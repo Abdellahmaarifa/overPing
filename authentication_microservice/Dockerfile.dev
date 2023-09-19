@@ -1,0 +1,19 @@
+# Use Node.js 20 on Alpine as the base
+FROM node:20-alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the entire project into /app (workdir)
+COPY . .
+
+# Install nodemon globally and other dependencies
+RUN npm install -g nodemon --silent && \
+    npm install --silent && \
+    apk add --no-cache bash
+
+# set the port that your NestJS app will run on docker network not outside docker
+EXPOSE 3000
+
+# Start the application using nodemon for hot-reloading
+CMD ["npm", "run", "start:dev"]
