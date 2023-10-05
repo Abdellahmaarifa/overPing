@@ -1,0 +1,55 @@
+version: '3.9'
+services:
+
+  ## USER PROFILE ##
+  user:
+    container_name: user_service
+    build:
+      context: .
+      dockerfile: ./user-microservice/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - profile_database
+      - rabbitmq
+    env_file:
+      - ./user-microservice/.env
+    environment:
+      - DATABASE_URL=${PROFILE_DB_URL}
+    networks:
+      - user-profile
+
+  ## PROFILE DATABASE ##
+  profile_database:
+    container_name: profile_database
+    image: postgres:16
+    restart: always
+    env_file:
+      - ./user-microservice/.env
+    environment:
+      - POSTGRES_USER=${PROFILE_DB_USER}
+      - POSTGRES_PASSWORD=${PROFILE_DB_PASSWORD}
+      - POSTGRES_DB=${PROFILE_DB_NAME}
+    ports:
+      - "${PROFILE_DB_PORT}:5432"
+    networks:
+      - user-profile
+
+  ## RABBITMQ SERVICE ##
+  rabbitmq:
+    container_name: rabbitmq
+    image: "rabbitmq:3.12.6-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - ./user-microservice/.env
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    networks:
+      - user-profile
+
+networks:
+  user-profile:
+    driver: bridge

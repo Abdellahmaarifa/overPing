@@ -1,0 +1,63 @@
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserProfile {
+  id            Int       @id @default(autoincrement())
+  user_id       Int
+  username      String
+  nickname      String    @unique
+  xp            Int       @default(0)
+  rank          Int       @default(0)
+  wallet        Int       @default(500)
+  about         String?
+  games_stat    GameStat[]    // One-to-one relationship
+  achievements  Achievement[]   // Many-to-many relationship
+
+  // Opposite relation fields
+  matchesAsUser1 MatchHistory[] @relation("MatchHistoryUser1")
+  matchesAsUser2 MatchHistory[] @relation("MatchHistoryUser2")
+
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+}
+
+model GameStat {
+  id                  Int @id @default(autoincrement())
+  user_id             Int
+  profile             UserProfile @relation(fields: [user_id], references: [id])
+
+  game_won          Int @default(0)
+  game_played       Int @default(0)
+  tournament_played Int @default(0)
+  tournament_won    Int @default(0)
+  win_streak        Int @default(0)
+  best_win_streak   Int @default(0)
+}
+
+model Achievement {
+  id          Int         @id @default(autoincrement())
+  title       String
+  userProfile UserProfile[]   // Many-to-many relationship
+}
+
+model MatchHistory {
+  id          Int         @id @default(autoincrement())
+  user1_id    Int
+  user2_id    Int
+  user1       UserProfile @relation("MatchHistoryUser1", fields: [user1_id], references: [id])
+  user2       UserProfile @relation("MatchHistoryUser2", fields: [user2_id], references: [id])
+  scoreUser1  Int
+  scoreUser2  Int
+  winner_id   Int
+  prize       Int
+  xp_earned   Int
+  date        DateTime
+}

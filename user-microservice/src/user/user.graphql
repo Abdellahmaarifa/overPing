@@ -1,0 +1,43 @@
+
+type Mutation {
+  createUserProfile(user_id: Int!, username: String!): UserProfile
+  updateUserProfile(user_id: Int!, input: UserProfileInput): UserProfile
+  deleteUserProfile(user_id: Int!): Boolean
+}
+
+type UserProfile {
+  id: Int
+  user_id: Int 
+  username: String
+  nickname: String
+  xp: Int
+  rank: Int
+  wallet: Int
+  about: String
+  achievements: [Achievement]
+  matchesAsUser1: [MatchHistory]
+  matchesAsUser2: [MatchHistory]
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+input UserProfileInput {
+  user_id: Int
+  username: String
+  nickname: String
+  xp: Int
+  rank: Int
+  wallet: Int
+  about: String
+  achievements: [AchievementInput]
+}
+
+type Achievement {
+  id: Int
+  title: String
+}
+
+input AchievementInput {
+  id: Int
+  title: String
+}
