@@ -1,71 +1,218 @@
-# Getting Started with Create React App
+# Twin + Vite + Styled Components + TypeScript
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<p><a href="https://github.com/ben-rogerson/twin.macro#gh-light-mode-only" target="_blank"><img src="../.github/twin-light.svg" alt="Twin" width="60" height="70"></a><a href="https://github.com/ben-rogerson/twin.macro#gh-dark-mode-only" target="_blank"><img src="../.github/twin-dark.svg" alt="Twin" width="60" height="70"></a><a href="https://vitejs.dev/" target="_blank"><img src="../.github/vite.svg" alt="Vite" width="50" height="70"></a><a href="https://styled-components.com#gh-light-mode-only" target="_blank"><img src="../.github/styled-components-light.svg" alt="Styled components" width="105" height="70"></a><a href="https://styled-components.com#gh-dark-mode-only" target="_blank"><img src="../.github/styled-components-dark.svg" alt="Styled components" width="105" height="70"></a><a href="https://www.typescriptlang.org/" target="_blank"><img src="../.github/typescript.svg" alt="TypeScript" width="60" height="70"></a></p>
 
-## Available Scripts
+**Download this example using [degit](https://github.com/Rich-Harris/degit)**
 
-In the project directory, you can run:
+```shell
+npx degit https://github.com/ben-rogerson/twin.examples/vite-styled-components-typescript folder-name
+```
 
-### `npm start`
+From within the new folder, run `yarn`, then `yarn dev` to start the dev server.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+[](#table-of-contents)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Table of contents
 
-### `npm test`
+- [Getting started](#getting-started)
+  - [Installation](#installation)
+  - [Add the global styles](#add-the-global-styles)
+  - [Add the twin config](#add-the-twin-config)
+  - [Add the vite config](#add-the-vite-config)
+  - [Add TypeScript types](#add-typescript-types)
+- [Customization](#customization)
+- [Next steps](#next-steps)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+[](#getting-started)
 
-### `npm run build`
+## Getting started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Installation
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Install Vite
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```shell
+yarn create vite my-vite-app --template react-ts
+```
 
-### `npm run eject`
+Install the dependencies
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```shell
+yarn add styled-components
+yarn add twin.macro babel-plugin-styled-components babel-plugin-macros tailwindcss -D
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<details>
+  <summary>Install with npm</summary>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Install Vite
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```shell
+npm create vite@latest my-vite-app -- --template react-ts
+```
 
-## Learn More
+Install the dependencies
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```shell
+npm install styled-components
+npm install --save-dev twin.macro babel-plugin-styled-components babel-plugin-macros tailwindcss
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+</details>
 
-### Code Splitting
+### Add the global styles
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Twin uses the same preflight base styles as Tailwind to smooth over cross-browser inconsistencies.
 
-### Analyzing the Bundle Size
+The `GlobalStyles` import adds these base styles along with some @keyframes for the animation classes and some global css that makes the [ring classes](https://tailwindcss.com/docs/ring-width) and box-shadows work.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+You can import `GlobalStyles` within a new file placed in `src/styles/GlobalStyles.tsx`:
 
-### Making a Progressive Web App
+```js
+// src/styles/GlobalStyles.tsx
+import { createGlobalStyle } from 'styled-components'
+import tw, { theme, GlobalStyles as BaseStyles } from 'twin.macro'
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+const CustomStyles = createGlobalStyle({
+  body: {
+    WebkitTapHighlightColor: theme`colors.purple.500`,
+    ...tw`antialiased`,
+  },
+})
 
-### Advanced Configuration
+const GlobalStyles = () => (
+  <>
+    <BaseStyles />
+    <CustomStyles />
+  </>
+)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+export default GlobalStyles
+```
 
-### Deployment
+Then import the GlobalStyles file in `src/main.tsx`:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```js
+// src/main.tsx
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import GlobalStyles from './styles/GlobalStyles'
+import App from './App'
 
-### `npm run build` fails to minify
+const container = document.getElementById('root')
+const root = createRoot(container!)
+root.render(
+  <React.StrictMode>
+    <GlobalStyles />
+    <App />
+  </React.StrictMode>,
+)
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Add the twin config
 
+Twin’s config can be added in a couple of different files.
+
+a) Either in `babel-plugin-macros.config.js`:
+
+```js
+// babel-plugin-macros.config.js
+module.exports = {
+  twin: {
+    preset: 'styled-components',
+  },
+}
+```
+
+b) Or in `package.json`:
+
+```js
+// package.json
+"babelMacros": {
+  "twin": {
+    "preset": "styled-components"
+  }
+},
+```
+
+### Add the vite config
+
+Add the following to your vite config:
+
+```typescript
+// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2020',
+    },
+  },
+  esbuild: {
+    // https://github.com/vitejs/vite/issues/8644#issuecomment-1159308803
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+  },
+  plugins: [
+    react({
+      babel: {
+        plugins: ['babel-plugin-macros', 'babel-plugin-styled-components'],
+      },
+    }),
+  ],
+})
+```
+
+### Add TypeScript types
+
+Create a `types/twin.d.ts` file with the declarations from the example:
+
+```shell
+mkdir types && cd $_ && curl -o twin.d.ts -L https://github.com/ben-rogerson/twin.examples/raw/master/vite-styled-components-typescript/types/twin.d.ts
+```
+
+Then add the `types` folder to the include array in your typescript config:
+
+```json
+// tsconfig.json
+{
+  // ...
+  "include": ["src", "types"]
+}
+```
+
+Then add the following in your typescript config:
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
+  "include": ["src", "types"]
+}
+```
+
+[](#customization)
+
+## Customization
+
+- [View the config options →](https://github.com/ben-rogerson/twin.macro/blob/master/docs/options.md)
+- [Customizing the tailwind config →](https://github.com/ben-rogerson/twin.macro/blob/master/docs/customizing-config.md)
+
+[](#next-steps)
+
+## Next steps
+
+Learn how to work with twin
+
+- [The prop styling guide](https://github.com/ben-rogerson/twin.macro/blob/master/docs/prop-styling-guide.md) - A must-read guide to level up on prop styling
+- [The styled component guide](https://github.com/ben-rogerson/twin.macro/blob/master/docs/styled-component-guide.md) - A must-read guide on getting productive with styled-components
+
+Learn more about styled-components
+
+- [The css prop](https://styled-components.com/docs/api#css-prop)
+- [The css import](https://styled-components.com/docs/api#css)
+- [The styled import](https://styled-components.com/docs/api#styled)
