@@ -6,7 +6,7 @@ import {
   Paragraph,
   Heading,
 } from "./HeadingSection.style";
-import Icon from "assets/common/logo.svg?react";
+
 const HeadingSection = () => {
   return (
     <HeadingSectionContainer>
@@ -25,7 +25,6 @@ const HeadingSection = () => {
         border={false}
         transparent={false}
         theme="white"
-        icon={Icon}
       ></Button>
     </HeadingSectionContainer>
   );
