@@ -8,11 +8,9 @@ const Button = ({
   Icon,
   disable = false,
   theme = "white",
-  link,
 }: ButtonLinkProps) => {
   return (
     <ButtonLink
-      href={link}
       size={size}
       transparent={transparent}
       theme={theme}

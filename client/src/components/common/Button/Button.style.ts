@@ -100,8 +100,12 @@ const ButtonLink = styled.a<ButtonLinkProps>(
   ]
 );
 
-export const IconContainer: React.FC<{ Icon: React.FC }> = ({ Icon }) => {
+export const IconContainer: React.FC<{ Icon: React.FC }> = ({
+  Icon,
+}: {
+  Icon: any;
+}) => {
   const Component = tw(Icon)`w-6 h-6`;
-  return <Component />;
+  return Component;
 };
 export default ButtonLink;
