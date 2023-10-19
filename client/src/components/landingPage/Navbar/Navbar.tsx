@@ -29,11 +29,16 @@ const Navbar = () => {
           <LogoContainer>Logo</LogoContainer>
           <NavLinks>
             <NavLink href="#home">Home</NavLink>
-            <NavLink href="#about">About us</NavLink>
-            <NavLink href="#contact">Contact us</NavLink>
+            <NavLink href="#whyus">Why us</NavLink>
+            <NavLink href="#meetus">Meet us</NavLink>
           </NavLinks>
           <LoginButtonContainer>
-            <Button text="Login" border={true} transparent={true} />
+            <Button
+              text="Login"
+              border={true}
+              transparent={true}
+              link="login"
+            />
           </LoginButtonContainer>
           <MobileMenuButton
             onClick={toggleMenu}
@@ -87,6 +92,7 @@ const Navbar = () => {
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
                 href="#home"
+                onClick={toggleMenu}
               >
                 Home
               </MobileMenuItem>
@@ -95,21 +101,28 @@ const Navbar = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
-                href="#about"
+                href="#whyus"
+                onClick={toggleMenu}
               >
-                About us
+                Why us
               </MobileMenuItem>
               <MobileMenuItem
                 initial={{ opacity: 0, x: -100 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
-                href="#contact"
+                href="#meetus"
+                onClick={toggleMenu}
               >
-                Contact us
+                Meet us
               </MobileMenuItem>
               <LoginButtonContainer tw="block">
-                <Button text="Login" border={true} transparent={true} />
+                <Button
+                  text="Login"
+                  border={true}
+                  transparent={true}
+                  link="/login"
+                />
               </LoginButtonContainer>
             </NavLinks>
           </MobileMenu>

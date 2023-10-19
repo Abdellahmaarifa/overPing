@@ -9,6 +9,7 @@ export interface ButtonLinkProps {
   transparent?: boolean;
   disable?: boolean;
   Icon?: React.FC;
+  link?: string;
 }
 
 const getBaseStyles = () => tw`

@@ -19,6 +19,7 @@ const HeadingSection = () => {
         smash your way to endless fun. Join now for exciting online matches!
       </Paragraph>
       <Button
+        link="/login"
         text="Play now"
         size="md"
         border={false}

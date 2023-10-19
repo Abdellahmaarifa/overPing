@@ -1,3 +1,7 @@
+import Feature_1 from "assets/landingPage/feature-1.svg?react";
+import Feature_2 from "assets/landingPage/feature-2.svg?react";
+import Feature_3 from "assets/landingPage/feature-3.svg?react";
+import tw from "twin.macro";
 import {
   Container,
   Feature,
@@ -6,16 +10,12 @@ import {
   FeatureHeading,
   FeatureIcon,
   Heading,
+  Blob,
 } from "./FeatureSection.style";
-import Feature_1 from "assets/landingPage/feature-1.svg?react";
-import Feature_2 from "assets/landingPage/feature-2.svg?react";
-import Feature_3 from "assets/landingPage/feature-3.svg?react";
-import tw from "twin.macro";
-const Col = tw.div`w-[845px] h-[845px] bg-ellipsRadialGradient rounded-[50%] absolute -right-[500px] top-[300px]`;
 const FeautueSection = () => {
   return (
     <Container>
-      <Col />
+      <Blob />
       <Heading>Play Games. Make friend</Heading>
       <FeatureContainer>
         <Feature>
@@ -31,18 +31,18 @@ const FeautueSection = () => {
           <FeatureIcon>
             <Feature_2 />
           </FeatureIcon>
-          <FeatureHeading>Play online</FeatureHeading>
+          <FeatureHeading>Make friends</FeatureHeading>
           <FeatureDesc>
-            Take on players worldwide in thrilling ping pong matches.
+            Connect with ping pong enthusiasts and share the fun.
           </FeatureDesc>
         </Feature>
         <Feature>
           <FeatureIcon>
             <Feature_3 />
           </FeatureIcon>
-          <FeatureHeading>Play online</FeatureHeading>
+          <FeatureHeading>Tournament</FeatureHeading>
           <FeatureDesc>
-            Take on players worldwide in thrilling ping pong matches.
+            Compete in high-stakes tournaments and become the champion.
           </FeatureDesc>
         </Feature>
       </FeatureContainer>

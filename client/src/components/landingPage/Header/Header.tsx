@@ -1,23 +1,9 @@
-import { motion, useAnimation } from "framer-motion";
-import { useEffect } from "react";
-import tw from "twin.macro";
 import ScrollIcon from "assets/landingPage/scroll.svg?react";
+import { motion } from "framer-motion";
 import HeadingSection from "../HeadingSection/HeadingSection";
 import Navbar from "../Navbar/Navbar";
 import HeaderContainer from "./Header.style";
 const Header = () => {
-  const controls = useAnimation();
-
-  useEffect(() => {
-    const animation = async () => {
-      while (false) {
-        await controls.start({ y: -5 }, { duration: 0.6 });
-        await controls.start({ y: 0 }, { duration: 0.6 });
-      }
-    };
-
-    animation();
-  }, [controls]);
   return (
     <HeaderContainer>
       <Navbar />

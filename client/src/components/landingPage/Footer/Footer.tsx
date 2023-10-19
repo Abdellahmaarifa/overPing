@@ -1,53 +1,64 @@
-import React from "react";
-import {
-  FooterContent,
-  FooterContainer,
-  FooterCreator,
-  FooterCreatorImg,
-  FoooterCreatorIcon,
-  FooterCopyright,
-  FooterHeading,
-} from "./Footer.style";
+import GithubIcon from "assets/landingPage/github.svg?react";
 import AyoubImg from "assets/landingPage/team/ayoub.png";
 import IlyasImg from "assets/landingPage/team/ilyas.png";
 import MaarifaImg from "assets/landingPage/team/maarifa.png";
 import TariqImg from "assets/landingPage/team/tariq.png";
-import GithubIcon from "assets/landingPage/github.svg?react";
+import {
+  FoooterCreatorIcon,
+  FooterContainer,
+  FooterContent,
+  FooterCopyright,
+  FooterCreator,
+  FooterCreatorImg,
+  FooterHeading,
+} from "./Footer.style";
 
 const Footer = () => {
   return (
-    <FooterContainer>
+    <FooterContainer id="meetus">
       <FooterHeading>Create with love by :</FooterHeading>
       <FooterContent>
         <FooterCreator>
-          <FooterCreatorImg>
+          <FooterCreatorImg href="https://github.com/bouCactus" target="_blank">
             <img src={AyoubImg} alt="" />
           </FooterCreatorImg>
-          <FoooterCreatorIcon>
+          <FoooterCreatorIcon
+            href="https://github.com/bouCactus"
+            target="_blank"
+          >
             <GithubIcon />
           </FoooterCreatorIcon>
         </FooterCreator>
         <FooterCreator>
-          <FooterCreatorImg>
+          <FooterCreatorImg href="https://github.com/medilyas" target="_blan">
             <img src={IlyasImg} alt="" />
           </FooterCreatorImg>
-          <FoooterCreatorIcon>
+          <FoooterCreatorIcon href="https://github.com/medilyas" target="_blan">
             <GithubIcon />
           </FoooterCreatorIcon>
         </FooterCreator>
         <FooterCreator>
-          <FooterCreatorImg>
-            <img src={MaarifaImg} alt="" />
+          <FooterCreatorImg
+            href="https://github.com/Abdellahmaarifa"
+            target="_blank"
+          >
+            <img src={MaarifaImg} alt="https://github.com/Abdellahmaarifa" />
           </FooterCreatorImg>
-          <FoooterCreatorIcon>
+          <FoooterCreatorIcon
+            href="https://github.com/Abdellahmaarifa"
+            target="_blank"
+          >
             <GithubIcon />
           </FoooterCreatorIcon>
         </FooterCreator>
         <FooterCreator>
-          <FooterCreatorImg>
+          <FooterCreatorImg href="https://github.com/tariqelb" target="_blank">
             <img src={TariqImg} alt="" />
           </FooterCreatorImg>
-          <FoooterCreatorIcon>
+          <FoooterCreatorIcon
+            href="https://github.com/tariqelb"
+            target="_blank"
+          >
             <GithubIcon />
           </FoooterCreatorIcon>
         </FooterCreator>

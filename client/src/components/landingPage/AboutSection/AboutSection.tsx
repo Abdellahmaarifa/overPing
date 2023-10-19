@@ -12,7 +12,7 @@ import tw from "twin.macro";
 const AboutSection = () => {
   return (
     <Container>
-      <Content>
+      <Content id="whyus">
         <ContentHeading>Why Choose us?</ContentHeading>
         <ContentDes>
           Experience gaming like never before with our smooth and uninterrupted
@@ -22,10 +22,10 @@ const AboutSection = () => {
           tournaments, proving their skill and dedication. Join us today to
           experience ping pong with unmatched fairness and excitement!
         </ContentDes>
-        <Button text="Try it" size="md" />
+        <Button text="Try it" size="md" link="login" />
       </Content>
       <Img>
-        <img src={ImgSrc} alt="" />
+        <img src={ImgSrc} alt="ping pong table" />
       </Img>
     </Container>
   );
