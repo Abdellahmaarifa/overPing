@@ -23,7 +23,10 @@
     "paths": {
       "components/*":["components/*"],
       "pages/*":["pages/*"],
-      "assets/*":["assets/*"]
+      "assets/*":["assets/*"],
+      "types/*": ["types/*"],
+      "context/*": ["context/*"],
+      "queries/*": ["queries/*"]
     }
   },
   "include": [
