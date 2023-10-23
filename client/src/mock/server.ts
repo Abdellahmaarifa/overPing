@@ -1,5 +1,5 @@
 import express from "express";
-import { Users } from "./db";
+import { User } from "./db";
 import { ApolloServer } from "apollo-server-express";
 import { UserResolver } from "./userResolver";
 import { buildSchema } from "type-graphql";
@@ -25,11 +25,5 @@ const URL = `http://localhost:${PORT}`;
   await apolloServer.start();
 
   apolloServer.applyMiddleware({ app } as any);
-  // CREATING A USER
-  const usr = await Users.create({
-    id: "1",
-    email: "test@gmail.com",
-    password: "test",
-  });
   app.listen(PORT, () => console.log(`[app] running at ${URL}`));
 })();

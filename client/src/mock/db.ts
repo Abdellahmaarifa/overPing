@@ -1,4 +1,5 @@
 import { Database } from "fakebase";
+import { UserT } from "./entity/UserT";
 
 const db = new Database("./data/");
-export const Users = db.table("users");
+export const User = db.table<UserT>("users");
