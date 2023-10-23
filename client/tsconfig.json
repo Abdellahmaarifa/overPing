@@ -27,7 +27,8 @@
       "types/*": ["types/*"],
       "context/*": ["context/*"],
       "queries/*": ["queries/*"]
-    }
+    },
+    "experimentalDecorators": true
   },
   "include": [
     "src",

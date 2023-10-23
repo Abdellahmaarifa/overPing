@@ -10,7 +10,7 @@
     "dev": "vite --host ",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "mock-server": "nodemon --exec tsx ./src/mock/server.ts"
+    "mock-server": "nodemon -e ts -w ./src/mock -x  tsx ./src/mock/server.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.8.6",
@@ -25,6 +25,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.17.0",
+    "reflect-metadata": "^0.1.13",
     "styled-components": "^6.0.4",
     "ts-node": "^10.9.1",
     "type-graphql": "^1.1.1",
@@ -35,6 +36,7 @@
     "@types/jsonwebtoken": "^9.0.4",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@types/reflect-metadata": "^0.1.0",
     "@vitejs/plugin-react": "^4.0.3",
     "babel-plugin-macros": "^3.1.0",
     "babel-plugin-styled-components": "^2.1.4",
