@@ -1,19 +1,20 @@
+import { compare, hash } from "bcrypt";
 import "reflect-metadata";
 import {
-  Resolver,
-  Query,
-  ObjectType,
-  Mutation,
   Arg,
   Ctx,
   Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+  UseMiddleware,
 } from "type-graphql";
-import { hash, compare } from "bcrypt";
-import { User } from "./db";
-import { faker } from "@faker-js/faker";
-import { AuthContext } from "./authContect";
 import { createAccessToken, createRefrechToken } from "./auth";
+import { AuthContext } from "./authContext";
 import { COOKIE_NAME } from "./constant";
+import { User } from "./db";
+import { isAuth } from "./isAuth";
 @ObjectType()
 class LoginResponse {
   @Field(() => String)
@@ -25,6 +26,13 @@ export class UserResolver {
   @Query(() => String)
   hello() {
     return "Hello, World 🌎";
+  }
+
+  // ONLY LOGGED IN USERS CAN HIT THIS ROUTE
+  @Query(() => String)
+  @UseMiddleware(isAuth)
+  home(@Ctx() { payload }: AuthContext) {
+    return `you are in your home and you id is : ${payload?.userId}`;
   }
 
   // LOG IN THE USER
