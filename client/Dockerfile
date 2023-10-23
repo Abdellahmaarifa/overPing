@@ -1,4 +1,16 @@
-FROM node:20-alpine
+FROM node:20-alpine as development
+
+WORKDIR /app
+
+COPY . /app
+
+RUN npm install --silent
+
+EXPOSE 5173
+
+CMD ["npm","run", "dev"]
+
+FROM node:20-alpine as production
 
 WORKDIR /app
 #copy files client to container
