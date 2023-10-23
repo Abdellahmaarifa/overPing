@@ -1,18 +1,23 @@
-import express from "express";
-import { User } from "./db";
 import { ApolloServer } from "apollo-server-express";
-import { UserResolver } from "./userResolver";
+import cookieParser from "cookie-parser";
+import express from "express";
 import { buildSchema } from "type-graphql";
+import { sendRefreshToken } from "./auth";
+import { UserResolver } from "./userResolver";
 // CONSTANTS
 const PORT = 9000;
 const URL = `http://localhost:${PORT}`;
 
 (async () => {
   const app = express();
+  app.use(cookieParser());
   // TEST IF APP IS WORKIN
   app.get("/", (_req, res) => {
     res.send("hello overping");
   });
+
+  // GET A REFRECH TOKEN
+  app.post("/refresh_token", async (req, res) => sendRefreshToken(req, res));
 
   // CREATE APPOLO SERVER
   const apolloServer = new ApolloServer({
