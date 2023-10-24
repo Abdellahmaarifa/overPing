@@ -4,12 +4,22 @@ import express from "express";
 import { buildSchema } from "type-graphql";
 import { sendRefreshToken } from "./auth";
 import { UserResolver } from "./userResolver";
+import cors from "cors";
+
 // CONSTANTS
 const PORT = 9000;
 const URL = `http://localhost:${PORT}`;
 
 (async () => {
   const app = express();
+  /*
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    })
+  );
+  */
   app.use(cookieParser());
   // TEST IF APP IS WORKIN
   app.get("/", (_req, res) => {

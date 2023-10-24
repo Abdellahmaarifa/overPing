@@ -5,4 +5,6 @@ export interface UserT extends Entity {
   id: string;
   email: string;
   password: string;
+  userName: string;
+  profilePhoto: string;
 }

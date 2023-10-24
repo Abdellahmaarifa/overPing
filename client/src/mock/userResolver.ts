@@ -21,6 +21,18 @@ class LoginResponse {
   accessToken!: string;
 }
 
+@ObjectType()
+class UserResponse {
+  @Field(() => String)
+  id!: string;
+  @Field(() => String)
+  email!: string;
+  @Field(() => String)
+  userName!: string;
+  @Field(() => String)
+  profilePhoto!: string;
+}
+
 @Resolver()
 export class UserResolver {
   @Query(() => String)
@@ -60,7 +72,9 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async register(
     @Arg("email", () => String) email: string,
-    @Arg("password", () => String) password: string
+    @Arg("password", () => String) password: string,
+    @Arg("userName", () => String) userName: string,
+    @Arg("profilePhoto", () => String) profilePhoto: string
   ) {
     const hashedPass = await hash(password, 12);
     try {
@@ -69,11 +83,26 @@ export class UserResolver {
       await User.create({
         email,
         password: hashedPass,
+        userName,
+        profilePhoto,
       });
     } catch (err) {
       console.log(err);
       return false;
     }
     return true;
+  }
+
+  @Query(() => UserResponse)
+  @UseMiddleware(isAuth)
+  async user(@Ctx() { payload }: AuthContext) {
+    const id = payload.userId;
+    const user = await User.findOne((usr) => usr.id === id);
+    if (!user) {
+      return {
+        msg: "error, no user found!",
+      };
+    }
+    return user;
   }
 }
