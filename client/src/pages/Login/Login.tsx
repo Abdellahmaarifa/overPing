@@ -1,44 +1,54 @@
-import { useMutation } from "@apollo/client";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import LOGIN from "queries/Login.query";
 import { useUserContext } from "context/user.context";
+import { FormContainer, PageContainer } from "./Login.style";
+import LoginAuth from "components/loginPage/LoginAuth/LoginAuth";
+import SignUp from "components/loginPage/SignUp/SignUp";
+import LoginSide from "components/loginPage/LoginSide/LoginSide";
+import LoginForm from "components/loginPage/LoginForm/LoginForm";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import {
+  useLoginMutation,
+  useRegisterMutation,
+  useHomeQuery,
+} from "../../graphql";
+import { User } from "types/User.type";
 
 const Login = () => {
-  const { signIn, user } = useUserContext();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const [login, { error, loading }] = useMutation(LOGIN, {
-    onCompleted: (data) => {
-      const {
-        login: { token, user },
-      } = data;
-      console.log(token, user);
-      signIn(user, token);
-      navigate("/", { replace: true });
+  const [regiser] = useRegisterMutation();
+  const [login] = useLoginMutation();
+  const { signIn, signOut, user } = useUserContext();
+  /*regiser({
+    variables: {
+      email: "hello_world!",
+      password: "test",
     },
-  });
-
-  const handleLogin = (email: string, password: string) => {
-    login({ variables: { email, password } });
-  };
-  console.log("this is what in user:", user);
-  if (loading) return <h1>Loading....</h1>;
+  });*/
+  async function loginUser() {
+    const res = await login({
+      variables: {
+        email: "hello_world!",
+        password: "test",
+      },
+    });
+    const accessToken = res.data?.login?.accessToken;
+    signIn({ token: accessToken ? accessToken : null });
+    console.log(res);
+  }
+  const display = false;
   return user ? (
     <Navigate to="/" />
   ) : (
-    <>
-      <h1>Login page.</h1>
-      <button
-        onClick={() => {
-          handleLogin("test@gmail.com", "test");
-          console.log("error and loading : ", error?.message);
-          location.state?.from ? navigate(location.state.from) : null;
-        }}
-      >
-        click
-      </button>
-    </>
+    <PageContainer>
+      <FormContainer>
+        <LoginForm />
+        <LoginSide />
+        <div tw="absolute bottom-0 w-full max-h-[30vh] h-[390px] bg-login-gradient-mobile block lg:hidden z-[1] sm:z-[0]"></div>
+        <div tw="bg-[#272E38] w-full h-full absolute right-0 top-0 opacity-[.5]"></div>
+        {display && <LoginAuth />}
+        {display || <SignUp />}
+      </FormContainer>
+    </PageContainer>
   );
 };
 

@@ -50,7 +50,9 @@ export class UserResolver {
     if (!valid) throw new Error("pass wrong!");
 
     // loged in!
-    res.cookie(COOKIE_NAME, createRefrechToken(user), { httpOnly: true });
+    res.cookie(COOKIE_NAME, createRefrechToken(user), {
+      httpOnly: false,
+    });
     return {
       accessToken: createAccessToken(user),
     };
