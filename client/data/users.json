@@ -28,5 +28,10 @@
     "id": "a_KPsnFptf1gAqpXoXULu",
     "email": "hello_world!",
     "password": "$2b$12$SWCIdr0PSViTiO.uRCKXZOmKEPNNT2B53bX/J0T4MYnnHB.tMzOW6"
+  },
+  {
+    "id": "q-Naz13TBnSv8WR4GwpTD",
+    "email": "test",
+    "password": "$2b$12$8fuRPOLccTA1UKAtflE5YeiDyevCC1o/RN2PRA7I1WnH0b0OQBC8u"
   }
 ]

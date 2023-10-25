@@ -46,7 +46,7 @@ const Login = () => {
         <div tw="absolute bottom-0 w-full max-h-[30vh] h-[390px] bg-login-gradient-mobile block lg:hidden z-[1] sm:z-[0]"></div>
         <div tw="bg-[#272E38] w-full h-full absolute right-0 top-0 opacity-[.5]"></div>
         {display && <LoginAuth />}
-        {display || <SignUp />}
+        {display && <SignUp />}
       </FormContainer>
     </PageContainer>
   );

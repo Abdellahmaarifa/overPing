@@ -6,8 +6,9 @@ const Button = ({
   border = false,
   text,
   Icon,
-  disable = false,
+  disabled = false,
   theme = "white",
+  type,
 }: ButtonLinkProps) => {
   return (
     <ButtonLink
@@ -17,7 +18,8 @@ const Button = ({
       border={border}
       icon={Icon ? true : false}
       text={text}
-      disable={disable}
+      disabled={disabled}
+      type={type}
     >
       {Icon && <IconContainer Icon={Icon} />}
       {text}

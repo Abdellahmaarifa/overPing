@@ -7,9 +7,10 @@ export interface ButtonLinkProps {
   text?: string;
   theme?: "dark" | "white" | "blue";
   transparent?: boolean;
-  disable?: boolean;
+  disabled?: boolean;
   Icon?: React.FC;
   link?: string;
+  type?: string;
 }
 
 const getBaseStyles = () => tw`
@@ -27,9 +28,9 @@ const getTextAndBgColorStyles = (
 ) => {
   if (!transparent) {
     return theme === "dark"
-      ? tw`text-btn-white bg-btn-black`
+      ? tw`text-btn-white bg-btn-black!`
       : theme === "white"
-      ? tw`text-btn-black bg-btn-white`
+      ? tw`text-btn-black bg-btn-white!`
       : theme === "blue"
       ? tw`text-btn-blue`
       : tw`text-btn-white`;
@@ -54,7 +55,7 @@ const getBgStyles = (
   transparent?: boolean,
   theme?: "dark" | "white" | "blue"
 ) => {
-  return !transparent && (theme === "blue" ? tw`bg-btn-blue` : null);
+  return !transparent && (theme === "blue" ? tw`bg-btn-blue!` : null);
 };
 
 const getSizeStyles = (size?: "sm" | "md" | "xl") => {
@@ -77,17 +78,17 @@ const getDisabledStyles = (
 ) => {
   if (disable) {
     return theme === "white"
-      ? tw`bg-btn-white-disable text-btn-black-disable`
+      ? tw`bg-btn-white-disable! text-btn-black-disable`
       : theme === "dark"
-      ? tw`bg-btn-black-disable text-btn-white-disable`
+      ? tw`bg-btn-black-disable! text-btn-white-disable`
       : tw`brightness-75`;
   } else {
     return tw`hover:brightness-75`;
   }
 };
 
-const ButtonLink = styled.a<ButtonLinkProps>(
-  ({ icon, size, border, text, theme, transparent, disable }) => [
+const ButtonLink = styled.button<ButtonLinkProps>(
+  ({ icon, size, border, text, theme, transparent, disabled }) => [
     getBaseStyles(),
     getIconGapStyles(icon, size),
     getTextAndBgColorStyles(theme, transparent),
@@ -95,8 +96,8 @@ const ButtonLink = styled.a<ButtonLinkProps>(
     getBgStyles(transparent, theme),
     getSizeStyles(size),
     getTextPaddingStyles(text),
-    getDisabledStyles(disable, theme),
-    disable ? tw`after:block` : tw`after:hidden`,
+    getDisabledStyles(disabled, theme),
+    disabled ? tw`after:block` : tw`after:hidden`,
   ]
 );
 

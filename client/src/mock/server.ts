@@ -11,12 +11,12 @@ const URL = `http://localhost:${PORT}`;
 
 (async () => {
   const app = express();
-  app.use(
+  /*app.use(
     cors({
       origin: "http://localhost:5173",
       credentials: true,
     })
-  );
+  );*/
   /*app.use(function (req, res, next) {
     res.header("Content-Type", "application/json;charset=UTF-8");
     res.header("Access-Control-Allow-Credentials", true);

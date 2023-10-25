@@ -37,7 +37,7 @@ The application offers the following features:
 
 ## Installation
 
-To run this project locally, follow these steps:
+To run this project locally,yous hould create .env file, please refere to .env.example for more information, and then follow these steps:
 
 1. Clone the repository:
 

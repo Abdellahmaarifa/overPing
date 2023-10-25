@@ -1,5 +1,11 @@
 import tw, { styled } from "twin.macro";
 
+interface IconPass {
+  activeIcon: React.FC;
+  defaultIcon: React.FC;
+  handler: any;
+  active: Boolean;
+}
 export interface InputBoxProps {
   type?: string;
   border?: boolean;
@@ -7,11 +13,12 @@ export interface InputBoxProps {
   showPass?: boolean;
   placeholder?: string;
   bgColor?: string;
-  Icon?: React.FC;
+  Icon?: IconPass;
   theme?: string;
+  state?: string;
 }
 const getGlobalStyle = () => {
-  return tw`px-[45px] w-[344px] h-[40px] gap-[10px] py-[4px] px-[8px] rounded-[4px] focus:outline-none text-[#B4B5CF] font-rubik text-[16px] font-normal`;
+  return tw`relative w-[344px] h-[40px] gap-[10px] py-[4px] px-[8px] rounded-[4px] focus:outline-none text-[#B4B5CF] font-rubik text-[16px] font-normal pr-[40px]`;
 };
 const getBorderStyle = (border?: boolean) => {
   return border
@@ -34,20 +41,33 @@ const getCustomTheme = (theme?: string) => {
     ? tw`border-[#4C4C57] bg-[transparent] placeholder-[#4C4C57]`
     : tw``;
 };
+const getStateColor = (state?: string) => {
+  if (!state) return tw``;
+  return state === "valid" ? tw`border-[#34e4a2]` : tw`border-[#f5425c]`;
+};
+
 const InputBox = styled.input<InputBoxProps>(
-  ({ type, border, size, placeholder, bgColor, theme }) => [
+  ({ type, border, size, placeholder, bgColor, theme, state }) => [
     getGlobalStyle(),
     getBorderStyle(border),
     getBackgroundColor(bgColor),
     getPlaceholderStyle(placeholder),
     getCustomTheme(theme),
+    getStateColor(state),
   ]
 );
 
-export const InputBoxIcon: React.FC<{ Icon: React.FC }> = ({ Icon }) => {
+export const InputBoxIcon = ({ Icon }: { Icon: IconPass }) => {
   const Component = tw(
-    Icon
-  )`w-6 h-6 absolute right-[8px] top-1/2 -translate-y-1/2`;
-  return <Component />;
+    Icon.active ? Icon.defaultIcon : Icon.activeIcon
+  )`w-6 h-6 `;
+  return (
+    <div
+      onClick={() => Icon.handler(!Icon.active)}
+      tw="absolute right-[8px] top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer"
+    >
+      <Component />
+    </div>
+  );
 };
 export default InputBox;
