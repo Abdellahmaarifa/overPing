@@ -9,7 +9,6 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import { gql, useQuery } from "@apollo/client";
 import Layout from "components/common/Layout/Layout";
 import Chat from "pages/Chat/Chat";
 import Error from "pages/Error/Error";
@@ -18,6 +17,7 @@ import Login from "pages/Login/Login";
 import { useUserContext } from "context/user.context";
 import { User } from "types/User.type";
 
+import LoginContextProvider from "context/login.context";
 // THIS IS SIMPLE EXAMPLE OF PROTECTED ROUTE
 const ProtectedRoutes = ({ user }: { user: User | null }) => {
   return user ? (

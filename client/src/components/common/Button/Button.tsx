@@ -9,6 +9,7 @@ const Button = ({
   disabled = false,
   theme = "white",
   type,
+  onClick,
 }: ButtonLinkProps) => {
   return (
     <ButtonLink
@@ -20,6 +21,7 @@ const Button = ({
       text={text}
       disabled={disabled}
       type={type}
+      onClick={onClick}
     >
       {Icon && <IconContainer Icon={Icon} />}
       {text}

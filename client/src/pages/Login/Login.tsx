@@ -1,23 +1,19 @@
-import { useUserContext } from "context/user.context";
-import { FormContainer, PageContainer } from "./Login.style";
 import LoginAuth from "components/loginPage/LoginAuth/LoginAuth";
-import SignUp from "components/loginPage/SignUp/SignUp";
-import LoginSide from "components/loginPage/LoginSide/LoginSide";
 import LoginForm from "components/loginPage/LoginForm/LoginForm";
+import LoginSide from "components/loginPage/LoginSide/LoginSide";
+import SignUp from "components/loginPage/SignUp/SignUp";
+import LoginContextProvider, { useLoginContext } from "context/login.context";
+import { useUserContext } from "context/user.context";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import {
-  useLoginMutation,
-  useRegisterMutation,
-  useHomeQuery,
-} from "../../graphql";
-import { User } from "types/User.type";
-
+import { useLoginMutation, useRegisterMutation } from "../../graphql";
+import { FormContainer, PageContainer } from "./Login.style";
 const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [regiser] = useRegisterMutation();
   const [login] = useLoginMutation();
   const { signIn, signOut, user } = useUserContext();
+  const { showRegister } = useLoginContext();
   /*regiser({
     variables: {
       email: "hello_world!",
@@ -44,9 +40,9 @@ const Login = () => {
         <LoginForm />
         <LoginSide />
         <div tw="absolute bottom-0 w-full max-h-[30vh] h-[390px] bg-login-gradient-mobile block lg:hidden z-[1] sm:z-[0]"></div>
-        <div tw="bg-[#272E38] w-full h-full absolute right-0 top-0 opacity-[.5]"></div>
+        <div tw="bg-[#0a0b0c] w-full h-full absolute right-0 top-0 opacity-[.5]"></div>
         {display && <LoginAuth />}
-        {display && <SignUp />}
+        {showRegister && <SignUp />}
       </FormContainer>
     </PageContainer>
   );

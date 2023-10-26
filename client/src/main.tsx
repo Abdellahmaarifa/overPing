@@ -1,11 +1,11 @@
 import { ApolloProvider } from "@apollo/client";
+import LoginContextProvider from "context/login.context";
 import UserContextProvider from "context/user.context";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { client } from "./apolloConfig";
 import GlobalStyles from "./styles/GlobalStyles";
-
 const container = document.getElementById("root");
 const root = createRoot(container!);
 root.render(
@@ -13,7 +13,9 @@ root.render(
     <React.StrictMode>
       <GlobalStyles />
       <UserContextProvider>
-        <App />
+        <LoginContextProvider>
+          <App />
+        </LoginContextProvider>
       </UserContextProvider>
     </React.StrictMode>
   </ApolloProvider>

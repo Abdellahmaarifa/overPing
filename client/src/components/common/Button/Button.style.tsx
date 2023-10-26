@@ -11,6 +11,7 @@ export interface ButtonLinkProps {
   Icon?: React.FC;
   link?: string;
   type?: string;
+  onClick?: any;
 }
 
 const getBaseStyles = () => tw`

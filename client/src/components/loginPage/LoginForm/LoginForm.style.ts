@@ -42,4 +42,5 @@ export const LoginFooter = tw.footer`
 export const LoginFooterLink = tw.a`
     text-[21px]
     font-bold
+    cursor-pointer
 `;

@@ -1,6 +1,6 @@
 import tw from "twin.macro";
 
-export const SignUpContainer = tw.div`
+export const SignUpContainer = tw.form`
     bg-[#181B1F] 
     rounded-[8px] 
     w-full 
@@ -12,7 +12,6 @@ export const SignUpContainer = tw.div`
     border-[1px]
     flex
     justify-start
-    sm:justify-center
     items-center 
     gap-[40px] 
     absolute 

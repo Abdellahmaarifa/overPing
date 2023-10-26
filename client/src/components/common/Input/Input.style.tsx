@@ -15,7 +15,7 @@ export interface InputBoxProps {
   bgColor?: string;
   Icon?: IconPass;
   theme?: string;
-  state?: string;
+  state?: "valid" | "invalid";
 }
 const getGlobalStyle = () => {
   return tw`relative w-[344px] h-[40px] gap-[10px] py-[4px] px-[8px] rounded-[4px] focus:outline-none text-[#B4B5CF] font-rubik text-[16px] font-normal pr-[40px]`;

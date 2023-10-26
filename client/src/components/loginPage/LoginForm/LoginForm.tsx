@@ -1,9 +1,10 @@
 import Button from "components/common/Button/Button";
 import Seprator from "components/common/Seprator/Seprator";
+import LoginContextProvider from "context/login.context";
 import { Toaster } from "react-hot-toast";
-import tw from "twin.macro";
 import IntraIcon from "../../../assets/login/42.svg?react";
 import GoogleIcon from "../../../assets/login/google.svg?react";
+import LoginWithPass from "../LoginWithPass/LoginWithPass";
 import {
   LoginFooter,
   LoginFooterLink,
@@ -11,9 +12,12 @@ import {
   LoginHeading,
   LoginSubHeading,
 } from "./LoginForm.style";
-import LoginWithPass from "../LoginWithPass/LoginWithPass";
+import { useLoginContext } from "context/login.context";
+import tw from "twin.macro";
 
+const a = tw.a``;
 const LoginForm = () => {
+  const { setShowRegister, showRegister } = useLoginContext();
   return (
     <LoginFormContainer>
       <LoginHeading>Happening now</LoginHeading>
@@ -41,7 +45,16 @@ const LoginForm = () => {
         </div>
 
         <LoginFooter>
-          don’t have account? <LoginFooterLink>Sing up</LoginFooterLink>
+          don’t have account?{" "}
+          <LoginFooterLink
+            onClick={() => {
+              console.log("clicked");
+              setShowRegister(true);
+              console.log("now it is: ", showRegister);
+            }}
+          >
+            Sing up
+          </LoginFooterLink>
         </LoginFooter>
       </div>
       <Toaster position="top-center" />
