@@ -4,7 +4,7 @@ import Seprator from "components/common/Seprator/Seprator";
 import StepLink from "components/common/StepLink/StepLink";
 import { useLoginContext } from "context/login.context";
 import { Field, Formik } from "formik";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import tw from "twin.macro";
 import * as Yup from "yup";
 import IntraGoogle from "../../../assets/login/42.svg?react";
@@ -13,7 +13,10 @@ import GoogleIcon from "../../../assets/login/google.svg?react";
 import PhotoIcon from "../../../assets/login/photoIcon.svg?react";
 import { SignUpContainer, SignUpGroup, SignUpHeading } from "./SignUp.style";
 
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import NotShowPass from "../../../assets/login/notShowPass.svg?react";
+import ShowPassIcon from "../../../assets/login/showPass.svg?react";
 const a = tw``;
 interface Values {
   username: string;
@@ -39,6 +42,12 @@ const SignUp = () => {
   const [fieldName, setFieldName] = useState<string>("");
   const [step, setStep] = useState(0);
   const [avatar, setAvatar] = useState("");
+  const [showPass_1, SetShowPass_1] = useState(false);
+  const [showPass_2, SetShowPass_2] = useState(false);
+  const [shake, setShake] = useState(false);
+  const [inputState, setInputState] = useState("");
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [passSubmitted, setPassSubmitted] = useState(false);
   const handleFocus = (e: any) => {
     console.log("foucs on :", fieldName);
     setFieldName(e.target.name);
@@ -109,186 +118,239 @@ const SignUp = () => {
         })}
       >
         {({ isSubmitting, values, getFieldMeta, setFieldValue }) => (
-          <SignUpContainer
-            onSubmit={(e) => {
-              e.preventDefault();
-              console.log("step: ", registerStep);
-              if (registerStep === 1) {
-                console.log(getFieldMeta("email").error);
-                if (
-                  getFieldMeta("username").error ||
-                  getFieldMeta("email").error ||
-                  !values.email ||
-                  !values.username
-                ) {
-                  // nor validated!1
-                  console.log("no way ", getFieldMeta("username").error);
-                  return;
-                }
-                console.log("pas..");
-              } else if (registerStep === 2) {
-                if (
-                  getFieldMeta("password_1").error ||
-                  getFieldMeta("password_2").error ||
-                  !values.password_1 ||
-                  !values.password_2
-                ) {
-                  // not validated
-                  console.log("not");
-                  return;
-                }
-                console.log("passowrd ..");
-              }
-              if (registerStep < 3) setRegisterStep("next");
-              console.log("submited...");
-              if (registerStep === 3) {
-                console.log("now we are going to create the user!");
-              }
-            }}
+          <motion.div
+            initial={false}
+            animate={
+              shake
+                ? {
+                    x: [0, -10, 10, -10, 10, 0],
+                    rotate: [0, -5, 5, -5, 5, 0],
+                    transition: {
+                      duration: 0.5,
+                    },
+                  }
+                : {}
+            }
+            tw="absolute w-full h-full sm:w-[600px] sm:h-[536px] "
           >
-            <StepLink
-              text="Next"
-              lastStep={3}
-              onClick={() => {
-                console.log("goinf back..", registerStep);
-                setRegisterStep("prev");
+            <SignUpContainer
+              onSubmit={(e) => {
+                e.preventDefault();
+                console.log("step: ", registerStep);
+                if (registerStep === 1) {
+                  console.log(getFieldMeta("email").error);
+                  if (
+                    getFieldMeta("username").error ||
+                    getFieldMeta("email").error ||
+                    !values.email ||
+                    !values.username
+                  ) {
+                    // nor validated!1
+                    setEmailSubmitted(true);
+                    setShake(true);
+                    setTimeout(() => {
+                      setShake(false);
+                    }, 500);
+                    console.log("no way ", getFieldMeta("username").error);
+                    return;
+                  }
+                  console.log("pas..");
+                } else if (registerStep === 2) {
+                  if (
+                    getFieldMeta("password_1").error ||
+                    getFieldMeta("password_2").error ||
+                    !values.password_1 ||
+                    !values.password_2
+                  ) {
+                    // not validated
+                    setPassSubmitted(true);
+                    setShake(true);
+                    setTimeout(() => {
+                      setShake(false);
+                    }, 500);
+                    console.log("not");
+                    return;
+                  }
+                  console.log("passowrd ..");
+                }
+                if (registerStep < 3) {
+                  setRegisterStep("next");
+                }
+                console.log("submited...");
+                if (registerStep === 3) {
+                  console.log("now we are going to create the user!");
+                }
               }}
             >
-              <CloseIcon />
-            </StepLink>
-            <SignUpHeading>Sign in to OverPing</SignUpHeading>
-            {registerStep === 0 ? (
-              <>
-                <SignUpGroup>
-                  <Button
-                    text="Create with Google"
-                    size="xl"
-                    Icon={GoogleIcon}
-                    transparent={true}
-                    border={true}
-                  />
-                  <Button
-                    text="Create With Intra"
-                    size="xl"
-                    Icon={IntraGoogle}
-                    transparent={true}
-                    border={true}
-                  />
-                </SignUpGroup>
-                <Seprator text="or" />
-              </>
-            ) : registerStep === 1 ? (
-              <>
-                <SignUpGroup>
-                  <Field
-                    as={Input}
-                    placeholder="Username"
-                    theme="grey"
-                    border={true}
-                    name="username"
-                    id="username"
-                    state={
-                      values.username && getFieldMeta("username").error
-                        ? "invalid"
-                        : values.username
-                        ? "valid"
-                        : ""
-                    }
-                    onFocus={handleFocus}
-                  />
-                  <Field
-                    as={Input}
-                    placeholder="Email address"
-                    type="text"
-                    theme="grey"
-                    border={true}
-                    id="email"
-                    name="email"
-                    state={
-                      values.email && getFieldMeta("email").error
-                        ? "invalid"
-                        : values.email
-                        ? "valid"
-                        : ""
-                    }
-                    onFocus={handleFocus}
-                  />
-                </SignUpGroup>
-              </>
-            ) : registerStep === 2 ? (
-              <>
-                <SignUpGroup>
-                  <Field
-                    as={Input}
-                    type="password"
-                    placeholder="Password"
-                    theme="grey"
-                    border={true}
-                    name="password_1"
-                    id="password_1"
-                    state={
-                      values.password_1 && getFieldMeta("password_1").error
-                        ? "invalid"
-                        : values.password_1
-                        ? "valid"
-                        : ""
-                    }
-                    onFocus={handleFocus}
-                  />
-                  <Field
-                    as={Input}
-                    placeholder="Password"
-                    type="password"
-                    theme="grey"
-                    border={true}
-                    name="password_2"
-                    id="password_2"
-                    state={
-                      values.password_2 && getFieldMeta("password_2").error
-                        ? "invalid"
-                        : values.password_2
-                        ? "valid"
-                        : ""
-                    }
-                    onFocus={handleFocus}
-                  />
-                </SignUpGroup>
-              </>
-            ) : (
-              <>
-                <div tw="relative overflow-hidden w-[159px] h-[159px] bg-[#4C5258] rounded-[24px] [&>*]:w-[48px] [&>*]:h-[48px] flex justify-center items-center">
-                  <input
-                    name="avatar"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const fileReader = new FileReader();
-                      fileReader.onload = () => {
-                        if (fileReader.readyState === 2) {
-                          setFieldValue("avatar", fileReader.result);
-                          setAvatar(fileReader.result);
-                        }
-                      };
-                      fileReader.readAsDataURL(e.target.files[0]);
-                    }}
-                    tw="w-full h-full absolute opacity-0 cursor-pointer z-10"
-                    type="file"
-                  />
-                  {avatar && (
-                    <img src={avatar} alt="" tw="w-full h-full absolute z-0" />
-                  )}
-                  <PhotoIcon />
-                </div>
-              </>
-            )}
-            <Button
-              text={registerStep === 0 ? "Create Account" : "Next"}
-              size="xl"
-              type="submit"
-            />
-            <div tw="text-[#f5425d83] font-rubik ">
-              {fieldName ? getFieldMeta(fieldName).error : []}
-            </div>
-          </SignUpContainer>
+              <StepLink
+                text="Next"
+                lastStep={3}
+                onClick={() => {
+                  console.log("goinf back..", registerStep);
+                  setRegisterStep("prev");
+                }}
+              >
+                <CloseIcon />
+              </StepLink>
+              <SignUpHeading>Sign in to OverPing</SignUpHeading>
+              {registerStep === 0 ? (
+                <>
+                  <SignUpGroup>
+                    <Button
+                      text="Create with Google"
+                      size="xl"
+                      Icon={GoogleIcon}
+                      transparent={true}
+                      border={true}
+                    />
+                    <Button
+                      text="Create With Intra"
+                      size="xl"
+                      Icon={IntraGoogle}
+                      transparent={true}
+                      border={true}
+                    />
+                  </SignUpGroup>
+                  <Seprator text="or" />
+                </>
+              ) : registerStep === 1 ? (
+                <>
+                  <SignUpGroup>
+                    <Field
+                      as={Input}
+                      placeholder="Username"
+                      theme="grey"
+                      border={true}
+                      name="username"
+                      id="username"
+                      state={
+                        values.username && getFieldMeta("username").error
+                          ? "invalid"
+                          : values.username
+                          ? "valid"
+                          : emailSubmitted
+                          ? "invalid"
+                          : ""
+                      }
+                      onFocus={handleFocus}
+                    />
+                    <Field
+                      as={Input}
+                      placeholder="Email address"
+                      type="text"
+                      theme="grey"
+                      border={true}
+                      id="email"
+                      name="email"
+                      state={
+                        values.email && getFieldMeta("email").error
+                          ? "invalid"
+                          : values.email
+                          ? "valid"
+                          : emailSubmitted
+                          ? "invalid"
+                          : ""
+                      }
+                      onFocus={handleFocus}
+                    />
+                  </SignUpGroup>
+                </>
+              ) : registerStep === 2 ? (
+                <>
+                  <SignUpGroup>
+                    <Field
+                      as={Input}
+                      placeholder="Password"
+                      theme="grey"
+                      border={true}
+                      name="password_1"
+                      id="password_1"
+                      state={
+                        values.password_1 && getFieldMeta("password_1").error
+                          ? "invalid"
+                          : values.password_1
+                          ? "valid"
+                          : passSubmitted
+                          ? "invalid"
+                          : ""
+                      }
+                      onFocus={handleFocus}
+                      Icon={{
+                        activeIcon: ShowPassIcon,
+                        defaultIcon: NotShowPass,
+                        handler: SetShowPass_1,
+                        active: showPass_1,
+                      }}
+                      type={showPass_1 ? "text" : "password"}
+                    />
+                    <Field
+                      as={Input}
+                      placeholder="Password"
+                      theme="grey"
+                      border={true}
+                      name="password_2"
+                      id="password_2"
+                      state={
+                        values.password_2 && getFieldMeta("password_2").error
+                          ? "invalid"
+                          : values.password_2
+                          ? "valid"
+                          : passSubmitted
+                          ? "invalid"
+                          : ""
+                      }
+                      onFocus={handleFocus}
+                      Icon={{
+                        activeIcon: ShowPassIcon,
+                        defaultIcon: NotShowPass,
+                        handler: SetShowPass_2,
+                        active: showPass_2,
+                      }}
+                      type={showPass_2 ? "text" : "password"}
+                    />
+                  </SignUpGroup>
+                </>
+              ) : (
+                <>
+                  <div tw="relative overflow-hidden w-[159px] h-[159px] bg-[#4C5258] rounded-[24px] [&>*]:w-[48px] [&>*]:h-[48px] flex justify-center items-center">
+                    <input
+                      name="avatar"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const fileReader = new FileReader();
+                        fileReader.onload = () => {
+                          if (fileReader.readyState === 2) {
+                            setFieldValue("avatar", fileReader.result);
+                            setAvatar(fileReader.result);
+                          }
+                        };
+
+                        fileReader.readAsDataURL(e.target.files[0]);
+                      }}
+                      tw="w-full h-full absolute opacity-0 cursor-pointer z-10"
+                      type="file"
+                    />
+                    {avatar && (
+                      <img
+                        src={avatar}
+                        alt=""
+                        tw="w-full h-full absolute z-0"
+                      />
+                    )}
+                    <PhotoIcon />
+                  </div>
+                </>
+              )}
+              <Button
+                text={registerStep === 0 ? "Create Account" : "Next"}
+                size="xl"
+                type="submit"
+              />
+              <div tw="text-[#f5425d83] font-rubik ">
+                {fieldName ? getFieldMeta(fieldName).error : []}
+              </div>
+            </SignUpContainer>
+          </motion.div>
         )}
       </Formik>
     </>
