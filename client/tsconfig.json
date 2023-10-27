@@ -26,6 +26,7 @@
       "assets/*":["assets/*"],
       "types/*": ["types/*"],
       "context/*": ["context/*"],
+      "helpers/*": ["helpers/*"]
     },
     "experimentalDecorators": true
   },

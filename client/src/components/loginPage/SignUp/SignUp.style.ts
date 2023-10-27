@@ -1,6 +1,6 @@
 import tw from "twin.macro";
-
-export const SignUpContainer = tw.form`
+import { Form } from "formik";
+export const SignUpContainer = tw(Form)`
     bg-[#181B1F] 
     rounded-[8px] 
     w-full 

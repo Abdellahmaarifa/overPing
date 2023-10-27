@@ -2,11 +2,8 @@ import Button from "components/common/Button/Button";
 import Input from "components/common/Input/Input";
 import Seprator from "components/common/Seprator/Seprator";
 import StepLink from "components/common/StepLink/StepLink";
-import { useLoginContext } from "context/login.context";
-import { Field, Formik } from "formik";
-import { useState, useRef } from "react";
+import { Field, Formik, FormikProps } from "formik";
 import tw from "twin.macro";
-import * as Yup from "yup";
 import IntraGoogle from "../../../assets/login/42.svg?react";
 import CloseIcon from "../../../assets/login/btn-back.svg?react";
 import GoogleIcon from "../../../assets/login/google.svg?react";
@@ -14,340 +11,232 @@ import PhotoIcon from "../../../assets/login/photoIcon.svg?react";
 import { SignUpContainer, SignUpGroup, SignUpHeading } from "./SignUp.style";
 
 import { motion } from "framer-motion";
-import toast from "react-hot-toast";
+import { useStateWithGetSet } from "helpers";
+import { SignUpModelType, SignUpViewModelType } from "types/SignUp.type";
 import NotShowPass from "../../../assets/login/notShowPass.svg?react";
 import ShowPassIcon from "../../../assets/login/showPass.svg?react";
+import { SignUpModel, SignUpModelSchema } from "./SignUpModel";
+import SignUpViewModel from "./SignUpViewModel";
 const a = tw``;
-interface Values {
-  username: string;
-  email: string;
-  password_1: string;
-  password_2: string;
+
+interface FormStepProps {
+  viewModel: SignUpViewModelType;
+  formikProps?: FormikProps<SignUpModelType>;
 }
-const convertToBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(file);
-    fileReader.onload = () => {
-      resolve(fileReader.result);
-    };
-    fileReader.onerror = (error) => {
-      reject(error);
-    };
-  });
+
+const SignUpFormStepOne = (_: FormStepProps) => {
+  return (
+    <>
+      <SignUpGroup>
+        <Button
+          text="Create with Google"
+          size="xl"
+          Icon={GoogleIcon}
+          transparent={true}
+          border={true}
+        />
+        <Button
+          text="Create With Intra"
+          size="xl"
+          Icon={IntraGoogle}
+          transparent={true}
+          border={true}
+        />
+      </SignUpGroup>
+      <Seprator text="or" />
+    </>
+  );
+};
+
+const SignUpFormStepTwo = ({ viewModel, formikProps }: FormStepProps) => {
+  return (
+    <>
+      <SignUpGroup>
+        <Field
+          as={Input}
+          placeholder="Username"
+          theme="grey"
+          border={true}
+          name="username"
+          id="username"
+          state={viewModel.getFieldState("username", formikProps)}
+          onFocus={viewModel.handleFocus}
+        />
+        <Field
+          as={Input}
+          placeholder="Email address"
+          type="text"
+          theme="grey"
+          border={true}
+          id="email"
+          name="email"
+          state={viewModel.getFieldState("email", formikProps)}
+          onFocus={viewModel.handleFocus}
+        />
+      </SignUpGroup>
+    </>
+  );
+};
+
+const SignUpFormStepThree = ({ viewModel, formikProps }: FormStepProps) => {
+  const {
+    state: { showPass, showPassConfirmation },
+  } = viewModel;
+  return (
+    <>
+      <SignUpGroup>
+        <Field
+          as={Input}
+          placeholder="Password"
+          theme="grey"
+          border={true}
+          name="password"
+          id="password"
+          state={viewModel.getFieldState("password", formikProps)}
+          onFocus={viewModel.handleFocus}
+          Icon={{
+            activeIcon: ShowPassIcon,
+            defaultIcon: NotShowPass,
+            handler: showPass.set,
+            active: showPass.get,
+          }}
+          type={showPass.get ? "text" : "password"}
+        />
+        <Field
+          as={Input}
+          placeholder="Password"
+          theme="grey"
+          border={true}
+          name="passwordConfirmation"
+          id="passwordConfirmation"
+          state={viewModel.getFieldState("passwordConfirmation", formikProps)}
+          onFocus={viewModel.handleFocus}
+          Icon={{
+            activeIcon: ShowPassIcon,
+            defaultIcon: NotShowPass,
+            handler: showPassConfirmation.set,
+            active: showPassConfirmation.get,
+          }}
+          type={showPassConfirmation.get ? "text" : "password"}
+        />
+      </SignUpGroup>
+    </>
+  );
+};
+
+const SignUpFormStepFour = ({ viewModel, formikProps }: FormStepProps) => {
+  const {
+    state: { avatar },
+  } = viewModel;
+  return (
+    <>
+      <div tw="relative overflow-hidden w-[159px] h-[159px] bg-[#4C5258] rounded-[24px] [&>*]:w-[48px] [&>*]:h-[48px] flex justify-center items-center">
+        <input
+          name="avatar"
+          accept="image/*"
+          onChange={(e) => {
+            const fileReader = new FileReader();
+            fileReader.onload = () => {
+              if (fileReader.readyState === 2) {
+                formikProps?.setFieldValue("avatar", fileReader.result);
+                avatar.set(fileReader.result as string);
+              }
+            };
+            fileReader.readAsDataURL(
+              e.target.files ? e.target.files[0] : new Blob()
+            );
+          }}
+          tw="w-full h-full absolute opacity-0 cursor-pointer z-10"
+          type="file"
+        />
+        {avatar.get && (
+          <img src={avatar.get} alt="" tw="w-full h-full absolute z-0" />
+        )}
+        <PhotoIcon />
+      </div>
+    </>
+  );
 };
 
 const SignUp = () => {
-  const { setShowRegister, registerStep, setRegisterStep } = useLoginContext();
-  const [fieldName, setFieldName] = useState<string>("");
-  const [step, setStep] = useState(0);
-  const [avatar, setAvatar] = useState("");
-  const [showPass_1, SetShowPass_1] = useState(false);
-  const [showPass_2, SetShowPass_2] = useState(false);
-  const [shake, setShake] = useState(false);
-  const [inputState, setInputState] = useState("");
-  const [emailSubmitted, setEmailSubmitted] = useState(false);
-  const [passSubmitted, setPassSubmitted] = useState(false);
-  const handleFocus = (e: any) => {
-    console.log("foucs on :", fieldName);
-    setFieldName(e.target.name);
-  };
-  const handleProfile = async (e, setFieldValue) => {
-    const file = e.target.files[0];
-    //check the size of image
-    if (file?.size / 1024 / 1024 < 2) {
-      const base64 = await convertToBase64(file);
-      setFieldValue("profile_image", base64);
-      console.log(base64);
-    } else {
-      toast.error("Image size must be of 2MB or less");
-    }
-  };
+  const viewModel = new SignUpViewModel({
+    fieldName: useStateWithGetSet(""),
+    avatar: useStateWithGetSet(""),
+    showPass: useStateWithGetSet(false),
+    showPassConfirmation: useStateWithGetSet(false),
+    shake: useStateWithGetSet(false),
+    isEmailSubmitted: useStateWithGetSet(false),
+    isPasswordSubmitted: useStateWithGetSet(false),
+  });
+
+  const { state, loginContext } = viewModel;
+  const motionShakeAnimation = state.shake.get
+    ? {
+        x: [0, -10, 10, -10, 10, 0],
+        rotate: [0, -5, 5, -5, 5, 0],
+        transition: {
+          duration: 0.5,
+        },
+      }
+    : {};
   return (
     <>
       <div
-        tw="w-full h-full absolute bg-[rgba(38, 57, 73, 0.58)]"
-        onClick={() => {
-          setRegisterStep("reset");
-          setShowRegister(false);
-        }}
+        tw="w-full h-full absolute bg-[rgba(38, 57, 73, 0.58)] cursor-pointer"
+        onClick={viewModel.closeModel}
       ></div>
       <Formik
-        initialValues={{
-          username: "",
-          email: "",
-          password_1: "",
-          password_2: "",
-        }}
-        onSubmit={(values: Values) => {}}
-        validationSchema={Yup.object({
-          username: Yup.string()
-            .min(8, "Must be at least 8 characters")
-            .max(20, "Must be less  than 20 characters")
-            .required("Username is required")
-            .matches(
-              /^[a-zA-Z0-9]+$/,
-              "Cannot contain special characters or spaces"
-            ),
-          email: Yup.string()
-            .min(8, "Must be at least 8 characters")
-            .max(20, "Must be less  than 20 characters")
-            .required("Email is required")
-            .matches(
-              /^[a-zA-Z0-9]+$/,
-              "Cannot contain special characters or spaces"
-            ),
-
-          password_1: Yup.string()
-            .min(8, "Must be at least 8 characters")
-            .max(20, "Must be less  than 20 characters")
-            .required("Password is required")
-            .matches(
-              /^[a-zA-Z0-9]+$/,
-              "Cannot contain special characters or spaces"
-            ),
-          password_2: Yup.string()
-            .min(8, "Must be at least 8 characters")
-            .max(20, "Must be less  than 20 characters")
-            .oneOf([Yup.ref("password_1"), null], "Passwords must match")
-            .required("Password Confirmation is required")
-            .matches(
-              /^[a-zA-Z0-9]+$/,
-              "Cannot contain special characters or spaces"
-            ),
-        })}
+        initialValues={new SignUpModel()}
+        onSubmit={(_: SignUpModelType) => {}}
+        validationSchema={SignUpModelSchema()}
       >
-        {({ isSubmitting, values, getFieldMeta, setFieldValue }) => (
+        {(formikProps: FormikProps<SignUpModelType>) => (
           <motion.div
             initial={false}
-            animate={
-              shake
-                ? {
-                    x: [0, -10, 10, -10, 10, 0],
-                    rotate: [0, -5, 5, -5, 5, 0],
-                    transition: {
-                      duration: 0.5,
-                    },
-                  }
-                : {}
-            }
+            animate={motionShakeAnimation}
             tw="absolute w-full h-full sm:w-[600px] sm:h-[536px] "
           >
             <SignUpContainer
               onSubmit={(e) => {
-                e.preventDefault();
-                console.log("step: ", registerStep);
-                if (registerStep === 1) {
-                  console.log(getFieldMeta("email").error);
-                  if (
-                    getFieldMeta("username").error ||
-                    getFieldMeta("email").error ||
-                    !values.email ||
-                    !values.username
-                  ) {
-                    // nor validated!1
-                    setEmailSubmitted(true);
-                    setShake(true);
-                    setTimeout(() => {
-                      setShake(false);
-                    }, 500);
-                    console.log("no way ", getFieldMeta("username").error);
-                    return;
-                  }
-                  console.log("pas..");
-                } else if (registerStep === 2) {
-                  if (
-                    getFieldMeta("password_1").error ||
-                    getFieldMeta("password_2").error ||
-                    !values.password_1 ||
-                    !values.password_2
-                  ) {
-                    // not validated
-                    setPassSubmitted(true);
-                    setShake(true);
-                    setTimeout(() => {
-                      setShake(false);
-                    }, 500);
-                    console.log("not");
-                    return;
-                  }
-                  console.log("passowrd ..");
-                }
-                if (registerStep < 3) {
-                  setRegisterStep("next");
-                }
-                console.log("submited...");
-                if (registerStep === 3) {
-                  console.log("now we are going to create the user!");
-                }
+                viewModel.handleSubmit(e, formikProps);
               }}
             >
-              <StepLink
-                text="Next"
-                lastStep={3}
-                onClick={() => {
-                  console.log("goinf back..", registerStep);
-                  setRegisterStep("prev");
-                }}
-              >
+              <StepLink text="Next" lastStep={3} onClick={viewModel.goBack}>
                 <CloseIcon />
               </StepLink>
               <SignUpHeading>Sign in to OverPing</SignUpHeading>
-              {registerStep === 0 ? (
-                <>
-                  <SignUpGroup>
-                    <Button
-                      text="Create with Google"
-                      size="xl"
-                      Icon={GoogleIcon}
-                      transparent={true}
-                      border={true}
-                    />
-                    <Button
-                      text="Create With Intra"
-                      size="xl"
-                      Icon={IntraGoogle}
-                      transparent={true}
-                      border={true}
-                    />
-                  </SignUpGroup>
-                  <Seprator text="or" />
-                </>
-              ) : registerStep === 1 ? (
-                <>
-                  <SignUpGroup>
-                    <Field
-                      as={Input}
-                      placeholder="Username"
-                      theme="grey"
-                      border={true}
-                      name="username"
-                      id="username"
-                      state={
-                        values.username && getFieldMeta("username").error
-                          ? "invalid"
-                          : values.username
-                          ? "valid"
-                          : emailSubmitted
-                          ? "invalid"
-                          : ""
-                      }
-                      onFocus={handleFocus}
-                    />
-                    <Field
-                      as={Input}
-                      placeholder="Email address"
-                      type="text"
-                      theme="grey"
-                      border={true}
-                      id="email"
-                      name="email"
-                      state={
-                        values.email && getFieldMeta("email").error
-                          ? "invalid"
-                          : values.email
-                          ? "valid"
-                          : emailSubmitted
-                          ? "invalid"
-                          : ""
-                      }
-                      onFocus={handleFocus}
-                    />
-                  </SignUpGroup>
-                </>
-              ) : registerStep === 2 ? (
-                <>
-                  <SignUpGroup>
-                    <Field
-                      as={Input}
-                      placeholder="Password"
-                      theme="grey"
-                      border={true}
-                      name="password_1"
-                      id="password_1"
-                      state={
-                        values.password_1 && getFieldMeta("password_1").error
-                          ? "invalid"
-                          : values.password_1
-                          ? "valid"
-                          : passSubmitted
-                          ? "invalid"
-                          : ""
-                      }
-                      onFocus={handleFocus}
-                      Icon={{
-                        activeIcon: ShowPassIcon,
-                        defaultIcon: NotShowPass,
-                        handler: SetShowPass_1,
-                        active: showPass_1,
-                      }}
-                      type={showPass_1 ? "text" : "password"}
-                    />
-                    <Field
-                      as={Input}
-                      placeholder="Password"
-                      theme="grey"
-                      border={true}
-                      name="password_2"
-                      id="password_2"
-                      state={
-                        values.password_2 && getFieldMeta("password_2").error
-                          ? "invalid"
-                          : values.password_2
-                          ? "valid"
-                          : passSubmitted
-                          ? "invalid"
-                          : ""
-                      }
-                      onFocus={handleFocus}
-                      Icon={{
-                        activeIcon: ShowPassIcon,
-                        defaultIcon: NotShowPass,
-                        handler: SetShowPass_2,
-                        active: showPass_2,
-                      }}
-                      type={showPass_2 ? "text" : "password"}
-                    />
-                  </SignUpGroup>
-                </>
+              {loginContext.registerStep === 0 ? (
+                <SignUpFormStepOne
+                  viewModel={viewModel}
+                  formikProps={formikProps}
+                />
+              ) : loginContext.registerStep === 1 ? (
+                <SignUpFormStepTwo
+                  viewModel={viewModel}
+                  formikProps={formikProps}
+                />
+              ) : loginContext.registerStep === 2 ? (
+                <SignUpFormStepThree
+                  viewModel={viewModel}
+                  formikProps={formikProps}
+                />
               ) : (
-                <>
-                  <div tw="relative overflow-hidden w-[159px] h-[159px] bg-[#4C5258] rounded-[24px] [&>*]:w-[48px] [&>*]:h-[48px] flex justify-center items-center">
-                    <input
-                      name="avatar"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const fileReader = new FileReader();
-                        fileReader.onload = () => {
-                          if (fileReader.readyState === 2) {
-                            setFieldValue("avatar", fileReader.result);
-                            setAvatar(fileReader.result);
-                          }
-                        };
-
-                        fileReader.readAsDataURL(e.target.files[0]);
-                      }}
-                      tw="w-full h-full absolute opacity-0 cursor-pointer z-10"
-                      type="file"
-                    />
-                    {avatar && (
-                      <img
-                        src={avatar}
-                        alt=""
-                        tw="w-full h-full absolute z-0"
-                      />
-                    )}
-                    <PhotoIcon />
-                  </div>
-                </>
+                <SignUpFormStepFour
+                  viewModel={viewModel}
+                  formikProps={formikProps}
+                />
               )}
               <Button
-                text={registerStep === 0 ? "Create Account" : "Next"}
+                text={
+                  loginContext.registerStep === 0 ? "Create Account" : "Next"
+                }
                 size="xl"
                 type="submit"
               />
               <div tw="text-[#f5425d83] font-rubik ">
-                {fieldName ? getFieldMeta(fieldName).error : []}
+                {state.fieldName.get
+                  ? formikProps.getFieldMeta(state.fieldName.get).error
+                  : []}
               </div>
             </SignUpContainer>
           </motion.div>

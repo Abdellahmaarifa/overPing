@@ -4,7 +4,9 @@ import LoginContextProvider from "context/login.context";
 import { Toaster } from "react-hot-toast";
 import IntraIcon from "../../../assets/login/42.svg?react";
 import GoogleIcon from "../../../assets/login/google.svg?react";
-import LoginWithPass from "../LoginWithPass/LoginWithPass";
+//import LoginWithPass from "../LoginWithPass/LoginWithPass";
+import LoginView from "../Login/LoginView";
+
 import {
   LoginFooter,
   LoginFooterLink,
@@ -24,7 +26,7 @@ const LoginForm = () => {
       <LoginSubHeading>Join Today.</LoginSubHeading>
       <div tw="w-[344px] h-auto flex flex-col [&>*:last-child]:mt-[40px] [&>*:last-child]:m-auto">
         <div tw=" mb-[22px] mt-[32px] ">
-          <LoginWithPass />
+          <LoginView />
         </div>
         <Seprator text="or" />
         <div tw="flex justify-center items-center flex-col gap-[16px] w-full mt-[22px]">

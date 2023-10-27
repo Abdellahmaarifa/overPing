@@ -35,6 +35,7 @@ export default defineConfig({
       assets: "/src/assets",
       types: "/src/types",
       context: "/src/context",
+      helpers: "/src/helpers",
     },
   },
 });
