@@ -12,7 +12,6 @@ RUN npm install --silent
 
 # Copy the rest of the application code
 COPY . .
-
 RUN npm run build --silent
 
 FROM  node:20-alpine as production

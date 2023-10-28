@@ -1,33 +1,44 @@
 version: '3.7'
 services:
-  #############
-  ## SERVER ##
-  gateway:
-    build:
-      context: ./gateway
-      dockerfile: Dockerfile
-    networks:
-      - webapp
-      - database
-    depends_on:
-      - postgres_db
-    restart: always
-    command: [ 'node', 'main.js']
-    container_name: gateway
-  #############
-  ## CLIENT ##
+
+  # CLIENT SERVICE FOR PRODUCTION #
   client:
     build:
       context: ./client
       dockerfile: Dockerfile
+      target: production
     networks:
       - webapp
     ports:
       - 80:80
     restart: always
     container_name: client
-  ##############
-  ## POSTGRES ##
+    profiles:
+      - production
+  # CLIENT SERVICE FOR DEVELOPMENT # 
+  client-dev:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: development
+    env_file:
+      - ./client/.env
+    volumes:
+      - ./client/node_modules:/app/node_modules
+      - ./client/src:/app/src
+      - ./client/public:/app/public
+    networks:
+      - webapp
+    ports:
+      - 5173:5173
+    command: npm run dev
+    stdin_open: true
+    restart: always
+    container_name: client
+    profiles:
+      - development
+
+  # DATABASE SERVICE FOR PRODUCTION & DEVELOPMENT #
   postgres_db:
     image: postgres
     networks:
@@ -37,10 +48,92 @@ services:
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=demo
     volumes:
-      - ./database/data/prod:/var/lib/postgresql/data/
+      - ./database/data:/var/lib/postgresql/data/
     restart: always
     container_name: postgres_db
+    profiles:
+      - production
+      - development
 
+  # GATEWAY SERVICE FOR PRODUCTION #
+  gateway:
+    build:
+      context: ./api/apps/gateway
+      dockerfile: Dockerfile
+    networks:
+      - webapp
+      - database
+    depends_on:
+      - postgres_db
+    restart: always
+    command: [ 'node', 'main.js']
+    container_name: gateway
+    profiles:
+      - production
+  # GATEWAY SERVICE FOR DEVELOPMENT #
+  gateway-dev:
+    build:
+      context: ./api
+      dockerfile: ./apps/gateway/Dockerfile
+      target: development
+    command: npm run start:dev gateway
+    env_file:
+      - ./api/.env
+    networks:
+      - webapp
+    ports:
+      - ${GATEWAY_PORT}:5500
+    volumes:
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - rabbitmq
+    restart: always
+    container_name: gateway
+    profiles:
+      - development
+
+  # AUTH SERVICE FOR DEVELOPMENT #
+  auth:
+    build:
+      context: ./api
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: npm run start:dev auth
+    env_file:
+      - ./api/.env
+    networks:
+      - webapp
+    ports:
+      - ${AUTH_PORT}:3001
+    volumes:
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - rabbitmq
+      - gateway-dev
+    restart: always
+    container_name: auth
+    profiles:
+      - development
+
+  rabbitmq:
+    image: rabbitmq:3-management 
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASSWORD}
+      - MESSAGE_BUS=amqp://rabbitmq
+    restart: always
+    networks:
+      - webapp
+    ports:
+      - "${RABBIT_MQ_PORT}:5672"
+      - ${RABBITMQ_AMQP_PORT}:15672
+    container_name: rabbitmq
+    profiles:
+      - development
+      - production
+    
 networks:
   webapp:
     driver: bridge
