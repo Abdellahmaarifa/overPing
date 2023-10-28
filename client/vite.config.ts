@@ -1,8 +1,13 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
+
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    "process.env": {},
+  },
   optimizeDeps: {
     esbuildOptions: {
       target: "es2020",
@@ -19,12 +24,18 @@ export default defineConfig({
       },
     }),
     svgr(),
+    nodePolyfills({
+      protocolImports: true,
+    }),
   ],
   resolve: {
     alias: {
       pages: "/src/pages",
       components: "/src/components",
       assets: "/src/assets",
+      types: "/src/types",
+      context: "/src/context",
+      queries: "/src/queries",
     },
   },
 });
