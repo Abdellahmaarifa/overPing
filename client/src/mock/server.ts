@@ -4,6 +4,7 @@ import express from "express";
 import { buildSchema } from "type-graphql";
 import { sendRefreshToken } from "./auth";
 import { UserResolver } from "./userResolver";
+import { graphqlUploadExpress } from "graphql-upload-ts";
 import cors from "cors";
 
 // CONSTANTS
@@ -38,7 +39,7 @@ const URL = `http://localhost:${PORT}`;
   });
 
   await apolloServer.start();
-
+  app.use(graphqlUploadExpress());
   apolloServer.applyMiddleware({ app } as any);
   app.listen(PORT, () => console.log(`[app] running at ${URL}`));
 })();

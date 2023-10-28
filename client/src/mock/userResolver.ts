@@ -1,5 +1,6 @@
 import { compare, hash } from "bcrypt";
 import "reflect-metadata";
+
 import {
   Arg,
   Ctx,
@@ -10,11 +11,15 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
+import { FileUpload, GraphQLUpload } from "graphql-upload-ts";
+import fs from "fs"; // Import the Node.js File System module for saving files
+import { v4 as uuidv4 } from "uuid";
 import { createAccessToken, createRefrechToken } from "./auth";
 import { AuthContext } from "./authContext";
 import { COOKIE_NAME } from "./constant";
 import { User } from "./db";
 import { isAuth } from "./isAuth";
+
 @ObjectType()
 class LoginResponse {
   @Field(() => String)
@@ -74,17 +79,37 @@ export class UserResolver {
     @Arg("email", () => String) email: string,
     @Arg("password", () => String) password: string,
     @Arg("userName", () => String) userName: string,
-    @Arg("profilePhoto", () => String) profilePhoto: string
+    @Arg("profilePhoto", () => GraphQLUpload) profilePhoto: FileUpload // Use GraphQLUpload for the file input
   ) {
     const hashedPass = await hash(password, 12);
     try {
       const user = await User.findOne((usr) => usr.email == email);
       if (user) throw new Error("Ops. User with that email already exist.");
+
+      const { createReadStream, filename, mimetype } = await profilePhoto;
+      const uniqueFileName = `${uuidv4()}-${filename}`; // Generate a unique filename
+      const fileStoragePath = `data/uploads/${uniqueFileName}`;
+
+      const fileStream = createReadStream();
+
+      const writeStream = fs.createWriteStream(fileStoragePath);
+
+      await new Promise((resolve, reject) => {
+        fileStream
+          .pipe(writeStream)
+          .on("finish", resolve)
+          .on("error", (error) => {
+            fs.unlink(fileStoragePath, () => {
+              reject(error);
+            });
+          });
+      });
+
       await User.create({
         email,
         password: hashedPass,
         userName,
-        profilePhoto,
+        profilePhoto: fileStoragePath,
       });
     } catch (err) {
       console.log(err);

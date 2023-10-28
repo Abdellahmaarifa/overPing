@@ -30,5 +30,12 @@
     "password": "$2b$12$a1LZjK8nDqeB14olF6./oec485F8YwO3rKUZb2WG46C3ftgORnvv.",
     "userName": "lola2",
     "profilePhoto": "lola2"
+  },
+  {
+    "id": "JMNT7YAv1zYPUSDw9t-54",
+    "email": "test@example.com",
+    "password": "$2b$12$Iuk7Lnz0g3YfaJ2KRprOP.hSwE9Haj45XODWTP7hc7m8/2l6cQFe.",
+    "userName": "TestUser",
+    "profilePhoto": "data/uploads/aaa2c879-1691-45f9-8221-d0ce9fcc9aeb-maarifa1.png"
   }
 ]
