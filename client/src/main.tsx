@@ -6,10 +6,8 @@ import App from "./App";
 import { client } from "./apolloConfig";
 import GlobalStyles from "./styles/GlobalStyles";
 
-import worker from "./mock/old";
 const container = document.getElementById("root");
 const root = createRoot(container!);
-worker.start();
 root.render(
   <ApolloProvider client={client}>
     <React.StrictMode>
