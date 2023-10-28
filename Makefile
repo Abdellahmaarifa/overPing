@@ -5,11 +5,9 @@ COMPOSE_FILE := docker-compose.yml
 COMPOSE := docker-compose -f $(COMPOSE_FILE)
 
 # Define targets
-.PHONY: build start stop restart logs clean clean-all client
+.PHONY: start stop restart logs clean clean-all client
 
-# Build Docker Compose services
-build:
-	$(COMPOSE) build
+
 
 # Start services (development profile)
 start:
@@ -18,6 +16,7 @@ start:
 # Start services (production profile)
 start-production:
 	$(COMPOSE) --profile production up -d
+
 
 # Stop services
 stop:
