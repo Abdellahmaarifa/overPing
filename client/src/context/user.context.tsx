@@ -16,7 +16,7 @@ type Props = {
 type Context = {
   signIn: (user: User) => void;
   signOut: () => void;
-  restoreUser: () => void;
+  restoreUser: (callbakc: () => void) => void;
   user: User | null;
 };
 
@@ -41,7 +41,7 @@ const UserContextProvider = ({ children }: Props): JSX.Element => {
     setUser(user);
   }, []);
 
-  const restoreUser = async () => {
+  const restoreUser = async (callback: () => void) => {
     // we should sen a request to /refresh_token and then update the user with the new token.
     try {
       const data = await fetch("http://localhost:9000/refresh_token", {
@@ -52,6 +52,7 @@ const UserContextProvider = ({ children }: Props): JSX.Element => {
       console.log("new token : ", res.accessToken);
       setToken(res?.accessToken);
       if (res?.accessToken) setUser({ token: res?.accessToken });
+      callback();
     } catch (err) {
       console.log(err);
     }

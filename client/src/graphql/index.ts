@@ -15,6 +15,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  Upload: { input: any; output: any; }
 };
 
 export type LoginResponse = {
@@ -25,6 +26,7 @@ export type LoginResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   login: LoginResponse;
+  logout: Scalars['Boolean']['output'];
   register: Scalars['Boolean']['output'];
 };
 
@@ -38,12 +40,23 @@ export type MutationLoginArgs = {
 export type MutationRegisterArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+  profilePhoto: Scalars['Upload']['input'];
+  userName: Scalars['String']['input'];
 };
 
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String']['output'];
   home: Scalars['String']['output'];
+  user: UserResponse;
+};
+
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  email: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  profilePhoto: Scalars['String']['output'];
+  userName: Scalars['String']['output'];
 };
 
 export type HomeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -59,7 +72,14 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', accessToken: string } };
 
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+
 export type RegisterMutationVariables = Exact<{
+  profilePhoto: Scalars['Upload']['input'];
+  userName: Scalars['String']['input'];
   password: Scalars['String']['input'];
   email: Scalars['String']['input'];
 }>;
@@ -134,9 +154,44 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const RegisterDocument = gql`
-    mutation Register($password: String!, $email: String!) {
-  register(password: $password, email: $email)
+    mutation Register($profilePhoto: Upload!, $userName: String!, $password: String!, $email: String!) {
+  register(
+    profilePhoto: $profilePhoto
+    userName: $userName
+    password: $password
+    email: $email
+  )
 }
     `;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
@@ -154,6 +209,8 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  * @example
  * const [registerMutation, { data, loading, error }] = useRegisterMutation({
  *   variables: {
+ *      profilePhoto: // value for 'profilePhoto'
+ *      userName: // value for 'userName'
  *      password: // value for 'password'
  *      email: // value for 'email'
  *   },

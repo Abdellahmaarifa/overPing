@@ -65,6 +65,7 @@ class LoginViewModel implements LoginViewModelType {
 
         this.userContext.signIn({ token: accessToken ? accessToken : null });
       } catch (err) {
+        console.log(err);
         reject("Email or Password is incorrect!");
       }
     });

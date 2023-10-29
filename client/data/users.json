@@ -1,41 +1,30 @@
 [
   {
-    "id": "be6c8f06-39fe-4d3a-b914-81928494e54c",
+    "id": "xgh8CJTHbBCIRv5pASZ6l",
     "email": "abdellah",
-    "password": "$2b$12$0xwWTM63TCgZBMB6y45JVuDh/qov6ZN.E8ay5lXaJX55XwhYWWi8i"
+    "password": "$2b$12$klJD7cRcTx609npJPznJg.w5PYyZSJ1j41UwDoiTNqMzSs3A0omUy",
+    "userName": "abdellah",
+    "profilePhoto": "data/uploads/ad4f6abf-b297-4b9a-851d-779cf63294a2-3-git-workflow.png"
   },
   {
-    "id": "8ee55fdd-95df-448f-a981-9f04d05d7957",
-    "email": "abdellah",
-    "password": "$2b$12$J0BDOKzGaytHgAeE8w1Epu7/DFxUjTyt0sYnChP5mtrEMCkuOjaEe"
+    "id": "LjeadpBeu6WIl5LmeqWNB",
+    "email": "helloworld",
+    "password": "$2b$12$5hVDJB5Aa9tOiX7qW2l/1O0QaOH1tAPZlYeP8TMMA50G/fyYYCChy",
+    "userName": "helloworld",
+    "profilePhoto": "data/uploads/b2f917b4-8db6-496c-a1c9-e4821c2a11de-3-git-workflow.png"
   },
   {
-    "id": "uol631VxXsKDlO-YJPrOP",
-    "email": "abdellah",
-    "password": "$2b$12$GTW8oVwlWW3JNLd2JKYki.YRSavioRsnGJts8FrDYq.0wAtb1ESwu"
+    "id": "1O1ix7PUfi8BTmXFM9RQf",
+    "email": "",
+    "password": "$2b$12$guZejWy8KNTQ0px7ouXAHuYwBTUQknlKtyA7aoLWgHxSR8dkb/F.a",
+    "userName": "",
+    "profilePhoto": "data/uploads/c6399509-f2a2-42ed-983b-479c6a0c4a19-3-git-workflow.png"
   },
   {
-    "id": "RCwvaXjjn-nubq9Oqq7Q3",
-    "email": "abdellah",
-    "password": "$2b$12$c.ZlGHm.X3uSUVowTNFm9ed/1yLKoBpMRhL5.Is5eh6na/4baqYzO"
-  },
-  {
-    "id": "P-y3WLgbF48RrLAN18MhM",
-    "email": "abdellahrt",
-    "password": "$2b$12$icqRKlyw0WTbWUg3Zer1uuXbo1fXmYKMFvop1NYrLLtw8D2Nyo54e"
-  },
-  {
-    "id": "HricQKny7Mdxws76gTEvF",
-    "email": "lola2",
-    "password": "$2b$12$a1LZjK8nDqeB14olF6./oec485F8YwO3rKUZb2WG46C3ftgORnvv.",
-    "userName": "lola2",
-    "profilePhoto": "lola2"
-  },
-  {
-    "id": "JMNT7YAv1zYPUSDw9t-54",
-    "email": "test@example.com",
-    "password": "$2b$12$Iuk7Lnz0g3YfaJ2KRprOP.hSwE9Haj45XODWTP7hc7m8/2l6cQFe.",
-    "userName": "TestUser",
-    "profilePhoto": "data/uploads/aaa2c879-1691-45f9-8221-d0ce9fcc9aeb-maarifa1.png"
+    "id": "lfBYbTxCTTV6b3dsSmnXX",
+    "email": "hellotest",
+    "password": "$2b$12$m1k59kvPvaBc9Nwn6d4Lb.GqxF93zjcp8JHOYKw1Ao5tTxhk6hdwC",
+    "userName": "hellotest",
+    "profilePhoto": "data/uploads/ff04a685-72e3-410b-b431-e337c6406d64-BoucactusGithubImage 1.png"
   }
 ]

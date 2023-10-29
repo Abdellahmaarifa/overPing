@@ -6,6 +6,7 @@ export interface SignUpModelType {
   email: string;
   password: string;
   passwordConfirmation: string;
+  profilePhoto: File | null;
 }
 
 export interface SignUpViewModelType {
@@ -35,4 +36,5 @@ export interface SignUpViewState {
   shake: StateWithGetSet<boolean>;
   isEmailSubmitted: StateWithGetSet<boolean>;
   isPasswordSubmitted: StateWithGetSet<boolean>;
+  isSubmitted: StateWithGetSet<boolean>;
 }

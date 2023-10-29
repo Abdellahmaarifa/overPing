@@ -17,6 +17,7 @@ import NotShowPass from "../../../assets/login/notShowPass.svg?react";
 import ShowPassIcon from "../../../assets/login/showPass.svg?react";
 import { SignUpModel, SignUpModelSchema } from "./SignUpModel";
 import SignUpViewModel from "./SignUpViewModel";
+import { useNavigate, Navigate } from "react-router-dom";
 const a = tw``;
 
 interface FormStepProps {
@@ -167,6 +168,7 @@ const SignUp = () => {
     shake: useStateWithGetSet(false),
     isEmailSubmitted: useStateWithGetSet(false),
     isPasswordSubmitted: useStateWithGetSet(false),
+    isSubmitted: useStateWithGetSet(false),
   });
 
   const { state, loginContext } = viewModel;
@@ -179,7 +181,9 @@ const SignUp = () => {
         },
       }
     : {};
-  return (
+  return viewModel.state.isSubmitted.get ? (
+    <Navigate to="/login" />
+  ) : (
     <>
       <div
         tw="w-full h-full absolute bg-[rgba(38, 57, 73, 0.58)] cursor-pointer"

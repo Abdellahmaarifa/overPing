@@ -33,11 +33,12 @@ const App: React.FC = () => {
   const { restoreUser, user } = useUserContext();
   console.log("render app...");
   useEffect(() => {
-    if (!user) restoreUser();
-    setLoading(false);
-    console.log("this should call one");
-    if (user) setLoading(false);
+    if (!user) restoreUser(() => setLoading(false));
+    // setLoading(false);
+    //if (!user) setLoading(false);
+    console.log("this should call one", user);
   }, []);
+  //if (user && loading) setLoading(false);
   return loading ? (
     <h1>Loading....</h1>
   ) : (

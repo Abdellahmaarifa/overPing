@@ -1,3 +1,13 @@
-mutation Register($password: String!, $email: String!) {
-  register(password: $password, email: $email)
+mutation Register(
+  $profilePhoto: Upload!
+  $userName: String!
+  $password: String!
+  $email: String!
+) {
+  register(
+    profilePhoto: $profilePhoto
+    userName: $userName
+    password: $password
+    email: $email
+  )
 }

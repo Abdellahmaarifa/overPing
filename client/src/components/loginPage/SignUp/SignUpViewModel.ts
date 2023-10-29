@@ -1,21 +1,26 @@
 import { useLoginContext } from "context/login.context";
 import { FormikProps } from "formik";
+import { sleep } from "helpers";
 import { FormEvent } from "react";
+import toast from "react-hot-toast";
 import {
   SignUpModelType,
   SignUpViewModelType,
   SignUpViewState,
 } from "types/SignUp.type";
+import { useRegisterMutation } from "../../../graphql";
 import { SignUpModel } from "./SignUpModel";
 
 class SignUpViewModel implements SignUpViewModelType {
   data: SignUpModelType;
   state: SignUpViewState;
+  registerMutation: any;
   loginContext: any;
   constructor(state: SignUpViewState) {
     this.data = new SignUpModel();
     this.loginContext = useLoginContext();
     this.state = state;
+    [this.registerMutation] = useRegisterMutation();
   }
 
   getFieldState = (
@@ -58,7 +63,6 @@ class SignUpViewModel implements SignUpViewModelType {
     const { values, getFieldMeta } = formikProps;
     event.preventDefault();
     this.data = values;
-
     console.log("step: ", this.loginContext.registerStep);
     if (this.loginContext.registerStep === 1) {
       console.log(getFieldMeta("email").error);
@@ -101,8 +105,61 @@ class SignUpViewModel implements SignUpViewModelType {
     }
     console.log("submited...");
     if (this.loginContext.registerStep === 3) {
-      console.log("now we are going to create the user!");
+      this.data.profilePhoto = (
+        document.getElementsByName("avatar")[0] as any
+      ).files[0];
+
+      console.log(
+        "now we are going to create the user!",
+        document.getElementsByName("avatar")[0]
+      );
+      await toast.promise(this.registerUser(), {
+        loading: "Loading",
+        success: () => {
+          this.state.isSubmitted.set(true);
+          return `Very Weelcome.`;
+        },
+        error: (err) => {
+          console.log(err);
+          return err;
+        },
+      });
     }
+  };
+
+  // Register the user!
+  private registerUser = async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // check is all the data is available here ...
+        if (
+          !this.data.username ||
+          !this.data.email ||
+          !this.data.password ||
+          !this.data.passwordConfirmation
+        ) {
+          reject("Please make sure all the fields are not empty.");
+        }
+        if (this.data.password !== this.data.passwordConfirmation) {
+          reject("Password is not the same.");
+        }
+        await sleep(500);
+        console.log("imag: ", this.data.profilePhoto);
+        const {} = await this.registerMutation({
+          variables: {
+            profilePhoto: this.data.profilePhoto,
+            userName: this.data.username,
+            password: this.data.password,
+            email: this.data.email,
+          },
+        });
+        resolve(true);
+      } catch (err) {
+        console.log("image: ", this.data.profilePhoto);
+        console.log(err);
+        reject("Something went wrong.");
+      }
+    });
   };
 }
 
