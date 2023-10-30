@@ -1,4 +1,3 @@
 export type User = {
-  firstName: string;
-  lastNAme: string;
+  token: string | null;
 };

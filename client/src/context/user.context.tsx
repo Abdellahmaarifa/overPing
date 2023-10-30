@@ -1,28 +1,29 @@
 import React, {
   createContext,
-  useState,
-  useContext,
   useCallback,
+  useContext,
   useMemo,
-  useEffect,
+  useState,
 } from "react";
 
 import { User } from "types/User.type";
-import { AUTH } from "../constants";
+import { setToken } from "../state/token";
 
 type Props = {
   children: React.ReactNode;
 };
 
 type Context = {
-  signIn: (user: User, token: string) => void;
+  signIn: (user: User) => void;
   signOut: () => void;
+  restoreUser: (callbakc: () => void) => void;
   user: User | null;
 };
 
 const UserContext = createContext<Context>({
   signIn: () => {},
   signOut: () => {},
+  restoreUser: () => {},
   user: null,
 });
 
@@ -30,36 +31,40 @@ const UserContextProvider = ({ children }: Props): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem(AUTH.token);
-    localStorage.removeItem(AUTH.user);
+    setToken(null);
     setUser(null);
   }, []);
 
-  const signIn = useCallback((user: User, token: string) => {
-    localStorage.setItem(AUTH.token, token);
-    localStorage.setItem(AUTH.user, JSON.stringify(user));
+  const signIn = useCallback((user: User) => {
+    setToken(user.token);
+
     setUser(user);
   }, []);
 
-  useEffect(() => {
-    const restoreUser = () => {
-      const user = localStorage.getItem(AUTH.user);
-      if (user) {
-        const decodedUser: User = JSON.parse(user);
-        setUser(decodedUser);
-      }
-    };
-
-    restoreUser();
-  }, []);
+  const restoreUser = async (callback: () => void) => {
+    // we should sen a request to /refresh_token and then update the user with the new token.
+    try {
+      const data = await fetch("http://localhost:9000/refresh_token", {
+        credentials: "include",
+        method: "POST",
+      });
+      const res = await data.json();
+      setToken(res?.accessToken);
+      if (res?.accessToken) setUser({ token: res?.accessToken });
+      callback();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const contextValue = useMemo(
     () => ({
       signIn,
       signOut,
+      restoreUser,
       user,
     }),
-    [signIn, signOut, user]
+    [signIn, signOut, restoreUser, user]
   );
 
   return (

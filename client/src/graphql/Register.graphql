@@ -1,0 +1,13 @@
+mutation Register(
+  $profilePhoto: Upload!
+  $userName: String!
+  $password: String!
+  $email: String!
+) {
+  register(
+    profilePhoto: $profilePhoto
+    userName: $userName
+    password: $password
+    email: $email
+  )
+}

@@ -32,6 +32,8 @@ export const sendRefreshToken = async (req: Request, res: Response) => {
     return res.end({ ok: false, accessToken: "" });
   }
   console.log("coool!", createAccessToken(user));
-  res.cookie(COOKIE_NAME, createRefrechToken(user), { httpOnly: true });
+  res.cookie(COOKIE_NAME, createRefrechToken(user), {
+    httpOnly: true,
+  });
   return res.send({ ok: true, accessToken: createAccessToken(user) });
 };

@@ -14,11 +14,16 @@ import {
 import { FileUpload, GraphQLUpload } from "graphql-upload-ts";
 import fs from "fs"; // Import the Node.js File System module for saving files
 import { v4 as uuidv4 } from "uuid";
-import { createAccessToken, createRefrechToken } from "./auth";
+import {
+  createAccessToken,
+  createRefrechToken,
+  sendRefreshToken,
+} from "./auth";
 import { AuthContext } from "./authContext";
 import { COOKIE_NAME } from "./constant";
 import { User } from "./db";
 import { isAuth } from "./isAuth";
+import { boolean } from "yup";
 
 @ObjectType()
 class LoginResponse {
@@ -67,12 +72,20 @@ export class UserResolver {
     if (!valid) throw new Error("pass wrong!");
 
     // loged in!
-    res.cookie(COOKIE_NAME, createRefrechToken(user), { httpOnly: true });
+    res.cookie(COOKIE_NAME, createRefrechToken(user), {
+      httpOnly: false,
+    });
     return {
       accessToken: createAccessToken(user),
     };
   }
 
+  // Log out
+  @Mutation(() => Boolean)
+  async logout(@Ctx() { req, res }: AuthContext) {
+    res.clearCookie(COOKIE_NAME);
+    return true;
+  }
   // REGISTER A NEW USER
   @Mutation(() => Boolean)
   async register(
@@ -104,7 +117,6 @@ export class UserResolver {
             });
           });
       });
-
       await User.create({
         email,
         password: hashedPass,

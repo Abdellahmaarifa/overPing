@@ -1,11 +1,11 @@
 import { ApolloServer } from "apollo-server-express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import express from "express";
+import { graphqlUploadExpress } from "graphql-upload-ts";
 import { buildSchema } from "type-graphql";
 import { sendRefreshToken } from "./auth";
 import { UserResolver } from "./userResolver";
-import { graphqlUploadExpress } from "graphql-upload-ts";
-import cors from "cors";
 
 // CONSTANTS
 const PORT = 9000;
@@ -13,17 +13,20 @@ const URL = `http://localhost:${PORT}`;
 
 (async () => {
   const app = express();
-  /*
+
   app.use(
+    "/",
     cors({
-      origin: "http://localhost:5173",
+      origin: ["http://localhost:5173", "https://studio.apollographql.com"],
       credentials: true,
     })
   );
-  */
   app.use(cookieParser());
   // TEST IF APP IS WORKIN
   app.get("/", (_req, res) => {
+    res.cookie("hello", "world", {
+      httpOnly: true,
+    });
     res.send("hello overping");
   });
 
@@ -37,9 +40,15 @@ const URL = `http://localhost:${PORT}`;
     }),
     context: ({ req, res }) => ({ req, res }),
   });
-
-  await apolloServer.start();
   app.use(graphqlUploadExpress());
-  apolloServer.applyMiddleware({ app } as any);
+  await apolloServer.start();
+  apolloServer.applyMiddleware({
+    app,
+    path: "/",
+    cors: {
+      origin: ["http://localhost:5173", "https://studio.apollographql.com"],
+      Credential: true,
+    },
+  } as any);
   app.listen(PORT, () => console.log(`[app] running at ${URL}`));
 })();

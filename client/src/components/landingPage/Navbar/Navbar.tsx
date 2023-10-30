@@ -34,10 +34,10 @@ const Navbar = () => {
           </NavLinks>
           <LoginButtonContainer>
             <Button
-              text="Login"
-              border={true}
-              transparent={true}
-              link="login"
+              $text="Login"
+              $border={true}
+              $transparent={true}
+              $link="login"
             />
           </LoginButtonContainer>
           <MobileMenuButton
@@ -118,10 +118,10 @@ const Navbar = () => {
               </MobileMenuItem>
               <LoginButtonContainer tw="block">
                 <Button
-                  text="Login"
-                  border={true}
-                  transparent={true}
-                  link="/login"
+                  $text="Login"
+                  $border={true}
+                  $transparent={true}
+                  $link="/login"
                 />
               </LoginButtonContainer>
             </NavLinks>

@@ -1,15 +1,17 @@
 import tw, { styled } from "twin.macro";
 
 export interface ButtonLinkProps {
-  icon?: boolean;
-  size?: "sm" | "md" | "xl";
-  border?: boolean;
-  text?: string;
-  theme?: "dark" | "white" | "blue";
-  transparent?: boolean;
-  disable?: boolean;
-  Icon?: React.FC;
-  link?: string;
+  $icon?: boolean;
+  $size?: "sm" | "md" | "xl";
+  $border?: boolean;
+  $text?: string;
+  $theme?: "dark" | "white" | "blue";
+  $transparent?: boolean;
+  $disabled?: boolean;
+  $Icon?: React.FC;
+  $link?: string;
+  type?: string;
+  onClick?: any;
 }
 
 const getBaseStyles = () => tw`
@@ -27,9 +29,9 @@ const getTextAndBgColorStyles = (
 ) => {
   if (!transparent) {
     return theme === "dark"
-      ? tw`text-btn-white bg-btn-black`
+      ? tw`text-btn-white bg-btn-black!`
       : theme === "white"
-      ? tw`text-btn-black bg-btn-white`
+      ? tw`text-btn-black bg-btn-white!`
       : theme === "blue"
       ? tw`text-btn-blue`
       : tw`text-btn-white`;
@@ -54,7 +56,7 @@ const getBgStyles = (
   transparent?: boolean,
   theme?: "dark" | "white" | "blue"
 ) => {
-  return !transparent && (theme === "blue" ? tw`bg-btn-blue` : null);
+  return !transparent && (theme === "blue" ? tw`bg-btn-blue!` : null);
 };
 
 const getSizeStyles = (size?: "sm" | "md" | "xl") => {
@@ -77,31 +79,34 @@ const getDisabledStyles = (
 ) => {
   if (disable) {
     return theme === "white"
-      ? tw`bg-btn-white-disable text-btn-black-disable`
+      ? tw`bg-btn-white-disable! text-btn-black-disable`
       : theme === "dark"
-      ? tw`bg-btn-black-disable text-btn-white-disable`
+      ? tw`bg-btn-black-disable! text-btn-white-disable`
       : tw`brightness-75`;
   } else {
     return tw`hover:brightness-75`;
   }
 };
 
-const ButtonLink = styled.a<ButtonLinkProps>(
-  ({ icon, size, border, text, theme, transparent, disable }) => [
+const ButtonLink = styled.button<ButtonLinkProps>(
+  ({ $icon, $size, $border, $text, $theme, $transparent, $disabled }) => [
     getBaseStyles(),
-    getIconGapStyles(icon, size),
-    getTextAndBgColorStyles(theme, transparent),
-    getBorderStyles(border, theme),
-    getBgStyles(transparent, theme),
-    getSizeStyles(size),
-    getTextPaddingStyles(text),
-    getDisabledStyles(disable, theme),
-    disable ? tw`after:block` : tw`after:hidden`,
+    getIconGapStyles($icon, $size),
+    getTextAndBgColorStyles($theme, $transparent),
+    getBorderStyles($border, $theme),
+    getBgStyles($transparent, $theme),
+    getSizeStyles($size),
+    getTextPaddingStyles($text),
+    getDisabledStyles($disabled, $theme),
+    $disabled ? tw`after:block` : tw`after:hidden`,
   ]
 );
 
 export const IconContainer: React.FC<{ Icon: React.FC }> = ({ Icon }) => {
-  const Component = tw(Icon)`w-6 h-6`;
-  return <Component />;
+  return (
+    <div tw="[&>*]:w-6 [&>*]:h-6">
+      <Icon />
+    </div>
+  );
 };
 export default ButtonLink;

@@ -1,5 +1,5 @@
 import LandingPage from "pages/LandingPage/LandingPage";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -14,10 +14,13 @@ import Chat from "pages/Chat/Chat";
 import Error from "pages/Error/Error";
 import Home from "pages/Home/Home";
 import Login from "pages/Login/Login";
+import { useUserContext } from "context/user.context";
+import { User } from "types/User.type";
 
+import LoginContextProvider from "context/login.context";
 // THIS IS SIMPLE EXAMPLE OF PROTECTED ROUTE
-const ProtectedRoutes = ({ logIn }: { logIn: Boolean }) => {
-  return logIn ? (
+const ProtectedRoutes = ({ user }: { user: User | null }) => {
+  return user ? (
     <Outlet />
   ) : (
     <Navigate to="/login" state={{ from: useLocation() }} replace />
@@ -25,22 +28,23 @@ const ProtectedRoutes = ({ logIn }: { logIn: Boolean }) => {
 };
 
 const App: React.FC = () => {
-  // REALLY BAD EXAMPLE OF MIMCING AUTH, BUT IT WILL DO FOR NOW!
-  const [logIn, setLogIn] = useState(false);
-
-  return (
+  const [loading, setLoading] = useState(true);
+  const { restoreUser, user } = useUserContext();
+  useEffect(() => {
+    if (!user) restoreUser(() => setLoading(false));
+  }, []);
+  return loading ? (
+    <h1>Loading....</h1>
+  ) : (
     <BrowserRouter>
       <Routes>
         <Route>
-          <Route element={logIn && <Layout />}>
-            <Route path="/" element={logIn ? <Home /> : <LandingPage />} />
-            <Route element={<ProtectedRoutes logIn={logIn} />}>
+          <Route element={user && <Layout />}>
+            <Route path="/" element={user ? <Home /> : <LandingPage />} />
+            <Route element={<ProtectedRoutes user={user} />}>
               <Route path="chat" element={<Chat />} />
             </Route>
-            <Route
-              path="login"
-              element={<Login logIn={logIn} setLogIn={setLogIn} />}
-            />
+            <Route path="login" element={<Login />} />
           </Route>
         </Route>
         <Route path="*" element={<Error />} />
