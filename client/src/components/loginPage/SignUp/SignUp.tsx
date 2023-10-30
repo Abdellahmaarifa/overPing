@@ -2,7 +2,7 @@ import Button from "components/common/Button/Button";
 import Input from "components/common/Input/Input";
 import Seprator from "components/common/Seprator/Seprator";
 import StepLink from "components/common/StepLink/StepLink";
-import { Formik, FormikProps } from "formik";
+import { Formik, FormikProps, Field } from "formik";
 import tw from "twin.macro";
 import IntraGoogle from "../../../assets/login/42.svg?react";
 import CloseIcon from "../../../assets/login/btn-back.svg?react";
@@ -52,7 +52,8 @@ const SignUpFormStepTwo = ({ viewModel, formikProps }: FormStepProps) => {
   return (
     <>
       <SignUpGroup>
-        <Input
+        <Field
+          as={Input}
           placeholder="Username"
           $theme="grey"
           $border={true}
@@ -61,8 +62,11 @@ const SignUpFormStepTwo = ({ viewModel, formikProps }: FormStepProps) => {
           $state={viewModel.getFieldState("username", formikProps)}
           onChange={formikProps?.handleChange}
           value={formikProps?.values.username}
+          onFocus={viewModel.handleFocus}
         />
-        <Input
+        <Field
+          as={Input}
+          onFocus={viewModel.handleFocus}
           placeholder="Email address"
           type="text"
           $theme="grey"
@@ -85,7 +89,9 @@ const SignUpFormStepThree = ({ viewModel, formikProps }: FormStepProps) => {
   return (
     <>
       <SignUpGroup>
-        <Input
+        <Field
+          as={Input}
+          onFocus={viewModel.handleFocus}
           placeholder="Password"
           $theme="grey"
           $border={true}
@@ -102,7 +108,9 @@ const SignUpFormStepThree = ({ viewModel, formikProps }: FormStepProps) => {
           onChange={formikProps?.handleChange}
           value={formikProps?.values.password}
         />
-        <Input
+        <Field
+          as={Input}
+          onFocus={viewModel.handleFocus}
           placeholder="Password"
           $theme="grey"
           $border={true}
@@ -152,7 +160,6 @@ const SignUpFormStepFour = ({ viewModel, formikProps }: FormStepProps) => {
           }}
           tw="w-full h-full absolute opacity-0 cursor-pointer z-10"
           type="file"
-          value={viewModel.state.avatarFile.get?.name}
         />
         {avatar.get && (
           <img src={avatar.get} alt="" tw="w-full h-full absolute z-0" />
