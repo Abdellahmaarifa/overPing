@@ -28,17 +28,11 @@ const ProtectedRoutes = ({ user }: { user: User | null }) => {
 };
 
 const App: React.FC = () => {
-  // REALLY BAD EXAMPLE OF MIMCING AUTH, BUT IT WILL DO FOR NOW!
   const [loading, setLoading] = useState(true);
   const { restoreUser, user } = useUserContext();
-  console.log("render app...");
   useEffect(() => {
     if (!user) restoreUser(() => setLoading(false));
-    // setLoading(false);
-    //if (!user) setLoading(false);
-    console.log("this should call one", user);
   }, []);
-  //if (user && loading) setLoading(false);
   return loading ? (
     <h1>Loading....</h1>
   ) : (

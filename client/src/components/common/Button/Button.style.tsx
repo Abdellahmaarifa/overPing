@@ -1,15 +1,15 @@
 import tw, { styled } from "twin.macro";
 
 export interface ButtonLinkProps {
-  icon?: boolean;
-  size?: "sm" | "md" | "xl";
-  border?: boolean;
-  text?: string;
-  theme?: "dark" | "white" | "blue";
-  transparent?: boolean;
-  disabled?: boolean;
-  Icon?: React.FC;
-  link?: string;
+  $icon?: boolean;
+  $size?: "sm" | "md" | "xl";
+  $border?: boolean;
+  $text?: string;
+  $theme?: "dark" | "white" | "blue";
+  $transparent?: boolean;
+  $disabled?: boolean;
+  $Icon?: React.FC;
+  $link?: string;
   type?: string;
   onClick?: any;
 }
@@ -89,21 +89,24 @@ const getDisabledStyles = (
 };
 
 const ButtonLink = styled.button<ButtonLinkProps>(
-  ({ icon, size, border, text, theme, transparent, disabled }) => [
+  ({ $icon, $size, $border, $text, $theme, $transparent, $disabled }) => [
     getBaseStyles(),
-    getIconGapStyles(icon, size),
-    getTextAndBgColorStyles(theme, transparent),
-    getBorderStyles(border, theme),
-    getBgStyles(transparent, theme),
-    getSizeStyles(size),
-    getTextPaddingStyles(text),
-    getDisabledStyles(disabled, theme),
-    disabled ? tw`after:block` : tw`after:hidden`,
+    getIconGapStyles($icon, $size),
+    getTextAndBgColorStyles($theme, $transparent),
+    getBorderStyles($border, $theme),
+    getBgStyles($transparent, $theme),
+    getSizeStyles($size),
+    getTextPaddingStyles($text),
+    getDisabledStyles($disabled, $theme),
+    $disabled ? tw`after:block` : tw`after:hidden`,
   ]
 );
 
 export const IconContainer: React.FC<{ Icon: React.FC }> = ({ Icon }) => {
-  const Component = tw(Icon)`w-6 h-6`;
-  return <Component />;
+  return (
+    <div tw="[&>*]:w-6 [&>*]:h-6">
+      <Icon />
+    </div>
+  );
 };
 export default ButtonLink;

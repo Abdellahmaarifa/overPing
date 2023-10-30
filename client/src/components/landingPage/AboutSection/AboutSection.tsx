@@ -22,7 +22,7 @@ const AboutSection = () => {
           tournaments, proving their skill and dedication. Join us today to
           experience ping pong with unmatched fairness and excitement!
         </ContentDes>
-        <Button text="Try it" size="md" link="login" />
+        <Button $text="Try it" $size="md" $link="login" />
       </Content>
       <Img>
         <img src={ImgSrc} alt="ping pong table" />

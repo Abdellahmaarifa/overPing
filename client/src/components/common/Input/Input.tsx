@@ -8,7 +8,7 @@ const Input = (
     <div tw="relative w-fit">
       <InputBox {...props} />
 
-      {props.Icon && <InputBoxIcon Icon={props.Icon} />}
+      {props.$Icon && <InputBoxIcon Icon={props.$Icon} />}
     </div>
   );
 };

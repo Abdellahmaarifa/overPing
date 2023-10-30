@@ -13,8 +13,8 @@ const LoginAuth = () => {
       <AuthHeader>
         Enter the 6-digit autthentication code generate by your app:
       </AuthHeader>
-      <Input placeholder="Numbers" type="text" border={true} theme="grey" />
-      <Button text="Next" size="xl" />
+      <Input placeholder="Numbers" type="text" $border={true} $theme="grey" />
+      <Button $text="Next" $size="xl" />
     </AuthContainer>
   );
 };

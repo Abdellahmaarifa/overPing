@@ -24,17 +24,21 @@ class LoginViewModel implements LoginViewModelType {
 
   handleSubmit = async (values: LoginModelType) => {
     this.data = values;
-    await toast.promise(this.loginUser(), {
-      loading: "Loading",
-      success: (data) => {
-        this.state.error.set("valid");
-        return `Good To see you again!`;
-      },
-      error: (err) => {
-        this.state.error.set("invalid");
-        return err;
-      },
-    });
+    try {
+      await toast.promise(this.loginUser(), {
+        loading: "Loading",
+        success: (data) => {
+          this.state.error.set("valid");
+          return `Good To see you again!`;
+        },
+        error: (err) => {
+          this.state.error.set("invalid");
+          return err;
+        },
+      });
+    } catch (_err) {
+      //console.log(err);
+    }
   };
 
   private async loginUser() {
@@ -57,7 +61,7 @@ class LoginViewModel implements LoginViewModelType {
             password: this.data.password,
           },
         });
-        console.log(data);
+        //console.log(data);
         const accessToken = data?.login?.accessToken;
         resolve(accessToken);
 
@@ -65,7 +69,7 @@ class LoginViewModel implements LoginViewModelType {
 
         this.userContext.signIn({ token: accessToken ? accessToken : null });
       } catch (err) {
-        console.log(err);
+        //console.log(err);
         reject("Email or Password is incorrect!");
       }
     });

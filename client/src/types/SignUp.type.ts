@@ -6,7 +6,6 @@ export interface SignUpModelType {
   email: string;
   password: string;
   passwordConfirmation: string;
-  profilePhoto: File | null;
 }
 
 export interface SignUpViewModelType {
@@ -25,7 +24,7 @@ export interface SignUpViewModelType {
   getFieldState: (
     name: string,
     formikProps: FormikProps<SignUpModelType> | undefined
-  ) => string;
+  ) => "valid" | "invalid" | undefined;
 }
 
 export interface SignUpViewState {
@@ -36,5 +35,5 @@ export interface SignUpViewState {
   shake: StateWithGetSet<boolean>;
   isEmailSubmitted: StateWithGetSet<boolean>;
   isPasswordSubmitted: StateWithGetSet<boolean>;
-  isSubmitted: StateWithGetSet<boolean>;
+  avatarFile: StateWithGetSet<File | null>;
 }

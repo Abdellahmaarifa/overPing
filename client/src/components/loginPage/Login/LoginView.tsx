@@ -10,46 +10,51 @@ import { useStateWithGetSet } from "helpers";
 
 const LoginView = () => {
   const viewModel = new LoginViewModel({
-    error: useStateWithGetSet(""),
+    error: useStateWithGetSet<"valid" | "invalid" | undefined>(undefined),
     showPass: useStateWithGetSet(false),
   });
   const { state } = viewModel;
   return (
     <Formik
       initialValues={viewModel.data}
-      onSubmit={(values: LoginModelType) => viewModel.handleSubmit(values)}
+      onSubmit={(values: LoginModelType, { resetForm }) => {
+        viewModel.handleSubmit(values);
+        resetForm();
+      }}
     >
-      {({ isSubmitting }) => (
+      {({ values, isSubmitting, handleChange }) => (
         <Form>
           <Group>
-            <Field
+            <Input
               placeholder="Email address"
               name="email"
-              border={false}
+              $border={false}
               id="email"
-              as={Input}
-              state={state.error.get}
+              $state={state.error.get}
+              onChange={handleChange}
+              value={values.email}
             />
-            <Field
+            <Input
               placeholder="Password"
               type={state.showPass.get ? "text" : "password"}
               name="password"
               id="password"
-              as={Input}
-              Icon={{
+              $Icon={{
                 activeIcon: ShowPassIcon,
                 defaultIcon: NotShowPass,
                 handler: state.showPass.set,
                 active: state.showPass.get,
               }}
-              state={state.error.get}
+              $state={state.error.get}
+              onChange={handleChange}
+              value={values.password}
             />
           </Group>
           <Button
-            text="Log in"
-            size="xl"
+            $text="Log in"
+            $size="xl"
             type="submit"
-            disabled={isSubmitting}
+            $disabled={isSubmitting}
           />
         </Form>
       )}

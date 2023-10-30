@@ -6,13 +6,11 @@ export class SignUpModel implements SignUpModelType {
   email: string;
   password: string;
   passwordConfirmation: string;
-  profilePhoto: File | null;
   constructor() {
     this.username = "";
     this.email = "";
     this.password = "";
     this.passwordConfirmation = "";
-    this.profilePhoto = null;
   }
 }
 

@@ -27,7 +27,7 @@ class SignUpViewModel implements SignUpViewModelType {
     name: string,
     formikProps: FormikProps<SignUpModelType> | undefined
   ) => {
-    if (formikProps === undefined) return "";
+    if (formikProps === undefined) return undefined;
     if ((formikProps?.values as any)[name]) {
       if (formikProps?.getFieldMeta(name)?.error) return "invalid";
       else return "valid";
@@ -38,7 +38,7 @@ class SignUpViewModel implements SignUpViewModelType {
       this.state.isPasswordSubmitted.get
     )
       return "invalid";
-    return "";
+    return undefined;
   };
   handleFocus = (
     e: FormEvent<HTMLFormElement> & { target: { name: string } }
@@ -52,7 +52,7 @@ class SignUpViewModel implements SignUpViewModelType {
   };
 
   goBack = () => {
-    console.log("emm");
+    //console.log("emm");
     this.loginContext.setRegisterStep("prev");
   };
 
@@ -62,10 +62,13 @@ class SignUpViewModel implements SignUpViewModelType {
   ) => {
     const { values, getFieldMeta } = formikProps;
     event.preventDefault();
+    this.state.showPass.set(false);
+    this.state.showPassConfirmation.set(false);
+
     this.data = values;
-    console.log("step: ", this.loginContext.registerStep);
+    //console.log("step: ", this.loginContext.registerStep);
     if (this.loginContext.registerStep === 1) {
-      console.log(getFieldMeta("email").error);
+      //console.log(getFieldMeta("email").error);
       if (
         getFieldMeta("username").error ||
         getFieldMeta("email").error ||
@@ -78,10 +81,10 @@ class SignUpViewModel implements SignUpViewModelType {
         setTimeout(() => {
           this.state.shake.set(false);
         }, 500);
-        console.log("no way ", getFieldMeta("username").error);
+        //console.log("no way ", getFieldMeta("username").error);
         return;
       }
-      console.log("pas..");
+      //console.log("pas..");
     } else if (this.loginContext.registerStep === 2) {
       if (
         getFieldMeta("password").error ||
@@ -95,35 +98,44 @@ class SignUpViewModel implements SignUpViewModelType {
         setTimeout(() => {
           this.state.shake.set(false);
         }, 500);
-        console.log("not");
+        //console.log("not");
         return;
       }
-      console.log("passowrd ..");
+      //console.log("passowrd ..");
     }
     if (this.loginContext.registerStep < 3) {
       this.loginContext.setRegisterStep("next");
     }
-    console.log("submited...");
+    //console.log("submited...");
     if (this.loginContext.registerStep === 3) {
-      this.data.profilePhoto = (
+      /*this.data.profilePhoto = (
         document.getElementsByName("avatar")[0] as any
-      ).files[0];
+      ).files[0];*/
 
-      console.log(
+      /*console.log(
         "now we are going to create the user!",
         document.getElementsByName("avatar")[0]
-      );
-      await toast.promise(this.registerUser(), {
-        loading: "Loading",
-        success: () => {
-          this.state.isSubmitted.set(true);
-          return `Very Weelcome.`;
-        },
-        error: (err) => {
-          console.log(err);
-          return err;
-        },
-      });
+      );*/
+      try {
+        await toast.promise(this.registerUser(), {
+          loading: "Loading",
+          success: () => {
+            this.loginContext.setShowRegister(false);
+            this.loginContext.setRegisterStep("reset");
+            return `Very Weelcome.`;
+          },
+          error: (err) => {
+            //console.log(err);
+            return err;
+          },
+        });
+      } catch (err) {
+        this.state.shake.set(true);
+
+        setTimeout(() => {
+          this.state.shake.set(false);
+        }, 500);
+      }
     }
   };
 
@@ -144,10 +156,10 @@ class SignUpViewModel implements SignUpViewModelType {
           reject("Password is not the same.");
         }
         await sleep(500);
-        console.log("imag: ", this.data.profilePhoto);
+        //console.log("imag: ", this.data.profilePhoto);
         const {} = await this.registerMutation({
           variables: {
-            profilePhoto: this.data.profilePhoto,
+            profilePhoto: this.state.avatarFile.get,
             userName: this.data.username,
             password: this.data.password,
             email: this.data.email,
@@ -155,8 +167,8 @@ class SignUpViewModel implements SignUpViewModelType {
         });
         resolve(true);
       } catch (err) {
-        console.log("image: ", this.data.profilePhoto);
-        console.log(err);
+        //console.log("image: ", this.data.profilePhoto);
+        //console.log(err);
         reject("Something went wrong.");
       }
     });

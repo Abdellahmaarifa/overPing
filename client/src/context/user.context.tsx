@@ -49,7 +49,6 @@ const UserContextProvider = ({ children }: Props): JSX.Element => {
         method: "POST",
       });
       const res = await data.json();
-      console.log("new token : ", res.accessToken);
       setToken(res?.accessToken);
       if (res?.accessToken) setUser({ token: res?.accessToken });
       callback();

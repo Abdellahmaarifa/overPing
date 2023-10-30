@@ -5,7 +5,7 @@ export interface LoginModelType {
 }
 
 export interface LoginViewState {
-  error: StateWithGetSet<string>;
+  error: StateWithGetSet<"valid" | "invalid" | undefined>;
   showPass: StateWithGetSet<boolean>;
 }
 

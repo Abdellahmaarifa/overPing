@@ -12,7 +12,7 @@ const link = createUploadLink();
 const authLink = setContext((_, { headers }) => {
   // get token from userContext!
   const token = getToken();
-  console.log("from apollo :", token);
+  //console.log("from apollo :", token);
   return {
     headers: {
       ...headers,

@@ -31,18 +31,18 @@ const LoginForm = () => {
         <Seprator text="or" />
         <div tw="flex justify-center items-center flex-col gap-[16px] w-full mt-[22px]">
           <Button
-            text="log in with Google"
-            border={true}
-            transparent={true}
-            size="xl"
-            Icon={GoogleIcon}
+            $text="log in with Google"
+            $border={true}
+            $transparent={true}
+            $size="xl"
+            $Icon={GoogleIcon}
           />
           <Button
-            text="log in with Google"
-            border={true}
-            transparent={true}
-            size="xl"
-            Icon={IntraIcon}
+            $text="log in with Google"
+            $border={true}
+            $transparent={true}
+            $size="xl"
+            $Icon={IntraIcon}
           />
         </div>
 
@@ -50,9 +50,9 @@ const LoginForm = () => {
           don’t have account?{" "}
           <LoginFooterLink
             onClick={() => {
-              console.log("clicked");
+              //console.log("clicked", showRegister);
               setShowRegister(true);
-              console.log("now it is: ", showRegister);
+              //console.log("now it is: ", showRegister);
             }}
           >
             Sing up
