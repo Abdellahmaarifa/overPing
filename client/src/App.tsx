@@ -16,7 +16,6 @@ import Home from "pages/Home/Home";
 import Login from "pages/Login/Login";
 import { useUserContext } from "context/user.context";
 import { User } from "types/User.type";
-
 import LoginContextProvider from "context/login.context";
 // THIS IS SIMPLE EXAMPLE OF PROTECTED ROUTE
 const ProtectedRoutes = ({ user }: { user: User | null }) => {
@@ -28,12 +27,14 @@ const ProtectedRoutes = ({ user }: { user: User | null }) => {
 };
 
 const App: React.FC = () => {
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const { restoreUser, user } = useUserContext();
   useEffect(() => {
-    if (!user) restoreUser(() => setLoading(false));
+    if (!user && isLoading) {
+      restoreUser(() => setIsLoading(false));
+    }
   }, []);
-  return loading ? (
+  return isLoading ? (
     <h1>Loading....</h1>
   ) : (
     <BrowserRouter>

@@ -1,0 +1,8 @@
+query User {
+  user {
+    id
+    email
+    userName
+    profilePhoto
+  }
+}

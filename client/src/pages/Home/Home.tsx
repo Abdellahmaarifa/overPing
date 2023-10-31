@@ -9,7 +9,6 @@ const Home = () => {
   const { signOut } = useUserContext();
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
-  console.log(error);
   if (loading) return <h2>loading..</h2>;
   return (
     <>

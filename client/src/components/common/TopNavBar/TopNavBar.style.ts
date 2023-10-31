@@ -93,8 +93,9 @@ export const UserBox = tw.div`
 export const UserImage = tw.div`
     h-[48px] 
     w-[48px] 
-    bg-amber-400 
+    bg-amber-100
     rounded-[16px]
+    overflow-hidden
 `;
 
 export const UserInfo = tw.div`

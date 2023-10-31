@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useCookies } from "react-cookie";
 import tw from "twin.macro";
 import BellIcon from "../../../assets/common/bell.svg?react";
 import DownArrowIcon from "../../../assets/common/downArrow.svg?react";
@@ -26,11 +27,18 @@ import {
   UserInfoStatusConatiner,
   UserInfoStatusIcon,
 } from "./TopNavBar.style";
+import ViewModel from "./TopNavBarViewModel";
 
 const NavLink = tw.div`flex justify-center items-center h-[24px] md:w-[48px] md:h-[48px]`;
 const TopNavBar = () => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
+  const [_cookie, setCookie, removeCookie] = useCookies();
+  const viewModel = new ViewModel();
+  const { data, loading, error } = viewModel.userQuery;
+
+  if (loading) return <h1>loading....</h1>;
+  if (error) console.log(error);
   return (
     <TopNavBarContainer>
       {/* Logo */}
@@ -52,10 +60,12 @@ const TopNavBar = () => {
         <UserBoxSeparator></UserBoxSeparator>
         {/* USER STATUS BOX */}
         <UserBox onClick={() => setOpenSettings(!openSettings)}>
-          <UserImage></UserImage>
+          <UserImage>
+            <img src={data?.user.profilePhoto} alt="" tw="w-full h-full" />
+          </UserImage>
           <UserInfo>
             <UserInfoNameConatiner>
-              <UserInfoName>Salma</UserInfoName>
+              <UserInfoName>{data?.user.userName}</UserInfoName>
               <UserInfoIcon>
                 <DownArrowIcon />
               </UserInfoIcon>
@@ -69,7 +79,7 @@ const TopNavBar = () => {
           <UserBoxMenu
             style={openSettings ? { display: "flex" } : { display: "none" }}
           >
-            <UserBoxMenuItem>
+            <UserBoxMenuItem onClick={viewModel.showProfile}>
               <UserBoxMenuItemText>View My Profile</UserBoxMenuItemText>
               <EyeIcon />
             </UserBoxMenuItem>
@@ -77,7 +87,7 @@ const TopNavBar = () => {
               <UserBoxMenuItemText>Settings</UserBoxMenuItemText>
               <SettingsIcon />
             </UserBoxMenuItem>
-            <UserBoxMenuItem>
+            <UserBoxMenuItem onClick={viewModel.logout}>
               <UserBoxMenuItemText style={{ color: "#8E3928" }}>
                 Logout
               </UserBoxMenuItemText>
