@@ -1,7 +1,7 @@
-import FriendshipMatchesComponent from "./FrientshipMatches";
-import Suggestions from "./Suggestion";
-import FriendshipMatches from "./MatchHistories";
 import tw from "twin.macro";
+import FriendsMatches from "../FriendsMatches/FrientsMatches";
+import MatchHistories from "../MatchHistories/MatchHistories";
+import Suggestions from "../Suggestions/Suggestion";
 
 const OverViewContainer = tw.div`
 w-full h-fit min-h-[300px] flex justify-start items-center flex-col gap-[10px] min-w-[fit-content]
@@ -21,9 +21,9 @@ const HomeOverview = () => {
           </h3>
         </div>
       </div>
-      <FriendshipMatches />
+      <MatchHistories />
       <div tw="2xl:fixed 2xl:top-[120px] 2xl:right-[50px] w-full h-auto  2xl:w-[350px] flex flex-col items-center gap-[10px] 2xl:gap-[16px]">
-        <FriendshipMatchesComponent />
+        <FriendsMatches />
         <Suggestions />
       </div>
     </OverViewContainer>
