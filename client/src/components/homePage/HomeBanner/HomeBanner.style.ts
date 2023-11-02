@@ -6,12 +6,12 @@ export const BannerContainer = tw.div`
 `;
 
 export const BannerText = tw.div`
-  w-[100%] xs:w-[50vw] max-w-[500px] p-[12px] gap-[10px] flex justify-center items-start flex-col min-w-[215px] sm:pr-[35px] sm:pl-[35px]
+  relative w-[100%] xs:w-[50vw] max-w-[500px] p-[12px] gap-[10px] flex justify-center items-start flex-col min-w-[215px] sm:pr-[35px] sm:pl-[35px]
   font-rubik text-[16px] text-[#CDCDDF] font-bold sm:text-[22px] md:text-[28px]
 `;
 
 export const BannerTitle = tw.h1`
-  font-rubik text-[16px] text-[#CDCDDF] font-bold sm:text-[22px] md:text-[28px]
+font-rubik text-[16px] text-[#CDCDDF] font-bold sm:text-[22px] md:text-[28px]
 `;
 
 export const BannerSubtitle = tw.p`
@@ -23,5 +23,5 @@ export const BannerImage = tw.img`
 `;
 
 export const Span = tw.span`
-  font-rubik text-[16px] sm:text-[22px]  md:text-[28px] text-[#4E95D4] font-bold
+  font-rubik text-[16px] sm:text-[22px]  md:text-[28px] text-[#4E95D4] font-bold [text-transform: capitalize] 
 `;

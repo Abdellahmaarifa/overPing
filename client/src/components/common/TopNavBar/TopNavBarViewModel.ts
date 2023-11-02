@@ -6,6 +6,7 @@ import { useUserQuery, UserQueryHookResult, UserQuery } from "../../../graphql";
 import { useUserContext, Context } from "context/user.context";
 import { useLogoutMutation } from "../../../graphql";
 import { useNavigate } from "react-router-dom";
+
 class TopNavBarViewModel implements TopNavBarViewModelType {
   userQuery: UserQueryHookResult;
   userContext: Context;

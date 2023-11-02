@@ -25,5 +25,5 @@ export const FeatureTitle = tw.h2`
 `;
 
 export const FeatureIconImage = tw.img`
-  w-[100px] absolute bottom-0 right-0 xs:relative xs:self-end xs:w-[200px]
+  w-[100px] absolute bottom-0 right-[10px] xs:relative xs:self-end xs:w-[200px]
 `;

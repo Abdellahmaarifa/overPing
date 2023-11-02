@@ -23,7 +23,7 @@ export const MatchTableLevelCell = tw.th`
   `;
 
 export const UserRofile = tw.div`
-w-[48px] h-[48px] rounded-[16px] bg-red-50
+w-[48px] h-[48px] rounded-[16px] 
 overflow-hidden
 [&>*]:w-full [&>*]:h-full
 `;

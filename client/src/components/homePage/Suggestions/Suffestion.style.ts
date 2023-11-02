@@ -5,11 +5,11 @@ export const SuggestionBox = tw.div`
 `;
 
 export const UserCard = tw.div`
-  h-[64px] w-full flex items-center justify-evenly
+  h-[64px] w-full flex items-center justify-between max-w-[320px]
 `;
 
-export const UserAvatar = tw.div`
-  w-[48px] h-[48px] rounded-[16px] bg-amber-400
+export const UserAvatar = tw.img`
+  w-[48px] h-[48px] rounded-[16px] 
 `;
 
 export const UserDetails = tw.div`

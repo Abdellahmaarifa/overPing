@@ -28,19 +28,21 @@ import {
   UserInfoStatusIcon,
 } from "./TopNavBar.style";
 import ViewModel from "./TopNavBarViewModel";
+import { useLayoutContext } from "context/layout.context";
+import Skeleton from "react-loading-skeleton";
 
 const NavLink = tw.div`flex justify-center items-center h-[24px] md:w-[48px] md:h-[48px]`;
 const TopNavBar = () => {
-  const [openMobileMenu, setOpenMobileMenu] = useState(false);
-  const [openSettings, setOpenSettings] = useState(false);
+  const { userMenuState, mobileMenuState } = useLayoutContext();
+  const [openMobileMenu, setOpenMobileMenu] = mobileMenuState;
+  const [openSettings, setOpenSettings] = userMenuState;
   const [_cookie, setCookie, removeCookie] = useCookies();
   const viewModel = new ViewModel();
   const { data, loading, error } = viewModel.userQuery;
 
-  if (loading) return <h1>loading....</h1>;
   if (error) console.log(error);
   return (
-    <TopNavBarContainer>
+    <TopNavBarContainer onClick={() => setOpenSettings(false)}>
       {/* Logo */}
       <LogoContainer>
         <Logo />
@@ -51,7 +53,11 @@ const TopNavBar = () => {
           <BellIcon />
         </NavLink>
         {/* MOBILE MENU  */}
-        <MobileMenuIcon onClick={() => setOpenMobileMenu(!openMobileMenu)}>
+        <MobileMenuIcon
+          onClick={() => {
+            setOpenMobileMenu(!openMobileMenu);
+          }}
+        >
           <MobileMenuIconElm elm="1" open={openMobileMenu} />
           <MobileMenuIconElm elm="2" open={openMobileMenu} />
           <MobileMenuIconElm elm="3" open={openMobileMenu} />
@@ -59,20 +65,42 @@ const TopNavBar = () => {
         </MobileMenuIcon>
         <UserBoxSeparator></UserBoxSeparator>
         {/* USER STATUS BOX */}
-        <UserBox onClick={() => setOpenSettings(!openSettings)}>
+        <UserBox
+          onClick={(e) => {
+            setOpenSettings(!openSettings);
+            e.stopPropagation();
+            console.log(e);
+          }}
+        >
           <UserImage>
-            <img src={data?.user.profilePhoto} alt="" tw="w-full h-full" />
+            {loading ? (
+              <Skeleton
+                width={50}
+                height={50}
+                style={{ top: "0", position: "absolute" }}
+              />
+            ) : (
+              <img src={data?.user.profilePhoto} alt="" tw="w-full h-full" />
+            )}
           </UserImage>
           <UserInfo>
             <UserInfoNameConatiner>
-              <UserInfoName>{data?.user.userName}</UserInfoName>
+              <UserInfoName>
+                {loading ? <Skeleton height={10} /> : data?.user.userName}
+              </UserInfoName>
               <UserInfoIcon>
                 <DownArrowIcon />
               </UserInfoIcon>
             </UserInfoNameConatiner>
             <UserInfoStatusConatiner>
-              <UserInfoStatusIcon></UserInfoStatusIcon>
-              <UserInfoStatus>Online</UserInfoStatus>
+              {loading ? (
+                <Skeleton height={8} width={50} />
+              ) : (
+                <>
+                  <UserInfoStatusIcon></UserInfoStatusIcon>
+                  <UserInfoStatus>Online</UserInfoStatus>
+                </>
+              )}
             </UserInfoStatusConatiner>
           </UserInfo>
           {/* USER STATUS MENU */}

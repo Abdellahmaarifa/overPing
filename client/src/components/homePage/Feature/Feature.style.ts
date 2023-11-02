@@ -2,7 +2,7 @@ import tw from "twin.macro";
 
 export const FeatureContainer = tw.div`
 
-w-full h-full xs:max-h-[26vw] md:w-[26vw] xs:h-full rounded-[14px] relative p-[15px] flex justify-between items-center xs:flex-col
+w-full h-full xs:max-h-[26vw] md:w-[26vw] xs:h-full rounded-[14px] relative p-[15px] flex justify-between items-center xs:flex-col cursor-pointer
 `;
 export const FeatureTitle = tw.div`
 

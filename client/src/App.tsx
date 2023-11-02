@@ -17,6 +17,7 @@ import Login from "pages/Login/Login";
 import { useUserContext } from "context/user.context";
 import { User } from "types/User.type";
 import LoginContextProvider from "context/login.context";
+import tw from "twin.macro";
 // THIS IS SIMPLE EXAMPLE OF PROTECTED ROUTE
 const ProtectedRoutes = ({ user }: { user: User | null }) => {
   return user ? (
@@ -35,7 +36,7 @@ const App: React.FC = () => {
     }
   }, []);
   return isLoading ? (
-    <h1>Loading....</h1>
+    <div tw="w-screen h-screen bg-[#0F1A24]"></div>
   ) : (
     <BrowserRouter>
       <Routes>

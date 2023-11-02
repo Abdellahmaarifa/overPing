@@ -1,8 +1,11 @@
+import Skeleton from "react-loading-skeleton";
+import { MatchResaultType } from "types/home.type";
 import {
   MatchTableCell,
   MatchTableDateCell,
   MatchTableLevelCell,
   MatchTablePointsCell,
+  MatchTableRow,
   Resault,
   ResaultContainer,
   Score,
@@ -12,9 +15,12 @@ import {
   ScorePoints,
   ScoreSeperator,
   UserRofile,
-  MatchTableRow,
 } from "./MatchResault.style";
+import { withPad } from "helpers";
+import tw from "twin.macro";
+const temp = tw.a``;
 const MatchResault = ({
+  id,
   userImage,
   opponentIamge,
   opponentScore,
@@ -22,29 +28,19 @@ const MatchResault = ({
   matchDate,
   points,
   level,
-}: {
-  userImage: string;
-  opponentIamge: string;
-  userScore: number;
-  opponentScore: number;
-  matchDate: string;
-  points: number;
-  level: number;
-}) => {
+}: MatchResaultType) => {
   const isWinner = userScore >= opponentScore;
   return (
-    <MatchTableRow $success={isWinner}>
+    <MatchTableRow $success={isWinner} key={id}>
       <MatchTableCell>
         <ResaultContainer>
           <UserRofile>
             <img src={isWinner ? userImage : opponentIamge} alt="" />
           </UserRofile>
           <Resault>
-            <span>
-              {isWinner ? userScore.toString() : opponentScore.toString()}
-            </span>
+            <span>{withPad(isWinner ? userScore : opponentScore)}</span>
             <span>:</span>
-            <span>{isWinner ? opponentScore.toString() : userScore}</span>
+            <span>{withPad(isWinner ? opponentScore : userScore)}</span>
           </Resault>
           <UserRofile>
             <img src={isWinner ? opponentIamge : userImage} alt="" />
@@ -52,18 +48,43 @@ const MatchResault = ({
         </ResaultContainer>
         <ScoreConatiner>
           <Score>
-            Level : <ScoreLevel>{level}</ScoreLevel>{" "}
-            <ScoreSeperator></ScoreSeperator>
-            points : <ScorePoints $success={isWinner}>{points}</ScorePoints>
+            Level : <ScoreLevel>{withPad(level)}</ScoreLevel>{" "}
+            <ScoreSeperator></ScoreSeperator>, points :{" "}
+            <ScorePoints $success={isWinner}>{withPad(points)}</ScorePoints>
           </Score>
-          <ScoreDate>{matchDate}</ScoreDate>
+          <ScoreDate>{matchDate.toDateString()}</ScoreDate>
         </ScoreConatiner>
       </MatchTableCell>
-      <MatchTableDateCell>{matchDate}</MatchTableDateCell>
-      <MatchTablePointsCell $success={isWinner}>{points}</MatchTablePointsCell>
-      <MatchTableLevelCell>{level}</MatchTableLevelCell>
+      <MatchTableDateCell>{matchDate.toDateString()}</MatchTableDateCell>
+      <MatchTablePointsCell $success={isWinner}>
+        {withPad(points)}
+      </MatchTablePointsCell>
+      <MatchTableLevelCell>{withPad(level)}</MatchTableLevelCell>
     </MatchTableRow>
   );
 };
 
+export const MatchResaultSkeleton = ({ _key }: { _key: string }) => {
+  return (
+    <tr
+      key={_key}
+      tw="
+    flex justify-evenly items-center h-[140px] sm:h-[80px] rounded-[12px] p-[16px]
+    relative
+  "
+    >
+      <td>
+        <Skeleton
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            left: "0",
+            top: "0",
+          }}
+        />
+      </td>
+    </tr>
+  );
+};
 export default MatchResault;
