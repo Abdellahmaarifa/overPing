@@ -20,7 +20,7 @@ class TopNavBarViewModel implements TopNavBarViewModelType {
   }
   logout = async () => {
     this.userContext.signOut();
-    this.navigate("/login");
+    window.location.replace("/login");
     await this.logoutMutation();
   };
 

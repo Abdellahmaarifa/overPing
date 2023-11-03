@@ -58,7 +58,7 @@ const Navbar = () => {
       <ExitIcon
         onClick={async () => {
           signOut();
-          navigate("/login");
+          window.location.replace("/login");
           await logout();
         }}
       >
