@@ -49,17 +49,26 @@ const MatchHistories = ({ active }: { active: boolean }) => {
             </tr>
           </MatchTableHeader>
           <MatchTableBody>
-            {matchList.map((match: MatchResaultType) =>
-              loading ? (
-                <MatchResaultSkeleton _key={match.id} />
-              ) : (
-                <MatchResault
-                  {...{
-                    ...match,
-                    userImage: data?.user.profilePhoto as string,
-                  }}
-                />
+            {matchList.length ? (
+              matchList.map((match: MatchResaultType) =>
+                loading ? (
+                  <MatchResaultSkeleton _key={match.id} />
+                ) : (
+                  <MatchResault
+                    {...{
+                      ...match,
+                      userImage: data?.user.profilePhoto as string,
+                    }}
+                  />
+                )
               )
+            ) : (
+              <div tw="h-full flex-[100%] flex justify-center items-center">
+                <span tw="text-center text-[#636472] text-[16px]">
+                  Your ping pong adventure is waiting for your epic strokes!
+                  🏓✨ Let's get that ball rolling!
+                </span>
+              </div>
             )}
             {isLoading
               ? matchList

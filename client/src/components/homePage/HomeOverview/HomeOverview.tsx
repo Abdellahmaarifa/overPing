@@ -1,9 +1,9 @@
+import { useLayoutContext } from "context/layout.context";
+import { useEffect } from "react";
 import tw from "twin.macro";
 import FriendsMatches from "../FriendsMatches/FrientsMatches";
 import MatchHistories from "../MatchHistories/MatchHistories";
 import Suggestions from "../Suggestions/Suggestion";
-import { useLayoutContext } from "context/layout.context";
-import { useEffect } from "react";
 const OverViewContainer = tw.div`
 w-full h-fit min-h-[300px] flex justify-start items-center flex-col gap-[10px] min-w-[fit-content]
 `;
@@ -15,8 +15,15 @@ const HomeOverview = () => {
 
   useEffect(() => {
     console.log(window.innerWidth);
-    if (window.innerWidth > 400 && window.innerWidth < 1024)
-      setFriendMatchTab(false);
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 400 && window.innerWidth < 1024)
+        setFriendMatchTab(false);
+
+      if (window.innerWidth > 1024 || window.innerWidth < 400) {
+        setMatchTabState(true);
+        setFriendMatchTab(true);
+      }
+    });
   }, []);
   return (
     <OverViewContainer>

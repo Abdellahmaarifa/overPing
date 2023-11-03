@@ -1,7 +1,7 @@
 import tw from "twin.macro";
 
 export const SuggestionBox = tw.div`
-  w-full h-fit min-h-[300px] bg-[#0E1821] flex flex-col items-center justify-start p-[16px] min-w-[300px]
+  w-full h-fit min-h-[300px] bg-[#0E1821] flex flex-col items-center justify-start p-[16px] min-w-[300px] rounded-[16px] rounded-tl-[4px] rounded-tr-[4px]
 `;
 
 export const UserCard = tw.div`

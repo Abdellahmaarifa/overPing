@@ -11,7 +11,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "../../../graphql";
 import { ExitIcon, Nav, NavLink, NavbarContainer } from "./LeftNavBar.style";
 import { useLayoutContext } from "context/layout.context";
-
+import { useEffect } from "react";
+import tw, { css } from "twin.macro";
 const Navbar = () => {
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
@@ -19,13 +20,24 @@ const Navbar = () => {
   const location = useLocation();
   const {
     userMenuState: [_openUserMenu, setOpenUserMenu],
+    mobileMenuState: [openMobileMenu, setOpenMobileMenu],
   } = useLayoutContext();
   const getNavLinkColor = (link: string) => {
     if (link === location.pathname) return "#636472";
     return "#B4B5CF";
   };
+
   return (
-    <NavbarContainer onClick={() => setOpenUserMenu(false)}>
+    <NavbarContainer
+      onClick={() => setOpenUserMenu(false)}
+      style={
+        openMobileMenu
+          ? {
+              display: "flex",
+            }
+          : undefined
+      }
+    >
       <Nav>
         <NavLink onClick={() => navigate("/")}>
           <HomeIcon fill={getNavLinkColor("/")} />
