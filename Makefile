@@ -2,7 +2,7 @@
 COMPOSE_FILE := docker-compose.yml
 
 # Docker Compose options
-COMPOSE := docker-compose -f $(COMPOSE_FILE)
+COMPOSE := docker-compose -f $(COMPOSE_FILE) --env-file=./api/.env
 
 # Define targets
 .PHONY: start stop restart logs clean clean-all client
@@ -11,7 +11,10 @@ COMPOSE := docker-compose -f $(COMPOSE_FILE)
 
 # Start services (development profile)
 start:
-	$(COMPOSE) --profile development up -d
+	$(COMPOSE)  --profile development up -d 
+# build services (development profile)	
+build:
+	$(COMPOSE) --profile development build
 
 # Start services (production profile)
 start-production:

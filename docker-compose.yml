@@ -108,6 +108,8 @@ services:
       - webapp
     ports:
       - ${AUTH_PORT}:3001
+      - ${PRISMA_STUDIO_PORT}:5555
+      
     volumes:
       - ./api:/usr/src/app
       - /usr/src/app/node_modules

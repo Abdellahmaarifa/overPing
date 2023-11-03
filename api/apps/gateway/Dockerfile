@@ -1,5 +1,5 @@
 # Use the desired Node.js base image
-FROM node:20-alpine as development
+FROM node:21.1.0-alpine as development
 
 RUN npm install -g @nestjs/cli
 
@@ -8,16 +8,16 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json (if exists) to leverage Docker cache
 COPY package*.json ./
 
-RUN npm install --silent
+RUN npm install --verbose 
 
 # Copy the rest of the application code
 COPY . .
 
-RUN npm run build --silent
+RUN npm run build 
 
-FROM  node:20-alpine as production
+FROM  node:21.1.0-alpine as production
 
-RUN npm install -g @nestjs/cli --silent
+RUN npm install -g @nestjs/cli 
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
@@ -27,7 +27,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install only production dependencies
-RUN npm install --only=production --silent
+RUN npm install --only=production 
 
 # Copy the rest of the application code
 COPY . .
