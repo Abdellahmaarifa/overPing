@@ -41,8 +41,8 @@ const FriendshipMatches = ({ active }: { active: boolean }) => {
     })();
     //console.log("getting more data", page);
   }, [page]);
-  return active ? (
-    <FriendsMatchesConatiner>
+  return (
+    <FriendsMatchesConatiner style={active ? { display: "flex" } : undefined}>
       <FriendsMatchesTitle>Friendship Matches</FriendsMatchesTitle>
       <Resault>
         {matchList.length ? (
@@ -117,7 +117,7 @@ const FriendshipMatches = ({ active }: { active: boolean }) => {
         </div>
       )}
     </FriendsMatchesConatiner>
-  ) : null;
+  );
 };
 
 interface MatchType {
