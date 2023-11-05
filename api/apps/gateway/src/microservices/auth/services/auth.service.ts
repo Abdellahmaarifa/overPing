@@ -50,13 +50,14 @@ export class GatewayService {
       "hello world"
     )
   }
-  async signUp(userInput: UserCreationIput){
-    const user = await this.userService.createAccount(userInput);
-    const response = {
-      user, 
-      acessToken: 'some thing should move from here ',
-      refreshToken: "some thing should move from here",
-    }
-    return (response);
-  }
+    async signUp(userInput: UserCreationIput): Promise<any>{
+      console.log("gateWay======> strating the cerate the acount: ", userInput);
+      const user = await this.userService.createAccount(userInput);
+      console.log("gateWay=====> the a account was created : " , user);
+      return {
+	  user: user.user, 
+	  acessToken: 'some thing should move from here ',
+	  refreshToken: "some thing should move from here",
+      }
+   }
 }

@@ -1,18 +1,18 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class UserLoggerService {
-  private readonly logger = new Logger('UserLoggerService');
+export class  LoggerService {
+    constructor() {}
 
-  logUserCreated(userId: any) {
-    this.logger.log(`User created with ID: ${userId}`);
-  }
+    actionLog(serviceName: string, functionName: string, action: string, data: any): void {
+        const resetColor = "\x1b[0m";
+        const redColor = "\x1b[31m";
+	const lightRed = "\x1b[91m";
+	const brightBlue = "\x1b[94m";
+	const brightMagenta = "\x1b[95m";
+	const brightCyan = "\x1b[96m";
 
-  logUserDeleted(userId: any) {
-    this.logger.log(`User deleted with ID: ${userId}`);
-  }
-  logUserFound(userId: any){
-    this.logger.log(`User found with ID: ${userId}`);
-  }
+        console.log(`${brightBlue}[${serviceName}]${resetColor} - ${brightCyan}[${functionName}]${resetColor} - ${brightMagenta}${action}:${resetColor} ${lightRed}${data}${resetColor}`);
+    }
 }
 

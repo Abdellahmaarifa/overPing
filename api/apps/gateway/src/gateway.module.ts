@@ -12,7 +12,7 @@ import { FortyTwoStrategy } from './microservices/auth/strategies/42.strategy';
 import { GoogleStrategy } from './microservices/auth/strategies/google.strategy';
 import { AuthController } from './microservices/auth/controllers/auth.controller';
 import { UserService } from './microservices/auth/services';
-import { UserLoggerService } from '@app/common/loger';
+import { LoggerService } from '@app/common/loger';
 @Module({
   imports: [
     PassportModule,
@@ -43,7 +43,7 @@ import { UserLoggerService } from '@app/common/loger';
     AuthMutationsResolver,
     FortyTwoStrategy,
     GoogleStrategy,
-    UserLoggerService,
+    LoggerService,
   ],
   controllers:[
     AuthController,

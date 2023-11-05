@@ -2,7 +2,7 @@ import { Injectable, Inject,BadRequestException, Logger } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from "@app/rabbit-mq";
-import { UserLoggerService } from "@app/common/loger";
+
 
 @Injectable()
 export class UserService {
@@ -71,7 +71,7 @@ export class UserService {
     async createAccount(user: any) {
         
         const userResponse = await this.createUser(user);
-        console.log("gateway====> createAccount: userCreated :", userResponse.user);
+        console.log("gateway====> createAccount: userCreated :", userResponse.data);
 
         if (!userResponse.data) {
             console.log("gateway====> createAccount: userCreated  was not created:", userResponse.data);

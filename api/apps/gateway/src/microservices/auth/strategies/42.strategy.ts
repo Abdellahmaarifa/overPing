@@ -19,7 +19,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42'){
         accessToken: string,
         refreshToken: string,
         profile: any,
-        ){  console.log(profile);
+        ){ 
             const user = {
                 fortyTwoId: profile.id,
                 username: profile.username,

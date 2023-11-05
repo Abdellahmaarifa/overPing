@@ -9,6 +9,7 @@ export class UserService{
 
     async validateUser(userWhereUniqueInput: Prisma.UserWhereUniqueInput,): Promise<IAuthUser>{
         let found_user = await this.findUserByUsername(userWhereUniqueInput.username);
+	console.log("auth: validateUser==> the user was found : ", found_user);
         if (!found_user){
             throw "user not found";
         }
