@@ -15,7 +15,7 @@ const LayoutOutlet = () => {
   } = useLayoutContext();
   return (
     <div
-      tw="w-full p-[15px] pt-[75px] md:ml-[72px]"
+      tw="w-full "
       onClick={() => {
         setOpenUserMenu(false);
         setOpenMobileMenu(false);
