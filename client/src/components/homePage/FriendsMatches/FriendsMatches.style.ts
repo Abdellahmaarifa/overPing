@@ -28,3 +28,19 @@ font-rubik text-[21px] font-bold text-white
 export const Resault = tw.div`
 flex items-center justify-center gap-[16px] flex-col text-[16px] sm:text-[18px] 2xl:text-[16px] w-full h-full flex-[100%]
 `;
+
+export const EmptyResaultConatiner = tw.div`
+h-full flex justify-center items-center text-center
+
+`;
+export const EmptyResault = tw.div`
+font-inter text-[16px] text-[#A4A5BC] [max-width: 275px] flex justify-center items-center gap-[15px] flex-col
+`;
+
+export const SeeMoreConatiner = tw.div`
+flex w-full justify-center items-center gap-[40px] self-end absolute bottom-[15px] left-1/2 -translate-x-1/2
+`;
+
+export const SeeMorePageNumber = tw.span`
+text-[14px] text-[#808193] font-bold
+`;

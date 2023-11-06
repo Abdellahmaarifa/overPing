@@ -4,6 +4,12 @@ import tw from "twin.macro";
 import FriendsMatches from "../FriendsMatches/FrientsMatches";
 import MatchHistories from "../MatchHistories/MatchHistories";
 import Suggestions from "../Suggestions/Suggestion";
+import {
+  RightSideConatiner,
+  Tab,
+  TabContainer,
+  TabHeading,
+} from "./HomeOverview.style";
 const OverViewContainer = tw.div`
 w-full h-fit min-h-[300px] flex justify-start items-center flex-col gap-[10px] min-w-[fit-content]
 `;
@@ -14,7 +20,7 @@ const HomeOverview = () => {
   } = useLayoutContext();
 
   useEffect(() => {
-    console.log(window.innerWidth);
+    // this is the only thing i can think of for now, i might change this later!
     window.addEventListener("resize", () => {
       if (window.innerWidth > 400 && window.innerWidth < 1024)
         setFriendMatchTab(false);
@@ -27,24 +33,21 @@ const HomeOverview = () => {
   }, []);
   return (
     <OverViewContainer>
-      <div tw="hidden w-full h-[24px] xs:flex lg:hidden justify-between items-center rounded-[4px] bg-[#1F272E] overflow-hidden">
-        <div
-          tw="w-1/2 flex justify-center items-center  h-full cursor-pointer"
-          style={{ background: matchTabState ? "#4C4C57" : "transparent" }}
+      <TabContainer>
+        <Tab
+          style={{
+            background: matchTabState ? "#4C4C57" : "transparent",
+          }}
           onClick={() => {
             setMatchTabState(true);
             setFriendMatchTab(false);
           }}
         >
-          <h3
-            tw="text-[12px]  font-rubik font-normal"
-            style={{ color: matchTabState ? "white" : "#4C5258" }}
-          >
+          <TabHeading style={{ color: matchTabState ? "white" : "#4C5258" }}>
             Match History
-          </h3>
-        </div>
-        <div
-          tw=" w-1/2 flex justify-center items-center h-full cursor-pointer"
+          </TabHeading>
+        </Tab>
+        <Tab
           style={{
             background: !matchTabState ? "#4C4C57" : "transparent",
           }}
@@ -53,19 +56,16 @@ const HomeOverview = () => {
             setFriendMatchTab(true);
           }}
         >
-          <h3
-            tw="text-[12px]  font-rubik font-normal"
-            style={{ color: !matchTabState ? "white" : "#4C5258" }}
-          >
+          <TabHeading style={{ color: !matchTabState ? "white" : "#4C5258" }}>
             Friendship matches
-          </h3>
-        </div>
-      </div>
+          </TabHeading>
+        </Tab>
+      </TabContainer>
       <MatchHistories active={matchTabState} />
-      <div tw="2xl:fixed 2xl:top-[120px] 2xl:right-[50px] w-full h-auto  2xl:w-[380px] flex flex-col items-center gap-[10px] 2xl:gap-[16px] ">
+      <RightSideConatiner>
         <FriendsMatches active={friendMatchTab} />
         <Suggestions />
-      </div>
+      </RightSideConatiner>
     </OverViewContainer>
   );
 };

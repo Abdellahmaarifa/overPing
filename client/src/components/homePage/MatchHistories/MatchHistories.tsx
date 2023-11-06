@@ -3,8 +3,11 @@ import MatchResault, {
   MatchResaultSkeleton,
 } from "../MatchResault/MatchResault";
 import {
+  EmptyMatchHistories,
+  EmptyMatchHistoriesContainer,
   MatchHistoriesTitle,
-  MatchHistoryContainer,
+  MatchHistoriesWrapper,
+  MatchHistoriesContainer,
   MatchTable,
   MatchTableBody,
   MatchTableHeader,
@@ -29,14 +32,13 @@ const MatchHistories = ({ active }: { active: boolean }) => {
   }, []);
   console.log(matchList);
   return (
-    <div
-      tw="w-full justify-center items-center flex-col gap-[10px]"
+    <MatchHistoriesWrapper
       style={{
         display: active ? "flex" : "none",
       }}
     >
       <MatchHistoriesTitle>Match Histories</MatchHistoriesTitle>
-      <MatchHistoryContainer>
+      <MatchHistoriesContainer>
         <MatchTable>
           <MatchTableHeader>
             <tr tw="flex justify-evenly w-full">
@@ -63,12 +65,12 @@ const MatchHistories = ({ active }: { active: boolean }) => {
                 )
               )
             ) : (
-              <div tw="h-full flex-[100%] flex justify-center items-center">
-                <span tw="text-center text-[#636472] text-[16px]">
+              <EmptyMatchHistoriesContainer>
+                <EmptyMatchHistories>
                   Your ping pong adventure is waiting for your epic strokes!
                   🏓✨ Let's get that ball rolling!
-                </span>
-              </div>
+                </EmptyMatchHistories>
+              </EmptyMatchHistoriesContainer>
             )}
             {isLoading
               ? matchList
@@ -94,8 +96,8 @@ const MatchHistories = ({ active }: { active: boolean }) => {
             }}
           />
         </div>
-      </MatchHistoryContainer>
-    </div>
+      </MatchHistoriesContainer>
+    </MatchHistoriesWrapper>
   );
 };
 
