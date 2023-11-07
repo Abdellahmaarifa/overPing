@@ -7,7 +7,7 @@ const CustomStyles = createGlobalStyle({
   },
   body: {
     WebkitTapHighlightColor: theme`colors.purple.500`,
-    ...tw`antialiased`,
+    ...tw`antialiased min-w-[100vw] min-h-[100vh] bg-[#0F1A24] text-white`,
   },
 });
 

@@ -1,33 +1,20 @@
-import Button from "components/common/Button/Button";
-import { useUserContext } from "context/user.context";
-import { useCookies } from "react-cookie";
-import { useNavigate } from "react-router-dom";
-import { useHomeQuery, useLogoutMutation } from "../../graphql";
+import Features from "components/homePage/Features/Features";
+import HomeBanner from "components/homePage/HomeBanner/HomeBanner";
+
+import HomeOverView from "../../components/homePage/HomeOverview/HomeOverview";
+import { HomeBody, HomeConatiner, OverViewConatiner } from "./Home.style";
+
 const Home = () => {
-  const { data, loading, error } = useHomeQuery();
-  const [cookie, setCookie, removeCookie] = useCookies();
-  const { signOut } = useUserContext();
-  const [logout] = useLogoutMutation();
-  const navigate = useNavigate();
-  console.log(error);
-  if (loading) return <h2>loading..</h2>;
   return (
-    <>
-      <h1>
-        Home Page <span>{data?.home}</span>.
-      </h1>
-      <Button
-        text="Logout"
-        size="xl"
-        onClick={async () => {
-          await logout();
-          signOut();
-          navigate("/login");
-          console.log("cookie!!", cookie);
-          removeCookie("yamy");
-        }}
-      />
-    </>
+    <HomeConatiner>
+      <HomeBody>
+        <HomeBanner />
+        <Features />
+        <OverViewConatiner>
+          <HomeOverView />
+        </OverViewConatiner>
+      </HomeBody>
+    </HomeConatiner>
   );
 };
 

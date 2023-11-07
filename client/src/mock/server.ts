@@ -46,7 +46,11 @@ const URL = `http://localhost:${PORT}`;
     app,
     path: "/",
     cors: {
-      origin: ["http://localhost:5173", "https://studio.apollographql.com"],
+      origin: [
+        "http://localhost:5173",
+        "https://studio.apollographql.com",
+        "http://192.168.0.115:5173",
+      ],
       Credential: true,
     },
   } as any);

@@ -41,3 +41,7 @@ export const validate = {
       .required("Password Confirmation is required")
       .matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
 };
+
+// add padd to number
+
+export const withPad = (n: number) => n.toString().padStart(2, "0");

@@ -131,5 +131,26 @@
     "password": "$2b$12$aaFdzUmUUuecDNVWKbMkm.4N/3weHvl1IFu/Q2qOJFHO5SoN3oJ8u",
     "userName": "asdfsadfds",
     "profilePhoto": "data/uploads/d379d766-c788-4f91-9951-5d4aa720bbbc-3-git-workflow.png"
+  },
+  {
+    "id": "QApxWxHEQ2XZrVCC6Pawh",
+    "email": "test@abdellah.com",
+    "password": "$2b$12$gJpaeMbIgrR.LaJso7OQdOzePB3ujq7CT3OLyBEXOGxzzcJ4aAMLm",
+    "userName": "abdellah",
+    "profilePhoto": "data/uploads/0270563d-dc9b-484f-8047-bebea1cab26d-PingPongBoYPyla-removebg-preview 1.png"
+  },
+  {
+    "id": "ZMIjmb5qNKj_FOZHtb0Mm",
+    "email": "amaarifa@amaarifa.com",
+    "password": "$2b$12$21MZfXyR9TVcmxZcG9X32ulfhgaQRPP4/aNmEBdgnynLqyNCF61vO",
+    "userName": "amaarifa",
+    "profilePhoto": "data/uploads/15c56c24-5a1e-45e1-ac57-5e7a714ebb18-maarifa1.png"
+  },
+  {
+    "id": "6AMneKaI2d1eTD_sXe0g1",
+    "email": "amaarifa@gmail.co",
+    "password": "$2b$12$MMSXd9GwirHknV9RgSdxuuZQedeJxuUoNGrwUJg.SLGcm/SnTXtRq",
+    "userName": "amaarifa",
+    "profilePhoto": "data/uploads/e7c40d50-d373-4802-8adf-e887188605d5-maarifa1.png"
   }
 ]

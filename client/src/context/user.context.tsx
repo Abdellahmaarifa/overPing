@@ -7,16 +7,15 @@ import React, {
 } from "react";
 
 import { User } from "types/User.type";
-import { setToken } from "../state/token";
-
+import { getToken, setToken } from "../state/token";
 type Props = {
   children: React.ReactNode;
 };
 
-type Context = {
+export type Context = {
   signIn: (user: User) => void;
   signOut: () => void;
-  restoreUser: (callbakc: () => void) => void;
+  restoreUser: (callback?: () => void) => void;
   user: User | null;
 };
 
@@ -37,13 +36,13 @@ const UserContextProvider = ({ children }: Props): JSX.Element => {
 
   const signIn = useCallback((user: User) => {
     setToken(user.token);
-
     setUser(user);
   }, []);
 
-  const restoreUser = async (callback: () => void) => {
+  const restoreUser = async (callback?: () => void) => {
     // we should sen a request to /refresh_token and then update the user with the new token.
     try {
+      if (user) return;
       const data = await fetch("http://localhost:9000/refresh_token", {
         credentials: "include",
         method: "POST",
@@ -51,7 +50,7 @@ const UserContextProvider = ({ children }: Props): JSX.Element => {
       const res = await data.json();
       setToken(res?.accessToken);
       if (res?.accessToken) setUser({ token: res?.accessToken });
-      callback();
+      callback && callback();
     } catch (err) {
       console.log(err);
     }
@@ -71,6 +70,8 @@ const UserContextProvider = ({ children }: Props): JSX.Element => {
     <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
 };
+
+export type useUserContextType = () => Context;
 
 export const useUserContext = () => {
   const context = useContext(UserContext);
