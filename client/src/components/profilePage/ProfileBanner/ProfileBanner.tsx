@@ -49,7 +49,7 @@ const ProfileBanner = () => {
         </BannerMenuButton>
       </BannerMenuConatiner>
       <ProfileConatiner>
-        <Hexagon percentage={60} Image={Onep} />
+        <Hexagon Image={Onep} outline={true} />
         <ProfileInfo>
           <ProfileName>abdellah</ProfileName>
           <ProfileLevel>Level : 5</ProfileLevel>

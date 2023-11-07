@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import ChatICon from "assets/common/chat.svg?react";
 import {
+  BioHeader,
   ProfileBadge,
   ProfileBadgeIcon,
   ProfileBadgeInfo,
@@ -15,7 +16,11 @@ import {
   ProfileInfoTabHeading,
   ProfileStatus,
 } from "./ProfileInfo.style";
+import tw from "twin.macro";
+import Achievement from "../Achievement/Achievement";
+import ProfileMatchResault from "../ProfileMatchResault/ProfileMatchResault";
 
+const a = tw.div``;
 const STATUS = [
   "Game Won",
   "Best win streak",
@@ -60,8 +65,13 @@ const ProfileBioInfo = () => {
           ))}
         </ProfileStatus>
         <ProfileBioConatiner>
-          <ProfileBio>{faker.lorem.paragraph()}</ProfileBio>
+          <BioHeader>About</BioHeader>
+          <ProfileBio>
+            {faker.lorem.paragraph().slice(0, 130).toString()}
+          </ProfileBio>
         </ProfileBioConatiner>
+        <Achievement />
+        <ProfileMatchResault />
       </ProfileInfoBody>
     </ProfileInfoConatiner>
   );

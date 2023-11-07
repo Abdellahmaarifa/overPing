@@ -40,28 +40,44 @@ export const ProfileInfoTabHeading = tw.h2`
 `;
 
 export const ProfileInfoBody = tw.div`
-    p-[14px]
-    pl-[28px]
-    pr-[28px]
-    bg-[#4C4C57]
     rounded-[8px]
     flex
     flex-col
-    md:flex-row
-    md:p-0
-    md:bg-transparent
+    lg:grid
+    [grid-template-columns: 1fr .5fr]
+    xl:[grid-template-rows: 145px 65px 1fr]
+    gap-[24px]
+    w-full
+
+
 `;
 export const ProfileBioConatiner = tw.div`
     md:flex-[30%]
     md:bg-[#1F272E]
     md:p-[24px]
     md:rounded-[8px]
-    md:h-[170px]
+    lg:h-[200px]
+    flex
+    flex-col
+    justify-start
+    gap-[10px]
+    [grid-row: 1/2]
+    
+`;
+export const BioHeader = tw.h3`
+    font-rubik
+    text-[18px]
+    font-bold
+    text-[#B4B5CF]
+    hidden
+    md:block
 `;
 export const ProfileBio = tw.p`
     text-[#808193]
     font-rubik
     text-[13px]
+    md:text-[15px]
+    lg:text-[16px]
 `;
 
 export const ProfileStatus = tw.div`
@@ -72,10 +88,12 @@ export const ProfileStatus = tw.div`
     xl:[grid-template-columns: 1.5fr 2.5fr 2fr]
     gap-[16px]
     md:flex-[70%]
-    mr-[24px]
     md:bg-[#1F272E]
     md:p-[45px]
     md:rounded-[8px]
+    [grid-row: 1/3]
+    md:[max-height: 333px]
+    xl:[max-height: 233px]
 `;
 export const ProfileBadge = tw.div`
     bg-[#B4B5CF]
