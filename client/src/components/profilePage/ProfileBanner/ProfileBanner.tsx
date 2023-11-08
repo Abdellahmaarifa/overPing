@@ -1,9 +1,14 @@
-import { CircularProgressbar } from "react-circular-progressbar";
-import tw from "twin.macro";
-import ProfileShape from "assets/common/profile-shape.svg?react";
+import ChatIcon from "assets/common/chat.svg?react";
+import DotsIcon from "assets/common/dots.svg?react";
+import FriendsIcon from "assets/common/friends.svg?react";
+import GamepadIcon from "assets/common/game-pad.svg?react";
+import SettingsIcon from "assets/common/settings.svg?react";
+import UserAddIcon from "assets/common/user-add.svg?react";
+import Badge from "assets/profile/badge.png";
 import DemoCover from "assets/profile/cover.jpg";
 import Onep from "assets/profile/onep.jpg";
-import Badge from "assets/profile/badge.png";
+import Hexagon from "components/common/Hexagon/Hexagon";
+import { useState } from "react";
 import {
   BannerBadge,
   BannerBadgeGrade,
@@ -12,17 +17,16 @@ import {
   BannerMenuButton,
   BannerMenuConatiner,
   BannerMenuMask,
+  ExtraLink,
+  ExtraMenu,
   ProfileConatiner,
   ProfileInfo,
   ProfileLevel,
   ProfileName,
 } from "./ProfileBanner.style";
-import ChatIcon from "assets/common/chat.svg?react";
-import FriendsIcon from "assets/common/friends.svg?react";
-import SettingsIcon from "assets/common/settings.svg?react";
-import Hexagon from "components/common/Hexagon/Hexagon";
 
 const ProfileBanner = () => {
+  const [userProfile, setUserProfile] = useState(true);
   return (
     <BannerConatiner
       style={{
@@ -38,16 +42,40 @@ const ProfileBanner = () => {
       </BannerBadge>
       <BannerMenuConatiner>
         <BannerMenuMask id="mask"></BannerMenuMask>
-        <BannerMenuButton>
-          <ChatIcon />
-        </BannerMenuButton>
-        <BannerMenuButton>
-          <FriendsIcon />
-        </BannerMenuButton>
-        <BannerMenuButton>
-          <SettingsIcon />
-        </BannerMenuButton>
+        {userProfile ? (
+          <>
+            <BannerMenuButton>
+              <ChatIcon />
+            </BannerMenuButton>
+            <BannerMenuButton>
+              <FriendsIcon />
+            </BannerMenuButton>
+            <BannerMenuButton>
+              <SettingsIcon />
+            </BannerMenuButton>
+          </>
+        ) : (
+          <>
+            <BannerMenuButton>
+              <GamepadIcon />
+            </BannerMenuButton>
+            <BannerMenuButton>
+              <ChatIcon />
+            </BannerMenuButton>
+            <BannerMenuButton>
+              <UserAddIcon />
+            </BannerMenuButton>
+            <BannerMenuButton>
+              <DotsIcon />
+              <ExtraMenu>
+                <ExtraLink>Block friend</ExtraLink>
+                <ExtraLink>remove friend</ExtraLink>
+              </ExtraMenu>
+            </BannerMenuButton>
+          </>
+        )}
       </BannerMenuConatiner>
+
       <ProfileConatiner>
         <Hexagon Image={Onep} outline={true} />
         <ProfileInfo>

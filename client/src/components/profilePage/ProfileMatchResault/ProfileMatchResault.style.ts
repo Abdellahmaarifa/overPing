@@ -78,4 +78,5 @@ export const ProfileSeeMore = tw.div`
     left-1/2
     -translate-x-1/2
     cursor-pointer
+    font-bold
 `;

@@ -52,8 +52,14 @@ const Hexagon = ({
 
         <HexagonImage
           style={{
-            background: Image ? "" : odd ? "#1F70B7" : "#13446F",
-            backgroundImage: Image ? `url(${Image})` : "",
+            background:
+              outline && Image
+                ? `center/cover url(${Image})`
+                : Image
+                ? `linear-gradient(rgba(79, 149, 212, 0.36), rgba(79, 149, 212, 0.36)), center/cover url(${Image})`
+                : odd
+                ? "#1F70B7"
+                : "#13446F",
           }}
         ></HexagonImage>
       </HexagonShape>

@@ -8,6 +8,7 @@ import {
   ProfileResalut,
   ProfileSeeMore,
 } from "./ProfileMatchResault.style";
+import DownIcon from "assets/common/down-arrow.svg?react";
 const ProfileMatchResault = () => {
   const [resault, setResault] = useState<MatchResaultType[]>([]);
 
@@ -51,6 +52,7 @@ const ProfileMatchResault = () => {
         );
       })}
       <ProfileSeeMore>
+        <DownIcon />
         <span>load more</span>
       </ProfileSeeMore>
     </ProfileMatchResaultContainer>

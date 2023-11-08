@@ -12,7 +12,11 @@ const Achievement = () => {
   return (
     <AchievementConatiner>
       {achievements.map((ach, index) => (
-        <Hexagon percentage={100} odd={Boolean(index % 2 == 0)} />
+        <Hexagon
+          percentage={100}
+          odd={Boolean(index % 2 == 0)}
+          Image={ach.image}
+        />
       ))}
     </AchievementConatiner>
   );
@@ -22,7 +26,7 @@ interface AchievementType {
   image: string;
 }
 const createAchievement = (): AchievementType => {
-  return { image: faker.image.avatar() };
+  return { image: faker.image.urlLoremFlickr({ category: "night" }) };
 };
 const getAchievement = () =>
   faker.helpers.multiple(createAchievement, { count: 9 });
