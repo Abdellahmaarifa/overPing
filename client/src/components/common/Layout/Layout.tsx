@@ -7,7 +7,9 @@ import useLayoutContextProvider, {
 import { Outlet } from "react-router-dom";
 
 import tw from "twin.macro";
+import Setting from "../Settings/Settings";
 const temp = tw.a``;
+
 const LayoutOutlet = () => {
   const {
     userMenuState: [_openUserMenu, setOpenUserMenu],
@@ -34,6 +36,7 @@ const Layout = () => {
         <TopNavBar />
         <LeftNavBar />
         <LayoutOutlet />
+        <Setting />
       </LayoutContextProvider>
     </div>
   );

@@ -18,7 +18,7 @@ export interface InputBoxProps {
   $state?: "valid" | "invalid";
 }
 const getGlobalStyle = () => {
-  return tw`relative w-[344px] h-[40px] gap-[10px] py-[4px] px-[8px] rounded-[4px] focus:outline-none text-[#B4B5CF] font-rubik text-[16px] font-normal pr-[40px]`;
+  return tw`relative  gap-[10px] py-[4px] px-[8px] rounded-[4px] focus:outline-none text-[#B4B5CF] font-rubik text-[16px] font-normal pr-[40px]`;
 };
 const getBorderStyle = (border?: boolean) => {
   return border
@@ -46,6 +46,10 @@ const getStateColor = (state?: string) => {
   return state === "valid" ? tw`border-[#34e4a2]` : tw`border-[#f5425c]`;
 };
 
+const getSizeStyle = (size?: string) => {
+  if (size === "auto") return tw`w-full h-[40px]`;
+  return tw`w-[344px] h-[40px]`;
+};
 const InputBox = styled.input<InputBoxProps>(
   ({ $type, $border, $size, $placeholder, $bgColor, $theme, $state }) => [
     getGlobalStyle(),
@@ -54,6 +58,7 @@ const InputBox = styled.input<InputBoxProps>(
     getPlaceholderStyle($placeholder),
     getCustomTheme($theme),
     getStateColor($state),
+    getSizeStyle($size),
   ]
 );
 
