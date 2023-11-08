@@ -32,8 +32,6 @@ const getTextAndBgColorStyles = (
       ? tw`text-btn-white bg-btn-black!`
       : theme === "white"
       ? tw`text-btn-black bg-btn-white!`
-      : theme === "blue"
-      ? tw`text-btn-blue`
       : tw`text-btn-white`;
   } else {
     return tw`text-btn-white`;
