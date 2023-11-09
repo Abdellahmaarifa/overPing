@@ -5,7 +5,7 @@ const Input = (
   props: InputBoxProps & React.ComponentPropsWithoutRef<"input">
 ) => {
   return (
-    <div tw="relative w-full">
+    <div tw="relative w-full flex items-center justify-center">
       <InputBox {...props} />
 
       {props.$Icon && <InputBoxIcon Icon={props.$Icon} />}
