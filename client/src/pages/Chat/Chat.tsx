@@ -1,4 +1,9 @@
-import React from "react";
+import CloseIcon from "assets/common/close.svg?react";
+import HashTagIcon from "assets/common/hashtag.svg?react";
+import PlusIcon from "assets/common/plus.svg?react";
+import SearchIcon from "assets/common/search.svg?react";
+import Button from "components/common/Button/Button";
+import { useState } from "react";
 import {
   ChannelConatiner,
   ChannelIcon,
@@ -21,6 +26,20 @@ import {
   MessageInfo,
   MessageProfile,
   MessageSender,
+  MessageSenderCard,
+  MessageSenderCardImage,
+  MessageSenderCardImageContainer,
+  MessageSenderCardImageText,
+  MessageSenderCardInfo,
+  MessageSenderCardInfoActionConatiner,
+  MessageSenderCardInfoName,
+  MessageSenderCardInfoNameConatiner,
+  MessageSenderCardInfoState,
+  MessageSenderCardInfoStateConatiner,
+  MessageSenderCardInfoStateName,
+  MessageSenderCardInfoStateNumber,
+  MessageSenderCardInfoUserName,
+  MessageSenderCardMask,
   MessageSenderDate,
   MessageSenderName,
   MessagesBox,
@@ -31,7 +50,6 @@ import {
   MessagesSearch,
   SendMessageFeild,
   SendMessageInput,
-  Test,
   UserCover,
   UserImage,
   UserInfoAbout,
@@ -47,23 +65,110 @@ import {
   UserInformation,
   UserProfile,
 } from "./Chat.style";
-import Icon from "assets/common/bell.svg?react";
-import Button from "components/common/Button/Button";
-import SearchIcon from "assets/common/search.svg?react";
-import PlusIcon from "assets/common/plus.svg?react";
-import CloseIcon from "assets/common/close.svg?react";
-import HashTagIcon from "assets/common/hashtag.svg?react";
 
-import { faker } from "@faker-js/faker";
+import { faker, tr } from "@faker-js/faker";
 
-const MessageSimple = () => {
+const SenderCard = ({
+  user,
+}: {
+  user: {
+    name: string;
+    userName: string;
+    image: string;
+    totalGames: number;
+    gamesWon: number;
+    gameLost: number;
+    isFriend: Boolean;
+  };
+}) => {
+  const [IsShownCard, setIsShownCard] = useState<boolean>(false);
   return (
-    <MessageContainer>
-      <MessageProfile src={faker.image.avatar()} />
+    <MessageSenderCard>
+      <MessageSenderCardImageContainer
+        onMouseEnter={() => setIsShownCard(true)}
+        onMouseLeave={() => setIsShownCard(false)}
+      >
+        <MessageSenderCardImage src={user.image} />
+        {IsShownCard && (
+          <>
+            <MessageSenderCardMask></MessageSenderCardMask>
+            <MessageSenderCardImageText>
+              view profile
+            </MessageSenderCardImageText>
+          </>
+        )}
+      </MessageSenderCardImageContainer>
+      <MessageSenderCardInfo>
+        <MessageSenderCardInfoNameConatiner>
+          <MessageSenderCardInfoName>{user.name}</MessageSenderCardInfoName>
+          <MessageSenderCardInfoUserName>
+            {user.userName}
+          </MessageSenderCardInfoUserName>
+        </MessageSenderCardInfoNameConatiner>
+        <MessageSenderCardInfoStateConatiner>
+          <MessageSenderCardInfoState>
+            <MessageSenderCardInfoStateName>
+              Total Game
+            </MessageSenderCardInfoStateName>
+            <MessageSenderCardInfoStateNumber>
+              {user.totalGames}
+            </MessageSenderCardInfoStateNumber>
+          </MessageSenderCardInfoState>
+          <MessageSenderCardInfoState>
+            <MessageSenderCardInfoStateName>
+              Game Won
+            </MessageSenderCardInfoStateName>
+            <MessageSenderCardInfoStateNumber>
+              {user.gamesWon}
+            </MessageSenderCardInfoStateNumber>
+          </MessageSenderCardInfoState>
+          <MessageSenderCardInfoState>
+            <MessageSenderCardInfoStateName>
+              Game Lost
+            </MessageSenderCardInfoStateName>
+            <MessageSenderCardInfoStateNumber>
+              {user.gameLost}
+            </MessageSenderCardInfoStateNumber>
+          </MessageSenderCardInfoState>
+        </MessageSenderCardInfoStateConatiner>
+        <MessageSenderCardInfoActionConatiner>
+          <Button $text="play" $size="sm" />
+          {user.isFriend ? (
+            <Button $text="play" $size="sm" $theme="danger" $border={true} />
+          ) : (
+            <Button $transparent={true} $border={true} $Icon={PlusIcon} />
+          )}
+        </MessageSenderCardInfoActionConatiner>
+      </MessageSenderCardInfo>
+    </MessageSenderCard>
+  );
+};
+const MessageSimple = () => {
+  const [IsShown, setIsShown] = useState<boolean>(true);
+
+  return (
+    <MessageContainer onMouseLeave={() => setIsShown(false)}>
+      <MessageProfile
+        src={faker.image.avatar()}
+        onMouseEnter={() => setIsShown(true)}
+      />
       <MessageInfo>
         <MessageSender>
           <MessageSenderName>salma</MessageSenderName>
           <MessageSenderDate>Today at 10:22 PM</MessageSenderDate>
+          {IsShown && (
+            <SenderCard
+              user={{
+                name: "maarifa",
+                userName: "amaarifa",
+                image: faker.image.urlLoremFlickr(),
+                totalGames: 200,
+                gamesWon: 150,
+                gameLost: 100,
+                isFriend: false,
+              }}
+            />
+          )}
         </MessageSender>
         <Message>
           <span>hello world!</span>
