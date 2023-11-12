@@ -8,7 +8,7 @@ import Badge from "assets/profile/badge.png";
 import DemoCover from "assets/profile/cover.jpg";
 import Onep from "assets/profile/onep.jpg";
 import Hexagon from "components/common/Hexagon/Hexagon";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   BannerBadge,
   BannerBadgeGrade,
@@ -24,9 +24,25 @@ import {
   ProfileLevel,
   ProfileName,
 } from "./ProfileBanner.style";
+import { useNavigate } from "react-router-dom";
+import { useSettingsContext } from "context/settings.context";
 
-const ProfileBanner = () => {
-  const [userProfile, setUserProfile] = useState(true);
+const ProfileBanner = ({
+  showFriendsList,
+  setShowFriendsList,
+  showExtraMenu,
+  setShowExtraMenu,
+}: {
+  showFriendsList: boolean;
+  setShowFriendsList: Dispatch<SetStateAction<boolean>>;
+  showExtraMenu: boolean;
+  setShowExtraMenu: Dispatch<SetStateAction<boolean>>;
+}) => {
+  const [userProfile, setUserProfile] = useState(false);
+  const navigate = useNavigate();
+  const {
+    settingsModel: [settingModel, setSettingModel],
+  } = useSettingsContext();
   return (
     <BannerConatiner
       style={{
@@ -45,32 +61,30 @@ const ProfileBanner = () => {
         {userProfile ? (
           <>
             <BannerMenuButton>
-              <ChatIcon />
+              <ChatIcon onClick={() => navigate("/chat")} />
             </BannerMenuButton>
             <BannerMenuButton>
-              <FriendsIcon />
+              <FriendsIcon
+                onClick={() => setShowFriendsList(!showFriendsList)}
+              />
             </BannerMenuButton>
             <BannerMenuButton>
-              <SettingsIcon />
+              <SettingsIcon onClick={() => setSettingModel(true)} />
             </BannerMenuButton>
           </>
         ) : (
           <>
             <BannerMenuButton>
-              <GamepadIcon />
+              <GamepadIcon onClick={() => navigate("/game")} />
             </BannerMenuButton>
             <BannerMenuButton>
-              <ChatIcon />
+              <ChatIcon onClick={() => navigate("/chat")} />
             </BannerMenuButton>
             <BannerMenuButton>
               <UserAddIcon />
             </BannerMenuButton>
             <BannerMenuButton>
-              <DotsIcon />
-              <ExtraMenu>
-                <ExtraLink>Block friend</ExtraLink>
-                <ExtraLink>remove friend</ExtraLink>
-              </ExtraMenu>
+              <DotsIcon onClick={() => setShowExtraMenu(!showExtraMenu)} />
             </BannerMenuButton>
           </>
         )}
