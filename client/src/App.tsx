@@ -14,10 +14,13 @@ import Chat from "pages/Chat/Chat";
 import Error from "pages/Error/Error";
 import Home from "pages/Home/Home";
 import Login from "pages/Login/Login";
+import Profile from "pages/Profile/Profile";
+
 import { useUserContext } from "context/user.context";
 import { User } from "types/User.type";
 import LoginContextProvider from "context/login.context";
 import tw from "twin.macro";
+import Friends from "pages/Friends/Friends";
 // THIS IS SIMPLE EXAMPLE OF PROTECTED ROUTE
 const ProtectedRoutes = ({ user }: { user: User | null }) => {
   return user ? (
@@ -26,7 +29,6 @@ const ProtectedRoutes = ({ user }: { user: User | null }) => {
     <Navigate to="/login" state={{ from: useLocation() }} replace />
   );
 };
-
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { restoreUser, user } = useUserContext();
@@ -45,6 +47,9 @@ const App: React.FC = () => {
             <Route path="/" element={user ? <Home /> : <LandingPage />} />
             <Route element={<ProtectedRoutes user={user} />}>
               <Route path="chat" element={<Chat />} />
+
+              <Route path="friends" element={<Friends />} />
+              <Route path="profile/:id" element={<Profile />} />
             </Route>
             <Route path="login" element={<Login />} />
           </Route>

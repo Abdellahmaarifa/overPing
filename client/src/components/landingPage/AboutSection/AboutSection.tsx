@@ -8,8 +8,10 @@ import {
 } from "./AboutSection.style";
 import Button from "components/common/Button/Button";
 import tw from "twin.macro";
+import { useNavigate } from "react-router-dom";
 
 const AboutSection = () => {
+  const navigate = useNavigate();
   return (
     <Container>
       <Content id="whyus">
@@ -22,7 +24,12 @@ const AboutSection = () => {
           tournaments, proving their skill and dedication. Join us today to
           experience ping pong with unmatched fairness and excitement!
         </ContentDes>
-        <Button $text="Try it" $size="md" $link="login" />
+        <Button
+          $text="Try it"
+          $size="md"
+          $link="login"
+          onClick={() => navigate("/game")}
+        />
       </Content>
       <Img>
         <img src={ImgSrc} alt="ping pong table" />

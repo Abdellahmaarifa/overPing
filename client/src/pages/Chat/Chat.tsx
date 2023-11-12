@@ -144,7 +144,7 @@ const SenderCard = ({
   );
 };
 const MessageSimple = () => {
-  const [IsShown, setIsShown] = useState<boolean>(true);
+  const [IsShown, setIsShown] = useState<boolean>(false);
 
   return (
     <MessageContainer onMouseLeave={() => setIsShown(false)}>

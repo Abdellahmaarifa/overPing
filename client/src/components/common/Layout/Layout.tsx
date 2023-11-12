@@ -6,8 +6,11 @@ import useLayoutContextProvider, {
 } from "context/layout.context";
 import { Outlet } from "react-router-dom";
 
+import useSettingsContextProvider from "context/settings.context";
 import tw from "twin.macro";
+import Settings from "../Settings/Settings";
 const temp = tw.a``;
+
 const LayoutOutlet = () => {
   const {
     userMenuState: [_openUserMenu, setOpenUserMenu],
@@ -28,12 +31,16 @@ const LayoutOutlet = () => {
 
 const Layout = () => {
   const LayoutContextProvider = useLayoutContextProvider();
+  const SettingsContextProvider = useSettingsContextProvider();
   return (
     <div tw="w-full h-full min-h-screen flex justify-center items-start bg-[#0F1A24] overflow-hidden">
       <LayoutContextProvider>
-        <TopNavBar />
-        <LeftNavBar />
-        <LayoutOutlet />
+        <SettingsContextProvider>
+          <TopNavBar />
+          <LeftNavBar />
+          <LayoutOutlet />
+          <Settings />
+        </SettingsContextProvider>
       </LayoutContextProvider>
     </div>
   );
