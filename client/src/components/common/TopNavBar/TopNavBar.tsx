@@ -30,6 +30,7 @@ import {
 import ViewModel from "./TopNavBarViewModel";
 import { useLayoutContext } from "context/layout.context";
 import Skeleton from "react-loading-skeleton";
+import { useSettingsContext } from "context/settings.context";
 
 const NavLink = tw.div`flex justify-center items-center h-[24px] md:w-[48px] md:h-[48px]`;
 const TopNavBar = () => {
@@ -39,7 +40,9 @@ const TopNavBar = () => {
   const [_cookie, setCookie, removeCookie] = useCookies();
   const viewModel = new ViewModel();
   const { data, loading, error } = viewModel.userQuery;
-
+  const {
+    settingsModel: [_settingsModel, setSettingsModel],
+  } = useSettingsContext();
   if (error) console.log(error);
   return (
     <TopNavBarContainer onClick={() => setOpenSettings(false)}>
@@ -111,7 +114,11 @@ const TopNavBar = () => {
               <UserBoxMenuItemText>View My Profile</UserBoxMenuItemText>
               <EyeIcon />
             </UserBoxMenuItem>
-            <UserBoxMenuItem>
+            <UserBoxMenuItem
+              onClick={() => {
+                setSettingsModel(true);
+              }}
+            >
               <UserBoxMenuItemText>Settings</UserBoxMenuItemText>
               <SettingsIcon />
             </UserBoxMenuItem>
@@ -119,7 +126,7 @@ const TopNavBar = () => {
               <UserBoxMenuItemText style={{ color: "#8E3928" }}>
                 Logout
               </UserBoxMenuItemText>
-              <LogoutIcon />
+              <LogoutIcon style={{ fill: "#8E3928" }} />
             </UserBoxMenuItem>
           </UserBoxMenu>
         </UserBox>

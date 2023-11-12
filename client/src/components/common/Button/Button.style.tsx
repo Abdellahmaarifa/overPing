@@ -2,7 +2,7 @@ import tw, { styled } from "twin.macro";
 
 export interface ButtonLinkProps {
   $icon?: boolean;
-  $size?: "sm" | "md" | "xl";
+  $size?: "sm" | "md" | "xl" | "auto";
   $border?: boolean;
   $text?: string;
   $theme?: "dark" | "white" | "blue";
@@ -19,7 +19,10 @@ const getBaseStyles = () => tw`
   relative overflow-hidden h-10 rounded flex items-center justify-center
 `;
 
-const getIconGapStyles = (icon?: boolean, size?: "sm" | "md" | "xl") => {
+const getIconGapStyles = (
+  icon?: boolean,
+  size?: "sm" | "md" | "xl" | "auto"
+) => {
   return icon ? (size === "sm" ? tw`gap-2` : tw`gap-3`) : null;
 };
 
@@ -59,7 +62,7 @@ const getBgStyles = (
   return !transparent && (theme === "blue" ? tw`bg-btn-blue!` : null);
 };
 
-const getSizeStyles = (size?: "sm" | "md" | "xl") => {
+const getSizeStyles = (size?: "sm" | "md" | "xl" | "auto") => {
   return size === "md"
     ? tw`w-[148px]`
     : size === "xl"
