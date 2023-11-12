@@ -8,10 +8,12 @@ export const FriendsConatiner = tw.div`
     top-[10px]
     sm:pr-[10px]
     sm:pl-[10px]
-    p-[0]
+    p-[15px]
+    md:ml-[80px]
+    md:mr-[10px]
     max-w-[1086px]
-    [margin: auto]
-
+    xl:[margin: auto]
+    pt-[75px]
 `;
 
 export const FriendsFilterConatiner = tw.div`
@@ -76,9 +78,9 @@ export const FriendsFilterHeader = tw.h3`
 export const FriendList = tw.div`
     grid
     grid-cols-1
-    xs:grid-cols-2
-    md:grid-cols-3
-    lg:grid-cols-4
+    xs:[grid-template-columns: repeat(2, 205px)]
+    md:[grid-template-columns: repeat(3, 205px)]
+    lg:[grid-template-columns: repeat(4, 205px)]
     xl:grid-cols-5
     justify-center
     items-center
