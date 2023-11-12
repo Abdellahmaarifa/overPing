@@ -1,6 +1,6 @@
 import tw from "twin.macro";
 
-export const HomeConatiner = tw.div`w-full min-h-screen flex flex-col justify-start items-start gap-[32px] p-[15px] pt-[75px] md:ml-[72px]`;
+export const HomeConatiner = tw.div`w-full min-h-screen flex flex-col justify-start items-start gap-[32px] p-[15px]`;
 
 export const HomeBody = tw.div`
 w-full h-full xs:pl-[20px] xs:pr-[20px] md:pl-[49px] md:pr-[49px] flex justify-start items-center 

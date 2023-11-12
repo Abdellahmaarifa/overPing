@@ -18,7 +18,7 @@ const LayoutOutlet = () => {
   } = useLayoutContext();
   return (
     <div
-      tw="w-full min-h-screen h-screen max-h-fit p-0 overflow-scroll pt-[65px] md:ml-[72px]"
+      tw="w-full min-h-screen h-screen max-h-fit p-0 overflow-scroll pt-[65px] md:ml-[72px] flex justify-center "
       onClick={() => {
         setOpenUserMenu(false);
         setOpenMobileMenu(false);

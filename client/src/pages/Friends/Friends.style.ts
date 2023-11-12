@@ -9,11 +9,9 @@ export const FriendsConatiner = tw.div`
     sm:pr-[10px]
     sm:pl-[10px]
     p-[15px]
-    md:ml-[80px]
-    md:mr-[10px]
+
     max-w-[1086px]
     xl:[margin: auto]
-    pt-[75px]
 `;
 
 export const FriendsFilterConatiner = tw.div`
