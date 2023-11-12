@@ -6,13 +6,9 @@ import ShowPassIcon from "../../../assets/login/showPass.svg?react";
 import LoginViewModel from "./LoginViewModel";
 import { Group } from "./Login.style";
 import { LoginModelType } from "types/Login.type";
-import { useStateWithGetSet } from "helpers";
 
 const LoginView = () => {
-  const viewModel = new LoginViewModel({
-    error: useStateWithGetSet<"valid" | "invalid" | undefined>(undefined),
-    showPass: useStateWithGetSet(false),
-  });
+  const viewModel = new LoginViewModel();
   const { state } = viewModel;
   return (
     <Formik
@@ -33,6 +29,7 @@ const LoginView = () => {
               $state={state.error.get}
               onChange={handleChange}
               value={values.email}
+              $size="auto"
             />
             <Input
               placeholder="Password"
@@ -48,6 +45,7 @@ const LoginView = () => {
               $state={state.error.get}
               onChange={handleChange}
               value={values.password}
+              $size="auto"
             />
           </Group>
           <Button

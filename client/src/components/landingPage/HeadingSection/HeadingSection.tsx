@@ -6,8 +6,10 @@ import {
   Paragraph,
   Heading,
 } from "./HeadingSection.style";
+import { useNavigate } from "react-router-dom";
 
 const HeadingSection = () => {
+  const navigate = useNavigate();
   return (
     <HeadingSectionContainer>
       <Heading>
@@ -25,6 +27,7 @@ const HeadingSection = () => {
         $border={false}
         $transparent={false}
         $theme="white"
+        onClick={() => navigate("/game")}
       ></Button>
     </HeadingSectionContainer>
   );

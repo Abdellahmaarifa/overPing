@@ -32,8 +32,9 @@ const Login = () => {
     console.log(res);
   }
   const display = false;
+  const history = location?.state?.from?.pathname;
   return user ? (
-    <Navigate to="/" />
+    <Navigate to={history || "/"} />
   ) : (
     <PageContainer>
       <FormContainer>

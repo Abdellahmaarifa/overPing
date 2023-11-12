@@ -1,25 +1,27 @@
 import { useUserContext } from "context/user.context";
+import { sleep, useStateWithGetSet } from "helpers";
 import { toast } from "react-hot-toast";
 import {
   LoginModelType,
-  LoginViewState,
   LoginViewModelType,
+  LoginViewState,
 } from "types/Login.type";
 import { useLoginMutation } from "../../../graphql";
 import { LoginModel } from "./LoginModel";
-import { sleep } from "helpers";
-
 class LoginViewModel implements LoginViewModelType {
   data: LoginModel;
   loginMutation: any;
   userContext: any;
   state: LoginViewState;
 
-  constructor(state: LoginViewState) {
+  constructor() {
     this.data = new LoginModel();
     [this.loginMutation] = useLoginMutation();
     this.userContext = useUserContext();
-    this.state = state;
+    this.state = {
+      error: useStateWithGetSet<"valid" | "invalid" | undefined>(undefined),
+      showPass: useStateWithGetSet(false),
+    };
   }
 
   handleSubmit = async (values: LoginModelType) => {

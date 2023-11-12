@@ -14,6 +14,7 @@ import {
   StopScroll,
 } from "./Navbar.style";
 import Button from "components/common/Button/Button";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +22,7 @@ const Navbar = () => {
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+  const navigate = useNavigate();
   return (
     <nav tw="w-full z-[1]">
       {isOpen && <StopScroll />}
@@ -28,7 +30,7 @@ const Navbar = () => {
         <Container>
           <LogoContainer>Logo</LogoContainer>
           <NavLinks>
-            <NavLink href="#home">Home</NavLink>
+            <NavLink href="/login">Home</NavLink>
             <NavLink href="#whyus">Why us</NavLink>
             <NavLink href="#meetus">Meet us</NavLink>
           </NavLinks>
@@ -37,7 +39,7 @@ const Navbar = () => {
               $text="Login"
               $border={true}
               $transparent={true}
-              $link="login"
+              onClick={() => navigate("/login")}
             />
           </LoginButtonContainer>
           <MobileMenuButton
@@ -91,7 +93,7 @@ const Navbar = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-                href="#home"
+                href="/login"
                 onClick={toggleMenu}
               >
                 Home
@@ -121,7 +123,7 @@ const Navbar = () => {
                   $text="Login"
                   $border={true}
                   $transparent={true}
-                  $link="/login"
+                  onClick={() => navigate("/login")}
                 />
               </LoginButtonContainer>
             </NavLinks>
