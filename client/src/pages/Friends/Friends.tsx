@@ -4,12 +4,7 @@ import Button from "components/common/Button/Button";
 import {
   FilterList,
   FilterListItem,
-  FriendAction,
-  FriendImage,
-  FriendImageConatiner,
   FriendList,
-  FriendName,
-  FriendProfile,
   FriendSearch,
   FriendSearchIcon,
   FriendsConatiner,
@@ -21,44 +16,7 @@ import {
 
 import { faker } from "@faker-js/faker";
 import { useEffect, useState } from "react";
-const UserProfile = ({
-  primaryAction,
-  secondaryAction,
-  name,
-  image,
-}: {
-  primaryAction?: string;
-  secondaryAction?: string;
-  name: string;
-  image: string;
-}) => {
-  return (
-    <FriendProfile>
-      <FriendImageConatiner>
-        <FriendImage
-          style={{
-            background: `url(${image}) center/cover`,
-          }}
-        />
-        <FriendName>{name}</FriendName>
-      </FriendImageConatiner>
-      <FriendAction>
-        {primaryAction && (
-          <Button $text={primaryAction} $size="auto" $theme="blue" />
-        )}
-        {secondaryAction && (
-          <Button
-            $text={secondaryAction}
-            $transparent={true}
-            $border={true}
-            $size="auto"
-          />
-        )}
-      </FriendAction>
-    </FriendProfile>
-  );
-};
-
+import UserProfile from "components/friends/UserProfile/UserProfile";
 const FILTERS = {
   ONLINE: "online friends",
   REQUEST: "friens request",
