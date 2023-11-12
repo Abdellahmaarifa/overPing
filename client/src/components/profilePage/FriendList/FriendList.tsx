@@ -12,8 +12,10 @@ import {
 import { useEffect, useState } from "react";
 import DotsIcon from "assets/common/dots.svg?react";
 import Button from "components/common/Button/Button";
+import { useNavigate } from "react-router-dom";
 const FriendList = () => {
   const [friends, setFriends] = useState<User[]>([]);
+  const navigate = useNavigate();
   useEffect(() => {
     setFriends(getFriends());
   }, []);
@@ -36,7 +38,11 @@ const FriendList = () => {
           </Friend>
         ))}
       </FriendListWrapper>
-      <Button $text="See more" $transparent={true} />
+      <Button
+        $text="See more"
+        $transparent={true}
+        onClick={() => navigate("/friends")}
+      />
     </FriendListContainer>
   );
 };

@@ -1,7 +1,7 @@
 import tw from "twin.macro";
 
 export const BannerConatiner = tw.div`
-bg-center bg-cover
+bg-center bg-cover overflow-hidden
      z-[1] min-w-[300px] w-full h-[172px] rounded-bl-[14px] rounded-br-[14px] md:rounded-[16px] relative  max-w-[1126px] md:h-[256px] 
 `;
 
@@ -71,8 +71,9 @@ export const ExtraMenu = tw.div`
     rounded-[4px]
     p-[16px]
     absolute
-    -left-[130px]
-    -bottom-[88px]
+    right-[10px]
+    md:-right-[0]
+    -bottom-[80px]
     z-10
     flex
     flex-col
