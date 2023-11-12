@@ -170,6 +170,8 @@ export const UserBoxMenuItem = tw.div`
     justify-between 
     w-full 
     cursor-pointer
+    [&>svg]:w-[12px]
+    [&>svg]:fill-[#808080]
 `;
 
 export const UserBoxMenuItemText = tw.span`
