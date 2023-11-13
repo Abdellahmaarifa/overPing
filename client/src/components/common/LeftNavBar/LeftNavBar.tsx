@@ -39,6 +39,9 @@ const Navbar = () => {
   const {
     settingsModel: [settingsModel, setSettingsModel],
   } = useSettingsContext();
+  useEffect(() => {
+    setOpenMobileMenu(false);
+  }, [location.pathname]);
   return (
     <NavbarContainer
       onClick={() => setOpenUserMenu(false)}

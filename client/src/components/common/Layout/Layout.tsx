@@ -6,6 +6,7 @@ import useLayoutContextProvider, {
 } from "context/layout.context";
 import { Outlet } from "react-router-dom";
 
+import useChatContextProvider from "context/chat.context";
 import useSettingsContextProvider from "context/settings.context";
 import tw from "twin.macro";
 import Settings from "../Settings/Settings";
@@ -32,14 +33,17 @@ const LayoutOutlet = () => {
 const Layout = () => {
   const LayoutContextProvider = useLayoutContextProvider();
   const SettingsContextProvider = useSettingsContextProvider();
+  const ChatContextProvider = useChatContextProvider();
   return (
     <div tw="w-full h-full min-h-screen flex justify-center items-start bg-[#0F1A24] overflow-hidden">
       <LayoutContextProvider>
         <SettingsContextProvider>
-          <TopNavBar />
-          <LeftNavBar />
-          <LayoutOutlet />
-          <Settings />
+          <ChatContextProvider>
+            <TopNavBar />
+            <LeftNavBar />
+            <LayoutOutlet />
+            <Settings />
+          </ChatContextProvider>
         </SettingsContextProvider>
       </LayoutContextProvider>
     </div>

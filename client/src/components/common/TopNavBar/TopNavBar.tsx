@@ -31,6 +31,7 @@ import ViewModel from "./TopNavBarViewModel";
 import { useLayoutContext } from "context/layout.context";
 import Skeleton from "react-loading-skeleton";
 import { useSettingsContext } from "context/settings.context";
+import { useChatContext } from "context/chat.context";
 
 const NavLink = tw.div`flex justify-center items-center h-[24px] md:w-[48px] md:h-[48px]`;
 const TopNavBar = () => {
@@ -43,9 +44,21 @@ const TopNavBar = () => {
   const {
     settingsModel: [_settingsModel, setSettingsModel],
   } = useSettingsContext();
+  const {
+    showChatMenu: [showChatMenu, setShowChatMenu],
+    showChatAbout: [showChatAbout, setShowChatAbout],
+    showFriends: [showFriends, setShowFriends],
+  } = useChatContext();
   if (error) console.log(error);
   return (
-    <TopNavBarContainer onClick={() => setOpenSettings(false)}>
+    <TopNavBarContainer
+      onClick={() => {
+        setOpenSettings(false);
+        setShowChatMenu(false);
+        setShowChatAbout(false);
+        setShowFriends(false);
+      }}
+    >
       {/* Logo */}
       <LogoContainer>
         <Logo />

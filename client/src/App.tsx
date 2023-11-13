@@ -46,7 +46,10 @@ const App: React.FC = () => {
           <Route element={user && <Layout />}>
             <Route path="/" element={user ? <Home /> : <LandingPage />} />
             <Route element={<ProtectedRoutes user={user} />}>
-              <Route path="chat" element={<Chat />} />
+              <Route path="chat" element={<Chat />}>
+                <Route path=":id" />
+                <Route path="channel/:id" />
+              </Route>
 
               <Route path="friends" element={<Friends />} />
               <Route path="profile/:id" element={<Profile />} />

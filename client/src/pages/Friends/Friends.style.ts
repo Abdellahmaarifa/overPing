@@ -11,7 +11,6 @@ export const FriendsConatiner = tw.div`
     p-[15px]
 
     max-w-[1086px]
-    xl:[margin: auto]
 `;
 
 export const FriendsFilterConatiner = tw.div`
