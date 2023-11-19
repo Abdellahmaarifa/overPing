@@ -152,5 +152,26 @@
     "password": "$2b$12$MMSXd9GwirHknV9RgSdxuuZQedeJxuUoNGrwUJg.SLGcm/SnTXtRq",
     "userName": "amaarifa",
     "profilePhoto": "data/uploads/e7c40d50-d373-4802-8adf-e887188605d5-maarifa1.png"
+  },
+  {
+    "id": "Q3MjYDJ__TGZZVP5oOUtw",
+    "email": "mounia13@gmail.com",
+    "password": "$2b$12$RlQzcv3tf8i3Ip4NEhbnUOdV52p1y0Oji9c4yDCbIkQPACyTsEFL6",
+    "userName": "mounia13",
+    "profilePhoto": "data/uploads/c91753f4-7ca9-4c78-b3fb-d1ec510c27a0-2722697-gon_freecss_2617.jpg"
+  },
+  {
+    "id": "iFAgCqHwXFIs49vGUVmwm",
+    "email": "slfjsj@gmail.com",
+    "password": "$2b$12$PyNurirw85jUZzKZN7h0MeTga1grKycffyAU4jfu8nO16kxUUtEPq",
+    "userName": "oshen777",
+    "profilePhoto": "data/uploads/926d5e61-552e-4ffa-81b6-7ca52af298fa-2722697-gon_freecss_2617.jpg"
+  },
+  {
+    "id": "3hbiMkcvHjT90f8OWLfUQ",
+    "email": "yassin7777@gmail.com",
+    "password": "$2b$12$fjZoo.W0gSbH76y25vbWj.3yHUQE2Pn.zAwi54IzPQNbqkwRMte5e",
+    "userName": "oshen7777",
+    "profilePhoto": "data/uploads/8ed316fd-bbef-4d64-8ae0-f5409ff4f72b-2722697-gon_freecss_2617.jpg"
   }
 ]

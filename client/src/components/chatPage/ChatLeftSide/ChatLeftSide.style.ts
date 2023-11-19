@@ -98,6 +98,7 @@ export const MessagesHeaderIcon = tw.div`
     h-[16px]
     [&>*]:w-full
     [&>*]:h-full
+    cursor-pointer
 `;
 
 export const MessagesContent = tw.div`

@@ -18,6 +18,8 @@ import {
   UserProfile,
 } from "./ChatRightSide.style";
 import { useChatContext } from "context/chat.context";
+import { ChannelMember } from "../ChannelMembers/ChannelMembers.style";
+import ChannelMembers from "../ChannelMembers/ChannelMembers";
 
 const ChatRightSide = () => {
   const {
@@ -35,7 +37,7 @@ const ChatRightSide = () => {
       }
     >
       {showFriends ? (
-        <h1>friends</h1>
+        <ChannelMembers />
       ) : (
         <>
           <UserProfile>

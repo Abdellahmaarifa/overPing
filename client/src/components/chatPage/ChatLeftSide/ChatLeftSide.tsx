@@ -28,8 +28,8 @@ import { useChatContext } from "context/chat.context";
 const ChatLeftSide = () => {
   const {
     showChatMenu: [showChatMenu, setShowChatMenu],
-
     showSearchModel: [showSearchModel, setShowSearchModel],
+    showChannelModel: [showChannelModel, setShowChannelModel],
   } = useChatContext();
 
   return (
@@ -53,7 +53,11 @@ const ChatLeftSide = () => {
       <MessagesBox>
         <MessagesHeaderContainer>
           <MessagesHeader>channels</MessagesHeader>
-          <MessagesHeaderIcon>
+          <MessagesHeaderIcon
+            onClick={() => {
+              setShowChannelModel(true);
+            }}
+          >
             <PlusIcon />
           </MessagesHeaderIcon>
         </MessagesHeaderContainer>

@@ -50,12 +50,14 @@ const SetPasswordModel = () => {
           placeholder="Enter your Current Password (required)"
         />
       </SetPassField>
-      <Switcher
-        title="Two-Factor Authentication"
-        description="You need to set up Google Authenticator on your phone to activate your account."
-      />
       <SetPassField>
-        <Button $text="submit" $size="auto" $disabled={true} />
+        <Switcher
+          title="Two-Factor Authentication"
+          description="You need to set up Google Authenticator on your phone to activate your account."
+        />
+        <SetPassField>
+          <Button $text="submit" $size="auto" $disabled={true} />
+        </SetPassField>
       </SetPassField>
     </SettingModelContainer>
   );

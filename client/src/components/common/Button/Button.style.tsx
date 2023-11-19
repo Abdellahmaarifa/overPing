@@ -15,7 +15,7 @@ export interface ButtonLinkProps {
 }
 
 const getBaseStyles = () => tw`
-  font-inter text-base font-semibold cursor-pointer ease-in-out duration-300 
+  font-inter text-[12px] xs:text-base font-semibold cursor-pointer ease-in-out duration-300 
   relative overflow-hidden h-10 rounded flex items-center justify-center
 `;
 

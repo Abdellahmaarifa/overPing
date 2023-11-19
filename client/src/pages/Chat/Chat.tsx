@@ -1,3 +1,4 @@
+import ChannelModel from "components/chatPage/ChannelModel/ChannelModel";
 import { ChatConatiner } from "./Chat.style";
 
 import ChatRightSide from "components/chatPage/CharRightSide/ChatRightSide";
@@ -9,6 +10,7 @@ import useChatContextProvider, { useChatContext } from "context/chat.context";
 const Chat = () => {
   const {
     showSearchModel: [showSearchModel, setShowSearchModel],
+    showChannelModel: [showChannelModel, setShowChannelModel],
   } = useChatContext();
   return (
     <ChatConatiner>
@@ -16,6 +18,7 @@ const Chat = () => {
       <ChatBody />
       <ChatRightSide />
       {showSearchModel && <ChatSearch />}
+      {showChannelModel && <ChannelModel />}
     </ChatConatiner>
   );
 };
