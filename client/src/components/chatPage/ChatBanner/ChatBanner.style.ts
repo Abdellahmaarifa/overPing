@@ -50,7 +50,6 @@ export const ChatBannerIcon = tw.div`
 
 export const ExtraMenu = tw.div`
     w-[156px]
-    h-[150px]
     absolute
     right-0
     top-[33px]
@@ -59,8 +58,20 @@ export const ExtraMenu = tw.div`
     flex
     flex-col
     gap-[8px]
+    p-[16px]
 `;
 
 export const ExtraMenuLink = tw.span`
-    
+    text-[#B6BAC0]
+    font-inter
+    text-[12px]
+    cursor-pointer
+
+`;
+
+export const ExtraMenuLinkDanger = tw.span`
+    text-[#8E3928]
+    font-inter
+    text-[12px]
+    cursor-pointer
 `;

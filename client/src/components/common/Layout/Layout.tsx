@@ -6,10 +6,11 @@ import useLayoutContextProvider, {
 } from "context/layout.context";
 import { Outlet } from "react-router-dom";
 
-import useChatContextProvider from "context/chat.context";
+import useChatContextProvider, { useChatContext } from "context/chat.context";
 import useSettingsContextProvider from "context/settings.context";
 import tw from "twin.macro";
 import Settings from "../Settings/Settings";
+import ConfirmModel from "../ConfirmModel/ConfirmModel";
 const temp = tw.a``;
 
 const LayoutOutlet = () => {
@@ -17,12 +18,18 @@ const LayoutOutlet = () => {
     userMenuState: [_openUserMenu, setOpenUserMenu],
     mobileMenuState: [_openMobileMenu, setOpenMobileMenu],
   } = useLayoutContext();
+  const {
+    showSearchModel: [showSearchModel, setShowSearchModel],
+    showChannelModel: [showChannelModel, setShowChannelModel],
+    showChannelMenu: [showChannelMenu, setShowChannelMenu],
+  } = useChatContext();
   return (
     <div
       tw="w-full min-h-screen h-screen max-h-fit p-0 overflow-scroll pt-[65px] md:ml-[72px] flex justify-center "
       onClick={() => {
         setOpenUserMenu(false);
         setOpenMobileMenu(false);
+        setShowChannelMenu(false);
       }}
     >
       {<Outlet />}
@@ -43,6 +50,14 @@ const Layout = () => {
             <LeftNavBar />
             <LayoutOutlet />
             <Settings />
+            {false && (
+              <ConfirmModel
+                header="are you sure?"
+                rejectText="No"
+                resolveText="yes"
+                confirm={true}
+              />
+            )}
           </ChatContextProvider>
         </SettingsContextProvider>
       </LayoutContextProvider>

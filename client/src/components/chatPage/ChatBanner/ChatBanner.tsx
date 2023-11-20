@@ -1,6 +1,6 @@
 import { useChatContext } from "context/chat.context";
 import { useLayoutContext } from "context/layout.context";
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import ChatMobIcon from "assets/common/chat-mob.svg?react";
@@ -13,19 +13,22 @@ import {
   ChatBannerLeft,
   ChatBannerRight,
   ExtraMenu,
+  ExtraMenuLink,
+  ExtraMenuLinkDanger,
 } from "./ChatBanner.style";
 const ChatBanner = () => {
   const [isChannel, setIsChannel] = useState(false);
-
   const { mobileMenuState } = useLayoutContext();
   const [mobileMenu, setMobileMenu] = mobileMenuState;
   const location = useLocation();
   const {
     showChatAbout: [showChatAbout, setShowChatAbout],
+    showChannelMenu: [showChannelMenu, setShowChannelMenu],
   } = useChatContext();
   const {
     showChatMenu: [showChatMenu, setShowChatMenu],
     showFriends: [showFriends, setShowFriends],
+    showSearchModel: [showSearchModel, setShowSearchModel],
   } = useChatContext();
   useEffect(() => {
     if (location.pathname.includes("channel")) setIsChannel(true);
@@ -72,8 +75,41 @@ const ChatBanner = () => {
         </ChatBannerIcon>
         {isChannel && (
           <ChatBannerIcon>
-            <DotsIcon />
-            <ExtraMenu />
+            <DotsIcon
+              onClick={(e: MouseEvent) => {
+                e.stopPropagation();
+                setShowChannelMenu(!showChannelMenu);
+              }}
+            />
+            <ExtraMenu
+              style={{
+                display: showChannelMenu ? "flex" : "none",
+              }}
+            >
+              <ExtraMenuLink
+                onClick={() => {
+                  setShowSearchModel(true);
+                }}
+              >
+                Add Admin
+              </ExtraMenuLink>
+              <ExtraMenuLink
+                onClick={() => {
+                  setShowSearchModel(true);
+                }}
+              >
+                Add Member
+              </ExtraMenuLink>
+              <ExtraMenuLink
+                onClick={() => {
+                  setShowSearchModel(true);
+                }}
+              >
+                Edit Channel
+              </ExtraMenuLink>
+              <ExtraMenuLinkDanger>Delete Channel</ExtraMenuLinkDanger>
+              <ExtraMenuLinkDanger>Leave Channel</ExtraMenuLinkDanger>
+            </ExtraMenu>
           </ChatBannerIcon>
         )}
       </ChatBannerRight>

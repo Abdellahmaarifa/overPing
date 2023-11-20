@@ -29,6 +29,8 @@ const getBorderStyle = (border?: boolean) => {
 const getBackgroundColor = (bgColor?: string) => {
   return bgColor === "dark"
     ? tw`bg-[#1C232A] placeholder:text-[#4C4C57]`
+    : bgColor === "darker"
+    ? tw`bg-[#161C21] placeholder:text-[#4C4C57] border-[#161C21]`
     : tw`bg-[transparent]`;
 };
 

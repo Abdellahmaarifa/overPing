@@ -6,6 +6,7 @@ import ChatBody from "components/chatPage/ChatBody/ChatBody";
 import ChatLeftSide from "components/chatPage/ChatLeftSide/ChatLeftSide";
 import ChatSearch from "components/chatPage/ChatSearch/ChatSearch";
 import useChatContextProvider, { useChatContext } from "context/chat.context";
+import EditChannelModel from "components/chatPage/EditChannelModel /EditChannelModel";
 
 const Chat = () => {
   const {
@@ -19,6 +20,7 @@ const Chat = () => {
       <ChatRightSide />
       {showSearchModel && <ChatSearch />}
       {showChannelModel && <ChannelModel />}
+      {true && <EditChannelModel />}
     </ChatConatiner>
   );
 };

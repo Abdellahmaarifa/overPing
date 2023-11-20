@@ -17,6 +17,7 @@ const ChatBody = () => {
   const {
     showChatMenu: [showChatMenu, setShowChatMenu],
     showFriends: [showFriends, setShowFriends],
+    showChannelMenu: [showChannelMenu, setShowChannelMenu],
   } = useChatContext();
 
   return (
@@ -25,6 +26,7 @@ const ChatBody = () => {
         setShowChatMenu(false);
         setShowChatAbout(false);
         setShowFriends(false);
+        setShowChannelMenu(false);
       }}
     >
       <ChatBanner />

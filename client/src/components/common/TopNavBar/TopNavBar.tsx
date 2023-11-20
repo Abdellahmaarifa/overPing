@@ -48,6 +48,7 @@ const TopNavBar = () => {
     showChatMenu: [showChatMenu, setShowChatMenu],
     showChatAbout: [showChatAbout, setShowChatAbout],
     showFriends: [showFriends, setShowFriends],
+    showChannelMenu: [showChannelMenu, setShowChannelMenu],
   } = useChatContext();
   if (error) console.log(error);
   return (
@@ -57,6 +58,7 @@ const TopNavBar = () => {
         setShowChatMenu(false);
         setShowChatAbout(false);
         setShowFriends(false);
+        setShowChannelMenu(false);
       }}
     >
       {/* Logo */}

@@ -8,6 +8,7 @@ type ChatCtxType = {
   showFriends: UseStateType<Boolean>;
   showSearchModel: UseStateType<Boolean>;
   showChannelModel: UseStateType<Boolean>;
+  showChannelMenu: UseStateType<Boolean>;
 };
 
 export class ChatContextValue implements ChatCtxType {
@@ -16,12 +17,14 @@ export class ChatContextValue implements ChatCtxType {
   showFriends: UseStateType<Boolean>;
   showSearchModel: UseStateType<Boolean>;
   showChannelModel: UseStateType<Boolean>;
+  showChannelMenu: UseStateType<Boolean>;
   constructor() {
     this.showChatMenu = useState<Boolean>(false);
     this.showChatAbout = useState<Boolean>(false);
     this.showFriends = useState<Boolean>(false);
     this.showSearchModel = useState<Boolean>(false);
     this.showChannelModel = useState<Boolean>(false);
+    this.showChannelMenu = useState<Boolean>(false);
   }
 }
 
@@ -31,6 +34,7 @@ const ChatContext = createContext<ChatCtxType>({
   showFriends: [false, () => {}],
   showSearchModel: [false, () => {}],
   showChannelModel: [false, () => {}],
+  showChannelMenu: [false, () => {}],
 });
 
 type Props = {
