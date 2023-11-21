@@ -5,7 +5,7 @@ export interface ButtonLinkProps {
   $size?: "sm" | "md" | "xl" | "auto";
   $border?: boolean;
   $text?: string;
-  $theme?: "dark" | "white" | "blue";
+  $theme?: "dark" | "white" | "blue" | "danger";
   $transparent?: boolean;
   $disabled?: boolean;
   $Icon?: React.FC;
@@ -15,7 +15,7 @@ export interface ButtonLinkProps {
 }
 
 const getBaseStyles = () => tw`
-  font-inter text-base font-semibold cursor-pointer ease-in-out duration-300 
+  font-inter text-[12px] xs:text-base font-semibold cursor-pointer ease-in-out duration-300 
   relative overflow-hidden h-10 rounded flex items-center justify-center
 `;
 
@@ -27,7 +27,7 @@ const getIconGapStyles = (
 };
 
 const getTextAndBgColorStyles = (
-  theme?: "dark" | "white" | "blue",
+  theme?: "dark" | "white" | "blue" | "danger",
   transparent?: boolean
 ) => {
   if (!transparent) {
@@ -35,6 +35,8 @@ const getTextAndBgColorStyles = (
       ? tw`text-btn-white bg-btn-black!`
       : theme === "white"
       ? tw`text-btn-black bg-btn-white!`
+      : theme === "danger"
+      ? tw`text-[#8E3928]`
       : tw`text-btn-white`;
   } else {
     return tw`text-btn-white`;
@@ -43,19 +45,21 @@ const getTextAndBgColorStyles = (
 
 const getBorderStyles = (
   border?: boolean,
-  theme?: "dark" | "white" | "blue"
+  theme?: "dark" | "white" | "blue" | "danger"
 ) => {
   return (
     border &&
     (theme === "blue"
       ? tw`border-[1px] border-solid border-btn-blue`
+      : theme == "danger"
+      ? tw`border-[1px] border-solid border-[#8E3928]`
       : tw`border-[1px] border-solid border-btn-white`)
   );
 };
 
 const getBgStyles = (
   transparent?: boolean,
-  theme?: "dark" | "white" | "blue"
+  theme?: "dark" | "white" | "blue" | "danger"
 ) => {
   return !transparent && (theme === "blue" ? tw`bg-btn-blue!` : null);
 };
@@ -76,7 +80,7 @@ const getTextPaddingStyles = (text?: string) => {
 
 const getDisabledStyles = (
   disable?: boolean,
-  theme?: "dark" | "white" | "blue"
+  theme?: "dark" | "white" | "blue" | "danger"
 ) => {
   if (disable) {
     return theme === "white"

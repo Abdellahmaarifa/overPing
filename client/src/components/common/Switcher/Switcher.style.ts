@@ -1,7 +1,6 @@
 import tw from "twin.macro";
 export const SettingModelSwitcherField = tw.div`
     w-[vw]
-    max-w-[300px]
     flex
     flex-col
     items-start
@@ -26,33 +25,46 @@ export const SettingModelSwitcherConatiner = tw.div`
 
 export const SettingModelSwitcherDescription = tw.p`
     font-rubik
-    text-[8px]
+    text-[10px]
     text-[#625959]
     [font-weight: 500]
 `;
 
 export const SettingModelSwitcherIcon = tw.div`
-    w-[18px]
-    h-[18px]
+    w-[20px]
+    h-[20px]
     [&>*]:w-full
     [&>*]:h-full
+    [&>*]:fill-[#B4B5CF]
 `;
 
 export const SettingModelSwitcherHeader = tw.h4`
     font-rubik
     text-[12px]
-    text-[#636472]
+    xs:text-[16px]
+    text-[#B4B5CF]
     [font-weight: 500]
 `;
 
 export const SettingModelSwitcher = tw.label`
 relative flex justify-between items-center  p-2 text-xl 
-w-[29px] h-[16px] right-0 cursor-pointer 
+xs:w-[45px] w-[35px] h-[20px] xs:h-[25px] right-0 cursor-pointer 
 `;
 export const SettingModelSwitcherInput = tw.input`
-absolute cursor-pointer left-1/2 -translate-x-1/2 w-full h-full  appearance-none rounded-md
+absolute cursor-pointer left-1/2 -translate-x-1/2 w-full 
+h-full  appearance-none rounded-md
     
 `;
 export const SettingModelSwitcherMask = tw.div`
-w-[29px] h-[16px] -ml-[10px] flex items-center flex-shrink-0  p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-[15px] after:h-[15px] after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-[8px] group-hover:after:translate-x-[1px]
+  border-solid border-[3px] border-[#18578F] bg-[#1F272E] 
+  box-border
+  xs:w-[45px] xs:h-[25px] w-[35px] h-[20px] -ml-[10px] flex items-center 
+  flex-shrink-0   p-[1px] xs:p-1  rounded-full duration-300
+   ease-in-out peer-checked:bg-[#18578F]
+   after:w-[15px] after:h-[15px] 
+   after:bg-white after:rounded-full
+    after:shadow-md after:duration-300 
+    peer-checked:after:translate-x-[12px]
+    xs:peer-checked:after:translate-x-[18px] 
+    group-hover:after:translate-x-[1px]
 `;

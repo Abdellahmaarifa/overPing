@@ -22,6 +22,7 @@ import { useLayoutContext } from "context/layout.context";
 import { useEffect } from "react";
 import tw, { css } from "twin.macro";
 import { useSettingsContext } from "context/settings.context";
+import { useChatContext } from "context/chat.context";
 const Navbar = () => {
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
@@ -39,9 +40,19 @@ const Navbar = () => {
   const {
     settingsModel: [settingsModel, setSettingsModel],
   } = useSettingsContext();
+
+  const {
+    showChannelMenu: [showChannelMenu, setShowChannelMenu],
+  } = useChatContext();
+  useEffect(() => {
+    setOpenMobileMenu(false);
+  }, [location.pathname]);
   return (
     <NavbarContainer
-      onClick={() => setOpenUserMenu(false)}
+      onClick={() => {
+        setOpenUserMenu(false);
+        setShowChannelMenu(false);
+      }}
       style={
         openMobileMenu
           ? {

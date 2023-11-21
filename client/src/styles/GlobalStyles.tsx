@@ -9,6 +9,9 @@ const CustomStyles = createGlobalStyle({
     WebkitTapHighlightColor: theme`colors.purple.500`,
     ...tw`antialiased min-w-[100vw] min-h-[100vh] bg-[#0F1A24] text-white`,
   },
+  "::-webkit-scrollbar": {
+    width: 0,
+  },
 });
 
 const GlobalStyles = () => (

@@ -27,7 +27,11 @@ const getBorderStyle = (border?: boolean) => {
 };
 
 const getBackgroundColor = (bgColor?: string) => {
-  return bgColor === "dark" ? tw`bg-[#1C232A]` : tw`bg-[transparent]`;
+  return bgColor === "dark"
+    ? tw`bg-[#1C232A] placeholder:text-[#4C4C57]`
+    : bgColor === "darker"
+    ? tw`bg-[#161C21] placeholder:text-[#4C4C57] border-[#161C21]`
+    : tw`bg-[transparent]`;
 };
 
 const getPlaceholderStyle = (placeholder?: string) => {
@@ -46,9 +50,13 @@ const getStateColor = (state?: string) => {
   return state === "valid" ? tw`border-[#34e4a2]` : tw`border-[#f5425c]`;
 };
 
-const getSizeStyle = (size?: string, type?: string) => {
+const getTypeStyle = (type?: string) => {
+  if (type === "longText")
+    return tw`h-[90px] justify-start items-start flex text-start`;
   if (type === "QR")
     return tw`w-[160px] h-[160px] text-[12px] justify-center items-center text-center pr-[0]`;
+};
+const getSizeStyle = (size?: string) => {
   if (size === "auto") return tw`w-full h-[40px]`;
   if (size === "md") return tw`w-[160px] h-[40px]`;
   if (size) return tw`w-[344px] h-[40px]`;
@@ -61,7 +69,8 @@ const InputBox = styled.input<InputBoxProps>(
     getPlaceholderStyle($placeholder),
     getCustomTheme($theme),
     getStateColor($state),
-    getSizeStyle($size, $type),
+    getSizeStyle($size),
+    getTypeStyle($type),
   ]
 );
 
@@ -75,4 +84,19 @@ export const InputBoxIcon = ({ Icon }: { Icon: IconPass }) => {
     </div>
   );
 };
+
+export const Textarea = tw.textarea`
+  outline-none
+  focus:outline-none
+  bg-[#1C232A]
+  rounded-[5px]
+  border-[1px]
+  border-solid
+  border-[#4C4C57]
+  [padding: 4px 8px]
+  h-[80px]
+  resize-none
+  placeholder:text-[#4C4C57]
+  w-full
+`;
 export default InputBox;
