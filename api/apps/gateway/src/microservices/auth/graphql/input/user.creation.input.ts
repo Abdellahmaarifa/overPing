@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 
 @InputType()
-export class UserCreationIput {
+export class UserCreationInput {
   @Field()
   @IsString()
   @MinLength(8)

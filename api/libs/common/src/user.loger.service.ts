@@ -11,8 +11,7 @@ export class  LoggerService {
 	const brightBlue = "\x1b[94m";
 	const brightMagenta = "\x1b[95m";
 	const brightCyan = "\x1b[96m";
-
-        console.log(`${brightBlue}[${serviceName}]${resetColor} - ${brightCyan}[${functionName}]${resetColor} - ${brightMagenta}${action}:${resetColor} ${lightRed}${data}${resetColor}`);
+        console.log(`${brightBlue}[${serviceName}]${resetColor} - ${brightCyan}[${functionName}]${resetColor} - ${brightMagenta}${action}:${resetColor} ${lightRed}`,data,`${resetColor}`);
     }
 }
 

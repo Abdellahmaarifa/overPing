@@ -78,7 +78,7 @@ services:
       context: ./api
       dockerfile: ./apps/gateway/Dockerfile
       target: development
-    command: npm run start:dev gateway
+    command: yarn start:dev gateway
     env_file:
       - ./api/.env
     networks:
@@ -87,7 +87,6 @@ services:
       - ${GATEWAY_PORT}:5500
     volumes:
       - ./api:/usr/src/app
-      - /usr/src/app/node_modules
     depends_on:
       - rabbitmq
     restart: always
@@ -101,7 +100,7 @@ services:
       context: ./api
       dockerfile: ./apps/auth/Dockerfile
       target: development
-    command: npm run start:dev auth
+    command: yarn start:dev auth
     env_file:
       - ./api/.env
     networks:
@@ -112,7 +111,6 @@ services:
       
     volumes:
       - ./api:/usr/src/app
-      - /usr/src/app/node_modules
     depends_on:
       - rabbitmq
       - postgres_auth_db

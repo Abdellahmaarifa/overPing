@@ -1,18 +1,21 @@
 import { Module } from '@nestjs/common';
-import { GatewayService } from './microservices/auth/services/auth.service'; 
+import { GatewayService } from './microservices/auth/services/gw.auth.service'; 
 import { join } from 'path';
 import { RabbitMqModule } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
-import { AuthQueryResolver } from './microservices/auth/graphql/queries/auth.query.resolver'
-import { AuthMutationsResolver } from './microservices/auth/graphql/mutations/auth.mutations.resolver';
+import { AuthQueryResolver } from './microservices/auth/graphql/queries/gw.auth.query.resolver'
+import { AuthMutationsResolver } from './microservices/auth/graphql/mutations/gw.auth.mutations.resolver';
 import { PassportModule } from '@nestjs/passport';
 import { FortyTwoStrategy } from './microservices/auth/strategies/42.strategy';
 import { GoogleStrategy } from './microservices/auth/strategies/google.strategy';
-import { AuthController } from './microservices/auth/controllers/auth.controller';
+import { JwtAccessTokenStrategy } from './microservices/auth/strategies/jwt.accessToken.strategy';
+import { AuthController } from './microservices/auth/controllers/gw.auth.controller';
 import { UserService } from './microservices/auth/services';
-import { LoggerService } from '@app/common/loger';
+import { LoggerService } from '@app/common';
+import { JwtRefreshTokenStrategy } from './microservices/auth/strategies/jwt.refreshToken.strategy';
+import { UserAccessAuthorizationGuard } from './microservices/auth/guards/user-auth.guard';
 @Module({
   imports: [
     PassportModule,
@@ -43,7 +46,10 @@ import { LoggerService } from '@app/common/loger';
     AuthMutationsResolver,
     FortyTwoStrategy,
     GoogleStrategy,
+    JwtAccessTokenStrategy,
+    JwtRefreshTokenStrategy,
     LoggerService,
+    UserAccessAuthorizationGuard,
   ],
   controllers:[
     AuthController,

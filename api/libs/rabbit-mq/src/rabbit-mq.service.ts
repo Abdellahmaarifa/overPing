@@ -51,11 +51,35 @@ export class RabbitMqService {
     try {
       return await client.send(messagePattern, payload).toPromise();
     } catch (error) {
+      console.log("the error of the httpException comming from ther service ", error);
       throw new HttpException(error.errorStatus, error.statusCode);
     }
   }
 
 
+    /**
+   * Method used to send the request to the corresponding microservice. It accepts following parameters:
+   *
+   * - @param {ClientProxy} client - microservice client to send the message to
+   * - @param {IMessagePattern} messagePattern - object containing the pattern for a message (i.e. `{ role: 'user', cmd: 'create' }`)
+   * - @param {*} payload - data to send to the microservice client
+   *
+   * @return {*}  {Promise<any>} - returned response from a microservice or an adequate HTTP exception
+   */
+  async sendMessageWithoutPayload(
+    client: ClientProxy,
+    messagePattern: IMessagePattern,
+  ): Promise<any> {
+    try {
+	return await client.send(messagePattern, {}).toPromise();
+    } catch (error) {
+      throw new HttpException(error.errorStatus, error.statusCode);
+    }
+  }
+
+
+
+    
   /**
  * Method used to emit a message to the corresponding microservice. It accepts following parameters:
  *

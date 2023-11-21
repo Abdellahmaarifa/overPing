@@ -1,2 +1,2 @@
-export * from './auth.service'
-export * from './user.service'
+export * from './gw.auth.service'
+export * from './gw.user.service'

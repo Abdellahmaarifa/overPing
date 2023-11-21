@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -8,11 +9,12 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
-  password   String?
-  googleId   String?  @unique
-  fortyTwoId String?  @unique
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id	       Int	@id @default(autoincrement())
+  username     String   	@unique
+  password     String?
+  googleId     String?	@unique
+  fortyTwoId   String?	@unique
+  refreshToken String? 	@unique
+  createdAt    DateTime 	@default(now())
+  updatedAt    DateTime 	@updatedAt
 }

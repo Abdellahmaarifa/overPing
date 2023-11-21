@@ -4,7 +4,7 @@ import { GQLUserModel } from "./graphqlAuthUserModel"
 @ObjectType()
 export class UserWithAccessModel{
     @Field()
-    acessToken : string
+    accessToken : string
     @Field()
     user : GQLUserModel
 }

@@ -3,23 +3,34 @@
 # ------------------------------------------------------
 
 type GQLUserModel {
-  id: Float!
+  id: ID!
   username: String!
+  googleId: String
+  fortyTwoId: String
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type UserWithAccessModel {
-  acessToken: String!
+  accessToken: String!
   user: GQLUserModel!
 }
 
 type Query {
-  hello: String!
+  findById(id: Float!): GQLUserModel!
+  findAll: [GQLUserModel!]!
 }
 
 type Mutation {
   signIn(authCredentials: AuthCredentialsInput!): UserWithAccessModel!
-  singUp(userCreationIput: UserCreationIput!): UserWithAccessModel!
-  hello: String!
+  signUp(userCreationInput: UserCreationInput!): UserWithAccessModel!
+  removeUser(id: Float!): Boolean!
+  refresh: String!
 }
 
 input AuthCredentialsInput {
@@ -27,7 +38,7 @@ input AuthCredentialsInput {
   password: String!
 }
 
-input UserCreationIput {
+input UserCreationInput {
   username: String!
   email: String!
   password: String!

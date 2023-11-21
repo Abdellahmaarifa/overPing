@@ -6,5 +6,5 @@ export class IAuthUser {
     refreshToken?: string;
     createdAt?: Date;
     updatedAt?: Date;
-  }
+}
   
