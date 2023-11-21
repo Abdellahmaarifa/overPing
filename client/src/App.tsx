@@ -21,6 +21,8 @@ import { User } from "types/User.type";
 import LoginContextProvider from "context/login.context";
 import tw from "twin.macro";
 import Friends from "pages/Friends/Friends";
+import LeaderBoard from "pages/LeaderBoard/LeaderBord";
+import Tournament from "pages/Tournament/Tournament";
 // THIS IS SIMPLE EXAMPLE OF PROTECTED ROUTE
 const ProtectedRoutes = ({ user }: { user: User | null }) => {
   return user ? (
@@ -52,6 +54,8 @@ const App: React.FC = () => {
               </Route>
 
               <Route path="friends" element={<Friends />} />
+              <Route path="leader-board" element={<LeaderBoard />} />
+              <Route path="tournament" element={<Tournament />} />
               <Route path="profile/:id" element={<Profile />} />
             </Route>
             <Route path="login" element={<Login />} />

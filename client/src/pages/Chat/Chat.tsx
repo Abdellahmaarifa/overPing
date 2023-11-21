@@ -12,6 +12,7 @@ const Chat = () => {
   const {
     showSearchModel: [showSearchModel, setShowSearchModel],
     showChannelModel: [showChannelModel, setShowChannelModel],
+    showEditChannelModel: [showEditChannelModel, setShowEditChannelModel],
   } = useChatContext();
   return (
     <ChatConatiner>
@@ -20,7 +21,7 @@ const Chat = () => {
       <ChatRightSide />
       {showSearchModel && <ChatSearch />}
       {showChannelModel && <ChannelModel />}
-      {true && <EditChannelModel />}
+      {showEditChannelModel && <EditChannelModel />}
     </ChatConatiner>
   );
 };

@@ -29,6 +29,7 @@ const ChatBanner = () => {
     showChatMenu: [showChatMenu, setShowChatMenu],
     showFriends: [showFriends, setShowFriends],
     showSearchModel: [showSearchModel, setShowSearchModel],
+    showEditChannelModel: [showEditChannelModel, setShowEditChannelModel],
   } = useChatContext();
   useEffect(() => {
     if (location.pathname.includes("channel")) setIsChannel(true);
@@ -102,7 +103,7 @@ const ChatBanner = () => {
               </ExtraMenuLink>
               <ExtraMenuLink
                 onClick={() => {
-                  setShowSearchModel(true);
+                  setShowEditChannelModel(true);
                 }}
               >
                 Edit Channel

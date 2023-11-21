@@ -19,6 +19,8 @@ import Button from "components/common/Button/Button";
 const EditChannelModel = () => {
   const {
     showChannelModel: [showChannelModel, setShowChannelModel],
+
+    showEditChannelModel: [showEditChannelModel, setShowEditChannelModel],
   } = useChatContext();
 
   const [editName, setEditName] = useState(false);
@@ -27,6 +29,8 @@ const EditChannelModel = () => {
   return (
     <ChannelModelConatiner
       onClick={() => {
+        console.log("hello");
+        setShowEditChannelModel(false);
         setShowChannelModel(false);
       }}
     >
