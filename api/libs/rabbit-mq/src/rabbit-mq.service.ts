@@ -51,7 +51,7 @@ export class RabbitMqService {
     try {
       return await client.send(messagePattern, payload).toPromise();
     } catch (error) {
-      console.log("the error of the httpException comming from ther service ", error);
+      console.log("the error of the httpException comming from ther service{ ", error, "}");
       throw new HttpException(error.errorStatus, error.statusCode);
     }
   }

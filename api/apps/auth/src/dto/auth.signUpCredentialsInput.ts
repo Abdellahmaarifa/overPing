@@ -1,4 +1,4 @@
-export class SignUpCredentialsInput {
+export class SignUpCredentialsDto {
     username: string;
     password: string;
 }

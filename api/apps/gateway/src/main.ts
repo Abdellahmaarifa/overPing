@@ -1,7 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { GatewayModule } from './gateway.module';
 import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors'; // Import cors
+import { ValidationPipe } from '@nestjs/common'
+// import { ErrorFilter } from './filters';
 
 async function bootstrap() {
     const app = await NestFactory.create(GatewayModule);
@@ -10,6 +11,11 @@ async function bootstrap() {
       app.enableCors({
         origin: "http://localhost:3000",
       });
+
+      // app.useGlobalPipes(
+      //   new ValidationPipe({skipMissingProperties: true,})
+      // );
+      //  app.useGlobalFilters(new ErrorFilter());
     await app.listen(5500);
 }
 bootstrap();
