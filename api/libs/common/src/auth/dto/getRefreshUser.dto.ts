@@ -1,4 +1,4 @@
-  export class GetRefreshUserDto {
-    id: number;
-    refreshToken: string;
-  }
+export class GetRefreshUserDto {
+  id: number;
+  refreshToken: string;
+}

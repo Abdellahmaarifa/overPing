@@ -11,6 +11,7 @@ import {
 export class AuthCredentialsInput {
   @Field()
   @IsString()
+  @IsEmail()
   @MinLength(8)
   @MaxLength(30)
   username: string;
@@ -19,5 +20,8 @@ export class AuthCredentialsInput {
   @IsString()
   @MinLength(8)
   @MaxLength(30)
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'password too weak',
+  })
   password: string;
 }

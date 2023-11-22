@@ -29,7 +29,6 @@ type Query {
 type Mutation {
   signIn(authCredentials: AuthCredentialsInput!): UserWithAccessModel!
   signUp(userCreationInput: UserCreationInput!): UserWithAccessModel!
-  logOut(id: Float!): Boolean!
   removeUser(id: Float!): Boolean!
   refresh: String!
 }

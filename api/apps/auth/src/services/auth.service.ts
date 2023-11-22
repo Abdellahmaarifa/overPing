@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { SignInCredentialsDto, SignUpCredentialsDto } from '../dto'
+import { SignUpCredentialsInput } from '../dto'
 import { UserService } from './user.service';
 import { IAuthUser } from '../interface';
+import { LoggerService } from '@app/common';
 import { AuthResponseDto } from '@app/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+// import * as argon2 from 'argon2';
 import * as argon2 from 'argon2'
 import { GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto'
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { JwtPayloadDto } from '@app/common/auth/dto';
-
+import { IAccessControl } from '@app/common/auth/interface/AccessToken.interface';
 @Injectable()
 export class AuthService {
 	constructor(
 		private readonly userService: UserService,
+		private readonly loger: LoggerService,
 		private jwtService: JwtService,
 		private configService: ConfigService,
 		private readonly rpcExceptionService: RpcExceptionService,
@@ -21,49 +23,57 @@ export class AuthService {
 	) { }
 
 	async signIn(
-		authCredentials: SignInCredentialsDto
+		authCredentials: SignUpCredentialsInput
 	): Promise<AuthResponseDto> {
 		let user: IAuthUser = await this.userService.validateUser(authCredentials);
-
-		const refreshAndAccessToken = await this.newRefreshAndAccessToken({
-			id: user.id,
-			username: user.username
-		});
+		// console.log("auth =========> the user is validateUser: ", user);
+		this.loger.actionLog("auth.controller", "signIn()", "the user validated exist", user);
+		if (!user) {
+			this.loger.actionLog("auth.controller", "signIn()", "the user error validated ", user);
+			return new AuthResponseDto('', '', null, 'error accessing the user');
+		}
+		const refreshAndAccessToken = await this.newRefreshAndAccessToken(user.id, user.username);
 		this.updateRefreshToken(user.id, refreshAndAccessToken.refreshToken);
+		this.loger.actionLog("auth", "signIN", "check tokens", {
+			hash: (await this.userService.findById(user.id)).refreshToken,
+			refersh: refreshAndAccessToken.refreshToken
+		});
 		return new AuthResponseDto(
 			refreshAndAccessToken.accessToken,
 			refreshAndAccessToken.refreshToken,
-			user
+			user,
+			null,
 		);
 	}
 
 	async signUp(
-		authCredentials: SignUpCredentialsDto
+		authCredentials: SignUpCredentialsInput
 	): Promise<AuthResponseDto> {
 		const user = await this.userService.findUserByUsername(authCredentials.username);
 		if (user) {
+			this.loger.actionLog("auth.service", "signUp()", "the user alredy exist", user);
 			this.rpcExceptionService.throwForbidden("Username already in use. Try a different one.");
 		}
 		const usercreated = await this.userService.createUser(authCredentials);
-		const refreshAndAccessToken = await this.newRefreshAndAccessToken(
-			{
-				id: usercreated.id,
-				username: usercreated.username
-			});
+		this.loger.actionLog("auth.service", "signUp()/craeteUser", "the user created", usercreated);
+		const refreshAndAccessToken = await this.newRefreshAndAccessToken(usercreated.id, usercreated.username);
 		this.updateRefreshToken(usercreated.id, refreshAndAccessToken.refreshToken);
 		return new AuthResponseDto(
 			refreshAndAccessToken.accessToken,
 			refreshAndAccessToken.refreshToken,
-			usercreated
+			usercreated,
+			null
 		);
 	}
 
-	async newRefreshAndAccessToken(payload: JwtPayloadDto) {
+
+
+	async newRefreshAndAccessToken(userId: number, username: string) {
 		const [accessToken, refreshToken] = await Promise.all([
 			this.jwtService.signAsync(
 				{
-					sub: payload.id,
-					username: payload.username,
+					sub: userId,
+					username,
 				},
 				{
 					secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
@@ -72,8 +82,8 @@ export class AuthService {
 			),
 			this.jwtService.signAsync(
 				{
-					sub: payload.id,
-					username: payload.username,
+					sub: userId,
+					username,
 				},
 				{
 					secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
@@ -96,15 +106,13 @@ export class AuthService {
 	}
 
 
-	async logOut(id: number) : Promise<boolean>{
-		this.updateRefreshToken(id, "");
-		return (true);
-	}
 
 	async getUserOnRefreshTokenMatch(refreshTokenOject: GetRefreshUserDto): Promise<IAuthUser> {
 		const user = await this.userService.findById(refreshTokenOject.id);
 		if (!user || !user.refreshToken)
 			throw 'Access Denied';
+		this.loger.actionLog("auth", "getuseronrefresh", "user found", user);
+		this.loger.actionLog("auth", "getUserOnrefersh", "refreshTokenObject", refreshTokenOject);
 		const refreshTokenMatches = await argon2.verify(
 			user.refreshToken,
 			refreshTokenOject.refreshToken,
@@ -113,7 +121,13 @@ export class AuthService {
 		if (!refreshTokenMatches) throw 'Access Denied';
 		console.log("refreshTokenMatches");
 		return (user);
+		// const tokens = await this.newRefreshAndAccessToken(user.id, user.username);
+		// this.updateRefreshToken(user.id, tokens.refreshToken);
+		// return tokens;
 	}
+
+
+
 
 	async verifyToken(token: string): Promise<any> {
 		try {
@@ -131,5 +145,11 @@ export class AuthService {
 		}
 	}
 
+	
+	async test(): Promise<any> {
+		const user = await this.userService.findAll();
+		this.loger.actionLog("auth", "find by  Id", "findById", user);
+		return (user);
+	}
 
 }

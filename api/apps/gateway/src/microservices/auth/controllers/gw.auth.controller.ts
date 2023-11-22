@@ -5,7 +5,7 @@ import { GoogleGuard } from '../guards/google.auth.grad';
 import { GatewayService} from '../services/gw.auth.service';
 import { Cookies } from 'apps/gateway/src/decortor/cookies.decorator';
 import { RefreshTokenGuard } from '../guards/refreshToken.guard';
-import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
+import { GetAccessTokenDto } from '@app/common/auth/dto/getAccessTokenDto';
 
 @Controller('auth')
 export class AuthController {
@@ -59,10 +59,8 @@ export class AuthController {
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
 		console.log("the token", token);
 		const access_token = token.accessToken;
-		const refresh_token = token.refreshToken;
-		
+
 		res.setHeader('Set-Cookie', `access_token="${access_token}"; Path=/; HttpOnly`);
-		res.setHeader('Set-Cookie', `refresh_token="${refresh_token}"; Path=/; HttpOnly`);
 		res.redirect(`http://localhost:3000/userinfo?user=${encodeURIComponent(JSON.stringify(user))}`);
     }
 
@@ -70,7 +68,7 @@ export class AuthController {
 	@UseGuards(RefreshTokenGuard)
     @Get('refresh')
     async refresh(@Request() req : any): Promise<string>{
-		const payload : JwtPayloadDto = {
+		const payload : GetAccessTokenDto = {
 			id : req.user.id,
 			username : req.user.username
 		}
