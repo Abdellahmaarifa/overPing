@@ -10,7 +10,7 @@
     "dev": "vite --host | yarn mock-server ",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "mock-server": "nodemon -e ts -w ./src/mock -x  tsx ./src/mock/server.ts",
+    "mock-server": "nodemon -e ts -w ./src/infrastructure/mock -x  tsx ./src/infrastructure/mock/server.ts",
     "gen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
@@ -33,6 +33,8 @@
     "graphql-scalars": "^1.22.4",
     "graphql-upload-ts": "^2.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mobx": "^6.11.0",
+    "mobx-react-lite": "^4.0.5",
     "react": "^18.2.0",
     "react-circular-progressbar": "^2.1.0",
     "react-cookie": "^6.1.1",

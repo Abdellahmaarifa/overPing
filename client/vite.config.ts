@@ -5,6 +5,7 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  envPrefix: "OVER_PING_",
   define: {
     "process.env": {},
   },
@@ -30,12 +31,17 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      pages: "/src/pages",
-      components: "/src/components",
-      assets: "/src/assets",
+      pages: "/src/presentation/pages",
+      components: "/src/presentation/components",
+      assets: "/src/presentation/assets",
       types: "/src/types",
-      context: "/src/context",
-      helpers: "/src/helpers",
+      context: "/src/presentation/context",
+      helpers: "/src/infrastructure/helpers",
+      gql: "/src/data/gql",
+      state: "/src/state",
+      constant: "/src/data/constant",
+      domain: "/src/domain",
+      presentation: "/src/presentation",
     },
   },
 });

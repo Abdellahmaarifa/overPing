@@ -22,18 +22,24 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "components/*":["components/*"],
-      "pages/*":["pages/*"],
-      "assets/*":["assets/*"],
-      "types/*": ["types/*"],
-      "context/*": ["context/*"],
-      "helpers/*": ["helpers/*"],
+      "components/*":["presentation/components/*"],
+      "pages/*":["presentation/pages/*"],
+      "assets/*":["presentation/assets/*"],
+      "types/*": ["src/infrastructure/types/*"],
+      "context/*": ["presentation/context/*"],
+      "helpers/*": ["infrastructure/helpers/*"],
+      "gql/*":["data/gql/*"],
+      "state/*":["state/*"],
+      "constant/*":["data/constant/*"],
+      "domain/*":["domain/*"],
+      "presentation/*":["presentation/*"]
     },
     "experimentalDecorators": true
   },
   "include": [
     "src",
-    "types"
+    "src/infrastructure/types",
+    "src/infrastructure/types/*"
   ],
   "references": [
     {
