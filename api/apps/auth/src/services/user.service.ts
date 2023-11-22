@@ -1,39 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { IAuthUser } from '../interface';
-import { CredentialsUserInput } from '../dto'
-// import { LoggerService } from '@app/common/loger'
-import { User } from '@prisma/client';
+import { UserCreationDto } from '../dto'
 import { PrismaService } from 'apps/auth/prisma/prisma.service';
 import * as argon2 from 'argon2'
-
+import { SignInCredentialsDto } from '../dto'
 import { RpcExceptionService } from '@app/common/exception-handling';
+import { User } from '@prisma/client'; 
 @Injectable()
 export class UserService {
 	constructor(
-		// private readonly loger: LoggerService,
 		private readonly rpcExceptionService: RpcExceptionService,
 		private prisma: PrismaService
 	) { }
 
-	async validateUser(userWhereUniqueInput: any): Promise<IAuthUser> {
-		let found_user = await this.findUserByUsername(userWhereUniqueInput.username);
-		console.log("auth: validateUser   ==> the user was found : ", found_user);
-		if (!found_user) {
+	async validateUser(userCredentials: SignInCredentialsDto): Promise<IAuthUser> {
+		let userFound = await this.findUserByUsername(userCredentials.username);
+		if (!userFound) {
 			this.rpcExceptionService.throwNotFound("User not found. Check the provided username.");
 		}
 		const isPasswordValid = await argon2.verify(
-			found_user.password,
-			userWhereUniqueInput.password,
+			userFound.password,
+			userCredentials.password,
 		);
-
 		if (!isPasswordValid)
 			this.rpcExceptionService.throwForbidden("Invalid username or password.");
-		const { password, ...user } = found_user;
-		return (user);
+		return (userFound);
 	}
 
-
-	async createUser({ password, username, googleId, fortyTwoId }: CredentialsUserInput): Promise<IAuthUser> {
+	async createUser({ password, username, googleId, fortyTwoId }: UserCreationDto): Promise<IAuthUser> {
 		try {
 			const hashedPassword = password ? await argon2.hash(password) : undefined;
 
@@ -87,7 +81,7 @@ export class UserService {
 			const user = await this.prisma.user.findUnique({
 				where: { id }
 			});
-			
+
 			return (user);
 
 		} catch (error) {
@@ -115,37 +109,35 @@ export class UserService {
 	}
 
 
-	
+
 
 	async remove(id: number): Promise<boolean> {
 		try {
-		  const userToDelete = await this.prisma.user.findUnique({
-			where: {
-			  id: id,
-			},
-		  });
-	  
-		  if (!userToDelete) {
+			const userToDelete = await this.prisma.user.findUnique({
+				where: {
+					id: id,
+				},
+			});
 
-			this.rpcExceptionService.throwBadRequest(`User with ID ${id} not found.`)
-		  }
-	  
-		  // Delete the user if it exists
-		  await this.prisma.user.delete({
-			where: {
-			  id: id,
-			},
-		  });
-		  return (true);
-	  
+			if (!userToDelete) {
+
+				this.rpcExceptionService.throwBadRequest(`User with ID ${id} not found.`)
+			}
+			// Delete the user if it exists
+			await this.prisma.user.delete({
+				where: {
+					id: id,
+				},
+			});
+			return (true);
+
 		} catch (error) {
 			this.rpcExceptionService.throwCatchedException({
 				code: 500,
 				message: (`Failed to delete user: ${id}`)
 			})
 		}
-	  }
-	  
+	}
 
 	async updateRefreshToken(userId: number, refreshToken: string) {
 		return this.prisma.user.update({

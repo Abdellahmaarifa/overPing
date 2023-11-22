@@ -1,4 +1,4 @@
-export class CredentialsUserInput {
+export class UserCreationDto {
     username: string;
     password?: string;
     googleId?: string;
