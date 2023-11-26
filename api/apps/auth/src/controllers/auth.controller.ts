@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { AuthService } from '../services/auth.service';
-import { SignInCredentialsDto, SignUpCredentialsDto } from '../dto';
+import { SignInCredentialsDto, SignUpCredentialsDto, TwoFActorAuthDto } from '../dto';
 import { AuthResponseDto } from '@app/common/auth/dto/AuthResponseDto';
 import { GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto';
 import { JwtPayloadDto } from '@app/common/auth/dto';
@@ -60,5 +60,20 @@ export class AuthController {
     async getRefreshWithJwtAccessToken(payload: JwtPayloadDto): Promise<any> {
         const tokens = await this.authService.newRefreshAndAccessToken(payload);
         return tokens;
+    }
+
+    @MessagePattern({ role: 'auth', cmd: 'enableTwoFactorAuth'})
+    async enableTwoFactorAuth(id: number): Promise<string>{
+        return this.authService.enableTwoFactorAuth(id);
+    }
+
+    @MessagePattern({ role: 'auth', cmd: 'verifyTwoFactorAuth'})
+    async verifyTwoFactorAuth(twoFActorAuthInput: TwoFActorAuthDto) : Promise<boolean>{
+        return this.authService.verifyTwoFactorAuth(twoFActorAuthInput);
+    }
+
+    @MessagePattern({ role: 'auth', cmd: 'authenticate_2fa'})
+    async authenticate_2fa(twoFActorAuthInput: TwoFActorAuthDto) : Promise<AuthResponseDto>{
+        return this.authService.authenticate_2fa(twoFActorAuthInput);
     }
 }

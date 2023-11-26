@@ -9,12 +9,14 @@ datasource db {
 }
 
 model User {
-  id	       Int	@id @default(autoincrement())
-  username     String   	@unique
-  password     String?
-  googleId     String?	@unique
-  fortyTwoId   String?	@unique
-  refreshToken String? 	@unique
-  createdAt    DateTime 	@default(now())
-  updatedAt    DateTime 	@updatedAt
+  id                         Int      @id @default(autoincrement())
+  username                   String   @unique
+  password                   String?
+  googleId                   String?  @unique
+  fortyTwoId                 String?  @unique
+  refreshToken               String?
+  twoFactorSecret            String   @default("")
+  twoStepVerificationEnabled Boolean  @default(false)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 }

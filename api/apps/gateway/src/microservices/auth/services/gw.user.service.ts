@@ -3,7 +3,7 @@ import { ClientProxy } from "@nestjs/microservices";
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from "@app/rabbit-mq";
 import {GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto';
-
+import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
 
 @Injectable()
 export class UserService {
@@ -15,27 +15,15 @@ export class UserService {
     ) { }
 
     async findOrCreateUser(profile: any): Promise<any> {
-        console.log("gateway =======> starting to find the username: ", profile.username)
         try {
             const user = await this.findUserByUsername(profile.username);
-            if (user) {
-                console.log("gateway====> findOrcreateUser: user found", user);
-                return user;
-            }
+            return user;
         } catch (error) {
-
-            // console.log("gateway====> findOrcreateUser: user was not found", user);
-            const account = await this.createAccount(profile);
-            console.log("gateway====> findorcreateuser account created : ", account);
-            if (!account) {
-                console.log("gateway====> findorcreateuser account was not created : ", account);
-                throw new Error("Error creating account");
-            }
-            return account;
+            return  await this.createAccount(profile);
         }
     }
 
-    async findUserByUsername(username: string): Promise<any> {
+    async findUserByUsername(username: string): Promise<IAuthUser> {
         const user = await this.clientService.sendMessageWithPayload(
             this.client,
             {
@@ -49,7 +37,7 @@ export class UserService {
         return (user);
     }
 
-    async createUser(user: any) {
+    async createUser(user: any) : Promise<IAuthUser> {
         const createUser = this.clientService.sendMessageWithPayload(
             this.client,
             {
@@ -75,33 +63,12 @@ export class UserService {
     //create dto for user 
     async createAccount(user: any) {
 
-        const userResponse = await this.createUser(user);
-        console.log("gateway====> createAccount: userCreated :", userResponse.data);
-
-        if (!userResponse.data) {
-            console.log("gateway====> createAccount: userCreated  was not created:", userResponse.data);
-            if (userResponse.message) {
-                throw new BadRequestException(`Failed to create user: ${userResponse.message}`);
-            } else {
-                throw new BadRequestException("Can't create the user");
-            }
-        }
-
-        // const ProfileResponse = await this.createProfile(userResponse.user, profile);
-
-        //     if (!ProfileResponse.profile) {
-        //         if (ProfileResponse.message){
-        //             throw new Error(`Failed to create user: ${ProfileResponse.message}`);
-        //         } else {
-        //             throw new Error("Can't create the user");
-        //         }
-        // }
-        return userResponse.data;
-        // return { user: userResponse.user, profile: ProfileResponse.profile };
+        return await this.createUser(user);
+        
     }
 
 
-    async findById(id: number) {
+    async findById(id: number): Promise<IAuthUser> {
         const response = await this.clientService.sendMessageWithPayload(
             this.client,
             {
@@ -125,7 +92,7 @@ export class UserService {
         return (response);
     }
 
-    async removeUser(id: number) {
+    async removeUser(id: number) : Promise<boolean>{
         const response = await this.clientService.sendMessageWithPayload(
             this.client,
             {

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { IAuthUser } from '../interface';
-import { UserCreationDto } from '../dto'
+import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
+import { UserCreationDto } from '../dto';
 import { PrismaService } from 'apps/auth/prisma/prisma.service';
-import * as argon2 from 'argon2'
-import { SignInCredentialsDto } from '../dto'
+import * as argon2 from 'argon2';
+import { SignInCredentialsDto } from '../dto';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { User } from '@prisma/client'; 
 @Injectable()
@@ -24,6 +24,10 @@ export class UserService {
 		);
 		if (!isPasswordValid)
 			this.rpcExceptionService.throwForbidden("Invalid username or password.");
+
+		if (userFound.twoStepVerificationEnabled){
+			this.rpcExceptionService.throwUnauthorised("Two-factor authentication is required. Please provide the 2FA code.")
+		}
 		return (userFound);
 	}
 
@@ -39,14 +43,18 @@ export class UserService {
 					password: hashedPassword,
 					googleId,
 					fortyTwoId,
+					twoFactorSecret: "",
+					twoStepVerificationEnabled: false,
 					createdAt: currentDate,
 					updatedAt: currentDate,
+
 				},
 				select: {
 					id: true,
 					username: true,
 					googleId: true,
 					fortyTwoId: true,
+					twoStepVerificationEnabled: true,
 					createdAt: true,
 					updatedAt: true,
 				},
@@ -148,4 +156,20 @@ export class UserService {
 		});
 	}
 
+	async update2FA(id: number, secret: string){
+		return this.prisma.user.update({
+			where: { id },
+			data: {
+				twoFactorSecret : secret
+			}
+		});
+	}
+	async toggle2FAStatus(id: number, state: boolean){
+		return this.prisma.user.update({
+			where: { id },
+			data: {
+				twoStepVerificationEnabled : state
+			}
+		});
+	}
 }

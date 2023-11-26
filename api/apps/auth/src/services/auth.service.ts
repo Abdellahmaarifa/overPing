@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { SignInCredentialsDto, SignUpCredentialsDto } from '../dto'
+import { SignInCredentialsDto, SignUpCredentialsDto, TwoFActorAuthDto } from '../dto'
 import { UserService } from './user.service';
-import { IAuthUser } from '../interface';
+import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
 import { AuthResponseDto } from '@app/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -9,6 +9,8 @@ import * as argon2 from 'argon2'
 import { GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto'
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { JwtPayloadDto } from '@app/common/auth/dto';
+import * as speakeasy from 'speakeasy';
+import * as QRCode from 'qrcode';
 
 @Injectable()
 export class AuthService {
@@ -96,7 +98,7 @@ export class AuthService {
 	}
 
 
-	async logOut(id: number) : Promise<boolean>{
+	async logOut(id: number): Promise<boolean> {
 		this.updateRefreshToken(id, "");
 		return (true);
 	}
@@ -129,6 +131,73 @@ export class AuthService {
 			}
 			return false;
 		}
+	}
+
+	async enableTwoFactorAuth(id: number): Promise<string> {
+		const user = await this.userService.findById(id);
+		if (!user){
+			this.rpcExceptionService.throwUnauthorised("User not found");
+		}
+		let secret = speakeasy.generateSecret({
+			name: user.username,
+			issuer: "overPing"
+		});
+		this.userService.update2FA(id, secret.base32);
+		return this.generateQrCodeDataURL(secret.otpauth_url);
+	}
+
+	async verifyTwoFactorAuth(twoFActorAuthInput: TwoFActorAuthDto): Promise<boolean> {
+		const user = await this.userService.findById(twoFActorAuthInput.id);
+		const isVerified = this.verifyTwoFactor(
+			user.twoFactorSecret,
+			twoFActorAuthInput.code
+		);
+		if (isVerified){
+			this.userService.toggle2FAStatus(user.id, true);
+		}else{
+			this.userService.toggle2FAStatus(user.id, false);
+			this.userService.update2FA(user.id, '');	
+		}
+		return isVerified;
+	}
+
+	async authenticate_2fa(twoFActorAuthInput: TwoFActorAuthDto): Promise<AuthResponseDto>{
+		const user = await this.userService.findById(twoFActorAuthInput.id);
+		if (!user.twoStepVerificationEnabled){
+			this.rpcExceptionService.throwBadRequest("twoStepVerification not enabled");
+		}
+		
+		const isVerified = this.verifyTwoFactor(
+			user.twoFactorSecret,
+			twoFActorAuthInput.code
+		);
+		if (!isVerified){
+			this.rpcExceptionService.throwForbidden("Invalid code. Please try again with a different code.");
+		}
+		const refreshAndAccessToken = await this.newRefreshAndAccessToken({
+			id: user.id,
+			username: user.username
+		});
+		this.updateRefreshToken(user.id, refreshAndAccessToken.refreshToken);
+		return new AuthResponseDto(
+			refreshAndAccessToken.accessToken,
+			refreshAndAccessToken.refreshToken,
+			user
+		);
+	}
+
+	private verifyTwoFactor(secret: string, code) {
+
+		const isVerified = speakeasy.totp.verify({
+			secret: secret,
+			encoding: 'base32',
+			token: code,
+		});
+		return isVerified;
+	}
+
+	private async generateQrCodeDataURL(otpAuthUrl: string) {
+		return QRCode.toDataURL(otpAuthUrl);
 	}
 
 

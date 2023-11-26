@@ -29,7 +29,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google'){
                     displayName: profile.displayName,
                     emails: profile.emails,
             }
-            console.log("gateway=======> prepare for the validate the user: the input is ", userAccount);
             const account = await this.userService.findOrCreateUser(userAccount);
            return (account);
     }   

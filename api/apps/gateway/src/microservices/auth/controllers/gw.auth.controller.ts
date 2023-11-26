@@ -19,25 +19,22 @@ export class AuthController {
     @Get('42/fortytwo-callback')
     async fortyTwoAuthCallback(
 	@Request() req,
-	@Ip() ip: string,
 	@Res() res,
     ){
-	//  const result = await this.authService.login(
-	//     req.user,
-	//     {
-	//       ipAddress: ip,
-	//       userAgent: req.headers['user-agent'],
-	//     });
-	//     res.cookie('refresh_token', result.refreshToken, {
-	//       httpOnly: true,
-	//       secure: true,
-	//       sameSite: 'Strict',
-	//     });
-	//    return res.send({
-	//     user: result.user,
-	//     accessToken: result.accesstoken,
-	//    })
-	return res.send(req.user);
+		const user = req.user;
+		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
+		res.cookie('Refresh_token', token.refreshToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'Strict',
+		  });
+		  
+		  res.cookie('Access_token', token.accessToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'Strict',
+		  });
+		res.redirect(`http://localhost:3000/userinfo?user=${encodeURIComponent(JSON.stringify(user))}`);
     }
 
 
@@ -46,23 +43,27 @@ export class AuthController {
     @Get('google')
     async redirectToGoogleAuth(){}
 
-    //TODO
-    // Create a custom parameter decorator
+
+	/// refresh token are not stored in database------------------------------------------?
     @UseGuards(GoogleGuard)
     @Get('google/google-callback')
     async GoogleoAuthCallback(
 	@Request() req,
-	@Ip() ip: string,
 	@Res() res,
     ){
 		const user = req.user;
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
-		console.log("the token", token);
-		const access_token = token.accessToken;
-		const refresh_token = token.refreshToken;
-		
-		res.setHeader('Set-Cookie', `access_token="${access_token}"; Path=/; HttpOnly`);
-		res.setHeader('Set-Cookie', `refresh_token="${refresh_token}"; Path=/; HttpOnly`);
+		res.cookie('Refresh_token', token.refreshToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'Strict',
+		  });
+		  
+		  res.cookie('Access_token', token.accessToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'Strict',
+		  });
 		res.redirect(`http://localhost:3000/userinfo?user=${encodeURIComponent(JSON.stringify(user))}`);
     }
 

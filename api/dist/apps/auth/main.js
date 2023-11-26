@@ -105,7 +105,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthController = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
@@ -152,6 +152,15 @@ let AuthController = class AuthController {
         const tokens = await this.authService.newRefreshAndAccessToken(payload);
         return tokens;
     }
+    async enableTwoFactorAuth(id) {
+        return this.authService.enableTwoFactorAuth(id);
+    }
+    async verifyTwoFactorAuth(twoFActorAuthInput) {
+        return this.authService.verifyTwoFactorAuth(twoFActorAuthInput);
+    }
+    async authenticate_2fa(twoFActorAuthInput) {
+        return this.authService.authenticate_2fa(twoFActorAuthInput);
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -196,6 +205,24 @@ __decorate([
     __metadata("design:paramtypes", [typeof (_q = typeof dto_2.JwtPayloadDto !== "undefined" && dto_2.JwtPayloadDto) === "function" ? _q : Object]),
     __metadata("design:returntype", typeof (_r = typeof Promise !== "undefined" && Promise) === "function" ? _r : Object)
 ], AuthController.prototype, "getRefreshWithJwtAccessToken", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'enableTwoFactorAuth' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", typeof (_s = typeof Promise !== "undefined" && Promise) === "function" ? _s : Object)
+], AuthController.prototype, "enableTwoFactorAuth", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'verifyTwoFactorAuth' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_t = typeof dto_1.TwoFActorAuthDto !== "undefined" && dto_1.TwoFActorAuthDto) === "function" ? _t : Object]),
+    __metadata("design:returntype", typeof (_u = typeof Promise !== "undefined" && Promise) === "function" ? _u : Object)
+], AuthController.prototype, "verifyTwoFactorAuth", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'authenticate_2fa' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_v = typeof dto_1.TwoFActorAuthDto !== "undefined" && dto_1.TwoFActorAuthDto) === "function" ? _v : Object]),
+    __metadata("design:returntype", typeof (_w = typeof Promise !== "undefined" && Promise) === "function" ? _w : Object)
+], AuthController.prototype, "authenticate_2fa", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object, typeof (_b = typeof exception_handling_1.RpcExceptionService !== "undefined" && exception_handling_1.RpcExceptionService) === "function" ? _b : Object, typeof (_c = typeof common_2.LoggerService !== "undefined" && common_2.LoggerService) === "function" ? _c : Object])
@@ -342,6 +369,22 @@ exports.SignUpCredentialsDto = SignUpCredentialsDto;
 
 /***/ }),
 
+/***/ "./apps/auth/src/dto/auth.twoFactorAuth.dto.ts":
+/*!*****************************************************!*\
+  !*** ./apps/auth/src/dto/auth.twoFactorAuth.dto.ts ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TwoFActorAuthDto = void 0;
+class TwoFActorAuthDto {
+}
+exports.TwoFActorAuthDto = TwoFActorAuthDto;
+
+
+/***/ }),
+
 /***/ "./apps/auth/src/dto/index.ts":
 /*!************************************!*\
   !*** ./apps/auth/src/dto/index.ts ***!
@@ -368,6 +411,7 @@ __exportStar(__webpack_require__(/*! ./auth.signUpCredentialsInput */ "./apps/au
 __exportStar(__webpack_require__(/*! ./auth.signInCredentialsInput */ "./apps/auth/src/dto/auth.signInCredentialsInput.ts"), exports);
 __exportStar(__webpack_require__(/*! ./user.UserCreation.dto */ "./apps/auth/src/dto/user.UserCreation.dto.ts"), exports);
 __exportStar(__webpack_require__(/*! ./user.creationResponse.dto */ "./apps/auth/src/dto/user.creationResponse.dto.ts"), exports);
+__exportStar(__webpack_require__(/*! ./auth.twoFactorAuth.dto */ "./apps/auth/src/dto/auth.twoFactorAuth.dto.ts"), exports);
 
 
 /***/ }),
@@ -430,6 +474,8 @@ const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
 const config_1 = __webpack_require__(/*! @nestjs/config */ "@nestjs/config");
 const argon2 = __webpack_require__(/*! argon2 */ "argon2");
 const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
+const speakeasy = __webpack_require__(/*! speakeasy */ "speakeasy");
+const QRCode = __webpack_require__(/*! qrcode */ "qrcode");
 let AuthService = class AuthService {
     constructor(userService, jwtService, configService, rpcExceptionService) {
         this.userService = userService;
@@ -516,6 +562,57 @@ let AuthService = class AuthService {
             return false;
         }
     }
+    async enableTwoFactorAuth(id) {
+        const user = await this.userService.findById(id);
+        if (!user) {
+            this.rpcExceptionService.throwUnauthorised("User not found");
+        }
+        let secret = speakeasy.generateSecret({
+            name: user.username,
+            issuer: "overPing"
+        });
+        this.userService.update2FA(id, secret.base32);
+        return this.generateQrCodeDataURL(secret.otpauth_url);
+    }
+    async verifyTwoFactorAuth(twoFActorAuthInput) {
+        const user = await this.userService.findById(twoFActorAuthInput.id);
+        const isVerified = this.verifyTwoFactor(user.twoFactorSecret, twoFActorAuthInput.code);
+        if (isVerified) {
+            this.userService.toggle2FAStatus(user.id, true);
+        }
+        else {
+            this.userService.toggle2FAStatus(user.id, false);
+            this.userService.update2FA(user.id, '');
+        }
+        return isVerified;
+    }
+    async authenticate_2fa(twoFActorAuthInput) {
+        const user = await this.userService.findById(twoFActorAuthInput.id);
+        if (!user.twoStepVerificationEnabled) {
+            this.rpcExceptionService.throwBadRequest("twoStepVerification not enabled");
+        }
+        const isVerified = this.verifyTwoFactor(user.twoFactorSecret, twoFActorAuthInput.code);
+        if (!isVerified) {
+            this.rpcExceptionService.throwForbidden("Invalid code. Please try again with a different code.");
+        }
+        const refreshAndAccessToken = await this.newRefreshAndAccessToken({
+            id: user.id,
+            username: user.username
+        });
+        this.updateRefreshToken(user.id, refreshAndAccessToken.refreshToken);
+        return new common_2.AuthResponseDto(refreshAndAccessToken.accessToken, refreshAndAccessToken.refreshToken, user);
+    }
+    verifyTwoFactor(secret, code) {
+        const isVerified = speakeasy.totp.verify({
+            secret: secret,
+            encoding: 'base32',
+            token: code,
+        });
+        return isVerified;
+    }
+    async generateQrCodeDataURL(otpAuthUrl) {
+        return QRCode.toDataURL(otpAuthUrl);
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
@@ -562,6 +659,9 @@ let UserService = class UserService {
         const isPasswordValid = await argon2.verify(userFound.password, userCredentials.password);
         if (!isPasswordValid)
             this.rpcExceptionService.throwForbidden("Invalid username or password.");
+        if (userFound.twoStepVerificationEnabled) {
+            this.rpcExceptionService.throwUnauthorised("Two-factor authentication is required. Please provide the 2FA code.");
+        }
         return (userFound);
     }
     async createUser({ password, username, googleId, fortyTwoId }) {
@@ -574,6 +674,8 @@ let UserService = class UserService {
                     password: hashedPassword,
                     googleId,
                     fortyTwoId,
+                    twoFactorSecret: "",
+                    twoStepVerificationEnabled: false,
                     createdAt: currentDate,
                     updatedAt: currentDate,
                 },
@@ -582,6 +684,7 @@ let UserService = class UserService {
                     username: true,
                     googleId: true,
                     fortyTwoId: true,
+                    twoStepVerificationEnabled: true,
                     createdAt: true,
                     updatedAt: true,
                 },
@@ -665,6 +768,22 @@ let UserService = class UserService {
                 refreshToken: refreshToken,
             },
             where: { id: userId },
+        });
+    }
+    async update2FA(id, secret) {
+        return this.prisma.user.update({
+            where: { id },
+            data: {
+                twoFactorSecret: secret
+            }
+        });
+    }
+    async toggle2FAStatus(id, state) {
+        return this.prisma.user.update({
+            where: { id },
+            data: {
+                twoStepVerificationEnabled: state
+            }
         });
     }
 };
@@ -1341,6 +1460,26 @@ module.exports = require("@prisma/client");
 /***/ ((module) => {
 
 module.exports = require("argon2");
+
+/***/ }),
+
+/***/ "qrcode":
+/*!*************************!*\
+  !*** external "qrcode" ***!
+  \*************************/
+/***/ ((module) => {
+
+module.exports = require("qrcode");
+
+/***/ }),
+
+/***/ "speakeasy":
+/*!****************************!*\
+  !*** external "speakeasy" ***!
+  \****************************/
+/***/ ((module) => {
+
+module.exports = require("speakeasy");
 
 /***/ })
 

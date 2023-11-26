@@ -2,9 +2,14 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from '@app/rabbit-mq';
-import { AuthCredentialsInput, UserCreationInput } from '../graphql/input';
+import {
+	AuthCredentialsInput,
+	UserCreationInput,
+	TwoFActorAuthInput
+} from '../graphql/input';
 import { JwtPayloadDto } from '@app/common/auth/dto';
 import { AuthResponseDto } from '@app/common';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 
 @Injectable()
 export class GatewayService {
@@ -23,7 +28,7 @@ export class GatewayService {
 		);
 	}
 
-	async signUp(userInput: UserCreationInput): Promise<any> {
+	async signUp(userInput: UserCreationInput): Promise<AuthResponseDto> {
 		return await this.clientService.sendMessageWithPayload(
 			this.client,
 			{ role: 'auth', cmd: 'signUp' },
@@ -31,7 +36,7 @@ export class GatewayService {
 		);
 	}
 
-	async logOut(id: number) : Promise<boolean>{
+	async logOut(id: number): Promise<boolean> {
 		return await this.clientService.sendMessageWithPayload(
 			this.client,
 			{ role: 'auth', cmd: 'logOut' },
@@ -58,5 +63,36 @@ export class GatewayService {
 			},
 			payload
 		)
+	}
+
+	async enableTwoFactorAuth(id: number): Promise<string> {
+		return await this.clientService.sendMessageWithPayload(
+			this.client,
+			{
+				role: 'auth',
+				cmd: 'enableTwoFactorAuth'
+			},
+			id
+		);
+	}
+	async verifyTwoFactorAuth(twoFActorAuthInput: TwoFActorAuthInput): Promise<boolean> {
+		return await this.clientService.sendMessageWithPayload(
+			this.client,
+			{
+				role: 'auth',
+				cmd: 'verifyTwoFactorAuth'
+			},
+			twoFActorAuthInput
+		);
+	}
+	async authenticate_2fa(twoFActorAuthInput: TwoFActorAuthInput): Promise<AuthResponseDto> {
+		return await this.clientService.sendMessageWithPayload(
+			this.client,
+			{
+				role: 'auth',
+				cmd: 'authenticate_2fa'
+			},
+			twoFActorAuthInput
+		);
 	}
 }

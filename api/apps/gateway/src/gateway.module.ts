@@ -16,6 +16,8 @@ import { UserService } from './microservices/auth/services';
 import { LoggerService } from '@app/common';
 import { JwtRefreshTokenStrategy } from './microservices/auth/strategies/jwt.refreshToken.strategy';
 import { UserAccessAuthorizationGuard } from './microservices/auth/guards/user-auth.guard';
+
+
 @Module({
   imports: [
     PassportModule,
@@ -24,6 +26,10 @@ import { UserAccessAuthorizationGuard } from './microservices/auth/guards/user-a
       driver:ApolloDriver,
       autoSchemaFile: join(process.cwd(), './graphql/schema.gql'),
       context: ({ req, res }) => ({ req, res }),
+      cors: {
+        credentials: true,
+        origin: true
+      },
       playground: true,
     }),
   //   ClientsModule.register([{
@@ -55,4 +61,5 @@ import { UserAccessAuthorizationGuard } from './microservices/auth/guards/user-a
     AuthController,
   ]
 })
-export class GatewayModule {}
+export class GatewayModule {
+}

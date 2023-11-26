@@ -9,14 +9,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { GatewayService, UserService } from '../../services';
-import { AuthCredentialsInput, UserCreationInput } from '../input';
-import { UserWithAccessModel } from 'apps/gateway/src/models';
+import { 
+  AuthCredentialsInput,
+  UserCreationInput,
+  TwoFActorAuthInput
+ } from '../input';
+import { UserWithAccessModel , GQLUserModel} from 'apps/gateway/src/models';
 import { LoggerService, AuthResponseDto } from '@app/common';
 import { GqlCurrentUser } from '../decortor/gql.user.decorator';
 import { GqlJwtRefreshGuard } from '../../guards/gql.refreshToken.guard';
 import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
 import { UserAccessAuthorizationGuard } from '../../guards/user-auth.guard';
-import { GqlJwtAuthGuard } from '../../guards/gql.accessToken.guard';
 
 
 @Resolver()
@@ -26,33 +29,46 @@ export class AuthMutationsResolver {
     private readonly loger: LoggerService) { }
 
   @HttpCode(200)
-  @Mutation((returns) => UserWithAccessModel)
+  @Mutation((returns) => GQLUserModel)
   async signIn(
     @Context() context,
-    @Args('authCredentials') authCredentialsInput: AuthCredentialsInput,): Promise<UserWithAccessModel> {
+    @Args('authCredentials') authCredentialsInput: AuthCredentialsInput,): Promise<GQLUserModel> {
     const response= await this.authService.signIn(authCredentialsInput);
-  
-    const refreshToken = response.refreshToken;
-    context.res.cookie('Refresh_token', refreshToken, {
+    const { res } = context;
+
+    res.cookie('Refresh_token', response.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'Strict',
     });
-    return (response);
+    
+    res.cookie('Access_token', response.accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict',
+    });
+    return (response.user);
   }
 
 
-  @Mutation((returns) => UserWithAccessModel)
+  @Mutation((returns) => GQLUserModel)
   async signUp(
     @Context() ctx,
-    @Args('userCreationInput') userCreationInput: UserCreationInput): Promise<UserWithAccessModel> {
-    const response: AuthResponseDto = await this.authService.signUp(userCreationInput);
-    ctx.res.cookie('Refresh_token', [...response.refreshToken], {
+    @Args('userCreationInput') userCreationInput: UserCreationInput): Promise<GQLUserModel> {
+    const response = await this.authService.signUp(userCreationInput);
+    const {res} = ctx;
+    res.cookie('Refresh_token', response.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'Strict',
     });
-    return (response);
+    
+    res.cookie('Access_token', response.accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict',
+    });
+    return (response.user);
   }
 
   @UseGuards(UserAccessAuthorizationGuard)
@@ -78,4 +94,42 @@ export class AuthMutationsResolver {
     return (result);
   }
 
+  @UseGuards(UserAccessAuthorizationGuard)
+  @Mutation(() => String)
+  async enableTwoFactorAuth(@Args('id') id: number): Promise<string>{
+    return this.authService.enableTwoFactorAuth(id);
+  }
+
+  @UseGuards(UserAccessAuthorizationGuard)
+  @Mutation(() => Boolean)
+  async verifyTwoFactorAuth(@Args('id') id: number, @Args('code') code : string): Promise<boolean>{
+    const twoFActorAuthInput : TwoFActorAuthInput = {
+      id,
+      code
+    }
+    return this.authService.verifyTwoFactorAuth(twoFActorAuthInput);
+  }
+  
+  @Mutation(() => GQLUserModel)
+  async authenticate_2fa(@Context() context, @Args('id') id: number, @Args('code') code: string): Promise<GQLUserModel>{
+    const twoFActorAuthInput : TwoFActorAuthInput = {
+      id,
+      code,
+    }
+    const response =  await this.authService.authenticate_2fa(twoFActorAuthInput);
+    const { res } = context;
+    res.cookie('Refresh_token', response.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict',
+    });
+
+    res.cookie('Access_token', response.accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict',
+    });
+
+    return (response.user);
+  }
 }

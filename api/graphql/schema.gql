@@ -7,6 +7,7 @@ type GQLUserModel {
   username: String!
   googleId: String
   fortyTwoId: String
+  twoStepVerificationEnabled: Boolean!
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -16,22 +17,20 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type UserWithAccessModel {
-  accessToken: String!
-  user: GQLUserModel!
-}
-
 type Query {
   findById(id: Float!): GQLUserModel!
   findAll: [GQLUserModel!]!
 }
 
 type Mutation {
-  signIn(authCredentials: AuthCredentialsInput!): UserWithAccessModel!
-  signUp(userCreationInput: UserCreationInput!): UserWithAccessModel!
+  signIn(authCredentials: AuthCredentialsInput!): GQLUserModel!
+  signUp(userCreationInput: UserCreationInput!): GQLUserModel!
   logOut(id: Float!): Boolean!
   removeUser(id: Float!): Boolean!
   refresh: String!
+  enableTwoFactorAuth(id: Float!): String!
+  verifyTwoFactorAuth(id: Float!, code: String!): Boolean!
+  authenticate_2fa(id: Float!, code: String!): GQLUserModel!
 }
 
 input AuthCredentialsInput {

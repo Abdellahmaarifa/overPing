@@ -5,6 +5,9 @@ CREATE TABLE "User" (
     "password" TEXT,
     "googleId" TEXT,
     "fortyTwoId" TEXT,
+    "refreshToken" TEXT,
+    "twoFactorSecret" TEXT NOT NULL DEFAULT '',
+    "twoStepVerificationEnabled" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
