@@ -16,6 +16,13 @@ import { UserService } from './microservices/auth/services';
 import { LoggerService } from '@app/common';
 import { JwtRefreshTokenStrategy } from './microservices/auth/strategies/jwt.refreshToken.strategy';
 import { UserAccessAuthorizationGuard } from './microservices/auth/guards/user-auth.guard';
+import { GwProfileService } from './microservices/profile/services/gw.profile.service';
+import { ProfileQueryResolver } from './microservices/profile/graphql/queries/gw.profile.guery.resolver';
+import { UserProifleMutationsResolver } from './microservices/profile/graphql/mutations/gw.profile.mutations.resolver';
+import { WalletMutationsResolver } from './microservices/profile/graphql/mutations/gw.wallet.user.mutations.resolver';
+import { GwWalletService } from './microservices/profile/services/gw.wallet.service';
+
+
 
 
 @Module({
@@ -43,11 +50,17 @@ import { UserAccessAuthorizationGuard } from './microservices/auth/guards/user-a
   //     }
   //   }
   // }])
-  RabbitMqModule.forClientProxy(IRmqSeverName.AUTH)
+  RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
+  RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE)
 ],
   providers: [
     GatewayService,
     UserService,
+    GwProfileService,
+    GwWalletService,
+    ProfileQueryResolver,
+    UserProifleMutationsResolver,
+    WalletMutationsResolver,
     AuthQueryResolver,
     AuthMutationsResolver,
     FortyTwoStrategy,

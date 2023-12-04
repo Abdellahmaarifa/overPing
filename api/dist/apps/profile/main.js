@@ -2,10 +2,10 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./apps/auth/prisma/prisma.service.ts":
-/*!********************************************!*\
-  !*** ./apps/auth/prisma/prisma.service.ts ***!
-  \********************************************/
+/***/ "./apps/profile/prisma/prisma.service.ts":
+/*!***********************************************!*\
+  !*** ./apps/profile/prisma/prisma.service.ts ***!
+  \***********************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -21,15 +21,7 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const client_1 = __webpack_require__(/*! @prisma/client */ "@prisma/client");
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     async onModuleInit() {
-        try {
-            console.log('#################Connecting to the database...####################');
-            await this.$connect();
-            console.log('################Connected to the database########################');
-        }
-        catch (e) {
-            console.error('##########################Error connecting to the database##################', e);
-            throw e;
-        }
+        await this.$connect();
     }
 };
 exports.PrismaService = PrismaService;
@@ -40,10 +32,308 @@ exports.PrismaService = PrismaService = __decorate([
 
 /***/ }),
 
-/***/ "./apps/auth/src/auth.module.ts":
-/*!**************************************!*\
-  !*** ./apps/auth/src/auth.module.ts ***!
-  \**************************************/
+/***/ "./apps/profile/src/controller/profile.controller.ts":
+/*!***********************************************************!*\
+  !*** ./apps/profile/src/controller/profile.controller.ts ***!
+  \***********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e, _f;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ProfileController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
+const createProfileDto_1 = __webpack_require__(/*! ../dto/createProfileDto */ "./apps/profile/src/dto/createProfileDto.ts");
+const profile_service_1 = __webpack_require__(/*! ../services/profile.service */ "./apps/profile/src/services/profile.service.ts");
+let ProfileController = class ProfileController {
+    constructor(profileService) {
+        this.profileService = profileService;
+    }
+    getHello(mess) {
+        return mess.message;
+    }
+    async createUserProfile(payload) {
+        return await this.profileService.create(payload);
+    }
+    async updateUserProfile(data) {
+        return await this.profileService.update(data.id, data.updateInput);
+    }
+    async findProfileById(id) {
+        return this.profileService.findOne(id);
+    }
+    async removeProfile(id) {
+        return this.profileService.remove(id);
+    }
+};
+exports.ProfileController = ProfileController;
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'hello-you' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", String)
+], ProfileController.prototype, "getHello", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'create-profile' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_b = typeof createProfileDto_1.CreateProfileDto !== "undefined" && createProfileDto_1.CreateProfileDto) === "function" ? _b : Object]),
+    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], ProfileController.prototype, "createUserProfile", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'update-profile' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
+], ProfileController.prototype, "updateUserProfile", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'find-Profile' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+], ProfileController.prototype, "findProfileById", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'remove-Profile' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
+], ProfileController.prototype, "removeProfile", null);
+exports.ProfileController = ProfileController = __decorate([
+    (0, common_1.Controller)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof profile_service_1.ProfileService !== "undefined" && profile_service_1.ProfileService) === "function" ? _a : Object])
+], ProfileController);
+
+
+/***/ }),
+
+/***/ "./apps/profile/src/controller/wallet.controller.ts":
+/*!**********************************************************!*\
+  !*** ./apps/profile/src/controller/wallet.controller.ts ***!
+  \**********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e, _f, _g;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.WalletController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
+const transfer_funds_dto_1 = __webpack_require__(/*! ../dto/transfer-funds.dto */ "./apps/profile/src/dto/transfer-funds.dto.ts");
+const wallet_service_1 = __webpack_require__(/*! ../services/wallet.service */ "./apps/profile/src/services/wallet.service.ts");
+const place_bet_dto_1 = __webpack_require__(/*! ../dto/place-bet.dto */ "./apps/profile/src/dto/place-bet.dto.ts");
+const resolve_bet_dto_1 = __webpack_require__(/*! ../dto/resolve-bet.dto */ "./apps/profile/src/dto/resolve-bet.dto.ts");
+let WalletController = class WalletController {
+    constructor(walletService) {
+        this.walletService = walletService;
+    }
+    async transferFunds(transferData) {
+        return this.walletService.transferFunds(transferData);
+    }
+    async placeBet(placeBetData) {
+        return this.walletService.placeBet(placeBetData);
+    }
+    async resolveBet(resolveBetData) {
+        return this.walletService.resolveBet(resolveBetData);
+    }
+};
+exports.WalletController = WalletController;
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'wallet', cmd: 'transferFunds' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_b = typeof transfer_funds_dto_1.TransferFundsDto !== "undefined" && transfer_funds_dto_1.TransferFundsDto) === "function" ? _b : Object]),
+    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], WalletController.prototype, "transferFunds", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'wallet', cmd: 'placeBet' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_d = typeof place_bet_dto_1.PlaceBetDto !== "undefined" && place_bet_dto_1.PlaceBetDto) === "function" ? _d : Object]),
+    __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+], WalletController.prototype, "placeBet", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'wallet', cmd: 'resolveBet' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_f = typeof resolve_bet_dto_1.ResolveBetDto !== "undefined" && resolve_bet_dto_1.ResolveBetDto) === "function" ? _f : Object]),
+    __metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
+], WalletController.prototype, "resolveBet", null);
+exports.WalletController = WalletController = __decorate([
+    (0, common_1.Controller)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof wallet_service_1.WalletService !== "undefined" && wallet_service_1.WalletService) === "function" ? _a : Object])
+], WalletController);
+
+
+/***/ }),
+
+/***/ "./apps/profile/src/dto/createProfileDto.ts":
+/*!**************************************************!*\
+  !*** ./apps/profile/src/dto/createProfileDto.ts ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CreateProfileDto = void 0;
+class CreateProfileDto {
+}
+exports.CreateProfileDto = CreateProfileDto;
+
+
+/***/ }),
+
+/***/ "./apps/profile/src/dto/place-bet.dto.ts":
+/*!***********************************************!*\
+  !*** ./apps/profile/src/dto/place-bet.dto.ts ***!
+  \***********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PlaceBetDto = void 0;
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+class PlaceBetDto {
+}
+exports.PlaceBetDto = PlaceBetDto;
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], PlaceBetDto.prototype, "walletId", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsPositive)(),
+    __metadata("design:type", Number)
+], PlaceBetDto.prototype, "betAmount", void 0);
+
+
+/***/ }),
+
+/***/ "./apps/profile/src/dto/resolve-bet.dto.ts":
+/*!*************************************************!*\
+  !*** ./apps/profile/src/dto/resolve-bet.dto.ts ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ResolveBetDto = void 0;
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+class ResolveBetDto {
+}
+exports.ResolveBetDto = ResolveBetDto;
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], ResolveBetDto.prototype, "walletId", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], ResolveBetDto.prototype, "isWinner", void 0);
+
+
+/***/ }),
+
+/***/ "./apps/profile/src/dto/transfer-funds.dto.ts":
+/*!****************************************************!*\
+  !*** ./apps/profile/src/dto/transfer-funds.dto.ts ***!
+  \****************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TransferFundsDto = void 0;
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+class TransferFundsDto {
+}
+exports.TransferFundsDto = TransferFundsDto;
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], TransferFundsDto.prototype, "senderId", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], TransferFundsDto.prototype, "recipientId", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsPositive)(),
+    __metadata("design:type", Number)
+], TransferFundsDto.prototype, "amount", void 0);
+
+
+/***/ }),
+
+/***/ "./apps/profile/src/interface/title.user.interface.ts":
+/*!************************************************************!*\
+  !*** ./apps/profile/src/interface/title.user.interface.ts ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UserTitle = void 0;
+var UserTitle;
+(function (UserTitle) {
+    UserTitle["APEX_VANGUARD_01"] = "Apex Vanguard";
+    UserTitle["VIRTUOSO_WARLORD_02"] = "Virtuoso Warlord";
+    UserTitle["Maestro_Dominator_03"] = "Maestro Dominator";
+    UserTitle["Legend_Conqueror_04"] = "Legend Conqueror";
+    UserTitle["Elite_Battlemaster_05"] = "Elite Battlemaster";
+    UserTitle["Master_Sentinel_06"] = "Master Sentinel";
+    UserTitle["Prodigy_Valor_07"] = "Prodigy Valor";
+    UserTitle["Ace_Gladiator_08"] = "Ace Gladiator";
+    UserTitle["Veteran_09"] = "Veteran";
+    UserTitle["Challenger_10"] = "Challenger";
+})(UserTitle || (exports.UserTitle = UserTitle = {}));
+
+
+/***/ }),
+
+/***/ "./apps/profile/src/profile.module.ts":
+/*!********************************************!*\
+  !*** ./apps/profile/src/profile.module.ts ***!
+  \********************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -54,579 +344,45 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AuthModule = void 0;
+exports.ProfileModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const auth_controller_1 = __webpack_require__(/*! ./controllers/auth.controller */ "./apps/auth/src/controllers/auth.controller.ts");
-const auth_service_1 = __webpack_require__(/*! ./services/auth.service */ "./apps/auth/src/services/auth.service.ts");
-const rabbit_mq_1 = __webpack_require__(/*! @app/rabbit-mq */ "./libs/rabbit-mq/src/index.ts");
-const prisma_service_1 = __webpack_require__(/*! ../prisma/prisma.service */ "./apps/auth/prisma/prisma.service.ts");
-const user_module_1 = __webpack_require__(/*! ./user.module */ "./apps/auth/src/user.module.ts");
-const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
+const profile_controller_1 = __webpack_require__(/*! ./controller/profile.controller */ "./apps/profile/src/controller/profile.controller.ts");
 const common_2 = __webpack_require__(/*! @app/common */ "./libs/common/src/index.ts");
 const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
-let AuthModule = class AuthModule {
+const rabbit_mq_1 = __webpack_require__(/*! @app/rabbit-mq */ "./libs/rabbit-mq/src/index.ts");
+const profile_service_1 = __webpack_require__(/*! ./services/profile.service */ "./apps/profile/src/services/profile.service.ts");
+const prisma_service_1 = __webpack_require__(/*! ../prisma/prisma.service */ "./apps/profile/prisma/prisma.service.ts");
+const wallet_controller_1 = __webpack_require__(/*! ./controller/wallet.controller */ "./apps/profile/src/controller/wallet.controller.ts");
+const wallet_service_1 = __webpack_require__(/*! ./services/wallet.service */ "./apps/profile/src/services/wallet.service.ts");
+let ProfileModule = class ProfileModule {
 };
-exports.AuthModule = AuthModule;
-exports.AuthModule = AuthModule = __decorate([
+exports.ProfileModule = ProfileModule;
+exports.ProfileModule = ProfileModule = __decorate([
     (0, common_1.Module)({
         imports: [
             common_2.CommonModule,
             rabbit_mq_1.RabbitMqModule,
-            user_module_1.UserModule,
-            jwt_1.JwtModule.register({}),
         ],
         controllers: [
-            auth_controller_1.AuthController
+            profile_controller_1.ProfileController,
+            wallet_controller_1.WalletController
         ],
         providers: [
-            auth_service_1.AuthService,
+            wallet_service_1.WalletService,
+            profile_service_1.ProfileService,
             prisma_service_1.PrismaService,
             exception_handling_1.RpcExceptionService,
         ],
     })
-], AuthModule);
+], ProfileModule);
 
 
 /***/ }),
 
-/***/ "./apps/auth/src/controllers/auth.controller.ts":
+/***/ "./apps/profile/src/services/profile.service.ts":
 /*!******************************************************!*\
-  !*** ./apps/auth/src/controllers/auth.controller.ts ***!
+  !*** ./apps/profile/src/services/profile.service.ts ***!
   \******************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AuthController = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
-const auth_service_1 = __webpack_require__(/*! ../services/auth.service */ "./apps/auth/src/services/auth.service.ts");
-const dto_1 = __webpack_require__(/*! ../dto */ "./apps/auth/src/dto/index.ts");
-const getRefreshUser_dto_1 = __webpack_require__(/*! @app/common/auth/dto/getRefreshUser.dto */ "./libs/common/src/auth/dto/getRefreshUser.dto.ts");
-const dto_2 = __webpack_require__(/*! @app/common/auth/dto */ "./libs/common/src/auth/dto/index.ts");
-const AccessToken_interface_1 = __webpack_require__(/*! @app/common/auth/interface/AccessToken.interface */ "./libs/common/src/auth/interface/AccessToken.interface.ts");
-const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
-const common_2 = __webpack_require__(/*! @app/common */ "./libs/common/src/index.ts");
-let AuthController = class AuthController {
-    constructor(authService, rpcExceptionService, logger) {
-        this.authService = authService;
-        this.rpcExceptionService = rpcExceptionService;
-        this.logger = logger;
-    }
-    async signIn(authCredentials) {
-        return this.authService.signIn(authCredentials);
-    }
-    async signUp(userCredentials) {
-        this.logger.actionLog("auth", "signUp()", "sing UP", userCredentials);
-        return this.authService.signUp(userCredentials);
-    }
-    async getUserOnRefreshTokenMatch(refreshToken) {
-        return this.authService.getUserOnRefreshTokenMatch(refreshToken);
-    }
-    async logOut(id) {
-        return this.authService.logOut(id);
-    }
-    async refreshAccessToken(payload) {
-        const tokens = await this.authService.newRefreshAndAccessToken(payload);
-        return { accessToken: tokens.accessToken };
-    }
-    async checkAccessToken(accessControlDto) {
-        const { token, id } = accessControlDto;
-        const jwtTokenPayload = await this.authService.verifyToken(token);
-        if (jwtTokenPayload.sub !== id) {
-            this.rpcExceptionService.throwForbidden('Forbidden resource');
-        }
-        return true;
-    }
-    async getRefreshWithJwtAccessToken(payload) {
-        const tokens = await this.authService.newRefreshAndAccessToken(payload);
-        return tokens;
-    }
-    async enableTwoFactorAuth(id) {
-        return this.authService.enableTwoFactorAuth(id);
-    }
-    async verifyTwoFactorAuth(twoFActorAuthInput) {
-        return this.authService.verifyTwoFactorAuth(twoFActorAuthInput);
-    }
-    async authenticate_2fa(twoFActorAuthInput) {
-        return this.authService.authenticate_2fa(twoFActorAuthInput);
-    }
-};
-exports.AuthController = AuthController;
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'login' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_d = typeof dto_1.SignInCredentialsDto !== "undefined" && dto_1.SignInCredentialsDto) === "function" ? _d : Object]),
-    __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
-], AuthController.prototype, "signIn", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'signUp' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_f = typeof dto_1.SignUpCredentialsDto !== "undefined" && dto_1.SignUpCredentialsDto) === "function" ? _f : Object]),
-    __metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
-], AuthController.prototype, "signUp", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'OnRefreshTokenMatch' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_h = typeof getRefreshUser_dto_1.GetRefreshUserDto !== "undefined" && getRefreshUser_dto_1.GetRefreshUserDto) === "function" ? _h : Object]),
-    __metadata("design:returntype", typeof (_j = typeof Promise !== "undefined" && Promise) === "function" ? _j : Object)
-], AuthController.prototype, "getUserOnRefreshTokenMatch", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'logOut' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
-], AuthController.prototype, "logOut", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'refresh-accessToken' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_l = typeof dto_2.JwtPayloadDto !== "undefined" && dto_2.JwtPayloadDto) === "function" ? _l : Object]),
-    __metadata("design:returntype", typeof (_m = typeof Promise !== "undefined" && Promise) === "function" ? _m : Object)
-], AuthController.prototype, "refreshAccessToken", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'checkAccess' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_o = typeof AccessToken_interface_1.IAccessControl !== "undefined" && AccessToken_interface_1.IAccessControl) === "function" ? _o : Object]),
-    __metadata("design:returntype", typeof (_p = typeof Promise !== "undefined" && Promise) === "function" ? _p : Object)
-], AuthController.prototype, "checkAccessToken", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'getRefreshWithJwtAccessToken' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_q = typeof dto_2.JwtPayloadDto !== "undefined" && dto_2.JwtPayloadDto) === "function" ? _q : Object]),
-    __metadata("design:returntype", typeof (_r = typeof Promise !== "undefined" && Promise) === "function" ? _r : Object)
-], AuthController.prototype, "getRefreshWithJwtAccessToken", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'enableTwoFactorAuth' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", typeof (_s = typeof Promise !== "undefined" && Promise) === "function" ? _s : Object)
-], AuthController.prototype, "enableTwoFactorAuth", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'verifyTwoFactorAuth' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_t = typeof dto_1.TwoFActorAuthDto !== "undefined" && dto_1.TwoFActorAuthDto) === "function" ? _t : Object]),
-    __metadata("design:returntype", typeof (_u = typeof Promise !== "undefined" && Promise) === "function" ? _u : Object)
-], AuthController.prototype, "verifyTwoFactorAuth", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'auth', cmd: 'authenticate_2fa' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_v = typeof dto_1.TwoFActorAuthDto !== "undefined" && dto_1.TwoFActorAuthDto) === "function" ? _v : Object]),
-    __metadata("design:returntype", typeof (_w = typeof Promise !== "undefined" && Promise) === "function" ? _w : Object)
-], AuthController.prototype, "authenticate_2fa", null);
-exports.AuthController = AuthController = __decorate([
-    (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object, typeof (_b = typeof exception_handling_1.RpcExceptionService !== "undefined" && exception_handling_1.RpcExceptionService) === "function" ? _b : Object, typeof (_c = typeof common_2.LoggerService !== "undefined" && common_2.LoggerService) === "function" ? _c : Object])
-], AuthController);
-
-
-/***/ }),
-
-/***/ "./apps/auth/src/controllers/user.controller.ts":
-/*!******************************************************!*\
-  !*** ./apps/auth/src/controllers/user.controller.ts ***!
-  \******************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var _a, _b, _c, _d, _e, _f, _g, _h;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UserController = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
-const user_service_1 = __webpack_require__(/*! ../services/user.service */ "./apps/auth/src/services/user.service.ts");
-const dto_1 = __webpack_require__(/*! ../dto */ "./apps/auth/src/dto/index.ts");
-const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
-let UserController = class UserController {
-    constructor(userService, rpcExceptionService) {
-        this.userService = userService;
-        this.rpcExceptionService = rpcExceptionService;
-    }
-    async registerUser(userInput) {
-        return await this.userService.createUser(userInput);
-    }
-    async findUserByUsername(username) {
-        const user = await this.userService.findUserByUsername(username);
-        this.handleUserNotFound(user, `Failed to find user: ${username}`);
-        return user;
-    }
-    async findById(id) {
-        const user = await this.userService.findById(id);
-        this.handleUserNotFound(user, `Failed to find user: ${id}`);
-        return user;
-    }
-    async findAll() {
-        const users = await this.userService.findAll();
-        this.handleUsersNotFound(users, 'Failed to query users');
-        return users;
-    }
-    async remove(id) {
-        return this.userService.remove(id);
-    }
-    handleUserNotFound(user, errorMessage) {
-        if (!user) {
-            this.rpcExceptionService.throwCatchedException({
-                code: 500,
-                message: errorMessage,
-            });
-        }
-    }
-    handleUsersNotFound(users, errorMessage) {
-        if (!users) {
-            this.rpcExceptionService.throwCatchedException({
-                code: 500,
-                message: errorMessage,
-            });
-        }
-    }
-};
-exports.UserController = UserController;
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'user', cmd: 'create-user' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_c = typeof dto_1.UserCreationDto !== "undefined" && dto_1.UserCreationDto) === "function" ? _c : Object]),
-    __metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
-], UserController.prototype, "registerUser", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'user', cmd: 'find-user-by-username' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
-], UserController.prototype, "findUserByUsername", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'user', cmd: 'findById' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
-], UserController.prototype, "findById", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'user', cmd: 'findAll' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
-], UserController.prototype, "findAll", null);
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'user', cmd: 'delete-user' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
-], UserController.prototype, "remove", null);
-exports.UserController = UserController = __decorate([
-    (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof user_service_1.UserService !== "undefined" && user_service_1.UserService) === "function" ? _a : Object, typeof (_b = typeof exception_handling_1.RpcExceptionService !== "undefined" && exception_handling_1.RpcExceptionService) === "function" ? _b : Object])
-], UserController);
-
-
-/***/ }),
-
-/***/ "./apps/auth/src/dto/auth.signInCredentialsInput.ts":
-/*!**********************************************************!*\
-  !*** ./apps/auth/src/dto/auth.signInCredentialsInput.ts ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SignInCredentialsDto = void 0;
-class SignInCredentialsDto {
-}
-exports.SignInCredentialsDto = SignInCredentialsDto;
-
-
-/***/ }),
-
-/***/ "./apps/auth/src/dto/auth.signUpCredentialsInput.ts":
-/*!**********************************************************!*\
-  !*** ./apps/auth/src/dto/auth.signUpCredentialsInput.ts ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SignUpCredentialsDto = void 0;
-class SignUpCredentialsDto {
-}
-exports.SignUpCredentialsDto = SignUpCredentialsDto;
-
-
-/***/ }),
-
-/***/ "./apps/auth/src/dto/auth.twoFactorAuth.dto.ts":
-/*!*****************************************************!*\
-  !*** ./apps/auth/src/dto/auth.twoFactorAuth.dto.ts ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TwoFActorAuthDto = void 0;
-class TwoFActorAuthDto {
-}
-exports.TwoFActorAuthDto = TwoFActorAuthDto;
-
-
-/***/ }),
-
-/***/ "./apps/auth/src/dto/index.ts":
-/*!************************************!*\
-  !*** ./apps/auth/src/dto/index.ts ***!
-  \************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__webpack_require__(/*! ./auth.signUpCredentialsInput */ "./apps/auth/src/dto/auth.signUpCredentialsInput.ts"), exports);
-__exportStar(__webpack_require__(/*! ./auth.signInCredentialsInput */ "./apps/auth/src/dto/auth.signInCredentialsInput.ts"), exports);
-__exportStar(__webpack_require__(/*! ./user.UserCreation.dto */ "./apps/auth/src/dto/user.UserCreation.dto.ts"), exports);
-__exportStar(__webpack_require__(/*! ./user.creationResponse.dto */ "./apps/auth/src/dto/user.creationResponse.dto.ts"), exports);
-__exportStar(__webpack_require__(/*! ./auth.twoFactorAuth.dto */ "./apps/auth/src/dto/auth.twoFactorAuth.dto.ts"), exports);
-
-
-/***/ }),
-
-/***/ "./apps/auth/src/dto/user.UserCreation.dto.ts":
-/*!****************************************************!*\
-  !*** ./apps/auth/src/dto/user.UserCreation.dto.ts ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UserCreationDto = void 0;
-class UserCreationDto {
-}
-exports.UserCreationDto = UserCreationDto;
-
-
-/***/ }),
-
-/***/ "./apps/auth/src/dto/user.creationResponse.dto.ts":
-/*!********************************************************!*\
-  !*** ./apps/auth/src/dto/user.creationResponse.dto.ts ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UserCreationResponsd = void 0;
-class UserCreationResponsd {
-}
-exports.UserCreationResponsd = UserCreationResponsd;
-
-
-/***/ }),
-
-/***/ "./apps/auth/src/services/auth.service.ts":
-/*!************************************************!*\
-  !*** ./apps/auth/src/services/auth.service.ts ***!
-  \************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var _a, _b, _c, _d;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AuthService = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const user_service_1 = __webpack_require__(/*! ./user.service */ "./apps/auth/src/services/user.service.ts");
-const common_2 = __webpack_require__(/*! @app/common */ "./libs/common/src/index.ts");
-const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
-const config_1 = __webpack_require__(/*! @nestjs/config */ "@nestjs/config");
-const argon2 = __webpack_require__(/*! argon2 */ "argon2");
-const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
-const speakeasy = __webpack_require__(/*! speakeasy */ "speakeasy");
-const QRCode = __webpack_require__(/*! qrcode */ "qrcode");
-let AuthService = class AuthService {
-    constructor(userService, jwtService, configService, rpcExceptionService) {
-        this.userService = userService;
-        this.jwtService = jwtService;
-        this.configService = configService;
-        this.rpcExceptionService = rpcExceptionService;
-    }
-    async signIn(authCredentials) {
-        let user = await this.userService.validateUser(authCredentials);
-        const refreshAndAccessToken = await this.newRefreshAndAccessToken({
-            id: user.id,
-            username: user.username
-        });
-        this.updateRefreshToken(user.id, refreshAndAccessToken.refreshToken);
-        return new common_2.AuthResponseDto(refreshAndAccessToken.accessToken, refreshAndAccessToken.refreshToken, user);
-    }
-    async signUp(authCredentials) {
-        const user = await this.userService.findUserByUsername(authCredentials.username);
-        if (user) {
-            this.rpcExceptionService.throwForbidden("Username already in use. Try a different one.");
-        }
-        const usercreated = await this.userService.createUser(authCredentials);
-        const refreshAndAccessToken = await this.newRefreshAndAccessToken({
-            id: usercreated.id,
-            username: usercreated.username
-        });
-        this.updateRefreshToken(usercreated.id, refreshAndAccessToken.refreshToken);
-        return new common_2.AuthResponseDto(refreshAndAccessToken.accessToken, refreshAndAccessToken.refreshToken, usercreated);
-    }
-    async newRefreshAndAccessToken(payload) {
-        const [accessToken, refreshToken] = await Promise.all([
-            this.jwtService.signAsync({
-                sub: payload.id,
-                username: payload.username,
-            }, {
-                secret: this.configService.get('JWT_ACCESS_SECRET'),
-                expiresIn: '15m',
-            }),
-            this.jwtService.signAsync({
-                sub: payload.id,
-                username: payload.username,
-            }, {
-                secret: this.configService.get('JWT_REFRESH_SECRET'),
-                expiresIn: '7d',
-            }),
-        ]);
-        return {
-            accessToken,
-            refreshToken,
-        };
-    }
-    hashData(data) {
-        return argon2.hash(data);
-    }
-    async updateRefreshToken(userId, refreshToken) {
-        const hashedRefreshToken = await this.hashData(refreshToken);
-        await this.userService.updateRefreshToken(userId, hashedRefreshToken);
-    }
-    async logOut(id) {
-        this.updateRefreshToken(id, "");
-        return (true);
-    }
-    async getUserOnRefreshTokenMatch(refreshTokenOject) {
-        const user = await this.userService.findById(refreshTokenOject.id);
-        if (!user || !user.refreshToken)
-            throw 'Access Denied';
-        const refreshTokenMatches = await argon2.verify(user.refreshToken, refreshTokenOject.refreshToken);
-        if (!refreshTokenMatches)
-            throw 'Access Denied';
-        console.log("refreshTokenMatches");
-        return (user);
-    }
-    async verifyToken(token) {
-        try {
-            const res = await this.jwtService.verify(token, {
-                secret: this.configService.get('JWT_ACCESS_SECRET'),
-            });
-            return res;
-        }
-        catch (error) {
-            if (error.expiredAt) {
-                this.rpcExceptionService.throwUnauthorised('Token has expired, please sign in');
-            }
-            return false;
-        }
-    }
-    async enableTwoFactorAuth(id) {
-        const user = await this.userService.findById(id);
-        if (!user) {
-            this.rpcExceptionService.throwUnauthorised("User not found");
-        }
-        let secret = speakeasy.generateSecret({
-            name: user.username,
-            issuer: "overPing"
-        });
-        this.userService.update2FA(id, secret.base32);
-        return this.generateQrCodeDataURL(secret.otpauth_url);
-    }
-    async verifyTwoFactorAuth(twoFActorAuthInput) {
-        const user = await this.userService.findById(twoFActorAuthInput.id);
-        const isVerified = this.verifyTwoFactor(user.twoFactorSecret, twoFActorAuthInput.code);
-        if (isVerified) {
-            this.userService.toggle2FAStatus(user.id, true);
-        }
-        else {
-            this.userService.toggle2FAStatus(user.id, false);
-            this.userService.update2FA(user.id, '');
-        }
-        return isVerified;
-    }
-    async authenticate_2fa(twoFActorAuthInput) {
-        const user = await this.userService.findById(twoFActorAuthInput.id);
-        if (!user.twoStepVerificationEnabled) {
-            this.rpcExceptionService.throwBadRequest("twoStepVerification not enabled");
-        }
-        const isVerified = this.verifyTwoFactor(user.twoFactorSecret, twoFActorAuthInput.code);
-        if (!isVerified) {
-            this.rpcExceptionService.throwForbidden("Invalid code. Please try again with a different code.");
-        }
-        const refreshAndAccessToken = await this.newRefreshAndAccessToken({
-            id: user.id,
-            username: user.username
-        });
-        this.updateRefreshToken(user.id, refreshAndAccessToken.refreshToken);
-        return new common_2.AuthResponseDto(refreshAndAccessToken.accessToken, refreshAndAccessToken.refreshToken, user);
-    }
-    verifyTwoFactor(secret, code) {
-        const isVerified = speakeasy.totp.verify({
-            secret: secret,
-            encoding: 'base32',
-            token: code,
-        });
-        return isVerified;
-    }
-    async generateQrCodeDataURL(otpAuthUrl) {
-        return QRCode.toDataURL(otpAuthUrl);
-    }
-};
-exports.AuthService = AuthService;
-exports.AuthService = AuthService = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof user_service_1.UserService !== "undefined" && user_service_1.UserService) === "function" ? _a : Object, typeof (_b = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _b : Object, typeof (_c = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _c : Object, typeof (_d = typeof exception_handling_1.RpcExceptionService !== "undefined" && exception_handling_1.RpcExceptionService) === "function" ? _d : Object])
-], AuthService);
-
-
-/***/ }),
-
-/***/ "./apps/auth/src/services/user.service.ts":
-/*!************************************************!*\
-  !*** ./apps/auth/src/services/user.service.ts ***!
-  \************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -641,165 +397,116 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UserService = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const prisma_service_1 = __webpack_require__(/*! apps/auth/prisma/prisma.service */ "./apps/auth/prisma/prisma.service.ts");
-const argon2 = __webpack_require__(/*! argon2 */ "argon2");
+exports.ProfileService = void 0;
 const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
-let UserService = class UserService {
-    constructor(rpcExceptionService, prisma) {
-        this.rpcExceptionService = rpcExceptionService;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const prisma_service_1 = __webpack_require__(/*! apps/profile/prisma/prisma.service */ "./apps/profile/prisma/prisma.service.ts");
+const title_user_interface_1 = __webpack_require__(/*! ../interface/title.user.interface */ "./apps/profile/src/interface/title.user.interface.ts");
+const client_1 = __webpack_require__(/*! @prisma/client */ "@prisma/client");
+let ProfileService = class ProfileService {
+    constructor(prisma, rpcExceptionService) {
         this.prisma = prisma;
+        this.rpcExceptionService = rpcExceptionService;
     }
-    async validateUser(userCredentials) {
-        let userFound = await this.findUserByUsername(userCredentials.username);
-        if (!userFound) {
-            this.rpcExceptionService.throwNotFound("User not found. Check the provided username.");
-        }
-        const isPasswordValid = await argon2.verify(userFound.password, userCredentials.password);
-        if (!isPasswordValid)
-            this.rpcExceptionService.throwForbidden("Invalid username or password.");
-        if (userFound.twoStepVerificationEnabled) {
-            this.rpcExceptionService.throwUnauthorised("Two-factor authentication is required. Please provide the 2FA code.");
-        }
-        return (userFound);
-    }
-    async createUser({ password, username, googleId, fortyTwoId }) {
+    async create(input) {
         try {
-            const hashedPassword = password ? await argon2.hash(password) : undefined;
-            const currentDate = new Date();
-            return this.prisma.user.create({
+            const userRank = await this.getLastUserRank();
+            const userProfile = await this.prisma.userProfile.create({
                 data: {
-                    username,
-                    password: hashedPassword,
-                    googleId,
-                    fortyTwoId,
-                    twoFactorSecret: "",
-                    twoStepVerificationEnabled: false,
-                    createdAt: currentDate,
-                    updatedAt: currentDate,
-                },
-                select: {
-                    id: true,
-                    username: true,
-                    googleId: true,
-                    fortyTwoId: true,
-                    twoStepVerificationEnabled: true,
-                    createdAt: true,
-                    updatedAt: true,
+                    user_id: input.userId,
+                    nickname: `${input.username.replace(/\s/g, '')}${Date.now()}`,
+                    title: title_user_interface_1.UserTitle.Challenger_10,
+                    rank: userRank
                 },
             });
+            const wallet = await this.prisma.wallet.create({
+                data: {
+                    userProfile: { connect: { id: userProfile.id } },
+                },
+            });
+            const updatedUserProfile = await this.prisma.userProfile.update({
+                where: { id: userProfile.id },
+                data: { wallet: { connect: { id: wallet.id } } },
+            });
+            return updatedUserProfile;
         }
         catch (error) {
-            this.rpcExceptionService.throwCatchedException({
-                code: 500,
-                message: ("Failed to create user: Unknown error")
-            });
+            this.handlePrismaError(error);
         }
     }
-    async findUserByUsername(username) {
+    async getLastUserRank() {
+        const lastUserRank = await this.prisma.userProfile.count();
+        return lastUserRank + 1;
+    }
+    async findOne(id) {
         try {
-            const user = await (this.prisma.user.findUnique({
-                where: { username }
-            }));
-            return (user);
+            const userProfile = await this.prisma.userProfile.findUnique({
+                where: { id: id },
+            });
+            return userProfile;
         }
         catch (error) {
-            this.rpcExceptionService.throwCatchedException({
-                code: 500,
-                message: ("Failed to find user: Unknown error") + error
-            });
+            this.handlePrismaError(error);
         }
     }
-    async findById(id) {
+    async update(id, input) {
         try {
-            const user = await this.prisma.user.findUnique({
-                where: { id }
+            await this.prisma.userProfile.update({
+                where: { id },
+                data: input,
             });
-            return (user);
+            return true;
         }
         catch (error) {
-            this.rpcExceptionService.throwCatchedException({
-                code: 500,
-                message: ("Failed to find user: Unknown error")
-            });
+            this.handlePrismaError(error);
         }
-    }
-    async findAll() {
-        return await this.prisma.user.findMany({
-            select: {
-                id: true,
-                username: true,
-                password: false,
-                googleId: true,
-                fortyTwoId: true,
-                createdAt: true,
-                updatedAt: true,
-            },
-        });
     }
     async remove(id) {
         try {
-            const userToDelete = await this.prisma.user.findUnique({
-                where: {
-                    id: id,
-                },
+            const existingProfile = await this.prisma.userProfile.findUnique({
+                where: { id },
             });
-            if (!userToDelete) {
-                this.rpcExceptionService.throwBadRequest(`User with ID ${id} not found.`);
+            console.log(existingProfile);
+            if (!existingProfile) {
+                this.rpcExceptionService.throwNotFound(`Profile of User ID ${id} not found`);
             }
-            await this.prisma.user.delete({
+            await this.prisma.userProfile.delete({
                 where: {
-                    id: id,
+                    id: id
                 },
             });
-            return (true);
+            return true;
         }
         catch (error) {
             this.rpcExceptionService.throwCatchedException({
                 code: 500,
-                message: (`Failed to delete user: ${id}`)
+                message: ("Failed to delete profile: Unknown error") + error
             });
         }
     }
-    async updateRefreshToken(userId, refreshToken) {
-        return this.prisma.user.update({
-            data: {
-                refreshToken: refreshToken,
-            },
-            where: { id: userId },
-        });
-    }
-    async update2FA(id, secret) {
-        return this.prisma.user.update({
-            where: { id },
-            data: {
-                twoFactorSecret: secret
-            }
-        });
-    }
-    async toggle2FAStatus(id, state) {
-        return this.prisma.user.update({
-            where: { id },
-            data: {
-                twoStepVerificationEnabled: state
-            }
-        });
+    handlePrismaError(error) {
+        if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
+            const prismaError = new exception_handling_1.PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
+            prismaError.handlePrismaError();
+        }
+        else {
+            throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
+        }
     }
 };
-exports.UserService = UserService;
-exports.UserService = UserService = __decorate([
+exports.ProfileService = ProfileService;
+exports.ProfileService = ProfileService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof exception_handling_1.RpcExceptionService !== "undefined" && exception_handling_1.RpcExceptionService) === "function" ? _a : Object, typeof (_b = typeof prisma_service_1.PrismaService !== "undefined" && prisma_service_1.PrismaService) === "function" ? _b : Object])
-], UserService);
+    __metadata("design:paramtypes", [typeof (_a = typeof prisma_service_1.PrismaService !== "undefined" && prisma_service_1.PrismaService) === "function" ? _a : Object, typeof (_b = typeof exception_handling_1.RpcExceptionService !== "undefined" && exception_handling_1.RpcExceptionService) === "function" ? _b : Object])
+], ProfileService);
 
 
 /***/ }),
 
-/***/ "./apps/auth/src/user.module.ts":
-/*!**************************************!*\
-  !*** ./apps/auth/src/user.module.ts ***!
-  \**************************************/
+/***/ "./apps/profile/src/services/wallet.service.ts":
+/*!*****************************************************!*\
+  !*** ./apps/profile/src/services/wallet.service.ts ***!
+  \*****************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -809,31 +516,86 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UserModule = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const user_service_1 = __webpack_require__(/*! ./services/user.service */ "./apps/auth/src/services/user.service.ts");
-const prisma_service_1 = __webpack_require__(/*! ../prisma/prisma.service */ "./apps/auth/prisma/prisma.service.ts");
-const user_controller_1 = __webpack_require__(/*! ./controllers/user.controller */ "./apps/auth/src/controllers/user.controller.ts");
-const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
-let UserModule = class UserModule {
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-exports.UserModule = UserModule;
-exports.UserModule = UserModule = __decorate([
-    (0, common_1.Module)({
-        providers: [
-            user_service_1.UserService,
-            prisma_service_1.PrismaService,
-            exception_handling_1.RpcExceptionService,
-        ],
-        controllers: [
-            user_controller_1.UserController
-        ],
-        exports: [
-            user_service_1.UserService
-        ]
-    })
-], UserModule);
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.WalletService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const prisma_service_1 = __webpack_require__(/*! apps/profile/prisma/prisma.service */ "./apps/profile/prisma/prisma.service.ts");
+const client_1 = __webpack_require__(/*! @prisma/client */ "@prisma/client");
+const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
+let WalletService = class WalletService {
+    constructor(prisma, rpcExceptionService) {
+        this.prisma = prisma;
+        this.rpcExceptionService = rpcExceptionService;
+    }
+    async transferFunds(data) {
+        await this.prisma.$transaction(async () => {
+            await this.updateWalletBalance(data.senderId, -data.amount);
+            await this.updateWalletBalance(data.recipientId, data.amount);
+        });
+        return true;
+    }
+    async updateWalletBalance(walletId, amount) {
+        try {
+            await this.prisma.wallet.update({
+                where: { id: walletId },
+                data: { balance: { increment: amount } },
+            });
+        }
+        catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+    async placeBet(placeBetData) {
+        try {
+            await this.prisma.wallet.update({
+                where: { id: placeBetData.walletId },
+                data: { betAmount: { increment: placeBetData.betAmount } },
+            });
+            return true;
+        }
+        catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+    async resolveBet(resolveBetData) {
+        try {
+            const wallet = await this.prisma.wallet.findUnique({
+                where: { id: resolveBetData.walletId },
+            });
+            if (wallet?.betAmount && wallet.betAmount > 0) {
+                const amountWonOrLost = resolveBetData.isWinner ? wallet.betAmount : -wallet.betAmount;
+                await this.prisma.$transaction(async (prisma) => {
+                    await prisma.wallet.update({
+                        where: { id: resolveBetData.walletId },
+                        data: { balance: { increment: amountWonOrLost }, betAmount: 0 },
+                    });
+                });
+                return (true);
+            }
+        }
+        catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+    handlePrismaError(error) {
+        if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
+            const prismaError = new exception_handling_1.PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
+            prismaError.handlePrismaError();
+        }
+        else {
+            throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
+        }
+    }
+};
+exports.WalletService = WalletService;
+exports.WalletService = WalletService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof prisma_service_1.PrismaService !== "undefined" && prisma_service_1.PrismaService) === "function" ? _a : Object, typeof (_b = typeof exception_handling_1.RpcExceptionService !== "undefined" && exception_handling_1.RpcExceptionService) === "function" ? _b : Object])
+], WalletService);
 
 
 /***/ }),
@@ -855,81 +617,6 @@ class AuthResponseDto {
     }
 }
 exports.AuthResponseDto = AuthResponseDto;
-
-
-/***/ }),
-
-/***/ "./libs/common/src/auth/dto/JwtPayloadDto.ts":
-/*!***************************************************!*\
-  !*** ./libs/common/src/auth/dto/JwtPayloadDto.ts ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.JwtPayloadDto = void 0;
-class JwtPayloadDto {
-}
-exports.JwtPayloadDto = JwtPayloadDto;
-
-
-/***/ }),
-
-/***/ "./libs/common/src/auth/dto/getRefreshUser.dto.ts":
-/*!********************************************************!*\
-  !*** ./libs/common/src/auth/dto/getRefreshUser.dto.ts ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GetRefreshUserDto = void 0;
-class GetRefreshUserDto {
-}
-exports.GetRefreshUserDto = GetRefreshUserDto;
-
-
-/***/ }),
-
-/***/ "./libs/common/src/auth/dto/index.ts":
-/*!*******************************************!*\
-  !*** ./libs/common/src/auth/dto/index.ts ***!
-  \*******************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__webpack_require__(/*! ./JwtPayloadDto */ "./libs/common/src/auth/dto/JwtPayloadDto.ts"), exports);
-
-
-/***/ }),
-
-/***/ "./libs/common/src/auth/interface/AccessToken.interface.ts":
-/*!*****************************************************************!*\
-  !*** ./libs/common/src/auth/interface/AccessToken.interface.ts ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.IAccessControl = void 0;
-class IAccessControl {
-}
-exports.IAccessControl = IAccessControl;
 
 
 /***/ }),
@@ -1508,16 +1195,6 @@ module.exports = require("@nestjs/core");
 
 /***/ }),
 
-/***/ "@nestjs/jwt":
-/*!******************************!*\
-  !*** external "@nestjs/jwt" ***!
-  \******************************/
-/***/ ((module) => {
-
-module.exports = require("@nestjs/jwt");
-
-/***/ }),
-
 /***/ "@nestjs/microservices":
 /*!****************************************!*\
   !*** external "@nestjs/microservices" ***!
@@ -1538,33 +1215,13 @@ module.exports = require("@prisma/client");
 
 /***/ }),
 
-/***/ "argon2":
-/*!*************************!*\
-  !*** external "argon2" ***!
-  \*************************/
+/***/ "class-validator":
+/*!**********************************!*\
+  !*** external "class-validator" ***!
+  \**********************************/
 /***/ ((module) => {
 
-module.exports = require("argon2");
-
-/***/ }),
-
-/***/ "qrcode":
-/*!*************************!*\
-  !*** external "qrcode" ***!
-  \*************************/
-/***/ ((module) => {
-
-module.exports = require("qrcode");
-
-/***/ }),
-
-/***/ "speakeasy":
-/*!****************************!*\
-  !*** external "speakeasy" ***!
-  \****************************/
-/***/ ((module) => {
-
-module.exports = require("speakeasy");
+module.exports = require("class-validator");
 
 /***/ })
 
@@ -1599,20 +1256,20 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 var exports = __webpack_exports__;
-/*!*******************************!*\
-  !*** ./apps/auth/src/main.ts ***!
-  \*******************************/
+/*!**********************************!*\
+  !*** ./apps/profile/src/main.ts ***!
+  \**********************************/
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(/*! @nestjs/core */ "@nestjs/core");
-const auth_module_1 = __webpack_require__(/*! ./auth.module */ "./apps/auth/src/auth.module.ts");
+const profile_module_1 = __webpack_require__(/*! ./profile.module */ "./apps/profile/src/profile.module.ts");
 const rabbit_mq_1 = __webpack_require__(/*! @app/rabbit-mq */ "./libs/rabbit-mq/src/index.ts");
 const rabbit_constent_1 = __webpack_require__(/*! @app/rabbit-mq/constent/rabbit-constent */ "./libs/rabbit-mq/src/constent/rabbit-constent.ts");
 const rmqServerName_1 = __webpack_require__(/*! @app/rabbit-mq/interface/rmqServerName */ "./libs/rabbit-mq/src/interface/rmqServerName.ts");
 async function bootstrap() {
-    const app = await core_1.NestFactory.create(auth_module_1.AuthModule);
+    const app = await core_1.NestFactory.create(profile_module_1.ProfileModule);
     const rmqService = app.get(rabbit_mq_1.RabbitMqService);
-    app.connectMicroservice(rmqService.getOptions(rabbit_constent_1.RABBIT_SERVICES[rmqServerName_1.IRmqSeverName.AUTH].queue));
+    app.connectMicroservice(rmqService.getOptions(rabbit_constent_1.RABBIT_SERVICES[rmqServerName_1.IRmqSeverName.PROFILE].queue));
     await app.startAllMicroservices();
 }
 bootstrap();

@@ -3,7 +3,7 @@ import { RabbitMqService } from './rabbit-mq.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IRmqSeverName } from './interface/rmqServerName';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-
+import { RABBIT_SERVICES } from '@app/rabbit-mq/constent/rabbit-constent'
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,7 +33,7 @@ export class RabbitMqModule {
                   transport: Transport.RMQ,
                   options: {
                     urls: [`amqp://${username}:${password}@${host}`],
-                    queue: 'auth_queuetwo',
+                    queue: RABBIT_SERVICES[service].queue,
                     queueOptions: {
                             durable: false
                     }

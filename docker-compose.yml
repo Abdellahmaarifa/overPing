@@ -49,12 +49,34 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "${POSTGRES_DB_PROT}:5432"
+    volumes:
+      - ./database/data/auth:/var/lib/postgresql/data/
+    restart: always
+    networks:
+      - webapp
+    container_name: postgres_auth_db
+    profiles:
+      - production
+      - development
+
+#   DATABASE SERVICE FOR PROFILE DEV AND PROD #
+
+  postgress_profile_db:
+    image: postgres
+    container_name: postgress_profile_db
+    env_file:
+      - /Users/aboudarga/bouCactus/overPing/api/.env
+    environment:
+      - POSTGRES_DB=${PROFILE_DB_NAME}
+      - POSTGRES_USER=${PROFILE_DB_USER}
+      - POSTGRES_PASSWORD=${PROFILE_DB_PASSWORD}
+    ports:
+      -  "${PROFILE_DB_PORT}:5432"
     networks:
       - webapp
     volumes:
-      - ./database/data:/var/lib/postgresql/data/
+      - ./database/data/profile:/var/lib/postgresql/data/
     restart: always
-    container_name: postgres_auth_db
     profiles:
       - production
       - development
@@ -120,6 +142,33 @@ services:
     profiles:
       - development
 
+# PROFILE SERVICE FOR DEVELOPMENT #
+  profile:
+    build:
+      context: ./api
+      dockerfile: ./apps/profile/Dockerfile
+      target: development
+    command: yarn start:dev profile
+    env_file:
+      - ./api/.env
+    networks:
+      - webapp
+    ports:
+      - ${PROFILE_PORT}:3003
+      - ${PRISMA_STUDIO_PROFILE_PORT}:5555
+      
+    volumes:
+      - ./api:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - postgress_profile_db
+      - gateway-dev
+    restart: always
+    container_name: profile
+    profiles:
+      - development
+
+# RABBBITMQ SERVER #
   rabbitmq:
     image: rabbitmq:3-management 
     environment:

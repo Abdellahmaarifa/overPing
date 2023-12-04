@@ -78,7 +78,7 @@ export class UserService {
 		} catch (error) {
 			this.rpcExceptionService.throwCatchedException({
 				code: 500,
-				message: ("Failed to find user: Unknown error")
+				message: ("Failed to find user: Unknown error") + error
 			})
 		}
 	}
