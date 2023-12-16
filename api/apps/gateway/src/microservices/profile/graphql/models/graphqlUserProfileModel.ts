@@ -1,5 +1,5 @@
 import { Field, ObjectType, ID } from "@nestjs/graphql";
-
+import { GQLWalletModel } from './graphqlWallet';
 @ObjectType()
 export class GQLUserProfileModel {
     @Field(() => ID)
@@ -22,6 +22,9 @@ export class GQLUserProfileModel {
 
     @Field()
     about: string
+
+    @Field()
+    wallet: GQLWalletModel
 
     @Field()
     created_at: Date

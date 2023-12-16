@@ -3,7 +3,7 @@ import { IsNumber, IsPositive } from 'class-validator';
 
 export class  PlaceBetDto {
   @IsNumber()
-  walletId: number;
+  userId: number;
 
   @IsNumber()
   @IsPositive()

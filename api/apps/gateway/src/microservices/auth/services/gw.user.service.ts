@@ -4,13 +4,15 @@ import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from "@app/rabbit-mq";
 import {GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto';
 import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
-
+import { UserProfileUpdateInput } from '../graphql/input/UserProfileUpdate.input';
+import { GwProfileService } from "../../profile/services/gw.profile.service";
 @Injectable()
 export class UserService {
     constructor(
         @Inject(IRmqSeverName.AUTH)
         private readonly client: ClientProxy,
         private readonly clientService: RabbitMqService,
+        private readonly profileService: GwProfileService,
 
     ) { }
 
@@ -63,8 +65,13 @@ export class UserService {
     //create dto for user 
     async createAccount(user: any) {
 
-        return await this.createUser(user);
-        
+        const respondUser =  await this.createUser(user);
+
+        const profile = await this.profileService.createUserProfile({
+			userId: respondUser.id,
+			username: respondUser.username
+		})
+        return (respondUser)
     }
 
 
@@ -103,6 +110,7 @@ export class UserService {
         )
         return (response);
     }
+
 
     async getUserByRefreshTokenMatch(refreshToken : GetRefreshUserDto){
 		const response = await this.clientService.sendMessageWithPayload(

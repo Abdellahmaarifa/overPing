@@ -4,6 +4,7 @@ export class IAuthUser {
     googleId?: string;
     fortyTwoId?: string;
     refreshToken?: string;
+    profileId: number;
     createdAt?: Date;
     updatedAt?: Date;
   }

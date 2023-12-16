@@ -21,8 +21,11 @@ import { ProfileQueryResolver } from './microservices/profile/graphql/queries/gw
 import { UserProifleMutationsResolver } from './microservices/profile/graphql/mutations/gw.profile.mutations.resolver';
 import { WalletMutationsResolver } from './microservices/profile/graphql/mutations/gw.wallet.user.mutations.resolver';
 import { GwWalletService } from './microservices/profile/services/gw.wallet.service';
-
-
+import { MatchMakingQueryResolver } from './microservices/matchMaking/graphql/queries/gw.matchMaking.query.resolver';
+import { GwMatchMakingService } from './microservices/matchMaking/services/gw.matchMaking.service';
+import { PubSub } from 'graphql-subscriptions';
+import { MatchMakingMutationsResolver } from './microservices/matchMaking/graphql/mutations/gw.matchMaking.mutation.resolver';
+import { GwMatchmakingController } from './microservices/matchMaking/controller/gw.matchmaking.controller';
 
 
 @Module({
@@ -38,26 +41,29 @@ import { GwWalletService } from './microservices/profile/services/gw.wallet.serv
         origin: true
       },
       playground: true,
+      // installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': {
+          path: '/graphql'
+        },
+      }
+    
     }),
-  //   ClientsModule.register([{
-  //   name: IRmqSeverName.AUTH,
-  //   transport: Transport.RMQ,
-  //   options: {
-  //     urls:['amqp://boucactus:pass@rabbitmq:5672'],
-  //     queue: 'auth_queuetwo',
-  //     queueOptions: {
-  //       durable: false
-  //     }
-  //   }
-  // }])
   RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
-  RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE)
+  RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),
+  RabbitMqModule.forClientProxy(IRmqSeverName.MATCH_MAKING)
 ],
-  providers: [
+  providers: [{
+    provide: 'PUB_SUB',
+    useValue: new PubSub(),
+    },
+    GwMatchMakingService, 
     GatewayService,
     UserService,
     GwProfileService,
     GwWalletService,
+    MatchMakingQueryResolver,
+    MatchMakingMutationsResolver,
     ProfileQueryResolver,
     UserProifleMutationsResolver,
     WalletMutationsResolver,
@@ -72,6 +78,7 @@ import { GwWalletService } from './microservices/profile/services/gw.wallet.serv
   ],
   controllers:[
     AuthController,
+    GwMatchmakingController,
   ]
 })
 export class GatewayModule {

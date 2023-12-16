@@ -11,6 +11,8 @@ import { RpcExceptionService } from '@app/common/exception-handling';
 import { JwtPayloadDto } from '@app/common/auth/dto';
 import * as speakeasy from 'speakeasy';
 import * as QRCode from 'qrcode';
+import { Prisma } from "@prisma/client";
+import { PrismaError } from '@app/common/exception-handling';
 
 @Injectable()
 export class AuthService {
@@ -42,10 +44,10 @@ export class AuthService {
 	async signUp(
 		authCredentials: SignUpCredentialsDto
 	): Promise<AuthResponseDto> {
-		const user = await this.userService.findUserByUsername(authCredentials.username);
-		if (user) {
-			this.rpcExceptionService.throwForbidden("Username already in use. Try a different one.");
-		}
+		// const user = await this.userService.findUserByUsername(authCredentials.username);
+		// if (user) {
+		// 	this.rpcExceptionService.throwForbidden("Username already in use. Try a different one.");
+		// }
 		const usercreated = await this.userService.createUser(authCredentials);
 		const refreshAndAccessToken = await this.newRefreshAndAccessToken(
 			{
@@ -200,5 +202,13 @@ export class AuthService {
 		return QRCode.toDataURL(otpAuthUrl);
 	}
 
+	private handlePrismaError(error: any): void {
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+		  const prismaError = new PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
+		  prismaError.handlePrismaError();
+		} else {
+		  throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
+		}
+	  }
 
 }

@@ -21,10 +21,10 @@ export class WalletService {
     return true;
   }
 
-  private async updateWalletBalance(walletId: number, amount: number): Promise<void> {
+  private async updateWalletBalance(userId: number, amount: number): Promise<void> {
     try {
       await this.prisma.wallet.update({
-        where: { id: walletId },
+        where: { user_id: userId },
         data: { balance: { increment: amount } },
       });
     } catch (error) {
@@ -35,8 +35,8 @@ export class WalletService {
   async placeBet(placeBetData: PlaceBetDto): Promise<boolean> {
     try{
     await this.prisma.wallet.update({
-      where: { id: placeBetData.walletId },
-      data: { betAmount: { increment: placeBetData.betAmount } },
+      where: { user_id: placeBetData.userId },
+      data: { betAmount:  placeBetData.betAmount  },
     });
     return true;
   }catch(error){
@@ -47,7 +47,7 @@ export class WalletService {
   async resolveBet(resolveBetData: ResolveBetDto): Promise<boolean> {
     try{
     const wallet = await this.prisma.wallet.findUnique({
-      where: { id: resolveBetData.walletId },
+      where: { user_id: resolveBetData.userId },
     });
 
     if (wallet?.betAmount && wallet.betAmount > 0) {
@@ -55,7 +55,7 @@ export class WalletService {
 
       await this.prisma.$transaction(async (prisma) => {
         await prisma.wallet.update({
-          where: { id: resolveBetData.walletId },
+          where: { user_id: resolveBetData.userId },
           data: { balance: { increment: amountWonOrLost }, betAmount: 0 },
         });
       });

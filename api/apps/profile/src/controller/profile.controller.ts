@@ -13,20 +13,14 @@ export class ProfileController {
     private readonly profileService : ProfileService,
   ) {}
 
-  @MessagePattern({ role: 'profile', cmd: 'hello-you'})
-  getHello(mess: any): string {
-    return mess.message;
-  }
-
-
   @MessagePattern({role: 'profile', cmd: 'create-profile'})
   async createUserProfile(payload: CreateProfileDto) : Promise<UserProfile> {
        return await this.profileService.create(payload);
   }
 
   @MessagePattern({role: 'profile', cmd: 'update-profile'})
-  async updateUserProfile(data: {id: number, updateInput: UpdateProfileDto}): Promise<boolean>{
-    return await this.profileService.update(data.id, data.updateInput);
+  async updateUserProfile(data: {userId: number, updateInput: UpdateProfileDto}): Promise<boolean>{
+    return await this.profileService.update(data.userId, data.updateInput);
   }
 
   @MessagePattern({role: 'profile', cmd: 'find-Profile'})
@@ -34,9 +28,13 @@ export class ProfileController {
     return this.profileService.findOne(id);
   }
 
+  @MessagePattern({ role: 'profile', cmd: 'find-profile-by-userId'})
+  async findProfileByUserId(userId: number) : Promise<IUserProfile>{
+     return this.profileService.findOneByUserId(userId);
+  }
   @MessagePattern({role: 'profile', cmd: 'remove-Profile'})
-  async removeProfile(id: number) : Promise<boolean>{
-    return this.profileService.remove(id);
+  async removeProfile(userId: number) : Promise<boolean>{
+    return this.profileService.remove(userId);
   }
 
 }

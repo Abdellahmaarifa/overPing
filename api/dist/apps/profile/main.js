@@ -48,7 +48,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c, _d, _e, _f;
+var _a, _b, _c, _d, _e, _f, _g;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ProfileController = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
@@ -59,29 +59,23 @@ let ProfileController = class ProfileController {
     constructor(profileService) {
         this.profileService = profileService;
     }
-    getHello(mess) {
-        return mess.message;
-    }
     async createUserProfile(payload) {
         return await this.profileService.create(payload);
     }
     async updateUserProfile(data) {
-        return await this.profileService.update(data.id, data.updateInput);
+        return await this.profileService.update(data.userId, data.updateInput);
     }
     async findProfileById(id) {
         return this.profileService.findOne(id);
     }
-    async removeProfile(id) {
-        return this.profileService.remove(id);
+    async findProfileByUserId(userId) {
+        return this.profileService.findOneByUserId(userId);
+    }
+    async removeProfile(userId) {
+        return this.profileService.remove(userId);
     }
 };
 exports.ProfileController = ProfileController;
-__decorate([
-    (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'hello-you' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", String)
-], ProfileController.prototype, "getHello", null);
 __decorate([
     (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'create-profile' }),
     __metadata("design:type", Function),
@@ -101,10 +95,16 @@ __decorate([
     __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
 ], ProfileController.prototype, "findProfileById", null);
 __decorate([
-    (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'remove-Profile' }),
+    (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'find-profile-by-userId' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
+], ProfileController.prototype, "findProfileByUserId", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'profile', cmd: 'remove-Profile' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
 ], ProfileController.prototype, "removeProfile", null);
 exports.ProfileController = ProfileController = __decorate([
     (0, common_1.Controller)(),
@@ -442,6 +442,9 @@ let ProfileService = class ProfileService {
         try {
             const userProfile = await this.prisma.userProfile.findUnique({
                 where: { id: id },
+                include: {
+                    wallet: true,
+                },
             });
             return userProfile;
         }
@@ -449,10 +452,24 @@ let ProfileService = class ProfileService {
             this.handlePrismaError(error);
         }
     }
-    async update(id, input) {
+    async findOneByUserId(userId) {
+        try {
+            const userProfile = await this.prisma.userProfile.findUnique({
+                where: { user_id: userId },
+                include: {
+                    wallet: true,
+                },
+            });
+            return userProfile;
+        }
+        catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+    async update(userId, input) {
         try {
             await this.prisma.userProfile.update({
-                where: { id },
+                where: { user_id: userId },
                 data: input,
             });
             return true;
@@ -461,18 +478,18 @@ let ProfileService = class ProfileService {
             this.handlePrismaError(error);
         }
     }
-    async remove(id) {
+    async remove(userId) {
         try {
             const existingProfile = await this.prisma.userProfile.findUnique({
-                where: { id },
+                where: { user_id: userId },
             });
             console.log(existingProfile);
             if (!existingProfile) {
-                this.rpcExceptionService.throwNotFound(`Profile of User ID ${id} not found`);
+                this.rpcExceptionService.throwNotFound(`Profile of User ID ${userId} not found`);
             }
             await this.prisma.userProfile.delete({
                 where: {
-                    id: id
+                    user_id: userId
                 },
             });
             return true;
@@ -553,7 +570,7 @@ let WalletService = class WalletService {
         try {
             await this.prisma.wallet.update({
                 where: { id: placeBetData.walletId },
-                data: { betAmount: { increment: placeBetData.betAmount } },
+                data: { betAmount: placeBetData.betAmount },
             });
             return true;
         }
@@ -937,6 +954,9 @@ exports.RABBIT_SERVICES = {
     },
     [rmqServerName_1.IRmqSeverName.GATEWAY]: {
         queue: 'gateway_queue'
+    },
+    [rmqServerName_1.IRmqSeverName.MATCH_MAKING]: {
+        queue: 'match_making_queue'
     }
 };
 
@@ -1011,6 +1031,7 @@ var IRmqSeverName;
     IRmqSeverName["PROFILE"] = "PROFILE_SERVICE";
     IRmqSeverName["AUTH"] = "AUTH_SERVICE";
     IRmqSeverName["GATEWAY"] = "GATEWAY_SERVICE";
+    IRmqSeverName["MATCH_MAKING"] = "MATCH_MAKING";
 })(IRmqSeverName || (exports.IRmqSeverName = IRmqSeverName = {}));
 
 

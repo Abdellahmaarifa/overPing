@@ -55,7 +55,6 @@ export class AuthMutationsResolver {
     @Context() ctx,
     @Args('userCreationInput') userCreationInput: UserCreationInput): Promise<GQLUserModel> {
     const response = await this.authService.signUp(userCreationInput);
-    console.log("response::======> ", response);
     const {res} = ctx;
     res.cookie('Refresh_token', response.refreshToken, {
       httpOnly: true,

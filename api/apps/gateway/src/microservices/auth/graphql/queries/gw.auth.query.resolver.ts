@@ -15,14 +15,14 @@ export class AuthQueryResolver {
     
     
     @Query(() => GQLUserModel)
-    async findById(@Args('id') id: number) : Promise<GQLUserModel>{
-	const user = await this.userService.findById(id);
+    async findUserById(@Args('userId') userId: number) : Promise<GQLUserModel>{
+	const user = await this.userService.findById(userId);
 	return (user);
     }
 
 
     @Query(() => [GQLUserModel]) 
-    async findAll(): Promise<GQLUserModel[]> {
+    async findAllUsers(): Promise<GQLUserModel[]> {
 	const users: GQLUserModel[] = await this.userService.findAll();
 	return users;
     }

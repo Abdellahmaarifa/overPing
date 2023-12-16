@@ -5,7 +5,7 @@ import { IsNumber, IsPositive } from 'class-validator';
 export class  PlaceBetInput {
   @Field()
   @IsNumber()
-  walletId: number;
+  userId: number;
 
   @Field()
   @IsNumber()

@@ -476,6 +476,8 @@ const argon2 = __webpack_require__(/*! argon2 */ "argon2");
 const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
 const speakeasy = __webpack_require__(/*! speakeasy */ "speakeasy");
 const QRCode = __webpack_require__(/*! qrcode */ "qrcode");
+const client_1 = __webpack_require__(/*! @prisma/client */ "@prisma/client");
+const exception_handling_2 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
 let AuthService = class AuthService {
     constructor(userService, jwtService, configService, rpcExceptionService) {
         this.userService = userService;
@@ -493,10 +495,6 @@ let AuthService = class AuthService {
         return new common_2.AuthResponseDto(refreshAndAccessToken.accessToken, refreshAndAccessToken.refreshToken, user);
     }
     async signUp(authCredentials) {
-        const user = await this.userService.findUserByUsername(authCredentials.username);
-        if (user) {
-            this.rpcExceptionService.throwForbidden("Username already in use. Try a different one.");
-        }
         const usercreated = await this.userService.createUser(authCredentials);
         const refreshAndAccessToken = await this.newRefreshAndAccessToken({
             id: usercreated.id,
@@ -613,6 +611,15 @@ let AuthService = class AuthService {
     async generateQrCodeDataURL(otpAuthUrl) {
         return QRCode.toDataURL(otpAuthUrl);
     }
+    handlePrismaError(error) {
+        if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
+            const prismaError = new exception_handling_2.PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
+            prismaError.handlePrismaError();
+        }
+        else {
+            throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
+        }
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
@@ -646,6 +653,8 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const prisma_service_1 = __webpack_require__(/*! apps/auth/prisma/prisma.service */ "./apps/auth/prisma/prisma.service.ts");
 const argon2 = __webpack_require__(/*! argon2 */ "argon2");
 const exception_handling_1 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
+const client_1 = __webpack_require__(/*! @prisma/client */ "@prisma/client");
+const exception_handling_2 = __webpack_require__(/*! @app/common/exception-handling */ "./libs/common/src/exception-handling/index.ts");
 let UserService = class UserService {
     constructor(rpcExceptionService, prisma) {
         this.rpcExceptionService = rpcExceptionService;
@@ -666,6 +675,7 @@ let UserService = class UserService {
     }
     async createUser({ password, username, googleId, fortyTwoId }) {
         try {
+            console.log("the error: ", password, username);
             const hashedPassword = password ? await argon2.hash(password) : undefined;
             const currentDate = new Date();
             return this.prisma.user.create({
@@ -691,10 +701,7 @@ let UserService = class UserService {
             });
         }
         catch (error) {
-            this.rpcExceptionService.throwCatchedException({
-                code: 500,
-                message: ("Failed to create user: Unknown error")
-            });
+            this.handlePrismaError(error);
         }
     }
     async findUserByUsername(username) {
@@ -785,6 +792,15 @@ let UserService = class UserService {
                 twoStepVerificationEnabled: state
             }
         });
+    }
+    handlePrismaError(error) {
+        if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
+            const prismaError = new exception_handling_2.PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
+            prismaError.handlePrismaError();
+        }
+        else {
+            throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
+        }
     }
 };
 exports.UserService = UserService;
@@ -1250,6 +1266,9 @@ exports.RABBIT_SERVICES = {
     },
     [rmqServerName_1.IRmqSeverName.GATEWAY]: {
         queue: 'gateway_queue'
+    },
+    [rmqServerName_1.IRmqSeverName.MATCH_MAKING]: {
+        queue: 'match_making_queue'
     }
 };
 
@@ -1324,6 +1343,7 @@ var IRmqSeverName;
     IRmqSeverName["PROFILE"] = "PROFILE_SERVICE";
     IRmqSeverName["AUTH"] = "AUTH_SERVICE";
     IRmqSeverName["GATEWAY"] = "GATEWAY_SERVICE";
+    IRmqSeverName["MATCH_MAKING"] = "MATCH_MAKING";
 })(IRmqSeverName || (exports.IRmqSeverName = IRmqSeverName = {}));
 
 

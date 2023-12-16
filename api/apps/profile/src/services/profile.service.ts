@@ -7,6 +7,7 @@ import { UserProfile } from "@prisma/client";
 import { UpdateProfileDto } from "../dto/updateUserProfileDto";
 import { UpdateWalletDto } from "../dto/updateUserWalletDto";
 import { Prisma } from "@prisma/client";
+import { IUserProfile } from "@app/common/profile/IUserProfile";
 
 @Injectable()
 export class ProfileService {
@@ -14,13 +15,10 @@ export class ProfileService {
     private readonly prisma: PrismaService,
     private readonly rpcExceptionService: RpcExceptionService,
   ) {
-
   }
 
   async create(input: CreateProfileDto): Promise<UserProfile> {
     try {
-      // Fetch the total number of profiles to calculate the default rank
-      const userRank = await this.getLastUserRank();
 
       // Create a new user profile with the provided data
       const userProfile = await this.prisma.userProfile.create({
@@ -28,39 +26,57 @@ export class ProfileService {
           user_id: input.userId,
           nickname: `${input.username.replace(/\s/g, '')}${Date.now()}`,
           title: UserTitle.Challenger_10,
-          rank: userRank
+          wallet: { create: {} },
+          gameStatus: {
+            create: {
+              statistics: { create: {} }
+            }
+          }
+        },
+        include: {
+          gameStatus: {
+            include: {
+              statistics: true,
+            },
+          },
+          wallet: true,
         },
       });
 
-      const wallet = await this.prisma.wallet.create({
-        data: {
-          userProfile: { connect: { id: userProfile.id } },
-        },
-      });
-
-      const updatedUserProfile = await this.prisma.userProfile.update({
-        where: { id: userProfile.id },
-        data: { wallet: { connect: { id: wallet.id } } },
-      });
-  
-      return updatedUserProfile;
+      return userProfile;
     }
     catch (error) {
       this.handlePrismaError(error);
     }
   }
 
-  private async getLastUserRank(): Promise<number> {
-    const lastUserRank = await this.prisma.userProfile.count();
-    return lastUserRank + 1;
-  }
 
 
-  async findOne(id: number): Promise<UserProfile> {
+  async findOne(id: number): Promise<IUserProfile> {
     try {
       // Get User-Profile with the provided id
       const userProfile = await this.prisma.userProfile.findUnique({
         where: { id: id },
+        include: {
+          wallet: true,
+        },
+      });
+      return userProfile;
+    }
+    catch (error) {
+      this.handlePrismaError(error);
+    }
+  }
+
+
+  async findOneByUserId(userId: number): Promise<IUserProfile> {
+    try {
+      // Get User-Profile with the provided  user id
+      const userProfile = await this.prisma.userProfile.findUnique({
+        where: { user_id: userId },
+        include: {
+          wallet: true,
+        },
       });
       return userProfile;
     }
@@ -71,11 +87,11 @@ export class ProfileService {
 
 
 
-  async update(id: number, input: UpdateProfileDto): Promise<boolean> {
+  async update(userId: number, input: UpdateProfileDto): Promise<boolean> {
     try {
       // Save the changes to the database
       await this.prisma.userProfile.update({
-        where: { id },
+        where: { user_id: userId },
         data: input,
       });
       return true;
@@ -83,23 +99,23 @@ export class ProfileService {
       this.handlePrismaError(error);
     }
   }
-  
 
- 
 
-  async remove(id: number): Promise<boolean> {
+
+
+  async remove(userId: number): Promise<boolean> {
     try {
       const existingProfile = await this.prisma.userProfile.findUnique({
-        where: { id },
+        where: { user_id: userId },
       });
       console.log(existingProfile);
       if (!existingProfile) {
-        this.rpcExceptionService.throwNotFound(`Profile of User ID ${id} not found`);
+        this.rpcExceptionService.throwNotFound(`Profile of User ID ${userId} not found`);
       }
 
       await this.prisma.userProfile.delete({
         where: {
-          id: id
+          user_id: userId
         },
       });
       return true;

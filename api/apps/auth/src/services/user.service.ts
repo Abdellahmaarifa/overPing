@@ -5,7 +5,9 @@ import { PrismaService } from 'apps/auth/prisma/prisma.service';
 import * as argon2 from 'argon2';
 import { SignInCredentialsDto } from '../dto';
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { User } from '@prisma/client'; 
+import { UpdateProfileDto } from '../dto/user.updateProfileId.dto'; 
+import {User, Prisma } from "@prisma/client";
+import { PrismaError } from '@app/common/exception-handling';
 @Injectable()
 export class UserService {
 	constructor(
@@ -33,6 +35,7 @@ export class UserService {
 
 	async createUser({ password, username, googleId, fortyTwoId }: UserCreationDto): Promise<IAuthUser> {
 		try {
+			console.log("the error: ", password, username);
 			const hashedPassword = password ? await argon2.hash(password) : undefined;
 
 			const currentDate = new Date();
@@ -60,10 +63,11 @@ export class UserService {
 				},
 			});
 		} catch (error) {
-			this.rpcExceptionService.throwCatchedException({
-				code: 500,
-				message: ("Failed to create user: Unknown error")
-			})
+			this.handlePrismaError(error);
+			// this.rpcExceptionService.throwCatchedException({
+			// 	code: 500,
+			// 	message: ("Failed to create user: Unknown error")
+			// })
 		}
 	}
 
@@ -164,6 +168,8 @@ export class UserService {
 			}
 		});
 	}
+
+
 	async toggle2FAStatus(id: number, state: boolean){
 		return this.prisma.user.update({
 			where: { id },
@@ -172,4 +178,13 @@ export class UserService {
 			}
 		});
 	}
+
+	private handlePrismaError(error: any): void {
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+		  const prismaError = new PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
+		  prismaError.handlePrismaError();
+		} else {
+		  throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
+		}
+	  }
 }

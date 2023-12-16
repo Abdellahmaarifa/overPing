@@ -20,12 +20,12 @@ export class UserProifleMutationsResolver {
     }
 
     @Mutation(()=> Boolean)
-    async removeUserProfile(@Args('id') id: number) : Promise<boolean>{
-        return this.profileService.removeProfile(id);
+    async removeUserProfile(@Args('userId') userId: number) : Promise<boolean>{
+        return this.profileService.removeProfile(userId);
     }
 
     @Mutation(()=> Boolean)
-    async UpdateUserProfile(@Args('id') id: number, @Args('UpdateProfileInput') updateInput : UpdateProfileInput) : Promise<boolean>{
+    async UpdateUserProfile(@Args('userId') id: number, @Args('UpdateProfileInput') updateInput : UpdateProfileInput) : Promise<boolean>{
         return this.profileService.updateUserProfile(id, updateInput);
     }
 

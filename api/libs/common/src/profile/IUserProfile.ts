@@ -1,3 +1,4 @@
+import { IWallet } from './IWallet';
 export class IUserProfile {
     id: number
     user_id: number
@@ -6,6 +7,7 @@ export class IUserProfile {
     xp: number
     rank: number
     about: string
+    wallet: IWallet
     created_at: Date
     updated_at: Date
 }

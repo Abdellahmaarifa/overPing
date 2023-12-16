@@ -17,7 +17,8 @@ export class GQLUserModel {
 
     @Field()
     twoStepVerificationEnabled: boolean;
-
+    
+    
     @Field({ nullable: true })
     createdAt?: Date;
 

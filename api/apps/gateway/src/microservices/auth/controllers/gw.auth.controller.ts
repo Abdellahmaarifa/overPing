@@ -3,7 +3,6 @@ import { Controller,Post, Get, Request, UseGuards , Ip, Res, UseFilters} from '@
 import { FortyTwoGuard } from '../guards/42.auth.grade';
 import { GoogleGuard } from '../guards/google.auth.grad';
 import { GatewayService} from '../services/gw.auth.service';
-import { Cookies } from 'apps/gateway/src/decortor/cookies.decorator';
 import { RefreshTokenGuard } from '../guards/refreshToken.guard';
 import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
 

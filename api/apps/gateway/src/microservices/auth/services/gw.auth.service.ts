@@ -10,6 +10,8 @@ import {
 import { JwtPayloadDto } from '@app/common/auth/dto';
 import { AuthResponseDto } from '@app/common';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import { GwProfileService } from 'apps/gateway/src/microservices/profile/services/gw.profile.service';
+import { UserService } from './gw.user.service';
 
 @Injectable()
 export class GatewayService {
@@ -17,6 +19,9 @@ export class GatewayService {
 		@Inject(IRmqSeverName.AUTH)
 		private client: ClientProxy,
 		private readonly clientService: RabbitMqService,
+		private readonly profileService: GwProfileService,
+		private readonly userService: UserService,
+
 	) { }
 
 
@@ -29,11 +34,18 @@ export class GatewayService {
 	}
 
 	async signUp(userInput: UserCreationInput): Promise<AuthResponseDto> {
-		return await this.clientService.sendMessageWithPayload(
+		const respond = await this.clientService.sendMessageWithPayload(
 			this.client,
 			{ role: 'auth', cmd: 'signUp' },
 			userInput,
 		);
+		this.profileService.createUserProfile({
+			userId: respond.user.id,
+			username: respond.user.username
+		})
+
+		
+		return (respond);
 	}
 
 	async logOut(id: number): Promise<boolean> {

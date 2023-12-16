@@ -54,6 +54,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/profile/tsconfig.app.json"
       }
+    },
+    "matchmaking": {
+      "type": "application",
+      "root": "apps/matchmaking",
+      "entryFile": "main",
+      "sourceRoot": "apps/matchmaking/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/matchmaking/tsconfig.app.json"
+      }
     }
   }
 }

@@ -17,7 +17,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/api/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/api/test/jest-e2e.json",
+    "seed:achievement":"ts-node ./apps/profile/src/scripts/seed.achievement.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.9.5",
@@ -30,6 +31,8 @@
     "@nestjs/microservices": "^10.2.10",
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/platform-ws": "^10.2.10",
+    "@nestjs/schedule": "^4.0.0",
     "@prisma/client": "^5.6.0",
     "@types/passport-google-oauth20": "^2.0.13",
     "@types/speakeasy": "^2.0.10",
@@ -43,6 +46,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "graphql": "^16.8.1",
+    "graphql-subscriptions": "^2.0.0",
     "graphql-ws": "^5.14.2",
     "passport": "^0.6.0",
     "passport-42": "^1.2.6",
@@ -53,6 +57,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "speakeasy": "^2.0.0",
+    "subscriptions-transport-ws": "^0.11.0",
     "webpack": "^5.0.0"
   },
   "devDependencies": {

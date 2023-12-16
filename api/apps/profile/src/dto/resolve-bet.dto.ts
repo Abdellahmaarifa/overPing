@@ -2,7 +2,7 @@ import { IsNumber, IsBoolean } from 'class-validator';
 
 export class ResolveBetDto {
   @IsNumber()
-  walletId: number;
+  userId: number;
 
   @IsBoolean()
   isWinner: boolean;

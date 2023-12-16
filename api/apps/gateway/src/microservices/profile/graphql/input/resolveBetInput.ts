@@ -5,7 +5,7 @@ import { InputType, Field } from "@nestjs/graphql";
 export class ResolveBetInput {
   @Field()
   @IsNumber()
-  walletId: number;
+  userId: number;
 
   @Field()
   @IsBoolean()

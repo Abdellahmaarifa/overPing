@@ -40,6 +40,11 @@ const gw_profile_guery_resolver_1 = __webpack_require__(/*! ./microservices/prof
 const gw_profile_mutations_resolver_1 = __webpack_require__(/*! ./microservices/profile/graphql/mutations/gw.profile.mutations.resolver */ "./apps/gateway/src/microservices/profile/graphql/mutations/gw.profile.mutations.resolver.ts");
 const gw_wallet_user_mutations_resolver_1 = __webpack_require__(/*! ./microservices/profile/graphql/mutations/gw.wallet.user.mutations.resolver */ "./apps/gateway/src/microservices/profile/graphql/mutations/gw.wallet.user.mutations.resolver.ts");
 const gw_wallet_service_1 = __webpack_require__(/*! ./microservices/profile/services/gw.wallet.service */ "./apps/gateway/src/microservices/profile/services/gw.wallet.service.ts");
+const gw_matchMaking_query_resolver_1 = __webpack_require__(/*! ./microservices/matchMaking/graphql/queries/gw.matchMaking.query.resolver */ "./apps/gateway/src/microservices/matchMaking/graphql/queries/gw.matchMaking.query.resolver.ts");
+const gw_matchMaking_service_1 = __webpack_require__(/*! ./microservices/matchMaking/services/gw.matchMaking.service */ "./apps/gateway/src/microservices/matchMaking/services/gw.matchMaking.service.ts");
+const graphql_subscriptions_1 = __webpack_require__(/*! graphql-subscriptions */ "graphql-subscriptions");
+const gw_matchMaking_mutation_resolver_1 = __webpack_require__(/*! ./microservices/matchMaking/graphql/mutations/gw.matchMaking.mutation.resolver */ "./apps/gateway/src/microservices/matchMaking/graphql/mutations/gw.matchMaking.mutation.resolver.ts");
+const gw_matchmaking_controller_1 = __webpack_require__(/*! ./microservices/matchMaking/controller/gw.matchmaking.controller */ "./apps/gateway/src/microservices/matchMaking/controller/gw.matchmaking.controller.ts");
 let GatewayModule = class GatewayModule {
 };
 exports.GatewayModule = GatewayModule;
@@ -57,15 +62,27 @@ exports.GatewayModule = GatewayModule = __decorate([
                     origin: true
                 },
                 playground: true,
+                subscriptions: {
+                    'graphql-ws': {
+                        path: '/graphql'
+                    },
+                }
             }),
             rabbit_mq_1.RabbitMqModule.forClientProxy(rmqServerName_1.IRmqSeverName.AUTH),
-            rabbit_mq_1.RabbitMqModule.forClientProxy(rmqServerName_1.IRmqSeverName.PROFILE)
+            rabbit_mq_1.RabbitMqModule.forClientProxy(rmqServerName_1.IRmqSeverName.PROFILE),
+            rabbit_mq_1.RabbitMqModule.forClientProxy(rmqServerName_1.IRmqSeverName.MATCH_MAKING)
         ],
-        providers: [
+        providers: [{
+                provide: 'PUB_SUB',
+                useValue: new graphql_subscriptions_1.PubSub(),
+            },
+            gw_matchMaking_service_1.GwMatchMakingService,
             gw_auth_service_1.GatewayService,
             services_1.UserService,
             gw_profile_service_1.GwProfileService,
             gw_wallet_service_1.GwWalletService,
+            gw_matchMaking_query_resolver_1.MatchMakingQueryResolver,
+            gw_matchMaking_mutation_resolver_1.MatchMakingMutationsResolver,
             gw_profile_guery_resolver_1.ProfileQueryResolver,
             gw_profile_mutations_resolver_1.UserProifleMutationsResolver,
             gw_wallet_user_mutations_resolver_1.WalletMutationsResolver,
@@ -80,6 +97,7 @@ exports.GatewayModule = GatewayModule = __decorate([
         ],
         controllers: [
             gw_auth_controller_1.AuthController,
+            gw_matchmaking_controller_1.GwMatchmakingController,
         ]
     })
 ], GatewayModule);
@@ -452,7 +470,6 @@ let AuthMutationsResolver = class AuthMutationsResolver {
     }
     async signUp(ctx, userCreationInput) {
         const response = await this.authService.signUp(userCreationInput);
-        console.log("response::======> ", response);
         const { res } = ctx;
         res.cookie('Refresh_token', response.refreshToken, {
             httpOnly: true,
@@ -872,23 +889,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b;
+var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GatewayService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
 const rmqServerName_1 = __webpack_require__(/*! @app/rabbit-mq/interface/rmqServerName */ "./libs/rabbit-mq/src/interface/rmqServerName.ts");
 const rabbit_mq_1 = __webpack_require__(/*! @app/rabbit-mq */ "./libs/rabbit-mq/src/index.ts");
+const gw_profile_service_1 = __webpack_require__(/*! apps/gateway/src/microservices/profile/services/gw.profile.service */ "./apps/gateway/src/microservices/profile/services/gw.profile.service.ts");
+const gw_user_service_1 = __webpack_require__(/*! ./gw.user.service */ "./apps/gateway/src/microservices/auth/services/gw.user.service.ts");
 let GatewayService = class GatewayService {
-    constructor(client, clientService) {
+    constructor(client, clientService, profileService, userService) {
         this.client = client;
         this.clientService = clientService;
+        this.profileService = profileService;
+        this.userService = userService;
     }
     async signIn(authCredentials) {
         return await this.clientService.sendMessageWithPayload(this.client, { role: 'auth', cmd: 'login' }, authCredentials);
     }
     async signUp(userInput) {
-        return await this.clientService.sendMessageWithPayload(this.client, { role: 'auth', cmd: 'signUp' }, userInput);
+        const respond = await this.clientService.sendMessageWithPayload(this.client, { role: 'auth', cmd: 'signUp' }, userInput);
+        const profile = await this.profileService.createUserProfile({
+            userId: respond.user.id,
+            username: respond.user.username
+        });
+        return (respond);
     }
     async logOut(id) {
         return await this.clientService.sendMessageWithPayload(this.client, { role: 'auth', cmd: 'logOut' }, id);
@@ -926,7 +952,7 @@ exports.GatewayService = GatewayService;
 exports.GatewayService = GatewayService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(rmqServerName_1.IRmqSeverName.AUTH)),
-    __metadata("design:paramtypes", [typeof (_a = typeof microservices_1.ClientProxy !== "undefined" && microservices_1.ClientProxy) === "function" ? _a : Object, typeof (_b = typeof rabbit_mq_1.RabbitMqService !== "undefined" && rabbit_mq_1.RabbitMqService) === "function" ? _b : Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof microservices_1.ClientProxy !== "undefined" && microservices_1.ClientProxy) === "function" ? _a : Object, typeof (_b = typeof rabbit_mq_1.RabbitMqService !== "undefined" && rabbit_mq_1.RabbitMqService) === "function" ? _b : Object, typeof (_c = typeof gw_profile_service_1.GwProfileService !== "undefined" && gw_profile_service_1.GwProfileService) === "function" ? _c : Object, typeof (_d = typeof gw_user_service_1.UserService !== "undefined" && gw_user_service_1.UserService) === "function" ? _d : Object])
 ], GatewayService);
 
 
@@ -951,17 +977,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b;
+var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UserService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
 const rmqServerName_1 = __webpack_require__(/*! @app/rabbit-mq/interface/rmqServerName */ "./libs/rabbit-mq/src/interface/rmqServerName.ts");
 const rabbit_mq_1 = __webpack_require__(/*! @app/rabbit-mq */ "./libs/rabbit-mq/src/index.ts");
+const gw_profile_service_1 = __webpack_require__(/*! ../../profile/services/gw.profile.service */ "./apps/gateway/src/microservices/profile/services/gw.profile.service.ts");
 let UserService = class UserService {
-    constructor(client, clientService) {
+    constructor(client, clientService, profileService) {
         this.client = client;
         this.clientService = clientService;
+        this.profileService = profileService;
     }
     async findOrCreateUser(profile) {
         try {
@@ -993,7 +1021,12 @@ let UserService = class UserService {
         }, { user, profile });
     }
     async createAccount(user) {
-        return await this.createUser(user);
+        const respondUser = await this.createUser(user);
+        const profile = await this.profileService.createUserProfile({
+            userId: respondUser.id,
+            username: respondUser.username
+        });
+        return (respondUser);
     }
     async findById(id) {
         const response = await this.clientService.sendMessageWithPayload(this.client, {
@@ -1025,7 +1058,7 @@ exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(rmqServerName_1.IRmqSeverName.AUTH)),
-    __metadata("design:paramtypes", [typeof (_a = typeof microservices_1.ClientProxy !== "undefined" && microservices_1.ClientProxy) === "function" ? _a : Object, typeof (_b = typeof rabbit_mq_1.RabbitMqService !== "undefined" && rabbit_mq_1.RabbitMqService) === "function" ? _b : Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof microservices_1.ClientProxy !== "undefined" && microservices_1.ClientProxy) === "function" ? _a : Object, typeof (_b = typeof rabbit_mq_1.RabbitMqService !== "undefined" && rabbit_mq_1.RabbitMqService) === "function" ? _b : Object, typeof (_c = typeof gw_profile_service_1.GwProfileService !== "undefined" && gw_profile_service_1.GwProfileService) === "function" ? _c : Object])
 ], UserService);
 
 
@@ -1274,6 +1307,301 @@ exports.JwtRefreshTokenStrategy = JwtRefreshTokenStrategy = __decorate([
 
 /***/ }),
 
+/***/ "./apps/gateway/src/microservices/matchMaking/controller/gw.matchmaking.controller.ts":
+/*!********************************************************************************************!*\
+  !*** ./apps/gateway/src/microservices/matchMaking/controller/gw.matchmaking.controller.ts ***!
+  \********************************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GwMatchmakingController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
+const graphql_subscriptions_1 = __webpack_require__(/*! graphql-subscriptions */ "graphql-subscriptions");
+const common_2 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const matchDataInput_1 = __webpack_require__(/*! ../graphql/inputs/matchDataInput */ "./apps/gateway/src/microservices/matchMaking/graphql/inputs/matchDataInput.ts");
+let GwMatchmakingController = class GwMatchmakingController {
+    constructor(pubSub) {
+        this.pubSub = pubSub;
+    }
+    async matchnotify(matchData) {
+        console.log("found match forun matchmaking coming form", matchData);
+        this.pubSub.publish(`waitingList${matchData.user1Id}`, matchData);
+        this.pubSub.publish(`waitingList${matchData.user2Id}`, matchData);
+    }
+};
+exports.GwMatchmakingController = GwMatchmakingController;
+__decorate([
+    (0, microservices_1.MessagePattern)({ role: 'gateway', cmd: 'matchFound' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_b = typeof matchDataInput_1.matchDataInput !== "undefined" && matchDataInput_1.matchDataInput) === "function" ? _b : Object]),
+    __metadata("design:returntype", Promise)
+], GwMatchmakingController.prototype, "matchnotify", null);
+exports.GwMatchmakingController = GwMatchmakingController = __decorate([
+    (0, common_1.Controller)(),
+    __param(0, (0, common_2.Inject)('PUB_SUB')),
+    __metadata("design:paramtypes", [typeof (_a = typeof graphql_subscriptions_1.PubSubEngine !== "undefined" && graphql_subscriptions_1.PubSubEngine) === "function" ? _a : Object])
+], GwMatchmakingController);
+
+
+/***/ }),
+
+/***/ "./apps/gateway/src/microservices/matchMaking/graphql/inputs/joinMatchmakingInput.ts":
+/*!*******************************************************************************************!*\
+  !*** ./apps/gateway/src/microservices/matchMaking/graphql/inputs/joinMatchmakingInput.ts ***!
+  \*******************************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.JoinMatchmakingInput = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+let JoinMatchmakingInput = class JoinMatchmakingInput {
+};
+exports.JoinMatchmakingInput = JoinMatchmakingInput;
+__decorate([
+    (0, graphql_1.Field)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Number)
+], JoinMatchmakingInput.prototype, "userId", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], JoinMatchmakingInput.prototype, "matchType", void 0);
+exports.JoinMatchmakingInput = JoinMatchmakingInput = __decorate([
+    (0, graphql_1.InputType)()
+], JoinMatchmakingInput);
+
+
+/***/ }),
+
+/***/ "./apps/gateway/src/microservices/matchMaking/graphql/inputs/matchDataInput.ts":
+/*!*************************************************************************************!*\
+  !*** ./apps/gateway/src/microservices/matchMaking/graphql/inputs/matchDataInput.ts ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.matchDataInput = void 0;
+class matchDataInput {
+}
+exports.matchDataInput = matchDataInput;
+
+
+/***/ }),
+
+/***/ "./apps/gateway/src/microservices/matchMaking/graphql/mutations/gw.matchMaking.mutation.resolver.ts":
+/*!**********************************************************************************************************!*\
+  !*** ./apps/gateway/src/microservices/matchMaking/graphql/mutations/gw.matchMaking.mutation.resolver.ts ***!
+  \**********************************************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MatchMakingMutationsResolver = exports.PingPongPayload = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const graphql_2 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const graphql_subscriptions_1 = __webpack_require__(/*! graphql-subscriptions */ "graphql-subscriptions");
+const gw_matchMaking_service_1 = __webpack_require__(/*! ../../services/gw.matchMaking.service */ "./apps/gateway/src/microservices/matchMaking/services/gw.matchMaking.service.ts");
+const joinMatchmakingInput_1 = __webpack_require__(/*! ../inputs/joinMatchmakingInput */ "./apps/gateway/src/microservices/matchMaking/graphql/inputs/joinMatchmakingInput.ts");
+let PingPongPayload = class PingPongPayload {
+};
+exports.PingPongPayload = PingPongPayload;
+__decorate([
+    (0, graphql_2.Field)(),
+    __metadata("design:type", Number)
+], PingPongPayload.prototype, "user1Id", void 0);
+__decorate([
+    (0, graphql_2.Field)(),
+    __metadata("design:type", Number)
+], PingPongPayload.prototype, "user2Id", void 0);
+__decorate([
+    (0, graphql_2.Field)(),
+    __metadata("design:type", String)
+], PingPongPayload.prototype, "matchKey", void 0);
+exports.PingPongPayload = PingPongPayload = __decorate([
+    (0, graphql_2.ObjectType)()
+], PingPongPayload);
+let MatchMakingMutationsResolver = class MatchMakingMutationsResolver {
+    constructor(pubSub, gwMatchMakingService) {
+        this.pubSub = pubSub;
+        this.gwMatchMakingService = gwMatchMakingService;
+    }
+    matchWaitingList(userId) {
+        return this.pubSub.asyncIterator(`waitingList${userId}`);
+    }
+    async joinMatchmakingQueue(joinMatchData) {
+        this.gwMatchMakingService.joinMatchmakingQueue(joinMatchData);
+    }
+};
+exports.MatchMakingMutationsResolver = MatchMakingMutationsResolver;
+__decorate([
+    (0, graphql_1.Subscription)((returns) => PingPongPayload, {
+        resolve: (payload) => payload,
+    }),
+    __param(0, (0, graphql_1.Args)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], MatchMakingMutationsResolver.prototype, "matchWaitingList", null);
+__decorate([
+    (0, graphql_1.Mutation)((returns) => Boolean, { nullable: true }),
+    __param(0, (0, graphql_1.Args)('JoinMatchmakingInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_c = typeof joinMatchmakingInput_1.JoinMatchmakingInput !== "undefined" && joinMatchmakingInput_1.JoinMatchmakingInput) === "function" ? _c : Object]),
+    __metadata("design:returntype", Promise)
+], MatchMakingMutationsResolver.prototype, "joinMatchmakingQueue", null);
+exports.MatchMakingMutationsResolver = MatchMakingMutationsResolver = __decorate([
+    (0, graphql_1.Resolver)(),
+    __param(0, (0, common_1.Inject)('PUB_SUB')),
+    __metadata("design:paramtypes", [typeof (_a = typeof graphql_subscriptions_1.PubSubEngine !== "undefined" && graphql_subscriptions_1.PubSubEngine) === "function" ? _a : Object, typeof (_b = typeof gw_matchMaking_service_1.GwMatchMakingService !== "undefined" && gw_matchMaking_service_1.GwMatchMakingService) === "function" ? _b : Object])
+], MatchMakingMutationsResolver);
+
+
+/***/ }),
+
+/***/ "./apps/gateway/src/microservices/matchMaking/graphql/queries/gw.matchMaking.query.resolver.ts":
+/*!*****************************************************************************************************!*\
+  !*** ./apps/gateway/src/microservices/matchMaking/graphql/queries/gw.matchMaking.query.resolver.ts ***!
+  \*****************************************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MatchMakingQueryResolver = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const gw_matchMaking_service_1 = __webpack_require__(/*! ../../services/gw.matchMaking.service */ "./apps/gateway/src/microservices/matchMaking/services/gw.matchMaking.service.ts");
+let MatchMakingQueryResolver = class MatchMakingQueryResolver {
+    constructor(matchMakingService) {
+        this.matchMakingService = matchMakingService;
+    }
+    async hello() {
+        return this.matchMakingService.getHello();
+    }
+};
+exports.MatchMakingQueryResolver = MatchMakingQueryResolver;
+__decorate([
+    (0, graphql_1.Query)(() => String),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
+], MatchMakingQueryResolver.prototype, "hello", null);
+exports.MatchMakingQueryResolver = MatchMakingQueryResolver = __decorate([
+    (0, graphql_1.Resolver)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof gw_matchMaking_service_1.GwMatchMakingService !== "undefined" && gw_matchMaking_service_1.GwMatchMakingService) === "function" ? _a : Object])
+], MatchMakingQueryResolver);
+
+
+/***/ }),
+
+/***/ "./apps/gateway/src/microservices/matchMaking/services/gw.matchMaking.service.ts":
+/*!***************************************************************************************!*\
+  !*** ./apps/gateway/src/microservices/matchMaking/services/gw.matchMaking.service.ts ***!
+  \***************************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GwMatchMakingService = void 0;
+const rabbit_mq_1 = __webpack_require__(/*! @app/rabbit-mq */ "./libs/rabbit-mq/src/index.ts");
+const rmqServerName_1 = __webpack_require__(/*! @app/rabbit-mq/interface/rmqServerName */ "./libs/rabbit-mq/src/interface/rmqServerName.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
+let GwMatchMakingService = class GwMatchMakingService {
+    constructor(client, clientService) {
+        this.client = client;
+        this.clientService = clientService;
+    }
+    getHello() {
+        return this.clientService.sendMessageWithPayload(this.client, {
+            role: 'matchMaking',
+            cmd: 'hello',
+        }, {
+            message: "hello server",
+        });
+    }
+    joinMatchmakingQueue(joinMatchData) {
+        this.clientService.emitMessageWithPayload(this.client, {
+            role: 'matchMaking',
+            cmd: 'joinQueue',
+        }, joinMatchData);
+    }
+};
+exports.GwMatchMakingService = GwMatchMakingService;
+exports.GwMatchMakingService = GwMatchMakingService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, common_1.Inject)(rmqServerName_1.IRmqSeverName.MATCH_MAKING)),
+    __metadata("design:paramtypes", [typeof (_a = typeof microservices_1.ClientProxy !== "undefined" && microservices_1.ClientProxy) === "function" ? _a : Object, typeof (_b = typeof rabbit_mq_1.RabbitMqService !== "undefined" && rabbit_mq_1.RabbitMqService) === "function" ? _b : Object])
+], GwMatchMakingService);
+
+
+/***/ }),
+
 /***/ "./apps/gateway/src/microservices/profile/graphql/input/createUserProfileInput.ts":
 /*!****************************************************************************************!*\
   !*** ./apps/gateway/src/microservices/profile/graphql/input/createUserProfileInput.ts ***!
@@ -1497,10 +1825,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b;
+var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GQLUserProfileModel = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const graphqlWallet_1 = __webpack_require__(/*! ./graphqlWallet */ "./apps/gateway/src/microservices/profile/graphql/models/graphqlWallet.ts");
 let GQLUserProfileModel = class GQLUserProfileModel {
 };
 exports.GQLUserProfileModel = GQLUserProfileModel;
@@ -1534,15 +1863,64 @@ __decorate([
 ], GQLUserProfileModel.prototype, "about", void 0);
 __decorate([
     (0, graphql_1.Field)(),
-    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
-], GQLUserProfileModel.prototype, "created_at", void 0);
+    __metadata("design:type", typeof (_a = typeof graphqlWallet_1.GQLWalletModel !== "undefined" && graphqlWallet_1.GQLWalletModel) === "function" ? _a : Object)
+], GQLUserProfileModel.prototype, "wallet", void 0);
 __decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
+], GQLUserProfileModel.prototype, "created_at", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
 ], GQLUserProfileModel.prototype, "updated_at", void 0);
 exports.GQLUserProfileModel = GQLUserProfileModel = __decorate([
     (0, graphql_1.ObjectType)()
 ], GQLUserProfileModel);
+
+
+/***/ }),
+
+/***/ "./apps/gateway/src/microservices/profile/graphql/models/graphqlWallet.ts":
+/*!********************************************************************************!*\
+  !*** ./apps/gateway/src/microservices/profile/graphql/models/graphqlWallet.ts ***!
+  \********************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GQLWalletModel = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+let GQLWalletModel = class GQLWalletModel {
+};
+exports.GQLWalletModel = GQLWalletModel;
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.ID),
+    __metadata("design:type", Number)
+], GQLWalletModel.prototype, "id", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", Number)
+], GQLWalletModel.prototype, "balance", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", Number)
+], GQLWalletModel.prototype, "userProfileId", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", Number)
+], GQLWalletModel.prototype, "betAmount", void 0);
+exports.GQLWalletModel = GQLWalletModel = __decorate([
+    (0, graphql_1.ObjectType)()
+], GQLWalletModel);
 
 
 /***/ }),
@@ -1581,8 +1959,8 @@ let UserProifleMutationsResolver = class UserProifleMutationsResolver {
     async createProfile(profileCredentials) {
         return this.profileService.createUserProfile(profileCredentials);
     }
-    async removeUserProfile(id) {
-        return this.profileService.removeProfile(id);
+    async removeUserProfile(userId) {
+        return this.profileService.removeProfile(userId);
     }
     async UpdateUserProfile(id, updateInput) {
         return this.profileService.updateUserProfile(id, updateInput);
@@ -1598,14 +1976,14 @@ __decorate([
 ], UserProifleMutationsResolver.prototype, "createProfile", null);
 __decorate([
     (0, graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, graphql_1.Args)('id')),
+    __param(0, (0, graphql_1.Args)('userId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
 ], UserProifleMutationsResolver.prototype, "removeUserProfile", null);
 __decorate([
     (0, graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, graphql_1.Args)('id')),
+    __param(0, (0, graphql_1.Args)('userId')),
     __param(1, (0, graphql_1.Args)('UpdateProfileInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, typeof (_e = typeof updateUserProfileInput_1.UpdateProfileInput !== "undefined" && updateUserProfileInput_1.UpdateProfileInput) === "function" ? _e : Object]),
@@ -1654,6 +2032,7 @@ let WalletMutationsResolver = class WalletMutationsResolver {
         return this.walletService.transferFunds(transferInput);
     }
     async placeBet(placeBetInput) {
+        console.log("place bet called");
         return this.walletService.placeBet(placeBetInput);
     }
     async resolveBet(resolveBetInput) {
@@ -1709,7 +2088,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b;
+var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ProfileQueryResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -1722,6 +2101,9 @@ let ProfileQueryResolver = class ProfileQueryResolver {
     async findProfileById(id) {
         return await this.profileService.findProfileById(id);
     }
+    async findProfileByUserId(userId) {
+        return await this.profileService.findProfileByUserId(userId);
+    }
 };
 exports.ProfileQueryResolver = ProfileQueryResolver;
 __decorate([
@@ -1731,6 +2113,13 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
 ], ProfileQueryResolver.prototype, "findProfileById", null);
+__decorate([
+    (0, graphql_1.Query)(() => graphqlUserProfileModel_1.GQLUserProfileModel, { nullable: true }),
+    __param(0, (0, graphql_1.Args)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], ProfileQueryResolver.prototype, "findProfileByUserId", null);
 exports.ProfileQueryResolver = ProfileQueryResolver = __decorate([
     (0, graphql_1.Resolver)(),
     __metadata("design:paramtypes", [typeof (_a = typeof gw_profile_service_1.GwProfileService !== "undefined" && gw_profile_service_1.GwProfileService) === "function" ? _a : Object])
@@ -1770,40 +2159,38 @@ let GwProfileService = class GwProfileService {
         this.client = client;
         this.clientService = clientService;
     }
-    hello() {
-        return this.clientService.sendMessageWithPayload(this.client, {
-            role: 'profile',
-            cmd: 'hello-you',
-        }, {
-            message: "hello server",
-        });
-    }
     async createUserProfile(userInfo) {
         return await this.clientService.sendMessageWithPayload(this.client, {
             role: 'profile',
             cmd: 'create-profile',
         }, userInfo);
     }
-    async updateUserProfile(id, updateInput) {
+    async updateUserProfile(userId, updateInput) {
         return await this.clientService.sendMessageWithPayload(this.client, {
             role: 'profile',
             cmd: 'update-profile',
         }, {
-            id,
+            userId,
             updateInput
         });
     }
-    async findProfileById(PorfileId) {
+    async findProfileById(userId) {
         return await this.clientService.sendMessageWithPayload(this.client, {
             role: 'profile',
             cmd: 'find-Profile',
-        }, PorfileId);
+        }, userId);
     }
-    async removeProfile(PorfileId) {
+    async findProfileByUserId(userId) {
+        return await this.clientService.sendMessageWithPayload(this.client, {
+            role: 'profile',
+            cmd: 'find-profile-by-userId',
+        }, userId);
+    }
+    async removeProfile(userId) {
         return await this.clientService.sendMessageWithPayload(this.client, {
             role: 'profile',
             cmd: 'remove-Profile',
-        }, PorfileId);
+        }, userId);
     }
 };
 exports.GwProfileService = GwProfileService;
@@ -2208,6 +2595,9 @@ exports.RABBIT_SERVICES = {
     },
     [rmqServerName_1.IRmqSeverName.GATEWAY]: {
         queue: 'gateway_queue'
+    },
+    [rmqServerName_1.IRmqSeverName.MATCH_MAKING]: {
+        queue: 'match_making_queue'
     }
 };
 
@@ -2282,6 +2672,7 @@ var IRmqSeverName;
     IRmqSeverName["PROFILE"] = "PROFILE_SERVICE";
     IRmqSeverName["AUTH"] = "AUTH_SERVICE";
     IRmqSeverName["GATEWAY"] = "GATEWAY_SERVICE";
+    IRmqSeverName["MATCH_MAKING"] = "MATCH_MAKING";
 })(IRmqSeverName || (exports.IRmqSeverName = IRmqSeverName = {}));
 
 
@@ -2526,6 +2917,16 @@ module.exports = require("cookie-parser");
 
 /***/ }),
 
+/***/ "graphql-subscriptions":
+/*!****************************************!*\
+  !*** external "graphql-subscriptions" ***!
+  \****************************************/
+/***/ ((module) => {
+
+module.exports = require("graphql-subscriptions");
+
+/***/ }),
+
 /***/ "passport-42":
 /*!******************************!*\
   !*** external "passport-42" ***!
@@ -2605,6 +3006,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(/*! @nestjs/core */ "@nestjs/core");
 const gateway_module_1 = __webpack_require__(/*! ./gateway.module */ "./apps/gateway/src/gateway.module.ts");
 const cookieParser = __webpack_require__(/*! cookie-parser */ "cookie-parser");
+const rabbit_mq_1 = __webpack_require__(/*! @app/rabbit-mq */ "./libs/rabbit-mq/src/index.ts");
+const rabbit_constent_1 = __webpack_require__(/*! @app/rabbit-mq/constent/rabbit-constent */ "./libs/rabbit-mq/src/constent/rabbit-constent.ts");
+const rmqServerName_1 = __webpack_require__(/*! @app/rabbit-mq/interface/rmqServerName */ "./libs/rabbit-mq/src/interface/rmqServerName.ts");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(gateway_module_1.GatewayModule);
     app.use(cookieParser());
@@ -2612,6 +3016,9 @@ async function bootstrap() {
         origin: true,
         credentials: true,
     });
+    const rmqService = app.get(rabbit_mq_1.RabbitMqService);
+    app.connectMicroservice(rmqService.getOptions(rabbit_constent_1.RABBIT_SERVICES[rmqServerName_1.IRmqSeverName.GATEWAY].queue));
+    await app.startAllMicroservices();
     await app.listen(5500);
 }
 bootstrap();

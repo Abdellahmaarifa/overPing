@@ -14,6 +14,7 @@ async function bootstrap() {
   app.connectMicroservice(rmqService.getOptions(RABBIT_SERVICES[IRmqSeverName.PROFILE].queue))
 
   await app.startAllMicroservices();
+  await app.init();
   
 }
 bootstrap();

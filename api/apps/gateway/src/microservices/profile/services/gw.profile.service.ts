@@ -14,18 +14,7 @@ export class GwProfileService {
         private readonly clientService: RabbitMqService,
     ) { }
 
-    hello(){
-        return this.clientService.sendMessageWithPayload(
-            this.client,
-            {
-                role: 'profile',
-                cmd: 'hello-you',
-            },
-            {
-                message: "hello server",
-            }
-        );
-    }
+  
 
     async createUserProfile(userInfo: CreateProfileInput) : Promise<IUserProfile>{
         return await this.clientService.sendMessageWithPayload(
@@ -38,7 +27,7 @@ export class GwProfileService {
         );
     }
 
-    async updateUserProfile(id: number,updateInput: UpdateProfileInput) : Promise<boolean>{
+    async updateUserProfile(userId: number,updateInput: UpdateProfileInput) : Promise<boolean>{
         return await this.clientService.sendMessageWithPayload(
             this.client,
             {
@@ -46,31 +35,42 @@ export class GwProfileService {
                 cmd: 'update-profile',
             },
             {
-                id,
+                userId,
                 updateInput
             }
         );
     }
 
-    async findProfileById(PorfileId: number) : Promise<IUserProfile>{
+    async findProfileById(userId: number) : Promise<IUserProfile>{
         return await this.clientService.sendMessageWithPayload(
             this.client,
             {
                 role: 'profile',
                 cmd: 'find-Profile',
             },
-            PorfileId
+            userId
         );
     }
 
-    async removeProfile(PorfileId: number) : Promise<boolean>{
+    async findProfileByUserId(userId: number) : Promise<IUserProfile>{
+        return await this.clientService.sendMessageWithPayload(
+            this.client,
+            {
+                role: 'profile',
+                cmd: 'find-profile-by-userId',
+            },
+            userId
+        );
+    }
+
+    async removeProfile(userId: number) : Promise<boolean>{
         return await this.clientService.sendMessageWithPayload(
             this.client,
             {
                 role: 'profile',
                 cmd: 'remove-Profile',
             },
-            PorfileId
+            userId
         );
     }
 

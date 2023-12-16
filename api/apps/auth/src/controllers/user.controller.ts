@@ -2,8 +2,9 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { UserService } from '../services/user.service';
 import { UserCreationDto } from '../dto';
-import { IAuthUser } from '../interface';
+import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
 import { RpcExceptionService } from '@app/common/exception-handling';
+import { UpdateProfileDto } from '../dto/user.updateProfileId.dto';
 
 @Controller()
 export class UserController {
@@ -42,6 +43,7 @@ export class UserController {
   async remove(id: number): Promise<boolean> {
     return this.userService.remove(id);
   }
+
 
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {
     if (!user) {

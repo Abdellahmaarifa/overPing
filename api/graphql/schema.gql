@@ -17,6 +17,13 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type GQLWalletModel {
+  id: ID!
+  balance: Float!
+  userProfileId: Float!
+  betAmount: Float!
+}
+
 type GQLUserProfileModel {
   id: ID!
   user_id: Float!
@@ -25,20 +32,30 @@ type GQLUserProfileModel {
   xp: Float!
   rank: Float!
   about: String!
+  wallet: GQLWalletModel!
   created_at: DateTime!
   updated_at: DateTime!
 }
 
+type PingPongPayload {
+  user1Id: Float!
+  user2Id: Float!
+  matchKey: String!
+}
+
 type Query {
+  hello: String!
   findProfileById(id: Float!): GQLUserProfileModel
+  findProfileByUserId(userId: Float!): GQLUserProfileModel
   findById(id: Float!): GQLUserModel!
   findAll: [GQLUserModel!]!
 }
 
 type Mutation {
+  joinMatchmakingQueue(JoinMatchmakingInput: JoinMatchmakingInput!): Boolean
   createProfile(profileCredentials: CreateProfileInput!): GQLUserProfileModel!
-  removeUserProfile(id: Float!): Boolean!
-  UpdateUserProfile(id: Float!, UpdateProfileInput: UpdateProfileInput!): Boolean!
+  removeUserProfile(userId: Float!): Boolean!
+  UpdateUserProfile(userId: Float!, UpdateProfileInput: UpdateProfileInput!): Boolean!
   transferFunds(transferFundsInput: TransferFundsInput!): Boolean
   placeBet(transferFundsInput: PlaceBetInput!): Boolean
   resolveBet(resolveBetInput: ResolveBetInput!): Boolean
@@ -50,6 +67,11 @@ type Mutation {
   enableTwoFactorAuth(id: Float!): String!
   verifyTwoFactorAuth(id: Float!, code: String!): Boolean!
   authenticate_2fa(id: Float!, code: String!): GQLUserModel!
+}
+
+input JoinMatchmakingInput {
+  userId: Float!
+  matchType: String!
 }
 
 input CreateProfileInput {
@@ -87,4 +109,8 @@ input UserCreationInput {
   username: String!
   email: String!
   password: String!
+}
+
+type Subscription {
+  matchWaitingList(userId: Float!): PingPongPayload!
 }

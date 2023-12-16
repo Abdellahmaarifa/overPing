@@ -91,7 +91,7 @@ export class RabbitMqService {
  */
 async emitMessageWithPayload(
     client: ClientProxy,
-    event: string,
+    event: IMessagePattern,
     payload: any,
   ): Promise<void> {
     try {

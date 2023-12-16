@@ -14,4 +14,9 @@ export class ProfileQueryResolver {
       return await this.profileService.findProfileById(id);
     }
 
+    @Query(() => GQLUserProfileModel ,{ nullable: true })
+    async findProfileByUserId(@Args('userId') userId: number) : Promise<IUserProfile>{
+      return await this.profileService.findProfileByUserId(userId);
+    }
+
 }
