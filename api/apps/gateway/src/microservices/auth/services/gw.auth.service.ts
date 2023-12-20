@@ -12,6 +12,8 @@ import { AuthResponseDto } from '@app/common';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { GwProfileService } from 'apps/gateway/src/microservices/profile/services/gw.profile.service';
 import { UserService } from './gw.user.service';
+import { FileUpload } from 'graphql-upload';
+import { GWMediaService } from './gw.media.service';
 
 @Injectable()
 export class GatewayService {
@@ -21,6 +23,7 @@ export class GatewayService {
 		private readonly clientService: RabbitMqService,
 		private readonly profileService: GwProfileService,
 		private readonly userService: UserService,
+		private readonly mediaService: GWMediaService,
 
 	) { }
 
@@ -33,7 +36,7 @@ export class GatewayService {
 		);
 	}
 
-	async signUp(userInput: UserCreationInput): Promise<AuthResponseDto> {
+	async signUp(userInput: UserCreationInput, file: FileUpload): Promise<AuthResponseDto> {
 		const respond = await this.clientService.sendMessageWithPayload(
 			this.client,
 			{ role: 'auth', cmd: 'signUp' },
@@ -43,7 +46,7 @@ export class GatewayService {
 			userId: respond.user.id,
 			username: respond.user.username
 		})
-
+		this.mediaService.uploadProfileImg(file);
 		
 		return (respond);
 	}

@@ -13,5 +13,8 @@ export const RABBIT_SERVICES: Record<IRmqSeverName, { queue: string }> = {
     },
     [IRmqSeverName.MATCH_MAKING]: {
         queue: 'match_making_queue'
+    },
+    [IRmqSeverName.MEDIA]: {
+        queue: 'media_queue'
     }
 }

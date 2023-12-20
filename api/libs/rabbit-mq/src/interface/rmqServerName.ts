@@ -3,4 +3,5 @@ export enum IRmqSeverName{
     AUTH = "AUTH_SERVICE",
     GATEWAY = 'GATEWAY_SERVICE',
     MATCH_MAKING = "MATCH_MAKING",
+    MEDIA = "MEDIA_SERVICE"
 }

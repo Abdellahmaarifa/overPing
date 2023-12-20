@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/api/test/jest-e2e.json",
-    "seed:achievement":"ts-node ./apps/profile/src/scripts/seed.achievement.ts"
+    "seed:achievement": "ts-node ./apps/profile/src/scripts/seed.achievement.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.9.5",
@@ -34,10 +34,12 @@
     "@nestjs/platform-ws": "^10.2.10",
     "@nestjs/schedule": "^4.0.0",
     "@prisma/client": "^5.6.0",
+    "@types/graphql-upload": "8.0.4",
     "@types/passport-google-oauth20": "^2.0.13",
     "@types/speakeasy": "^2.0.10",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.3",
+    "apollo-server-express": "^3.13.0",
     "argon2": "^0.31.2",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
@@ -47,7 +49,9 @@
     "cors": "^2.8.5",
     "graphql": "^16.8.1",
     "graphql-subscriptions": "^2.0.0",
+    "graphql-upload": "12.0.0",
     "graphql-ws": "^5.14.2",
+    "import": "^0.0.6",
     "passport": "^0.6.0",
     "passport-42": "^1.2.6",
     "passport-google-oauth20": "^2.0.0",

@@ -20,6 +20,7 @@ import { GqlCurrentUser } from '../decortor/gql.user.decorator';
 import { GqlJwtRefreshGuard } from '../../guards/gql.refreshToken.guard';
 import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
 import { UserAccessAuthorizationGuard } from '../../guards/user-auth.guard';
+import { FileUpload , GraphQLUpload} from 'graphql-upload';
 
 
 @Resolver()
@@ -53,8 +54,9 @@ export class AuthMutationsResolver {
   @Mutation((returns) => GQLUserModel)
   async signUp(
     @Context() ctx,
-    @Args('userCreationInput') userCreationInput: UserCreationInput): Promise<GQLUserModel> {
-    const response = await this.authService.signUp(userCreationInput);
+    @Args('userCreationInput') userCreationInput: UserCreationInput,
+    @Args('profileImage', { type: () => GraphQLUpload, nullable: true }) file?: FileUpload): Promise<GQLUserModel> {
+    const response = await this.authService.signUp(userCreationInput, file);
     const {res} = ctx;
     res.cookie('Refresh_token', response.refreshToken, {
       httpOnly: true,

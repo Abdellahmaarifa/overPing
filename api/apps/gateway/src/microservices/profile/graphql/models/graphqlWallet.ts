@@ -9,7 +9,7 @@ export class GQLWalletModel {
     balance: number;
     
     @Field()
-    userProfileId: number;
+    user_id: number;
 
     @Field()
     betAmount?: number;

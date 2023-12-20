@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common"
 import { GatewayService } from './microservices/auth/services/gw.auth.service'; 
 import { join } from 'path';
 import { RabbitMqModule } from '@app/rabbit-mq';
@@ -26,8 +26,8 @@ import { GwMatchMakingService } from './microservices/matchMaking/services/gw.ma
 import { PubSub } from 'graphql-subscriptions';
 import { MatchMakingMutationsResolver } from './microservices/matchMaking/graphql/mutations/gw.matchMaking.mutation.resolver';
 import { GwMatchmakingController } from './microservices/matchMaking/controller/gw.matchmaking.controller';
-
-
+import { graphqlUploadExpress } from 'graphql-upload';
+import { GWMediaService } from './microservices/auth/services/gw.media.service';
 @Module({
   imports: [
     PassportModule,
@@ -35,6 +35,7 @@ import { GwMatchmakingController } from './microservices/matchMaking/controller/
     GraphQLModule.forRoot({
       driver:ApolloDriver,
       autoSchemaFile: join(process.cwd(), './graphql/schema.gql'),
+      uploads: false,
       context: ({ req, res }) => ({ req, res }),
       cors: {
         credentials: true,
@@ -51,12 +52,14 @@ import { GwMatchmakingController } from './microservices/matchMaking/controller/
     }),
   RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
   RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),
-  RabbitMqModule.forClientProxy(IRmqSeverName.MATCH_MAKING)
+  RabbitMqModule.forClientProxy(IRmqSeverName.MATCH_MAKING),
+  RabbitMqModule.forClientProxy(IRmqSeverName.MEDIA),
 ],
   providers: [{
     provide: 'PUB_SUB',
     useValue: new PubSub(),
     },
+    GWMediaService,
     GwMatchMakingService, 
     GatewayService,
     UserService,
@@ -82,4 +85,7 @@ import { GwMatchmakingController } from './microservices/matchMaking/controller/
   ]
 })
 export class GatewayModule {
+  configure(consumer: any) {
+    consumer.apply(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 })).forRoutes('graphql');
+  }
 }

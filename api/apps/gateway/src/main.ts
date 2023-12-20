@@ -8,7 +8,6 @@ import { RABBIT_SERVICES, } from '@app/rabbit-mq/constent/rabbit-constent'
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 
 
-
 async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);
   app.use(cookieParser());
@@ -19,6 +18,7 @@ async function bootstrap() {
   });
   const rmqService = app.get<RabbitMqService>(RabbitMqService);
 
+  
   app.connectMicroservice(rmqService.getOptions(RABBIT_SERVICES[IRmqSeverName.GATEWAY].queue))
   await app.startAllMicroservices();
   // app.useGlobalPipes(
