@@ -1,56 +1,104 @@
 version: '3.7'
 services:
 
-  # CLIENT SERVICE FOR PRODUCTION #
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-      target: production
-    networks:
-      - webapp
-    ports:
-      - 80:80
-    restart: always
-    container_name: client
-    profiles:
-      - production
-  # CLIENT SERVICE FOR DEVELOPMENT # 
-  client-dev:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-      target: development
-    env_file:
-      - ./client/.env
-    volumes:
-      - ./client/node_modules:/app/node_modules
-      - ./client/src:/app/src
-      - ./client/public:/app/public
-    networks:
-      - webapp
-    ports:
-      - 5173:5173
-    command: npm run dev
-    stdin_open: true
-    restart: always
-    container_name: client
-    profiles:
-      - development
+  # # CLIENT SERVICE FOR PRODUCTION #
+  # client:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #     target: production
+  #   networks:
+  #     - webapp
+  #   ports:
+  #     - 80:80
+  #   restart: always
+  #   container_name: client
+  #   profiles:
+  #     - production
+  # # CLIENT SERVICE FOR DEVELOPMENT # 
+  # client-dev:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #     target: development
+  #   # env_file:
+  #     # - ./client/.env
+  #   volumes:
+  #     - ./client/node_modules:/app/node_modules
+  #     - ./client/src:/app/src
+  #     - ./client/public:/app/public
+  #   networks:
+  #     - webapp
+  #   ports:
+  #     - 5173:5173
+  #   command: npm run dev
+  #   stdin_open: true
+  #   restart: always
+  #   container_name: client
+  #   profiles:
+  #     - development
 
   # DATABASE SERVICE FOR PRODUCTION & DEVELOPMENT #
-  postgres_db:
+  postgres_auth_db:
     image: postgres
-    networks:
-      - database
+    env_file:
+      - /Users/aboudarga/bouCactus/overPing/api/.env
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=demo
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_DB_PROT}:5432"
     volumes:
-      - ./database/data:/var/lib/postgresql/data/
+      - ./database/data/auth:/var/lib/postgresql/data/
     restart: always
-    container_name: postgres_db
+    networks:
+      - webapp
+    container_name: postgres_auth_db
+    profiles:
+      - production
+      - development
+
+#   DATABASE SERVICE FOR MEDIA DEV AND PROD #
+
+  postgres_media_db:
+    image: postgres
+    env_file:
+      - /Users/aboudarga/bouCactus/overPing/api/.env
+    environment:
+      - POSTGRES_DB=${MEDIA_DB_NAME}
+      - POSTGRES_USER=${MEDIA_DB_USER}
+      - POSTGRES_PASSWORD=${MEDIA_DB_PASSWORD}
+    ports:
+      - "${MEDIA_DB_PORT}:5432"
+    volumes:
+      - ./database/data/media:/var/lib/postgresql/data/
+    restart: always
+    networks:
+      - webapp
+    container_name: postgres_media_db
+    profiles:
+      - production
+      - development
+
+#   DATABASE SERVICE FOR PROFILE DEV AND PROD #
+
+  postgress_profile_db:
+    image: postgres
+    container_name: postgress_profile_db
+    env_file:
+      - /Users/aboudarga/bouCactus/overPing/api/.env
+    environment:
+      - POSTGRES_DB=${PROFILE_DB_NAME}
+      - POSTGRES_USER=${PROFILE_DB_USER}
+      - POSTGRES_PASSWORD=${PROFILE_DB_PASSWORD}
+    ports:
+      -  "${PROFILE_DB_PORT}:5432"
+    networks:
+      - webapp
+    volumes:
+      - ./database/data/profile:/var/lib/postgresql/data/
+    restart: always
     profiles:
       - production
       - development
@@ -63,8 +111,6 @@ services:
     networks:
       - webapp
       - database
-    depends_on:
-      - postgres_db
     restart: always
     command: [ 'node', 'main.js']
     container_name: gateway
@@ -76,7 +122,7 @@ services:
       context: ./api
       dockerfile: ./apps/gateway/Dockerfile
       target: development
-    command: npm run start:dev gateway
+    command: yarn start:dev gateway
     env_file:
       - ./api/.env
     networks:
@@ -84,8 +130,8 @@ services:
     ports:
       - ${GATEWAY_PORT}:5500
     volumes:
-      - ./api:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./api/apps/gateway:/usr/src/app/apps/gateway
+      - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
     restart: always
@@ -99,24 +145,102 @@ services:
       context: ./api
       dockerfile: ./apps/auth/Dockerfile
       target: development
-    command: npm run start:dev auth
+    command: yarn start:dev auth
     env_file:
       - ./api/.env
     networks:
       - webapp
     ports:
       - ${AUTH_PORT}:3001
+      - ${PRISMA_STUDIO_PORT}:5555
+      
     volumes:
-      - ./api:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./api/apps/auth:/usr/src/app/apps/auth
+      - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
+      - postgres_auth_db
       - gateway-dev
     restart: always
     container_name: auth
     profiles:
       - development
 
+# PROFILE SERVICE FOR DEVELOPMENT #
+  profile:
+    build:
+      context: ./api
+      dockerfile: ./apps/profile/Dockerfile
+      target: development
+    command: yarn start:dev profile
+    env_file:
+      - ./api/.env
+    networks:
+      - webapp
+    ports:
+      - ${PROFILE_PORT}:3003
+      - ${PRISMA_STUDIO_PROFILE_PORT}:5555
+      
+    volumes:
+      - ./api/apps/profile:/usr/src/app/apps/profile
+      - ./api/libs:/usr/src/app/libs
+    depends_on:
+      - rabbitmq
+      - postgress_profile_db
+      - gateway-dev
+    restart: always
+    container_name: profile
+    profiles:
+      - development
+
+# MATCHMAKING SERVICE FOR DEVELOPMENT #
+  matchmaking:
+    build:
+      context: ./api
+      dockerfile: ./apps/matchmaking/Dockerfile
+      target: development
+    command: yarn start:dev matchmaking
+    container_name: matchmaking
+    env_file:
+      - ./api/.env
+    networks:
+      - webapp
+    volumes:
+      - ./api/apps/matchmaking:/usr/src/app/apps/matchmaking
+      - ./api/libs:/usr/src/app/libs
+    depends_on:
+      - rabbitmq
+      - gateway-dev
+    restart: always
+    profiles:
+      - development
+
+# MATCHMAKING SERVICE FOR DEVELOPMENT #
+
+  media:
+    build:
+      context: ./api
+      dockerfile: ./apps/media/Dockerfile
+      target: development
+    command: yarn start:dev media
+    container_name: media
+    env_file:
+      - ./api/.env
+    ports:
+      - ${PRISMA_STUDIO_MEDIA_PORT}:5555
+    networks:
+      - webapp
+    volumes:
+      - ./api/apps/media:/usr/src/app/apps/media
+      - ./api/libs:/usr/src/app/libs
+    depends_on:
+      - rabbitmq
+      - gateway-dev
+    restart: always
+    profiles:
+      - development
+
+# RABBBITMQ SERVER #
   rabbitmq:
     image: rabbitmq:3-management 
     environment:
@@ -124,6 +248,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASSWORD}
       - MESSAGE_BUS=amqp://rabbitmq
     restart: always
+    env_file:
+      - ./api/.env
     networks:
       - webapp
     ports:
@@ -139,3 +265,4 @@ networks:
     driver: bridge
   database:
     driver: bridge
+

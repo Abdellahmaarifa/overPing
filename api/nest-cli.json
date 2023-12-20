@@ -36,6 +36,42 @@
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
+    },
+    "rabbit-mq": {
+      "type": "library",
+      "root": "libs/rabbit-mq",
+      "entryFile": "index",
+      "sourceRoot": "libs/rabbit-mq/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/rabbit-mq/tsconfig.lib.json"
+      }
+    },
+    "profile": {
+      "type": "application",
+      "root": "apps/profile",
+      "entryFile": "main",
+      "sourceRoot": "apps/profile/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/profile/tsconfig.app.json"
+      }
+    },
+    "matchmaking": {
+      "type": "application",
+      "root": "apps/matchmaking",
+      "entryFile": "main",
+      "sourceRoot": "apps/matchmaking/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/matchmaking/tsconfig.app.json"
+      }
+    },
+    "media": {
+      "type": "application",
+      "root": "apps/media",
+      "entryFile": "main",
+      "sourceRoot": "apps/media/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/media/tsconfig.app.json"
+      }
     }
   }
 }

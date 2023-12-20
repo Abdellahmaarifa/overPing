@@ -1,0 +1,89 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PROFILE_DATABASE_URL")
+}
+
+model UserProfile {
+  id           Int                        @id @default(autoincrement())
+  user_id      Int                        @unique
+  nickname     String                     @unique
+  title        String
+  rank         Int                        @default(0)
+  displayRank  Int?
+  xp           Int                        @default(0)
+  about        String                     @default("Chatting my way through life on [overPing]. Let's keep the conversations rolling! 📱✨ #Connected")
+  created_at   DateTime                   @default(now())
+  updated_at   DateTime                   @updatedAt
+  gameStatus   GameStatus?
+  achievements UserProfileToAchievement[]
+  wallet       Wallet?
+
+  @@index([user_id, xp(sort: Desc), nickname])
+}
+
+model Wallet {
+  id          Int         @id @default(autoincrement())
+  balance     Int         @default(1500)
+  user_id     Int         @unique
+  betAmount   Int?        @default(0)
+  userProfile UserProfile @relation(fields: [user_id], references: [user_id])
+
+  @@unique([id, user_id])
+}
+
+model GameStatus {
+  id              Int         @id @default(autoincrement())
+  user_id         Int         @unique
+  userPofile      UserProfile @relation(fields: [user_id], references: [user_id])
+  matchesLoss     Int         @default(0)
+  matchesWon      Int         @default(0)
+  totalMatches    Int         @default(0)
+  win_streak      Int         @default(0)
+  best_win_streak Int         @default(0)
+  statistics      Statistics?
+}
+
+model Statistics {
+  id                      Int        @id @default(autoincrement())
+  user_id                 Int        @unique
+  gameStatus              GameStatus @relation(fields: [user_id], references: [user_id])
+  strict_shot_goals       Int        @default(0)
+  rebounded_goals         Int        @default(0)
+  starts_collected        Int        @default(0)
+  clean_sheets            Int        @default(0)
+  successive_clean_sheets Int        @default(0)
+}
+
+model GameMatch {
+  id           Int      @id @default(autoincrement())
+  player1      Int      @unique
+  player2      Int      @unique
+  winner       Int      @unique
+  loser        Int      @unique
+  createdAt    DateTime @default(now())
+  player1Score Int      @default(0)
+  player2Score Int      @default(0)
+  VictoryWager Int      @default(0)
+}
+
+model Achievement {
+  id            Int                        @id @default(autoincrement())
+  title         String
+  requirement   String
+  description   String
+  UsersProfiles UserProfileToAchievement[]
+}
+
+model UserProfileToAchievement {
+  userProfileId Int
+  achievementId Int
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  userProfile   UserProfile @relation(fields: [userProfileId], references: [user_id])
+
+  @@id([userProfileId, achievementId])
+}

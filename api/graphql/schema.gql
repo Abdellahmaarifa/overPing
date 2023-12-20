@@ -1,0 +1,116 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type GQLUserModel {
+  id: ID!
+  username: String!
+  googleId: String
+  fortyTwoId: String
+  twoStepVerificationEnabled: Boolean!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type GQLWalletModel {
+  id: ID!
+  balance: Float!
+  userProfileId: Float!
+  betAmount: Float!
+}
+
+type GQLUserProfileModel {
+  id: ID!
+  user_id: Float!
+  nickname: String!
+  title: String!
+  xp: Float!
+  rank: Float!
+  about: String!
+  wallet: GQLWalletModel!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type PingPongPayload {
+  user1Id: Float!
+  user2Id: Float!
+  matchKey: String!
+}
+
+type Query {
+  hello: String!
+  findProfileById(id: Float!): GQLUserProfileModel
+  findProfileByUserId(userId: Float!): GQLUserProfileModel
+  findById(id: Float!): GQLUserModel!
+  findAll: [GQLUserModel!]!
+}
+
+type Mutation {
+  joinMatchmakingQueue(JoinMatchmakingInput: JoinMatchmakingInput!): Boolean
+  createProfile(profileCredentials: CreateProfileInput!): GQLUserProfileModel!
+  removeUserProfile(userId: Float!): Boolean!
+  UpdateUserProfile(userId: Float!, UpdateProfileInput: UpdateProfileInput!): Boolean!
+  transferFunds(transferFundsInput: TransferFundsInput!): Boolean
+  placeBet(transferFundsInput: PlaceBetInput!): Boolean
+  resolveBet(resolveBetInput: ResolveBetInput!): Boolean
+  signIn(authCredentials: AuthCredentialsInput!): GQLUserModel!
+  signUp(userCreationInput: UserCreationInput!): GQLUserModel!
+  logOut(id: Float!): Boolean!
+  removeUser(id: Float!): Boolean!
+  refresh: String!
+  enableTwoFactorAuth(id: Float!): String!
+  verifyTwoFactorAuth(id: Float!, code: String!): Boolean!
+  authenticate_2fa(id: Float!, code: String!): GQLUserModel!
+}
+
+input JoinMatchmakingInput {
+  userId: Float!
+  matchType: String!
+}
+
+input CreateProfileInput {
+  userId: Float!
+  username: String!
+}
+
+input UpdateProfileInput {
+  nickname: String
+  about: String
+}
+
+input TransferFundsInput {
+  senderId: Float!
+  recipientId: Float!
+  amount: Float!
+}
+
+input PlaceBetInput {
+  walletId: Float!
+  betAmount: Float!
+}
+
+input ResolveBetInput {
+  walletId: Float!
+  isWinner: Boolean!
+}
+
+input AuthCredentialsInput {
+  username: String!
+  password: String!
+}
+
+input UserCreationInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+type Subscription {
+  matchWaitingList(userId: Float!): PingPongPayload!
+}
