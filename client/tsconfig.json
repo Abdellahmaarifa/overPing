@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "maxNodeModuleJsDepth":10,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": "./src",
+    "paths": {
+      "components/*":["presentation/components/*"],
+      "pages/*":["presentation/pages/*"],
+      "assets/*":["presentation/assets/*"],
+      "types/*": ["src/infrastructure/types/*"],
+      "context/*": ["presentation/context/*"],
+      "helpers/*": ["infrastructure/helpers/*"],
+      "gql/*":["data/gql/*"],
+      "state/*":["state/*"],
+      "constant/*":["data/constant/*"],
+      "domain/*":["domain/*"],
+      "presentation/*":["presentation/*"]
+    },
+    "experimentalDecorators": true
+  },
+  "include": [
+    "src",
+    "src/infrastructure/types",
+    "src/infrastructure/types/*"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
+}
