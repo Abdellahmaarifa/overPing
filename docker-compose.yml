@@ -59,6 +59,28 @@ services:
       - production
       - development
 
+#   DATABASE SERVICE FOR MEDIA DEV AND PROD #
+
+  postgres_media_db:
+    image: postgres
+    env_file:
+      - /Users/aboudarga/bouCactus/overPing/api/.env
+    environment:
+      - POSTGRES_DB=${MEDIA_DB_NAME}
+      - POSTGRES_USER=${MEDIA_DB_USER}
+      - POSTGRES_PASSWORD=${MEDIA_DB_PASSWORD}
+    ports:
+      - "${MEDIA_DB_PORT}:5432"
+    volumes:
+      - ./database/data/media:/var/lib/postgresql/data/
+    restart: always
+    networks:
+      - webapp
+    container_name: postgres_media_db
+    profiles:
+      - production
+      - development
+
 #   DATABASE SERVICE FOR PROFILE DEV AND PROD #
 
   postgress_profile_db:
@@ -108,7 +130,8 @@ services:
     ports:
       - ${GATEWAY_PORT}:5500
     volumes:
-      - ./api:/usr/src/app
+      - ./api/apps/gateway:/usr/src/app/apps/gateway
+      - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
     restart: always
@@ -132,7 +155,8 @@ services:
       - ${PRISMA_STUDIO_PORT}:5555
       
     volumes:
-      - ./api:/usr/src/app
+      - ./api/apps/auth:/usr/src/app/apps/auth
+      - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
       - postgres_auth_db
@@ -158,13 +182,61 @@ services:
       - ${PRISMA_STUDIO_PROFILE_PORT}:5555
       
     volumes:
-      - ./api:/usr/src/app
+      - ./api/apps/profile:/usr/src/app/apps/profile
+      - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
       - postgress_profile_db
       - gateway-dev
     restart: always
     container_name: profile
+    profiles:
+      - development
+
+# MATCHMAKING SERVICE FOR DEVELOPMENT #
+  matchmaking:
+    build:
+      context: ./api
+      dockerfile: ./apps/matchmaking/Dockerfile
+      target: development
+    command: yarn start:dev matchmaking
+    container_name: matchmaking
+    env_file:
+      - ./api/.env
+    networks:
+      - webapp
+    volumes:
+      - ./api/apps/matchmaking:/usr/src/app/apps/matchmaking
+      - ./api/libs:/usr/src/app/libs
+    depends_on:
+      - rabbitmq
+      - gateway-dev
+    restart: always
+    profiles:
+      - development
+
+# MATCHMAKING SERVICE FOR DEVELOPMENT #
+
+  media:
+    build:
+      context: ./api
+      dockerfile: ./apps/media/Dockerfile
+      target: development
+    command: yarn start:dev media
+    container_name: media
+    env_file:
+      - ./api/.env
+    ports:
+      - ${PRISMA_STUDIO_MEDIA_PORT}:5555
+    networks:
+      - webapp
+    volumes:
+      - ./api/apps/media:/usr/src/app/apps/media
+      - ./api/libs:/usr/src/app/libs
+    depends_on:
+      - rabbitmq
+      - gateway-dev
+    restart: always
     profiles:
       - development
 
