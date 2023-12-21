@@ -1,8 +1,16 @@
-query User {
-  user {
+# query User {
+#   user {
+#     id
+#     email
+#     userName
+#     profilePhoto
+#   }
+# }
+
+query User($id: Float!) {
+  findUserById(userId: $id) {
     id
     email
-    userName
-    profilePhoto
+    username
   }
 }

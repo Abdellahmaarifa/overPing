@@ -9,11 +9,15 @@ export class GQLUserModel {
     @Field()
     username: string;
 
+    @Field()
+    email: string;
+    
     @Field({ nullable: true })
     googleId?: string;
 
     @Field({ nullable: true })
     fortyTwoId?: string;
+
 
     @Field()
     twoStepVerificationEnabled: boolean;

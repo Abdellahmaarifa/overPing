@@ -1,13 +1,34 @@
+# mutation Register(
+#   $profilePhoto: Upload!
+#   $userName: String!
+#   $password: String!
+#   $email: String!
+# ) {
+#   register(
+#     profilePhoto: $profilePhoto
+#     userName: $userName
+#     password: $password
+#     email: $email
+#   )
+# }
+
+
+
 mutation Register(
   $profilePhoto: Upload!
   $userName: String!
   $password: String!
   $email: String!
 ) {
-  register(
-    profilePhoto: $profilePhoto
-    userName: $userName
-    password: $password
-    email: $email
-  )
+  signUp(
+    userCreationInput: {
+      username: $userName
+      email: $email
+      password: $password
+    }
+    profileImage: $profilePhoto
+  ) {
+    username
+    id
+  }
 }
