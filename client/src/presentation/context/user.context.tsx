@@ -44,17 +44,22 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   const restoreUser = async (callback?: () => void) => {
     // we should sen a request to /refresh_token and then update the user with the new token.
     try {
+      // console.log("the usrl of refersh: " ,import.meta.env.OVER_PING_REFRECH_TOKEN)
+      const refresh_url : string = import.meta.env.OVER_PING_REFRECH_TOKEN ;
+      console.log("user refresh ", refresh_url);
       if (user) return;
-      const data = await fetch("http://localhost:9000/refresh_token", {
+      const data = await fetch(refresh_url, {
+        
         credentials: "include",
-        method: "POST",
+        method: "GET",
       });
       const res = await data.json();
+      console.log("the res: " , res);
       store.setToken(res?.accessToken);
       if (res?.accessToken) setUser({ token: res?.accessToken });
       callback && callback();
     } catch (err) {
-      console.log(err);
+      console.log("the error of networking : ",err);
     }
   };
 

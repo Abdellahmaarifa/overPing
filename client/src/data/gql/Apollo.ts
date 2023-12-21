@@ -15,7 +15,9 @@ export const authLink = (token: string | null) =>
   setContext((_, { headers }) => {
     return {
       headers: {
-        ...headers,
+        'Content-Type': 'application/json',
+        'x-apollo-operation-name': 'something', 
+        ...headers, 
         authorization: token ? `Bearer ${token}` : "",
       },
     };

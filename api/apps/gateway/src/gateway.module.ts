@@ -40,6 +40,7 @@ import { GWMediaService } from './microservices/auth/services/gw.media.service';
       cors: {
         credentials: true,
         origin: true
+      //   origin: ["http://localhost:5173"],
       },
       playground: true,
       // installSubscriptionHandlers: true,

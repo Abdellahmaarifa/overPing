@@ -168,7 +168,7 @@ class SignUpViewModel implements SignUpViewModelType {
         resolve(true);
       } catch (err) {
         //console.log("image: ", this.data.profilePhoto);
-        //console.log(err);
+        console.log("the error of it : " ,err);
         reject("Something went wrong.");
       }
     });

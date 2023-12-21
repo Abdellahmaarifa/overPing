@@ -4,7 +4,8 @@ CREATE TABLE "UserProfile" (
     "user_id" INTEGER NOT NULL,
     "nickname" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "rank" INTEGER,
+    "rank" INTEGER NOT NULL DEFAULT 0,
+    "displayRank" INTEGER,
     "xp" INTEGER NOT NULL DEFAULT 0,
     "about" TEXT NOT NULL DEFAULT 'Chatting my way through life on [overPing]. Let''s keep the conversations rolling! 📱✨ #Connected',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -17,7 +18,7 @@ CREATE TABLE "UserProfile" (
 CREATE TABLE "Wallet" (
     "id" SERIAL NOT NULL,
     "balance" INTEGER NOT NULL DEFAULT 1500,
-    "userProfileId" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
     "betAmount" INTEGER DEFAULT 0,
 
     CONSTRAINT "Wallet_pkey" PRIMARY KEY ("id")
@@ -92,10 +93,10 @@ CREATE UNIQUE INDEX "UserProfile_nickname_key" ON "UserProfile"("nickname");
 CREATE INDEX "UserProfile_user_id_xp_nickname_idx" ON "UserProfile"("user_id", "xp" DESC, "nickname");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Wallet_userProfileId_key" ON "Wallet"("userProfileId");
+CREATE UNIQUE INDEX "Wallet_user_id_key" ON "Wallet"("user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Wallet_id_userProfileId_key" ON "Wallet"("id", "userProfileId");
+CREATE UNIQUE INDEX "Wallet_id_user_id_key" ON "Wallet"("id", "user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "GameStatus_user_id_key" ON "GameStatus"("user_id");
@@ -116,7 +117,7 @@ CREATE UNIQUE INDEX "GameMatch_winner_key" ON "GameMatch"("winner");
 CREATE UNIQUE INDEX "GameMatch_loser_key" ON "GameMatch"("loser");
 
 -- AddForeignKey
-ALTER TABLE "Wallet" ADD CONSTRAINT "Wallet_userProfileId_fkey" FOREIGN KEY ("userProfileId") REFERENCES "UserProfile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Wallet" ADD CONSTRAINT "Wallet_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "UserProfile"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "GameStatus" ADD CONSTRAINT "GameStatus_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "UserProfile"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;

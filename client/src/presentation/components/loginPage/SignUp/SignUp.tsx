@@ -18,7 +18,7 @@ import ShowPassIcon from "assets/login/showPass.svg?react";
 import { SignUpModel, SignUpModelSchema } from "./SignUpModel";
 import SignUpViewModel from "./SignUpViewModel";
 const a = tw``;
-
+import {useHelloQuery} from "../../../../data/gql"
 interface FormStepProps {
   viewModel: SignUpViewModelType;
   formikProps?: FormikProps<SignUpModelType>;
@@ -171,6 +171,8 @@ const SignUpFormStepFour = ({ viewModel, formikProps }: FormStepProps) => {
 };
 
 const SignUp = () => {
+  const {data} = useHelloQuery();
+  console.log("this is data: ",data);
   const viewModel = new SignUpViewModel({
     fieldName: useStateWithGetSet(""),
     avatar: useStateWithGetSet(""),

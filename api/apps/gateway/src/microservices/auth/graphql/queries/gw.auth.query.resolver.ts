@@ -14,11 +14,17 @@ export class AuthQueryResolver {
     ) {}
     
     
+    @Query(() => String)
+    async helloT(): Promise<string> {
+      return "hello world from server";
+    }
+    
     @Query(() => GQLUserModel)
     async findUserById(@Args('userId') userId: number) : Promise<GQLUserModel>{
 	const user = await this.userService.findById(userId);
 	return (user);
     }
+
 
 
     @Query(() => [GQLUserModel]) 

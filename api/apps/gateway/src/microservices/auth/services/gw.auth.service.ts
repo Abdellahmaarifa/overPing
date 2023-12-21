@@ -42,11 +42,11 @@ export class GatewayService {
 			{ role: 'auth', cmd: 'signUp' },
 			userInput,
 		);
-		this.profileService.createUserProfile({
-			userId: respond.user.id,
-			username: respond.user.username
-		})
-		this.mediaService.uploadProfileImg(file);
+		// this.profileService.createUserProfile({
+		// 	userId: respond.user.id,
+		// 	username: respond.user.username
+		// })
+		// this.mediaService.uploadProfileImg(file);
 		
 		return (respond);
 	}

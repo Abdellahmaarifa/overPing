@@ -8,6 +8,7 @@ import { RpcExceptionService } from '@app/common/exception-handling';
 import { UpdateProfileDto } from '../dto/user.updateProfileId.dto'; 
 import {User, Prisma } from "@prisma/client";
 import { PrismaError } from '@app/common/exception-handling';
+
 @Injectable()
 export class UserService {
 	constructor(
@@ -33,7 +34,12 @@ export class UserService {
 		return (userFound);
 	}
 
-	async createUser({ password, username, googleId, fortyTwoId }: UserCreationDto): Promise<IAuthUser> {
+	async createUser({ password, username, googleId, fortyTwoId, email }: UserCreationDto): Promise<IAuthUser> {
+		const exists = await this.isUserExist(username);
+		if (exists){
+			throw this.rpcExceptionService.throwBadRequest(`Resource already exists`);
+		}
+		  
 		try {
 			console.log("the error: ", password, username);
 			const hashedPassword = password ? await argon2.hash(password) : undefined;
@@ -43,6 +49,7 @@ export class UserService {
 			return this.prisma.user.create({
 				data: {
 					username,
+					email,
 					password: hashedPassword,
 					googleId,
 					fortyTwoId,
@@ -54,6 +61,7 @@ export class UserService {
 				},
 				select: {
 					id: true,
+					email: true,
 					username: true,
 					googleId: true,
 					fortyTwoId: true,
@@ -64,10 +72,6 @@ export class UserService {
 			});
 		} catch (error) {
 			this.handlePrismaError(error);
-			// this.rpcExceptionService.throwCatchedException({
-			// 	code: 500,
-			// 	message: ("Failed to create user: Unknown error")
-			// })
 		}
 	}
 
@@ -80,10 +84,7 @@ export class UserService {
 			}));
 			return (user);
 		} catch (error) {
-			this.rpcExceptionService.throwCatchedException({
-				code: 500,
-				message: ("Failed to find user: Unknown error") + error
-			})
+			this.handlePrismaError(error);
 		}
 	}
 
@@ -97,10 +98,7 @@ export class UserService {
 			return (user);
 
 		} catch (error) {
-			this.rpcExceptionService.throwCatchedException({
-				code: 500,
-				message: ("Failed to find user: Unknown error")
-			})
+			this.handlePrismaError(error);
 		}
 	}
 
@@ -144,10 +142,7 @@ export class UserService {
 			return (true);
 
 		} catch (error) {
-			this.rpcExceptionService.throwCatchedException({
-				code: 500,
-				message: (`Failed to delete user: ${id}`)
-			})
+			this.handlePrismaError(error);
 		}
 	}
 
@@ -187,4 +182,15 @@ export class UserService {
 		  throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
 		}
 	  }
+	
+	private async isUserExist(username: string) : Promise<boolean>{
+		const exists = !!await this.prisma.user.findFirst(
+			{
+			  where: {
+				username: username
+			  }
+			}
+		  );
+		return(exists);
+	}
 }
