@@ -44,10 +44,6 @@ export class AuthService {
 	async signUp(
 		authCredentials: SignUpCredentialsDto
 	): Promise<AuthResponseDto> {
-		// const user = await this.userService.findUserByUsername(authCredentials.username);
-		// if (user) {
-		// 	this.rpcExceptionService.throwForbidden("Username already in use. Try a different one.");
-		// }
 		const usercreated = await this.userService.createUser(authCredentials);
 		const refreshAndAccessToken = await this.newRefreshAndAccessToken(
 			{

@@ -33,7 +33,7 @@ export class AuthController {
 			secure: true,
 			sameSite: 'Strict',
 		  });
-		res.redirect(`http://localhost:3000/userinfo?user=${encodeURIComponent(JSON.stringify(user))}`);
+		res.redirect(`http://localhost:5173/?user=${encodeURIComponent(JSON.stringify(user))}`);
     }
 
 
@@ -43,7 +43,8 @@ export class AuthController {
     async redirectToGoogleAuth(){}
 
 
-	/// refresh token are not stored in database------------------------------------------?
+	/// refresh token are not stored in database------------------------------------------? i fix it 
+	/// but check why the user can not sign from first time
     @UseGuards(GoogleGuard)
     @Get('google/google-callback')
     async GoogleoAuthCallback(
@@ -63,7 +64,7 @@ export class AuthController {
 			secure: true,
 			sameSite: 'Strict',
 		  });
-		res.redirect(`http://localhost:3000/userinfo?user=${encodeURIComponent(JSON.stringify(user))}`);
+		res.redirect(`http://localhost:5173/?user=${encodeURIComponent(JSON.stringify(user))}`);
     }
 
 

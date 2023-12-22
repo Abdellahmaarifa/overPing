@@ -59,6 +59,7 @@ export class AuthController {
     @MessagePattern({ role: 'auth', cmd: 'getRefreshWithJwtAccessToken' })
     async getRefreshWithJwtAccessToken(payload: JwtPayloadDto): Promise<any> {
         const tokens = await this.authService.newRefreshAndAccessToken(payload);
+        this.authService.updateRefreshToken(payload.id,tokens.refreshToken);
         return tokens;
     }
 
