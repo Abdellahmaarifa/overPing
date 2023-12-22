@@ -16,10 +16,12 @@ import {
 } from "./LoginForm.style";
 import { useLoginContext } from "context/login.context";
 import tw from "twin.macro";
+import { useNavigate } from "react-router-dom";
 
 const a = tw.a``;
 const LoginForm = () => {
   const { setShowRegister, showRegister } = useLoginContext();
+  const navigate = useNavigate();
   return (
     <LoginFormContainer>
       <LoginHeading>Happening now</LoginHeading>
@@ -36,6 +38,9 @@ const LoginForm = () => {
             $transparent={true}
             $size="xl"
             $Icon={GoogleIcon}
+            onClick={() => {
+               window.location.href = "http://localhost:5500/auth/google";
+            }}
           />
           <Button
             $text="log in with Google"
