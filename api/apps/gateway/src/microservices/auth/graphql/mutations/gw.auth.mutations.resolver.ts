@@ -21,6 +21,7 @@ import { GqlJwtRefreshGuard } from '../../guards/gql.refreshToken.guard';
 import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
 import { UserAccessAuthorizationGuard } from '../../guards/user-auth.guard';
 import { FileUpload , GraphQLUpload} from 'graphql-upload';
+import { GQTwoFAGuard } from '../../guards/gql.twoFa.grade';
 
 
 @Resolver()
@@ -37,6 +38,15 @@ export class AuthMutationsResolver {
     @Args('authCredentials') authCredentialsInput: AuthCredentialsInput,): Promise<GQLUserModel> {
     const response= await this.authService.signIn(authCredentialsInput);
     const { res } = context;
+
+    if (response.twoFactorAuth){
+      res.cookie('twoFactorAuth', response.twoFactorAuth, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+      });
+      return ;
+    }
 
     res.cookie('Refresh_token', response.refreshToken, {
       httpOnly: true,
@@ -120,10 +130,12 @@ export class AuthMutationsResolver {
     return this.authService.verifyTwoFactorAuth(twoFActorAuthInput);
   }
   
+  @UseGuards(GQTwoFAGuard)
   @Mutation(() => GQLUserModel)
-  async authenticate_2fa(@Context() context, @Args('id') id: number, @Args('code') code: string): Promise<GQLUserModel>{
+  async authenticate_2fa(@Context() context, @Args('code') code: string): Promise<GQLUserModel>{
+    const { req } = context;
     const twoFActorAuthInput : TwoFActorAuthInput = {
-      id,
+      id: req.user.userId,
       code,
     }
     const response =  await this.authService.authenticate_2fa(twoFActorAuthInput);

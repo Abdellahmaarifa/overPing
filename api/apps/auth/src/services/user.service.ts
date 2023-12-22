@@ -16,7 +16,7 @@ export class UserService {
 		private prisma: PrismaService
 	) { }
 
-	async validateUser(userCredentials: SignInCredentialsDto): Promise<IAuthUser> {
+	async validateUser(userCredentials: SignInCredentialsDto): Promise<IAuthUser | null> {
 		let userFound = await this.findUserByUsername(userCredentials.username);
 		if (!userFound) {
 			this.rpcExceptionService.throwNotFound("User not found. Check the provided username.");
@@ -29,7 +29,8 @@ export class UserService {
 			this.rpcExceptionService.throwForbidden("Invalid username or password.");
 
 		if (userFound.twoStepVerificationEnabled){
-			this.rpcExceptionService.throwUnauthorised("Two-factor authentication is required. Please provide the 2FA code.")
+			return null;
+			// this.rpcExceptionService.throwUnauthorised("Two-factor authentication is required. Please provide the 2FA code.")
 		}
 		return (userFound);
 	}

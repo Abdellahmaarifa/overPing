@@ -27,18 +27,28 @@ export class AuthService {
 	async signIn(
 		authCredentials: SignInCredentialsDto
 	): Promise<AuthResponseDto> {
-		let user: IAuthUser = await this.userService.validateUser(authCredentials);
+		let user = await this.userService.validateUser(authCredentials);
+		if (user == null) {
+			const twoFactorAuth = await this.newTwoFactorAccessToken({
+				id: user.id,
+				username: user.username
+			})
+			return {
+				twoFactorAuth
+			}
+		}
 
 		const refreshAndAccessToken = await this.newRefreshAndAccessToken({
 			id: user.id,
 			username: user.username
 		});
 		this.updateRefreshToken(user.id, refreshAndAccessToken.refreshToken);
-		return new AuthResponseDto(
-			refreshAndAccessToken.accessToken,
-			refreshAndAccessToken.refreshToken,
-			user
-		);
+		return {
+			accessToken: refreshAndAccessToken.accessToken,
+			refreshToken: refreshAndAccessToken.refreshToken,
+			user: user
+		}
+		
 	}
 
 	async signUp(
@@ -51,11 +61,30 @@ export class AuthService {
 				username: usercreated.username
 			});
 		this.updateRefreshToken(usercreated.id, refreshAndAccessToken.refreshToken);
-		return new AuthResponseDto(
-			refreshAndAccessToken.accessToken,
-			refreshAndAccessToken.refreshToken,
-			usercreated
-		);
+		return {
+			accessToken: refreshAndAccessToken.accessToken,
+			refreshToken: refreshAndAccessToken.refreshToken,
+			user: usercreated
+		}
+	}
+
+	async newTwoFactorAccessToken(payload: {
+		id: number,
+		username: string,
+	}) {
+
+		const newTFactorAccess = await this.jwtService.signAsync(
+			{
+				sub: payload.id,
+				username: payload.username,
+			},
+			{
+				secret: this.configService.get<string>('Jwt_TWOFA_SECRET'),
+				expiresIn: '15m',
+			},
+		)
+
+		return newTFactorAccess;
 	}
 
 	async newRefreshAndAccessToken(payload: JwtPayloadDto) {
@@ -133,7 +162,7 @@ export class AuthService {
 
 	async enableTwoFactorAuth(id: number): Promise<string> {
 		const user = await this.userService.findById(id);
-		if (!user){
+		if (!user) {
 			this.rpcExceptionService.throwUnauthorised("User not found");
 		}
 		let secret = speakeasy.generateSecret({
@@ -150,26 +179,26 @@ export class AuthService {
 			user.twoFactorSecret,
 			twoFActorAuthInput.code
 		);
-		if (isVerified){
+		if (isVerified) {
 			this.userService.toggle2FAStatus(user.id, true);
-		}else{
+		} else {
 			this.userService.toggle2FAStatus(user.id, false);
-			this.userService.update2FA(user.id, '');	
+			this.userService.update2FA(user.id, '');
 		}
 		return isVerified;
 	}
 
-	async authenticate_2fa(twoFActorAuthInput: TwoFActorAuthDto): Promise<AuthResponseDto>{
+	async authenticate_2fa(twoFActorAuthInput: TwoFActorAuthDto): Promise<AuthResponseDto> {
 		const user = await this.userService.findById(twoFActorAuthInput.id);
-		if (!user.twoStepVerificationEnabled){
+		if (!user.twoStepVerificationEnabled) {
 			this.rpcExceptionService.throwBadRequest("twoStepVerification not enabled");
 		}
-		
+
 		const isVerified = this.verifyTwoFactor(
 			user.twoFactorSecret,
 			twoFActorAuthInput.code
 		);
-		if (!isVerified){
+		if (!isVerified) {
 			this.rpcExceptionService.throwForbidden("Invalid code. Please try again with a different code.");
 		}
 		const refreshAndAccessToken = await this.newRefreshAndAccessToken({
@@ -177,11 +206,12 @@ export class AuthService {
 			username: user.username
 		});
 		this.updateRefreshToken(user.id, refreshAndAccessToken.refreshToken);
-		return new AuthResponseDto(
-			refreshAndAccessToken.accessToken,
-			refreshAndAccessToken.refreshToken,
-			user
-		);
+		return {
+			accessToken: refreshAndAccessToken.accessToken,
+			refreshToken: refreshAndAccessToken.refreshToken,
+			user: user
+		}
+		
 	}
 
 	private verifyTwoFactor(secret: string, code) {
@@ -200,11 +230,11 @@ export class AuthService {
 
 	private handlePrismaError(error: any): void {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-		  const prismaError = new PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
-		  prismaError.handlePrismaError();
+			const prismaError = new PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
+			prismaError.handlePrismaError();
 		} else {
-		  throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
+			throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
 		}
-	  }
+	}
 
 }

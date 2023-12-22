@@ -79,6 +79,16 @@ export class GatewayService {
 			payload
 		)
 	}
+	async getTwoFacatorAccessToken(payload: JwtPayloadDto){
+		return await this.clientService.sendMessageWithPayload(
+			this.client,
+			{
+				role: "auth",
+				cmd: "getTwoFacatorAccessToken"
+			},
+			payload
+		)
+	}
 
 	async enableTwoFactorAuth(id: number): Promise<string> {
 		return await this.clientService.sendMessageWithPayload(

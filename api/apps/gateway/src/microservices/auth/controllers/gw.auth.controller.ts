@@ -25,6 +25,17 @@ export class AuthController {
 	@Res() res,
     ){
 		const user = req.user;
+		const FRONT_URL = this.configService.get('FRONT_URL')
+
+		if (user.twoStepVerificationEnabled){
+			const respond = await this.gatewayService.getTwoFacatorAccessToken({id: user.id, username: user.username})
+			res.cookie('twoFactorAuth', respond.twoFactorAuth, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'Strict',
+			  });
+		  	res.redirect(FRONT_URL);
+		}
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
 		res.cookie('Refresh_token', token.refreshToken, {
 			httpOnly: true,
@@ -37,7 +48,6 @@ export class AuthController {
 			secure: true,
 			sameSite: 'Strict',
 		  });
-		const FRONT_URL = this.configService.get('FRONT_URL')
 		res.redirect(FRONT_URL);
     }
 
@@ -56,8 +66,18 @@ export class AuthController {
 	@Request() req,
 	@Res() res,
     ){
-		console.log("Goooooooooooooooooogle")
 		const user = req.user;
+		const FRONT_URL = this.configService.get('FRONT_URL')
+
+		if (user.twoStepVerificationEnabled){
+			const respond = await this.gatewayService.getTwoFacatorAccessToken({id: user.id, username: user.username})
+			res.cookie('twoFactorAuth', respond.twoFactorAuth, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'Strict',
+			  });
+		  	res.redirect(FRONT_URL);
+		}
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
 		res.cookie('Refresh_token', token.refreshToken, {
 			httpOnly: true,
@@ -70,7 +90,6 @@ export class AuthController {
 			secure: true,
 			sameSite: 'Strict',
 		  });
-		  const FRONT_URL = this.configService.get('FRONT_URL')
 		  res.redirect(FRONT_URL);
     }
 
