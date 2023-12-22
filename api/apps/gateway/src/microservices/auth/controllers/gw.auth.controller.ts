@@ -69,14 +69,19 @@ export class AuthController {
 
 	@UseGuards(RefreshTokenGuard)
     @Get('refresh')
-    async refresh(@Request() req : any): Promise<string>{
+    async refresh(@Request() req : any, @Res() res): Promise<void>{
 		const payload : JwtPayloadDto = {
 			id : req.user.id,
 			username : req.user.username
 		}
 		const result =  await this.gatewayService.refresh(payload);
+		res.cookie('Access_token', result, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'Strict',
+		  });
 		console.log("gateway ===========> result: [", result, "]");
-		return (result);
+		res.send(result);
     }
 
 }

@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { UserService } from '../services';
 import { LoggerService } from '@app/common';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -12,7 +13,23 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
         private readonly loger: LoggerService,
     ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: Request) => {
+          const cookieToken = request?.cookies?.Refresh_token;
+          if (cookieToken) {
+            this.loger.actionLog("gateway", "refresh strategy", "get cookies", cookieToken);
+            return cookieToken;
+          }
+        },
+        (request: Request) => {
+          const authorizationHeader = request.headers['authorization'];
+          if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
+            const headerToken = authorizationHeader.split(' ')[1];
+            this.loger.actionLog("gateway", "refresh strategy", "get header", headerToken);
+            return headerToken;
+          }
+        },
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_ACCESS_SECRET,
     });
