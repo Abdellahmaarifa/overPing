@@ -41,8 +41,7 @@ services:
   # DATABASE SERVICE FOR PRODUCTION & DEVELOPMENT #
   postgres_auth_db:
     image: postgres
-    env_file:
-      - /Users/aboudarga/bouCactus/overPing/api/.env
+
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -63,8 +62,7 @@ services:
 
   postgres_media_db:
     image: postgres
-    env_file:
-      - /Users/aboudarga/bouCactus/overPing/api/.env
+ 
     environment:
       - POSTGRES_DB=${MEDIA_DB_NAME}
       - POSTGRES_USER=${MEDIA_DB_USER}
@@ -86,8 +84,7 @@ services:
   postgress_profile_db:
     image: postgres
     container_name: postgress_profile_db
-    env_file:
-      - /Users/aboudarga/bouCactus/overPing/api/.env
+
     environment:
       - POSTGRES_DB=${PROFILE_DB_NAME}
       - POSTGRES_USER=${PROFILE_DB_USER}

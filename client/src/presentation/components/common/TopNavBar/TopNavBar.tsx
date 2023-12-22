@@ -40,7 +40,10 @@ const TopNavBar = () => {
   const [openSettings, setOpenSettings] = userMenuState;
   const [_cookie, setCookie, removeCookie] = useCookies();
   const viewModel = new ViewModel();
-  const { data, loading, error } = viewModel.userQuery;
+  //const { data, loading, error } = viewModel.userQuery;
+  //console.log("this data: ",data?.findUserById);
+  //const user = data?.findUserById;
+  //console.log("user: ", user);
   const {
     settingsModel: [_settingsModel, setSettingsModel],
   } = useSettingsContext();
@@ -50,7 +53,8 @@ const TopNavBar = () => {
     showFriends: [showFriends, setShowFriends],
     showChannelMenu: [showChannelMenu, setShowChannelMenu],
   } = useChatContext();
-  if (error) console.log(error);
+  const {user} = viewModel.userContext;
+  //if (error) console.log(error);
   return (
     <TopNavBarContainer
       onClick={() => {
@@ -91,34 +95,26 @@ const TopNavBar = () => {
           }}
         >
           <UserImage>
-            {loading ? (
-              <Skeleton
-                width={50}
-                height={50}
-                style={{ top: "0", position: "absolute" }}
-              />
-            ) : (
-              <img src={data?.user.profilePhoto} alt="" tw="w-full h-full" />
-            )}
+            {
+              <img src={user.profilePhoto} alt="" tw="w-full h-full" />
+            }
           </UserImage>
           <UserInfo>
             <UserInfoNameConatiner>
               <UserInfoName>
-                {loading ? <Skeleton height={10} /> : data?.user.userName}
+                {user.userName}
               </UserInfoName>
               <UserInfoIcon>
                 <DownArrowIcon />
               </UserInfoIcon>
             </UserInfoNameConatiner>
             <UserInfoStatusConatiner>
-              {loading ? (
-                <Skeleton height={8} width={50} />
-              ) : (
+              {
                 <>
                   <UserInfoStatusIcon></UserInfoStatusIcon>
                   <UserInfoStatus>Online</UserInfoStatus>
                 </>
-              )}
+              }
             </UserInfoStatusConatiner>
           </UserInfo>
           {/* USER STATUS MENU */}

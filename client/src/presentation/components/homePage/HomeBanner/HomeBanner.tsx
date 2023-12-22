@@ -12,48 +12,38 @@ import {
   Span,
 } from "./HomeBanner.style";
 import tw from "twin.macro";
+import { useUserContext } from "context/user.context";
 const HomeBanner = () => {
-  const { data, loading, error } = useUserQuery();
+  // const { data, loading, error } = useUserQuery({
+  //   variables:{
+  //     id:1
+  //   }
+  // });
+  //const user = data.findUserById;
   const navigate = useNavigate();
   //if (loading || true) return <Skeleton />;
-  if (error) {
-    console.log(error);
-    navigate("/error");
-  }
+  // if (error) {
+  //   console.log(error);
+  //   navigate("/error");
+  // }
+  const {user} = useUserContext();
   return (
     <BannerContainer>
       <BannerText>
         <BannerTitle>
-          {loading ? (
-            <Skeleton
-              height={20}
-              style={{ position: "absolute", width: "85%" }}
-            />
-          ) : (
+          {
             <>
-              Welcome Back <Span>{data?.user.userName}</Span>
+              Welcome Back <Span>{user.userName}</Span>
             </>
-          )}
+          }
         </BannerTitle>
         <BannerSubtitle>
-          {loading ? (
-            <>
-              <Skeleton
-                height={15}
-                count={2}
-                style={{ position: "absolute", width: "85%" }}
-              />
-              <Skeleton
-                height={15}
-                style={{ position: "absolute", width: "35%" }}
-              />
-            </>
-          ) : (
+          {
             <>
               Play today with us, find and discover the best player in our game,
               chat and get to know other people.
             </>
-          )}
+          }
         </BannerSubtitle>
       </BannerText>
 

@@ -3,12 +3,11 @@ import React, {
   useCallback,
   useContext,
   useMemo,
-  useState,
+  useState
 } from "react";
 
-import { User } from "types/User.type";
-import { getToken, setToken } from "state/token";
 import { Store } from "domain/DomainLayer";
+import { User } from "types/User.type";
 type Props = {
   children: React.ReactNode;
   store: Store;
@@ -32,22 +31,28 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
 
   const signOut = useCallback(() => {
-    store.setToken(null);
+    //store.setToken(null);
     setUser(null);
+    localStorage.removeItem("user");
   }, []);
 
   const signIn = useCallback((user: User) => {
-    store.setToken(user.token);
+    //store.setToken(user.token);
+    //setUser(user);
+    // 
+    localStorage.setItem("user", JSON.stringify(user));
     setUser(user);
   }, []);
 
   const restoreUser = async (callback?: () => void) => {
+    const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
+    // if (!user) return ;
     // we should sen a request to /refresh_token and then update the user with the new token.
     try {
       // console.log("the usrl of refersh: " ,import.meta.env.OVER_PING_REFRECH_TOKEN)
       const refresh_url : string = import.meta.env.OVER_PING_REFRECH_TOKEN ;
       console.log("user refresh ", refresh_url);
-      if (user) return;
+      //if (user) return;
       const data = await fetch(refresh_url, {
         
         credentials: "include",
@@ -56,7 +61,8 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
       const res = await data.json();
       console.log("the res: " , res);
       store.setToken(res?.accessToken);
-      if (res?.accessToken) setUser({ token: res?.accessToken });
+      setUser(user);
+      //if (res?.accessToken) setUser({ token: res?.accessToken, ...user });
       callback && callback();
     } catch (err) {
       console.log("the error of networking : ",err);

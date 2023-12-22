@@ -16,7 +16,6 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 const Router = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { restoreUser, user } = useUserContext();
-
   useEffect(() => {
     if (!user && isLoading) {
       restoreUser(() => setIsLoading(false));

@@ -63,13 +63,15 @@ class LoginViewModel implements LoginViewModelType {
             password: this.data.password,
           },
         });
-        //console.log(data);
-        const accessToken = data?.login?.accessToken;
-        resolve(accessToken);
+        console.log("after you logged in : ", data.signIn);
+        resolve(data.signIn);
 
         await sleep(500);
 
-        this.userContext.signIn({ token: accessToken ? accessToken : null });
+        this.userContext.signIn({ 
+          id:data.signIn.id,
+          userName:data.signIn.username
+         });
       } catch (err) {
         //console.log(err);
         reject("Email or Password is incorrect!");
