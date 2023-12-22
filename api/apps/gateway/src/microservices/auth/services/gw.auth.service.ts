@@ -59,13 +59,17 @@ export class GatewayService {
 		);
 	}
 
-	async refresh(payload: JwtPayloadDto): Promise<string> {
+	async refresh(payload: JwtPayloadDto): Promise<{
+		Access_token:string
+	}> {
 		const response = await this.clientService.sendMessageWithPayload(
 			this.client,
 			{ role: 'auth', cmd: 'refresh-accessToken' },
 			payload,
 		);
-		return response;
+		return {
+			Access_token:response.accessToken
+		};
 
 	}
 

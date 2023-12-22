@@ -4,7 +4,12 @@ import LoginSide from "components/loginPage/LoginSide/LoginSide";
 import SignUp from "components/loginPage/SignUp/SignUp";
 import LoginContextProvider, { useLoginContext } from "context/login.context";
 import { useUserContext } from "context/user.context";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useLoginMutation, useRegisterMutation } from "gql";
 import { FormContainer, PageContainer } from "./Login.style";
 const Login = () => {
@@ -14,6 +19,8 @@ const Login = () => {
   const [login] = useLoginMutation();
   const { signIn, signOut, user } = useUserContext();
   const { showRegister } = useLoginContext();
+  let [searchParams, setSearchParams] = useSearchParams();
+  console.log("params:", searchParams);
   /*regiser({
     variables: {
       email: "hello_world!",
@@ -31,7 +38,8 @@ const Login = () => {
     signIn({ token: accessToken ? accessToken : null });
     console.log(res);
   }
-  const display = false;
+  let display = false;
+  if (searchParams.get("step") == "verification") display = true;
   const history = location?.state?.from?.pathname;
   return user ? (
     <Navigate to={history || "/"} />

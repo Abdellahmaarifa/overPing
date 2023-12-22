@@ -64,10 +64,9 @@ const MatchResault = ({
   );
 };
 
-export const MatchResaultSkeleton = ({ _key }: { _key: string }) => {
+export const MatchResaultSkeleton = (props: any) => {
   return (
     <tr
-      key={_key}
       tw="
     flex justify-evenly items-center h-[140px] sm:h-[80px] rounded-[12px] p-[16px]
     relative

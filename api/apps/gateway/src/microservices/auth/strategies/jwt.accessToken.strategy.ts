@@ -17,7 +17,8 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
         (request: Request) => {
           const cookieToken = request?.cookies?.Access_token;
           if (cookieToken) {
-            this.loger.actionLog("gateway", "refresh strategy", "get cookies", cookieToken);
+            console.log("access:", cookieToken)
+            this.loger.actionLog("gateway", "access strategy", "get Access cookies", cookieToken);
             return cookieToken;
           }
         },
@@ -25,7 +26,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
           const authorizationHeader = request.headers['authorization'];
           if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
             const headerToken = authorizationHeader.split(' ')[1];
-            this.loger.actionLog("gateway", "refresh strategy", "get header", headerToken);
+            this.loger.actionLog("gateway", "access strategy", "get header", headerToken);
             return headerToken;
           }
         },

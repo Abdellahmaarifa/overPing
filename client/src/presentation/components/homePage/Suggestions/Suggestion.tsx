@@ -22,8 +22,8 @@ const Suggestions = () => {
     <SuggestionBox>
       <SuggestionTitle>Suggestions to play with</SuggestionTitle>
       <SuggestionConatiner>
-        {users.map((user) => (
-          <UserCard>
+        {users.map((user, id) => (
+          <UserCard key={id}>
             <UserCardInfo>
               <UserAvatar src={user.avatar} />
               <UserDetails>

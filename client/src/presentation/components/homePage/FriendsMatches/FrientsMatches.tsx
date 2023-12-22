@@ -50,7 +50,7 @@ const FriendshipMatches = ({ active }: { active: boolean }) => {
       <FriendsMatchesTitle>Friendship Matches</FriendsMatchesTitle>
       <Resault>
         {matchList.length ? (
-          matchList.map((match: MatchType) => {
+          matchList.map((match: MatchType, id) => {
             const winnerPoint =
               match.winner.point.toString().length === 1
                 ? `0${match.winner.point}`
@@ -70,7 +70,7 @@ const FriendshipMatches = ({ active }: { active: boolean }) => {
                 }}
               />
             ) : (
-              <MatchText>
+              <MatchText key={id}>
                 <Winner>{match.winner.name}</Winner>{" "}
                 <div>
                   <span tw="xs:inline-block hidden">Wins </span>

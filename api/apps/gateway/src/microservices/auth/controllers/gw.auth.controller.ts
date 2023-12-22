@@ -101,13 +101,15 @@ export class AuthController {
 			id : req.user.id,
 			username : req.user.username
 		}
-		const result =  await this.gatewayService.refresh(payload);
-		res.cookie('Access_token', result, {
+		const resault =  await this.gatewayService.refresh(payload);
+		console.log("res from the server: ", resault.Access_token);
+		res.cookie('Access_token', resault.Access_token, {
 			httpOnly: true,
 			secure: true,
 			sameSite: 'Strict',
 		  });
-		res.send(result);
+		
+		res.send(resault);
     }
 
 }
