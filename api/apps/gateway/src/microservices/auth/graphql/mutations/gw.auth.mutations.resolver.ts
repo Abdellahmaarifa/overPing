@@ -77,7 +77,13 @@ export class AuthMutationsResolver {
 
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async logOut(@Args("id") id: number) : Promise<boolean>{
+  async logOut(
+    @Args("id") id: number,
+    @Context() ctx,
+  ) : Promise<boolean>{
+    const {res } = ctx;
+    res.clearCookie("Access_token")
+    res.clearCookie("Refresh_token")
      return this.authService.logOut(id);
   }
 
