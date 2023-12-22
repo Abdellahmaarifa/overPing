@@ -8,6 +8,7 @@ import {
 } from "types/Login.type";
 import { useLoginMutation } from "gql";
 import { LoginModel } from "./LoginModel";
+import { Navigate } from "react-router-dom";
 class LoginViewModel implements LoginViewModelType {
   data: LoginModel;
   loginMutation: any;
@@ -67,11 +68,11 @@ class LoginViewModel implements LoginViewModelType {
         resolve(data.signIn);
 
         await sleep(500);
-
-        this.userContext.signIn({ 
-          id:data.signIn.id,
-          userName:data.signIn.username
-         });
+        window.location.replace("/");
+        // this.userContext.signIn({
+        //   id: data.signIn.id,
+        //   username: data.signIn.username,
+        // });
       } catch (err) {
         //console.log(err);
         reject("Email or Password is incorrect!");

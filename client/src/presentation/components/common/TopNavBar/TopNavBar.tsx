@@ -53,7 +53,7 @@ const TopNavBar = () => {
     showFriends: [showFriends, setShowFriends],
     showChannelMenu: [showChannelMenu, setShowChannelMenu],
   } = useChatContext();
-  const {user} = viewModel.userContext;
+  const { user } = viewModel.userContext;
   //if (error) console.log(error);
   return (
     <TopNavBarContainer
@@ -95,15 +95,11 @@ const TopNavBar = () => {
           }}
         >
           <UserImage>
-            {
-              <img src={user.profilePhoto} alt="" tw="w-full h-full" />
-            }
+            {<img src={user.profilePhoto} alt="" tw="w-full h-full" />}
           </UserImage>
           <UserInfo>
             <UserInfoNameConatiner>
-              <UserInfoName>
-                {user.userName}
-              </UserInfoName>
+              <UserInfoName>{user.username}</UserInfoName>
               <UserInfoIcon>
                 <DownArrowIcon />
               </UserInfoIcon>

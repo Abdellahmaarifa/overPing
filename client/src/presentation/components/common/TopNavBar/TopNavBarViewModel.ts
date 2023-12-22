@@ -14,9 +14,9 @@ class TopNavBarViewModel implements TopNavBarViewModelType {
   navigate: any;
   constructor() {
     this.userQuery = useUserQuery({
-      variables:{
-        id:1
-      }
+      variables: {
+        id: 1,
+      },
     });
     this.userContext = useUserContext();
     [this.logoutMutation] = useLogoutMutation();
@@ -26,14 +26,15 @@ class TopNavBarViewModel implements TopNavBarViewModelType {
     this.userContext.signOut();
     window.location.replace("/login");
     await this.logoutMutation({
-      variables:{
-        id:Number(this.userContext.user.id)
-      }
+      variables: {
+        id: Number(this.userContext.user.id),
+      },
     });
   };
 
   showProfile = () => {
-    this.navigate(`/profile/${this.userQuery.data?.user.id}`);
+    console.log();
+    this.navigate(`/profile/${this.userContext.user.id}`);
   };
 }
 

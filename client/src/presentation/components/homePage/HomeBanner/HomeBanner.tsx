@@ -26,14 +26,14 @@ const HomeBanner = () => {
   //   console.log(error);
   //   navigate("/error");
   // }
-  const {user} = useUserContext();
+  const { user } = useUserContext();
   return (
     <BannerContainer>
       <BannerText>
         <BannerTitle>
           {
             <>
-              Welcome Back <Span>{user.userName}</Span>
+              Welcome Back <Span>{user.username}</Span>
             </>
           }
         </BannerTitle>
