@@ -73,8 +73,15 @@ class LoginViewModel implements LoginViewModelType {
         //   id: data.signIn.id,
         //   username: data.signIn.username,
         // });
-      } catch (err) {
-        //console.log(err);
+      } catch (err: any) {
+        console.log("comes from the server: ", err);
+        if (
+          err?.message ==
+          "Two-factor authentication is required. Please provide the 2FA code."
+        ) {
+          // try 2factor auth:
+          window.location.replace("/login?step=verification");
+        }
         reject("Email or Password is incorrect!");
       }
     });

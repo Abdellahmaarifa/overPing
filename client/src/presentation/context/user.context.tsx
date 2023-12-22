@@ -76,7 +76,7 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
 
       // get the user :
 
-      fetch(graphqlEndpoint, {
+      const userData = await fetch(graphqlEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,17 +85,12 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
         },
         body: JSON.stringify({ query: HELLO }),
         credentials: "include",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Handle the GraphQL response data
-          console.log(data.data.getUser);
-          setUser(data.data.getUser);
-          //signIn(data.data.getUser);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      });
+      const userRes = await userData.json();
+
+      console.log(userRes?.data?.getUser);
+      setUser(userRes?.data?.getUser);
+
       //setUser(user);
       //if (res?.accessToken) setUser({ token: res?.accessToken, ...user });
       callback && callback();

@@ -52,11 +52,12 @@ const MatchHistories = ({ active }: { active: boolean }) => {
           </MatchTableHeader>
           <MatchTableBody>
             {matchList.length ? (
-              matchList.map((match: MatchResaultType) =>
+              matchList.map((match: MatchResaultType, id) =>
                 loading ? (
-                  <MatchResaultSkeleton _key={match.id} />
+                  <MatchResaultSkeleton key={match.id} />
                 ) : (
                   <MatchResault
+                    key={id}
                     {...{
                       ...match,
                       userImage: data?.user.profilePhoto as string,
@@ -75,7 +76,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
             {isLoading
               ? matchList
                   .slice(0, 5)
-                  .map((el, c) => <MatchResaultSkeleton _key={c.toString()} />)
+                  .map((el, c) => <MatchResaultSkeleton key={c} />)
               : null}
           </MatchTableBody>
         </MatchTable>

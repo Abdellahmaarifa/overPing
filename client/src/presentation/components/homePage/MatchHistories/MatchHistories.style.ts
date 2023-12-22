@@ -24,11 +24,11 @@ export const MatchHistoriesTitle = tw.div`
   text-[#E8E9F0] font-rubik font-bold text-[18px] xs:hidden lg:block lg:text-[38px] lg:font-normal
   `;
 
-export const EmptyMatchHistoriesContainer = tw.div`
+export const EmptyMatchHistoriesContainer = tw.tr`
 h-full flex-[100%] flex justify-center items-center
 `;
 
-export const EmptyMatchHistories = tw.span`
+export const EmptyMatchHistories = tw.td`
 text-center text-[#636472] text-[16px]
 `;
 
