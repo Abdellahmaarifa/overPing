@@ -52,7 +52,7 @@ export class AccessTokenGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean> {
     const data = context.switchToRpc().getData(); // Extract data from the context
 
-    // Check if the authentication logic passes (replace this with your own logic)
+
     const isAuthenticated = this.validateAuthentication(data);
 
     if (!isAuthenticated) {

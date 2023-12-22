@@ -9,6 +9,7 @@ import { IAccessControl } from '@app/common/auth/interface/AccessToken.interface
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { IJwtPayload } from '../interface/jwt.payload.interface';
 import { LoggerService } from '@app/common';
+import { UserService } from '../services/user.service';
 
 
 @Controller()

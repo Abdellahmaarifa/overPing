@@ -5,10 +5,14 @@ import { GoogleGuard } from '../guards/google.auth.grad';
 import { GatewayService} from '../services/gw.auth.service';
 import { RefreshTokenGuard } from '../guards/refreshToken.guard';
 import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly gatewayService: GatewayService ){}
+    constructor(
+		private readonly gatewayService: GatewayService,
+		private readonly configService: ConfigService,
+		 ){}
 
     @UseGuards(FortyTwoGuard)
     @Get('42')
@@ -33,7 +37,8 @@ export class AuthController {
 			secure: true,
 			sameSite: 'Strict',
 		  });
-		res.redirect(`http://localhost:5173/?user=${encodeURIComponent(JSON.stringify(user))}`);
+		const FRONT_URL = this.configService.get('FRONT_URL')
+		res.redirect(FRONT_URL);
     }
 
 
@@ -65,7 +70,8 @@ export class AuthController {
 			secure: true,
 			sameSite: 'Strict',
 		  });
-		res.redirect(`http://localhost:5173/?user=${encodeURIComponent(JSON.stringify(user))}`);
+		  const FRONT_URL = this.configService.get('FRONT_URL')
+		  res.redirect(FRONT_URL);
     }
 
 
@@ -82,7 +88,6 @@ export class AuthController {
 			secure: true,
 			sameSite: 'Strict',
 		  });
-		console.log("gateway ===========> result: [", result, "]");
 		res.send(result);
     }
 
