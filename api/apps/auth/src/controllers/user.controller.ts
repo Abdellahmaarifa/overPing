@@ -44,6 +44,8 @@ export class UserController {
     return this.userService.remove(id);
   }
 
+  
+
 
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {
     if (!user) {
@@ -53,6 +55,8 @@ export class UserController {
       });
     }
   }
+
+
 
   private handleUsersNotFound(users: IAuthUser[], errorMessage: string): void {
     if (!users) {

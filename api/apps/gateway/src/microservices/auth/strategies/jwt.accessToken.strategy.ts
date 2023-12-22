@@ -15,7 +15,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          const cookieToken = request?.cookies?.Refresh_token;
+          const cookieToken = request?.cookies?.Access_token;
           if (cookieToken) {
             this.loger.actionLog("gateway", "refresh strategy", "get cookies", cookieToken);
             return cookieToken;

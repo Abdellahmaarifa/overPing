@@ -1,10 +1,12 @@
-import { Resolver,Query, Args} from '@nestjs/graphql';
+import { Resolver,Query, Args, Context} from '@nestjs/graphql';
 
 import { GQLUserModel } from 'apps/gateway/src/models';
 import { AuthCredentialsInput } from '../input';
 import { GatewayService, UserService } from '../../services';
 import {    UseGuards } from '@nestjs/common';
 import { GqlJwtAuthGuard } from '../../guards/gql.accessToken.guard';
+
+
 
 @Resolver()
 export class AuthQueryResolver {
@@ -31,6 +33,15 @@ export class AuthQueryResolver {
     async findAllUsers(): Promise<GQLUserModel[]> {
 	const users: GQLUserModel[] = await this.userService.findAll();
 	return users;
+    }
+
+    @UseGuards(GqlJwtAuthGuard)
+    @Query(() => GQLUserModel)
+    async getUser(@Context() { req }): Promise<GQLUserModel>{
+     
+       const user = await this.userService.getMe(token);
+     const user = req.user;
+        return user;
     }
 
 }
