@@ -8,10 +8,12 @@ import React, {
 
 import { Store } from "domain/DomainLayer";
 import { User } from "types/User.type";
+
 type Props = {
   children: React.ReactNode;
   store: Store;
 };
+
 
 export type Context = {
   signIn: (user: User) => void;
@@ -27,6 +29,13 @@ const UserContext = createContext<Context>({
   user: null,
 });
 
+
+const HELLO = `
+  query hello {
+    helloT
+  }
+`;
+const graphqlEndpoint = 'http://localhost:5500/graphql';
 const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
 
@@ -45,6 +54,24 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   }, []);
 
   const restoreUser = async (callback?: () => void) => {
+
+    fetch(graphqlEndpoint, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-apollo-operation-name': 'something', 
+    // Add any other headers if needed
+  },
+  body: JSON.stringify({ query: HELLO }),
+})
+  .then(response => response.json())
+  .then(data => {
+    // Handle the GraphQL response data
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
     const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
     // if (!user) return ;
     // we should sen a request to /refresh_token and then update the user with the new token.

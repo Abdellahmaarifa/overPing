@@ -6,12 +6,14 @@ docker exec auth sh -c 'npx prisma generate --schema=/usr/src/app/apps/auth/pris
 docker restart auth
 
 
+
 docker exec profile rm -rf /usr/app/apps/profile/prisma/migrations
 docker exec profile sh -c 'cd /usr/src/app/apps/profile/prisma &&  yes | prisma migrate dev'
-docker exec profile sh -c 'npx prisma generate --schema=/usr/src/app/apps/auth/prisma/schema.prisma'
+docker exec profile sh -c 'npx prisma generate --schema=/usr/src/app/apps/profile/prisma/schema.prisma'
 docker restart profile
 
 docker exec media rm -rf /usr/app/apps/media/prisma/migrations
 docker exec media sh -c 'cd /usr/src/app/apps/media/prisma &&  yes | prisma migrate dev'
 docker exec media sh -c 'npx prisma generate --schema=/usr/src/app/apps/media/prisma/schema.prisma'
 docker restart media
+

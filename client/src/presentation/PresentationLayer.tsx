@@ -6,8 +6,10 @@ import { GlobalStyles } from "twin.macro";
 import Router from "./routes/Router";
 import { observer } from "mobx-react-lite";
 import { Store } from "domain/DomainLayer";
+import { gql } from "apollo-server-express";
 
 const App = observer(({ store }: { store: Store }) => {
+
   return (
     <ApolloProvider client={store.client}>
       <GlobalStyles />

@@ -22,7 +22,7 @@ const LoginView = () => {
         <Form>
           <Group>
             <Input
-              placeholder="Email address"
+              placeholder="username"
               name="email"
               $border={false}
               id="email"

@@ -51,6 +51,7 @@ export class AuthController {
 	@Request() req,
 	@Res() res,
     ){
+		console.log("Goooooooooooooooooogle")
 		const user = req.user;
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
 		res.cookie('Refresh_token', token.refreshToken, {

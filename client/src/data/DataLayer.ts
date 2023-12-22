@@ -11,6 +11,7 @@ export default class initializeDataLayer {
       return initApolloClient();
     } catch (err) {
       // A BETTER ERROR HANDLING IS NEEDED!!
+      
     }
   }
 }

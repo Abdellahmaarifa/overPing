@@ -166,10 +166,13 @@ class SignUpViewModel implements SignUpViewModelType {
           },
         });
         resolve(true);
-      } catch (err) {
+      } catch (err : any) {
         //console.log("image: ", this.data.profilePhoto);
         console.log("the error of it : " ,err);
-        reject("Something went wrong.");
+        if (err?.message == "Resource already exists")
+          reject("username already exist.");
+        else
+          reject("Something went wrong.");
       }
     });
   };

@@ -1,12 +1,14 @@
-import Button from "components/common/Button/Button";
-import Seprator from "components/common/Seprator/Seprator";
-import LoginContextProvider from "context/login.context";
-import { Toaster } from "react-hot-toast";
 import IntraIcon from "assets/login/42.svg?react";
 import GoogleIcon from "assets/login/google.svg?react";
+import Button from "components/common/Button/Button";
+import Seprator from "components/common/Seprator/Seprator";
+import { Toaster } from "react-hot-toast";
 //import LoginWithPass from "../LoginWithPass/LoginWithPass";
 import LoginView from "../Login/LoginView";
 
+import { useLoginContext } from "context/login.context";
+import { useNavigate } from "react-router-dom";
+import tw from "twin.macro";
 import {
   LoginFooter,
   LoginFooterLink,
@@ -14,9 +16,6 @@ import {
   LoginHeading,
   LoginSubHeading,
 } from "./LoginForm.style";
-import { useLoginContext } from "context/login.context";
-import tw from "twin.macro";
-import { useNavigate } from "react-router-dom";
 
 const a = tw.a``;
 const LoginForm = () => {
@@ -48,6 +47,10 @@ const LoginForm = () => {
             $transparent={true}
             $size="xl"
             $Icon={IntraIcon}
+
+            onClick={() => {
+               window.location.href = "http://localhost:5500/auth/42";
+            }}
           />
         </div>
 
