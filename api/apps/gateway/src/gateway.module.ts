@@ -28,6 +28,8 @@ import { MatchMakingMutationsResolver } from './microservices/matchMaking/graphq
 import { GwMatchmakingController } from './microservices/matchMaking/controller/gw.matchmaking.controller';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { GWMediaService } from './microservices/auth/services/gw.media.service';
+import { TWOFATokenStrategy } from "./microservices/auth/strategies/twofa.starategy";
+
 @Module({
   imports: [
     PassportModule,
@@ -73,6 +75,7 @@ import { GWMediaService } from './microservices/auth/services/gw.media.service';
     WalletMutationsResolver,
     AuthQueryResolver,
     AuthMutationsResolver,
+    TWOFATokenStrategy,
     FortyTwoStrategy,
     GoogleStrategy,
     JwtAccessTokenStrategy,

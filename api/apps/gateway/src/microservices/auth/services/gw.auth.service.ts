@@ -84,7 +84,7 @@ export class GatewayService {
 		)
 	}
 	async getTwoFacatorAccessToken(payload: JwtPayloadDto){
-		return await this.clientService.sendMessageWithPayload(
+		const token  = await this.clientService.sendMessageWithPayload(
 			this.client,
 			{
 				role: "auth",
@@ -92,6 +92,7 @@ export class GatewayService {
 			},
 			payload
 		)
+		return token;
 	}
 
 	async enableTwoFactorAuth(id: number): Promise<string> {

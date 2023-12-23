@@ -71,12 +71,13 @@ export class AuthController {
 
 		if (user.twoStepVerificationEnabled){
 			const respond = await this.gatewayService.getTwoFacatorAccessToken({id: user.id, username: user.username})
-			res.cookie('twoFactorAuth', respond.twoFactorAuth, {
+			res.cookie('twoFactorAuth', respond, {
 				httpOnly: true,
 				secure: true,
 				sameSite: 'Strict',
 			  });
-		  	res.redirect(FRONT_URL);
+		  	res.redirect('http://localhost:5173/login?step=verification');
+			return;
 		}
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
 		res.cookie('Refresh_token', token.refreshToken, {

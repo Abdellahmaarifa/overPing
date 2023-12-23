@@ -66,8 +66,9 @@ export class AuthController {
 
     @MessagePattern({ role: 'auth', cmd: 'getTwoFacatorAccessToken' })
     async getTwoFacatorAccessToken(payload: JwtPayloadDto): Promise<any> {
-        const tokens = await this.authService.newTwoFactorAccessToken(payload);
-        return tokens;
+        const token = await this.authService.newTwoFactorAccessToken(payload);
+        
+        return token;
     }
 
     @MessagePattern({ role: 'auth', cmd: 'enableTwoFactorAuth'})

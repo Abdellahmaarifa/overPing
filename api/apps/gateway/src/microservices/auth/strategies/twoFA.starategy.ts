@@ -15,7 +15,7 @@ export class TWOFATokenStrategy extends PassportStrategy(Strategy, 'tfa') {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          const cookieToken = request?.cookies?.TwoFA_token;
+          const cookieToken = request?.cookies?.twoFactorAuth;
           if (cookieToken) {
             this.loger.actionLog("gateway", "TwoFA strategy", "get cookies", cookieToken);
             return cookieToken;

@@ -83,7 +83,6 @@ export class AuthService {
 				expiresIn: '15m',
 			},
 		)
-
 		return newTFactorAccess;
 	}
 
