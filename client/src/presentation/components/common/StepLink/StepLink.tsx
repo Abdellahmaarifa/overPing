@@ -5,8 +5,8 @@ import { useLoginContext } from "context/login.context";
 const StepLink = (props: {
   children?: JSX.Element;
   text?: string;
-  lastStep: number;
-  onClick: MouseEventHandler<HTMLDivElement> | undefined;
+  lastStep?: number;
+  onClick?: MouseEventHandler<HTMLDivElement> | undefined;
 }) => {
   const { setRegisterStep, registerStep } = useLoginContext();
   return (

@@ -15,24 +15,46 @@
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "maxNodeModuleJsDepth":10,
+    "maxNodeModuleJsDepth": 10,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "components/*":["presentation/components/*"],
-      "pages/*":["presentation/pages/*"],
-      "assets/*":["presentation/assets/*"],
-      "types/*": ["src/infrastructure/types/*"],
-      "context/*": ["presentation/context/*"],
-      "helpers/*": ["infrastructure/helpers/*"],
-      "gql/*":["data/gql/*"],
-      "state/*":["state/*"],
-      "constant/*":["data/constant/*"],
-      "domain/*":["domain/*"],
-      "presentation/*":["presentation/*"]
+      "components/*": [
+        "presentation/components/*"
+      ],
+      "pages/*": [
+        "presentation/pages/*"
+      ],
+      "assets/*": [
+        "presentation/assets/*"
+      ],
+      "types/*": [
+        "src/infrastructure/types/*"
+      ],
+      "context/*": [
+        "presentation/context/*"
+      ],
+      "helpers/*": [
+        "infrastructure/helpers/*"
+      ],
+      "gql": [
+        "data/gql/index"
+      ],
+      "state/*": [
+        "state/*"
+      ],
+      "constant/*": [
+        "data/constant/*"
+      ],
+      "domain/*": [
+        "domain/*"
+      ],
+      "presentation/*": [
+        "presentation/*"
+      ]
     },
     "experimentalDecorators": true
   },

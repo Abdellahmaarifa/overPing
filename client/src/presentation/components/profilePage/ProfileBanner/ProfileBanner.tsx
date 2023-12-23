@@ -8,7 +8,7 @@ import Badge from "assets/profile/badge.png";
 import DemoCover from "assets/profile/cover.jpg";
 import Onep from "assets/profile/onep.jpg";
 import Hexagon from "components/common/Hexagon/Hexagon";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   BannerBadge,
   BannerBadgeGrade,
@@ -24,8 +24,9 @@ import {
   ProfileLevel,
   ProfileName,
 } from "./ProfileBanner.style";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useSettingsContext } from "context/settings.context";
+import { useUserContext } from "context/user.context";
 
 const ProfileBanner = ({
   showFriendsList,
@@ -43,6 +44,13 @@ const ProfileBanner = ({
   const {
     settingsModel: [settingModel, setSettingModel],
   } = useSettingsContext();
+  const {user} = useUserContext();
+  const id = useParams()?.id;
+  useEffect(()=>{
+
+  if (Number(id) == user.id)
+    setUserProfile(true);
+  },[])
   return (
     <BannerConatiner
       style={{

@@ -12,9 +12,13 @@ import {
 const Switcher = ({
   title,
   description,
+  enable,
+  onChange
 }: {
   title: string;
   description: string;
+  enable: boolean;
+  onChange: any
 }) => {
   return (
     <SettingModelSwitcherField>
@@ -26,7 +30,7 @@ const Switcher = ({
           <SettingModelSwitcherHeader>{title}</SettingModelSwitcherHeader>
         </div>
         <SettingModelSwitcher className="group">
-          <SettingModelSwitcherInput type="checkbox" className="peer" />
+          <SettingModelSwitcherInput type="checkbox" className="peer" checked={enable} onChange={onChange}/>
           <SettingModelSwitcherMask></SettingModelSwitcherMask>
         </SettingModelSwitcher>
       </SettingModelSwitcherConatiner>

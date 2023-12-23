@@ -59,6 +59,7 @@ const getTypeStyle = (type?: string) => {
 const getSizeStyle = (size?: string) => {
   if (size === "auto") return tw`w-full h-[40px]`;
   if (size === "md") return tw`w-[160px] h-[40px]`;
+  if (size == "sm") return tw`w-[120px] h-[40px]`;
   if (size) return tw`w-[344px] h-[40px]`;
 };
 const InputBox = styled.input<InputBoxProps>(

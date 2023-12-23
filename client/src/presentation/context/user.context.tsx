@@ -34,6 +34,7 @@ const HELLO = `
       id
       username
       email
+      twoStepVerificationEnabled
     }
   }
 `;

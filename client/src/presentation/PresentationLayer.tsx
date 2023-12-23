@@ -2,7 +2,7 @@ import { ApolloProvider } from "@apollo/client";
 import LoginContextProvider from "context/login.context";
 import UserContextProvider from "context/user.context";
 import { SkeletonTheme } from "react-loading-skeleton";
-import { GlobalStyles } from "twin.macro";
+import  GlobalStyles  from "./styles/GlobalStyles";
 import Router from "./routes/Router";
 import { observer } from "mobx-react-lite";
 import { Store } from "domain/DomainLayer";

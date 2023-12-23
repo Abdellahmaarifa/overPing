@@ -28,7 +28,7 @@ import { MatchMakingMutationsResolver } from './microservices/matchMaking/graphq
 import { GwMatchmakingController } from './microservices/matchMaking/controller/gw.matchmaking.controller';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { GWMediaService } from './microservices/auth/services/gw.media.service';
-import { TWOFATokenStrategy } from "./microservices/auth/strategies/twofa.starategy";
+import { TWOFATokenStrategy } from "./microservices/auth/strategies/twoFA.starategy";
 
 @Module({
   imports: [

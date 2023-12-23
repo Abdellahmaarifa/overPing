@@ -4,5 +4,6 @@ export type User = {
   email?: string;
   userName?: string;
   profilePhoto?: string;
+  twoStepVerificationEnabled?:boolean
   __typename?: "UserResponse" | undefined;
 };

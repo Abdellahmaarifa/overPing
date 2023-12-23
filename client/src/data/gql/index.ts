@@ -96,7 +96,6 @@ export type MutationUpdateUserProfileArgs = {
 
 export type MutationAuthenticate_2faArgs = {
   code: Scalars['String']['input'];
-  id: Scalars['Float']['input'];
 };
 
 
@@ -179,6 +178,7 @@ export type Query = {
   findProfileById?: Maybe<GqlUserProfileModel>;
   findProfileByUserId?: Maybe<GqlUserProfileModel>;
   findUserById: GqlUserModel;
+  getUser: GqlUserModel;
   hello: Scalars['String']['output'];
   helloT: Scalars['String']['output'];
 };
@@ -260,12 +260,34 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', signUp: { __typename?: 'GQLUserModel', username: string, id: string } };
 
+export type EnableTwoFactorAuthMutationVariables = Exact<{
+  id: Scalars['Float']['input'];
+}>;
+
+
+export type EnableTwoFactorAuthMutation = { __typename?: 'Mutation', enableTwoFactorAuth: string };
+
+export type VerifyTwoFactorAuthMutationVariables = Exact<{
+  id: Scalars['Float']['input'];
+  code: Scalars['String']['input'];
+}>;
+
+
+export type VerifyTwoFactorAuthMutation = { __typename?: 'Mutation', verifyTwoFactorAuth: boolean };
+
+export type Authenticate_2faMutationVariables = Exact<{
+  code: Scalars['String']['input'];
+}>;
+
+
+export type Authenticate_2faMutation = { __typename?: 'Mutation', authenticate_2fa: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean } };
+
 export type UserQueryVariables = Exact<{
   id: Scalars['Float']['input'];
 }>;
 
 
-export type UserQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string } };
+export type UserQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean } };
 
 
 export const HelloDocument = gql`
@@ -406,12 +428,112 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const EnableTwoFactorAuthDocument = gql`
+    mutation enableTwoFactorAuth($id: Float!) {
+  enableTwoFactorAuth(id: $id)
+}
+    `;
+export type EnableTwoFactorAuthMutationFn = Apollo.MutationFunction<EnableTwoFactorAuthMutation, EnableTwoFactorAuthMutationVariables>;
+
+/**
+ * __useEnableTwoFactorAuthMutation__
+ *
+ * To run a mutation, you first call `useEnableTwoFactorAuthMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEnableTwoFactorAuthMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [enableTwoFactorAuthMutation, { data, loading, error }] = useEnableTwoFactorAuthMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useEnableTwoFactorAuthMutation(baseOptions?: Apollo.MutationHookOptions<EnableTwoFactorAuthMutation, EnableTwoFactorAuthMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EnableTwoFactorAuthMutation, EnableTwoFactorAuthMutationVariables>(EnableTwoFactorAuthDocument, options);
+      }
+export type EnableTwoFactorAuthMutationHookResult = ReturnType<typeof useEnableTwoFactorAuthMutation>;
+export type EnableTwoFactorAuthMutationResult = Apollo.MutationResult<EnableTwoFactorAuthMutation>;
+export type EnableTwoFactorAuthMutationOptions = Apollo.BaseMutationOptions<EnableTwoFactorAuthMutation, EnableTwoFactorAuthMutationVariables>;
+export const VerifyTwoFactorAuthDocument = gql`
+    mutation verifyTwoFactorAuth($id: Float!, $code: String!) {
+  verifyTwoFactorAuth(id: $id, code: $code)
+}
+    `;
+export type VerifyTwoFactorAuthMutationFn = Apollo.MutationFunction<VerifyTwoFactorAuthMutation, VerifyTwoFactorAuthMutationVariables>;
+
+/**
+ * __useVerifyTwoFactorAuthMutation__
+ *
+ * To run a mutation, you first call `useVerifyTwoFactorAuthMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyTwoFactorAuthMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyTwoFactorAuthMutation, { data, loading, error }] = useVerifyTwoFactorAuthMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      code: // value for 'code'
+ *   },
+ * });
+ */
+export function useVerifyTwoFactorAuthMutation(baseOptions?: Apollo.MutationHookOptions<VerifyTwoFactorAuthMutation, VerifyTwoFactorAuthMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyTwoFactorAuthMutation, VerifyTwoFactorAuthMutationVariables>(VerifyTwoFactorAuthDocument, options);
+      }
+export type VerifyTwoFactorAuthMutationHookResult = ReturnType<typeof useVerifyTwoFactorAuthMutation>;
+export type VerifyTwoFactorAuthMutationResult = Apollo.MutationResult<VerifyTwoFactorAuthMutation>;
+export type VerifyTwoFactorAuthMutationOptions = Apollo.BaseMutationOptions<VerifyTwoFactorAuthMutation, VerifyTwoFactorAuthMutationVariables>;
+export const Authenticate_2faDocument = gql`
+    mutation authenticate_2fa($code: String!) {
+  authenticate_2fa(code: $code) {
+    id
+    email
+    username
+    twoStepVerificationEnabled
+  }
+}
+    `;
+export type Authenticate_2faMutationFn = Apollo.MutationFunction<Authenticate_2faMutation, Authenticate_2faMutationVariables>;
+
+/**
+ * __useAuthenticate_2faMutation__
+ *
+ * To run a mutation, you first call `useAuthenticate_2faMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAuthenticate_2faMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [authenticate_2faMutation, { data, loading, error }] = useAuthenticate_2faMutation({
+ *   variables: {
+ *      code: // value for 'code'
+ *   },
+ * });
+ */
+export function useAuthenticate_2faMutation(baseOptions?: Apollo.MutationHookOptions<Authenticate_2faMutation, Authenticate_2faMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Authenticate_2faMutation, Authenticate_2faMutationVariables>(Authenticate_2faDocument, options);
+      }
+export type Authenticate_2faMutationHookResult = ReturnType<typeof useAuthenticate_2faMutation>;
+export type Authenticate_2faMutationResult = Apollo.MutationResult<Authenticate_2faMutation>;
+export type Authenticate_2faMutationOptions = Apollo.BaseMutationOptions<Authenticate_2faMutation, Authenticate_2faMutationVariables>;
 export const UserDocument = gql`
     query User($id: Float!) {
   findUserById(userId: $id) {
     id
     email
     username
+    twoStepVerificationEnabled
   }
 }
     `;

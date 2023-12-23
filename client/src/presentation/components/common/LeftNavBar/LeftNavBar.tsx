@@ -1,16 +1,20 @@
 import HomeIcon from "assets/common/home.svg?react";
 
 import ChatIcon from "assets/common/chat.svg?react";
+import EyeIcon from "assets/common/eye.svg?react";
 import FriendsIcon from "assets/common/friends.svg?react";
 import LeaderboardIcon from "assets/common/leaderboard.svg?react";
 import LogoutIcon from "assets/common/logoutmenu.svg?react";
-import TournamentIcon from "assets/common/tournament.svg?react";
-import EyeIcon from "assets/common/eye.svg?react";
 import SettingsIcon from "assets/common/settings.svg?react";
+import TournamentIcon from "assets/common/tournament.svg?react";
 
+import { useChatContext } from "context/chat.context";
+import { useLayoutContext } from "context/layout.context";
+import { useSettingsContext } from "context/settings.context";
 import { useUserContext } from "context/user.context";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "gql";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ExitIcon,
   Nav,
@@ -18,15 +22,10 @@ import {
   NavbarContainer,
   Seperator,
 } from "./LeftNavBar.style";
-import { useLayoutContext } from "context/layout.context";
-import { useEffect } from "react";
-import tw, { css } from "twin.macro";
-import { useSettingsContext } from "context/settings.context";
-import { useChatContext } from "context/chat.context";
 const Navbar = () => {
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
-  const { signOut } = useUserContext();
+  const { signOut, user } = useUserContext();
   const location = useLocation();
 
   const {
@@ -93,7 +92,11 @@ const Navbar = () => {
         onClick={async () => {
           signOut();
           window.location.replace("/login");
-          await logout();
+          await logout({
+            variables: {
+            id: Number(user.id),
+          },
+    });
         }}
       >
         <LogoutIcon fill={getNavLinkColor("*")} />
