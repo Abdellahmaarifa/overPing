@@ -91,12 +91,13 @@ const Navbar = () => {
       <ExitIcon
         onClick={async () => {
           signOut();
-          window.location.replace("/login");
+          // window.location.replace("/login");
+          navigate("/login");
           await logout({
             variables: {
-            id: Number(user.id),
-          },
-    });
+              id: Number(user.id),
+            },
+          });
         }}
       >
         <LogoutIcon fill={getNavLinkColor("*")} />

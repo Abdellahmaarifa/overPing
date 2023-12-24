@@ -27,7 +27,7 @@ import {
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useSettingsContext } from "context/settings.context";
 import { useUserContext } from "context/user.context";
-
+import { useFindProfileByUserIdQuery } from "gql";
 const ProfileBanner = ({
   showFriendsList,
   setShowFriendsList,
@@ -44,13 +44,20 @@ const ProfileBanner = ({
   const {
     settingsModel: [settingModel, setSettingModel],
   } = useSettingsContext();
-  const {user} = useUserContext();
-  const id = useParams()?.id;
-  useEffect(()=>{
 
-  if (Number(id) == user.id)
-    setUserProfile(true);
-  },[])
+  const { user } = useUserContext();
+  const { data, loading, error } = useFindProfileByUserIdQuery({
+    variables: {
+      userId: Number(user.id),
+    },
+  });
+
+  const id = useParams()?.id;
+  useEffect(() => {
+    if (Number(id) == user.id) setUserProfile(true);
+  }, []);
+  console.log("data od the user: ", data, error);
+  if (loading) return <h1>loading</h1>;
   return (
     <BannerConatiner
       style={{
