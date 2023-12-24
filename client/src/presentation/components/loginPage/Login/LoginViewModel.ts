@@ -9,6 +9,7 @@ import {
 import { useLoginMutation } from "gql";
 import { LoginModel } from "./LoginModel";
 import { Navigate } from "react-router-dom";
+
 class LoginViewModel implements LoginViewModelType {
   data: LoginModel;
   loginMutation: any;

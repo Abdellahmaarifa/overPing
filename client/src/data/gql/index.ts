@@ -250,6 +250,13 @@ export type LogoutMutationVariables = Exact<{
 
 export type LogoutMutation = { __typename?: 'Mutation', logOut: boolean };
 
+export type FindProfileByUserIdQueryVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type FindProfileByUserIdQuery = { __typename?: 'Query', findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, user_id: number, nickname: string, title: string, xp: number, rank: number, about: string } | null };
+
 export type RegisterMutationVariables = Exact<{
   profilePhoto: Scalars['Upload']['input'];
   userName: Scalars['String']['input'];
@@ -288,6 +295,21 @@ export type UserQueryVariables = Exact<{
 
 
 export type UserQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean } };
+
+export type RemoveUserProfileMutationVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type RemoveUserProfileMutation = { __typename?: 'Mutation', removeUserProfile: boolean };
+
+export type UpdateUserProfileMutationVariables = Exact<{
+  userId: Scalars['Float']['input'];
+  UpdateProfileInput: UpdateProfileInput;
+}>;
+
+
+export type UpdateUserProfileMutation = { __typename?: 'Mutation', UpdateUserProfile: boolean };
 
 
 export const HelloDocument = gql`
@@ -388,6 +410,47 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const FindProfileByUserIdDocument = gql`
+    query findProfileByUserId($userId: Float!) {
+  findProfileByUserId(userId: $userId) {
+    id
+    user_id
+    nickname
+    title
+    xp
+    rank
+    about
+  }
+}
+    `;
+
+/**
+ * __useFindProfileByUserIdQuery__
+ *
+ * To run a query within a React component, call `useFindProfileByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindProfileByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindProfileByUserIdQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useFindProfileByUserIdQuery(baseOptions: Apollo.QueryHookOptions<FindProfileByUserIdQuery, FindProfileByUserIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindProfileByUserIdQuery, FindProfileByUserIdQueryVariables>(FindProfileByUserIdDocument, options);
+      }
+export function useFindProfileByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindProfileByUserIdQuery, FindProfileByUserIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindProfileByUserIdQuery, FindProfileByUserIdQueryVariables>(FindProfileByUserIdDocument, options);
+        }
+export type FindProfileByUserIdQueryHookResult = ReturnType<typeof useFindProfileByUserIdQuery>;
+export type FindProfileByUserIdLazyQueryHookResult = ReturnType<typeof useFindProfileByUserIdLazyQuery>;
+export type FindProfileByUserIdQueryResult = Apollo.QueryResult<FindProfileByUserIdQuery, FindProfileByUserIdQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($profilePhoto: Upload!, $userName: String!, $password: String!, $email: String!) {
   signUp(
@@ -565,3 +628,66 @@ export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQ
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
+export const RemoveUserProfileDocument = gql`
+    mutation removeUserProfile($userId: Float!) {
+  removeUserProfile(userId: $userId)
+}
+    `;
+export type RemoveUserProfileMutationFn = Apollo.MutationFunction<RemoveUserProfileMutation, RemoveUserProfileMutationVariables>;
+
+/**
+ * __useRemoveUserProfileMutation__
+ *
+ * To run a mutation, you first call `useRemoveUserProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveUserProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeUserProfileMutation, { data, loading, error }] = useRemoveUserProfileMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useRemoveUserProfileMutation(baseOptions?: Apollo.MutationHookOptions<RemoveUserProfileMutation, RemoveUserProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveUserProfileMutation, RemoveUserProfileMutationVariables>(RemoveUserProfileDocument, options);
+      }
+export type RemoveUserProfileMutationHookResult = ReturnType<typeof useRemoveUserProfileMutation>;
+export type RemoveUserProfileMutationResult = Apollo.MutationResult<RemoveUserProfileMutation>;
+export type RemoveUserProfileMutationOptions = Apollo.BaseMutationOptions<RemoveUserProfileMutation, RemoveUserProfileMutationVariables>;
+export const UpdateUserProfileDocument = gql`
+    mutation UpdateUserProfile($userId: Float!, $UpdateProfileInput: UpdateProfileInput!) {
+  UpdateUserProfile(userId: $userId, UpdateProfileInput: $UpdateProfileInput)
+}
+    `;
+export type UpdateUserProfileMutationFn = Apollo.MutationFunction<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
+
+/**
+ * __useUpdateUserProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserProfileMutation, { data, loading, error }] = useUpdateUserProfileMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      UpdateProfileInput: // value for 'UpdateProfileInput'
+ *   },
+ * });
+ */
+export function useUpdateUserProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>(UpdateUserProfileDocument, options);
+      }
+export type UpdateUserProfileMutationHookResult = ReturnType<typeof useUpdateUserProfileMutation>;
+export type UpdateUserProfileMutationResult = Apollo.MutationResult<UpdateUserProfileMutation>;
+export type UpdateUserProfileMutationOptions = Apollo.BaseMutationOptions<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;

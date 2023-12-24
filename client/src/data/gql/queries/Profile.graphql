@@ -1,0 +1,11 @@
+query findProfileByUserId($userId: Float!) {
+  findProfileByUserId(userId: $userId) {
+    id
+    user_id
+    nickname
+    title
+    xp
+    rank
+    about
+  }
+}

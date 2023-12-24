@@ -19,6 +19,7 @@ export type Context = {
   signOut: () => void;
   restoreUser: (callback?: () => void) => void;
   user: User | null;
+  updateUser: (user: User) => void;
 };
 
 const UserContext = createContext<Context>({
@@ -26,6 +27,7 @@ const UserContext = createContext<Context>({
   signOut: () => {},
   restoreUser: () => {},
   user: null,
+  updateUser: (user: User) => {},
 });
 
 const HELLO = `
@@ -100,12 +102,16 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
     }
   };
 
+  const updateUser = (user: User) => {
+    setUser(user);
+  };
   const contextValue = useMemo(
     () => ({
       signIn,
       signOut,
       restoreUser,
       user,
+      updateUser,
     }),
     [signIn, signOut, restoreUser, user]
   );
