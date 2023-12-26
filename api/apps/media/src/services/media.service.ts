@@ -4,11 +4,9 @@ import { FileUpload } from 'graphql-upload';
 
 // @Injectable()
 export class MediaService {
-  constructor(
-    private readonly prisma : PrismaClient,
-  ){}
+  constructor(private readonly prisma: PrismaClient) {}
 
-  async uploadProfileImg(file: FileUpload): Promise<String>{
+  async uploadProfileImg(file: FileUpload): Promise<String> {
     const { createReadStream, filename, mimetype, encoding } = file;
     const stream = createReadStream();
 
@@ -21,17 +19,17 @@ export class MediaService {
 
     const result = await this.prisma.profileImg.create({
       data: {
-        imgKey: "something for now",
+        imgKey: 'something for now',
         filename,
         mimetype,
         encoding,
-        content: buffer, 
+        content: buffer,
       },
     });
 
-    return (result.imgKey);
+    return result.imgKey;
   }
 
-  uploadProfileBackgroundImg(file: FileUpload){}
-  uploadchatImg(file: FileUpload){} 
+  uploadProfileBackgroundImg(file: FileUpload) {}
+  uploadchatImg(file: FileUpload) {}
 }

@@ -18,8 +18,8 @@ query User($id: Float!) {
 }
 
 # DELETE THE User
-mutation removeUserProfile($userId: Float!) {
-  removeUserProfile(userId: $userId)
+mutation deleteAccount($id: Float!, $password: String!) {
+  deleteAccount(id: $id, password: $password)
 }
 
 # UPDATE THE User

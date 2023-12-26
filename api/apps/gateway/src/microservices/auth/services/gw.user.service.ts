@@ -1,127 +1,126 @@
-import { Injectable, Inject, BadRequestException, Logger } from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
+import {
+  Injectable,
+  Inject,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
-import { RabbitMqService } from "@app/rabbit-mq";
-import {GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto';
+import { RabbitMqService } from '@app/rabbit-mq';
+import { GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto';
 import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
 import { UserProfileUpdateInput } from '../graphql/input/UserProfileUpdate.input';
-import { GwProfileService } from "../../profile/services/gw.profile.service";
+import { GwProfileService } from '../../profile/services/gw.profile.service';
 @Injectable()
 export class UserService {
-    constructor(
-        @Inject(IRmqSeverName.AUTH)
-        private readonly client: ClientProxy,
-        private readonly clientService: RabbitMqService,
-        private readonly profileService: GwProfileService,
+  constructor(
+    @Inject(IRmqSeverName.AUTH)
+    private readonly client: ClientProxy,
+    private readonly clientService: RabbitMqService,
+    private readonly profileService: GwProfileService,
+  ) {}
 
-    ) { }
-
-    async findOrCreateUser(profile: any): Promise<IAuthUser> {
-        try {
-            const user = await this.findUserByUsername(profile.username);
-            console.log("user is not found in this (createUser)", user);
-            return user;
-        } catch (error) {
-            return  await this.createAccount(profile);
-        }
+  async findOrCreateUser(profile: any): Promise<IAuthUser> {
+    try {
+      const user = await this.findUserByUsername(profile.username);
+      console.log('user is not found in this (createUser)', user);
+      return user;
+    } catch (error) {
+      return await this.createAccount(profile);
     }
+  }
 
-    async findUserByUsername(username: string): Promise<IAuthUser> {
-        const user = await this.clientService.sendMessageWithPayload(
-            this.client,
-            {
-                role: 'user',
-                cmd: 'find-user-by-username'
-            },
+  async findUserByUsername(username: string): Promise<IAuthUser> {
+    const user = await this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+        role: 'user',
+        cmd: 'find-user-by-username',
+      },
 
-            username
+      username,
+    );
+    return user;
+  }
 
-        );
-        return (user);
-    }
+  async createUser(user: any): Promise<IAuthUser> {
+    const createUser = this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+        role: 'user',
+        cmd: 'create-user',
+      },
+      user,
+    );
 
-    async createUser(user: any) : Promise<IAuthUser> {
-        const createUser = this.clientService.sendMessageWithPayload(
-            this.client,
-            {
-                role: 'user',
-                cmd: "create-user",
-            },
-            user
-        );
+    return createUser;
+  }
 
-        return (createUser);
-    }
+  async createProfile(user: any, profile: any) {
+    return this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+        role: 'user',
+        cmd: 'create-profile',
+      },
+      { user, profile },
+    );
+  }
+  //create dto for user
+  async createAccount(user: any) {
+    const respondUser = await this.createUser(user);
 
-    async createProfile(user: any, profile: any) {
-        return this.clientService.sendMessageWithPayload(
-            this.client,
-            {
-                role: 'user',
-                cmd: "create-profile",
-            },
-            { user, profile }
-        );
-    }
-    //create dto for user 
-    async createAccount(user: any) {
+    const profile = await this.profileService.createUserProfile({
+      userId: respondUser.id,
+      username: respondUser.username,
+    });
+    return respondUser;
+  }
 
-        const respondUser =  await this.createUser(user);
+  async findById(id: number): Promise<IAuthUser> {
+    const response = await this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+        role: 'user',
+        cmd: 'findById',
+      },
+      id,
+    );
+    return response; //for now
+  }
 
-        const profile = await this.profileService.createUserProfile({
-			userId: respondUser.id,
-			username: respondUser.username
-		})
-        return (respondUser)
-    }
+  async findAll() {
+    const response = await this.clientService.sendMessageWithoutPayload(
+      this.client,
+      {
+        role: 'user',
+        cmd: 'findAll',
+      },
+    );
+    return response;
+  }
 
+  async removeAccount(id: number, password: string): Promise<boolean> {
+    const response = await this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+        role: 'user',
+        cmd: 'delete-user',
+      },
+      {
+        id,
+        password,
+      },
+    );
+    return response;
+  }
 
-    async findById(id: number): Promise<IAuthUser> {
-        const response = await this.clientService.sendMessageWithPayload(
-            this.client,
-            {
-                role: 'user',
-                cmd: 'findById'
-            },
-            id
-        )
-        return (response);//for now
-    }
-
-    async findAll() {
-        const response = await this.clientService.sendMessageWithoutPayload(
-            this.client,
-            {
-                role: 'user',
-                cmd: 'findAll'
-            },
-
-        )
-        return (response);
-    }
-
-    async removeUser(id: number) : Promise<boolean>{
-        const response = await this.clientService.sendMessageWithPayload(
-            this.client,
-            {
-                role: 'user',
-                cmd: 'delete-user'
-            },
-            id
-        )
-        return (response);
-    }
-
-
-    async getUserByRefreshTokenMatch(refreshToken : GetRefreshUserDto){
-		const response = await this.clientService.sendMessageWithPayload(
-			this.client,
-			{role: 'auth', cmd: 'OnRefreshTokenMatch'},
-			refreshToken,
-		);
-			return response;
-	}
-
-   
-
+  async getUserByRefreshTokenMatch(refreshToken: GetRefreshUserDto) {
+    const response = await this.clientService.sendMessageWithPayload(
+      this.client,
+      { role: 'auth', cmd: 'OnRefreshTokenMatch' },
+      refreshToken,
+    );
+    return response;
+  }
 }

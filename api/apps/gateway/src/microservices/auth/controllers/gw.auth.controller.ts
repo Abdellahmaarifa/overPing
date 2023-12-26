@@ -1,11 +1,11 @@
 
-import { Controller,Post, Get, Request, UseGuards , Ip, Res, UseFilters} from '@nestjs/common';
+import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
+import { Controller, Get, Request, Res, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { FortyTwoGuard } from '../guards/42.auth.grade';
 import { GoogleGuard } from '../guards/google.auth.grad';
-import { GatewayService} from '../services/gw.auth.service';
 import { RefreshTokenGuard } from '../guards/refreshToken.guard';
-import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
-import { ConfigService } from '@nestjs/config';
+import { GatewayService } from '../services/gw.auth.service';
 
 @Controller('auth')
 export class AuthController {
@@ -26,15 +26,15 @@ export class AuthController {
     ){
 		const user = req.user;
 		const FRONT_URL = this.configService.get('FRONT_URL')
-
 		if (user.twoStepVerificationEnabled){
 			const respond = await this.gatewayService.getTwoFacatorAccessToken({id: user.id, username: user.username})
-			res.cookie('twoFactorAuth', respond.twoFactorAuth, {
+			res.cookie('twoFactorAuth', respond, {
 				httpOnly: true,
 				secure: true,
 				sameSite: 'Strict',
 			  });
 		  	res.redirect(FRONT_URL);
+			return ;
 		}
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
 		res.cookie('Refresh_token', token.refreshToken, {
@@ -76,7 +76,7 @@ export class AuthController {
 				secure: true,
 				sameSite: 'Strict',
 			  });
-		  	res.redirect('http://localhost:5173/login?step=verification');
+		  	res.redirect(FRONT_URL);
 			return;
 		}
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});

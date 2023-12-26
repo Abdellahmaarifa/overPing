@@ -76,10 +76,7 @@ class LoginViewModel implements LoginViewModelType {
         // });
       } catch (err: any) {
         console.log("comes from the server: ", err);
-        if (
-          err?.message ==
-          "Two-factor authentication is required. Please provide the 2FA code."
-        ) {
+        if (err?.message == "Two-factor") {
           // try 2factor auth:
           window.location.replace("/login?step=verification");
         }

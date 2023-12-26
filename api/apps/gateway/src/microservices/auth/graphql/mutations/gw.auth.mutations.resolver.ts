@@ -1,28 +1,28 @@
+import { LoggerService } from '@app/common';
+import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
 import {
-  Resolver,
-  Mutation,
+  UseGuards
+} from '@nestjs/common';
+import {
   Args,
   Context,
+  Mutation,
+  Resolver,
 } from '@nestjs/graphql';
-import {
-  HttpCode,
-  UseGuards,
-} from '@nestjs/common';
-import { GatewayService, UserService } from '../../services';
-import { 
-  AuthCredentialsInput,
-  UserCreationInput,
-  TwoFActorAuthInput
- } from '../input';
-import { UserWithAccessModel , GQLUserModel} from 'apps/gateway/src/models';
-import { LoggerService, AuthResponseDto } from '@app/common';
-import { GqlCurrentUser } from '../decortor/gql.user.decorator';
+import { GQLUserModel } from 'apps/gateway/src/models';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { GqlJwtRefreshGuard } from '../../guards/gql.refreshToken.guard';
-import { JwtPayloadDto } from '@app/common/auth/dto/JwtPayloadDto';
-import { UserAccessAuthorizationGuard } from '../../guards/user-auth.guard';
-import { FileUpload , GraphQLUpload} from 'graphql-upload';
 import { GQTwoFAGuard } from '../../guards/gql.twoFa.grade';
-
+import { UserAccessAuthorizationGuard } from '../../guards/user-auth.guard';
+import { GatewayService, UserService } from '../../services';
+import { GqlCurrentUser } from '../decortor/gql.user.decorator';
+import {
+  AuthCredentialsInput,
+  TwoFActorAuthInput,
+  UserCreationInput
+} from '../input';
+import { TwoFAModel } from 'apps/gateway/src/models/graphqlTwoFAModel';
+import {HttpException} from "@nestjs/common";
 
 @Resolver()
 export class AuthMutationsResolver {
@@ -32,7 +32,7 @@ export class AuthMutationsResolver {
 
    
 
-  @Mutation((returns) => GQLUserModel)
+  @Mutation((returns) => GQLUserModel )
   async signIn(
     @Context() context,
     @Args('authCredentials') authCredentialsInput: AuthCredentialsInput,): Promise<GQLUserModel> {
@@ -45,7 +45,7 @@ export class AuthMutationsResolver {
         secure: true,
         sameSite: 'Strict',
       });
-      return ;
+      throw new HttpException("Two-factor", 401);
     }
 
     res.cookie('Refresh_token', response.refreshToken, {
@@ -97,10 +97,10 @@ export class AuthMutationsResolver {
      return this.authService.logOut(id);
   }
 
-  @UseGuards(UserAccessAuthorizationGuard)
+  // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async removeUser(@Args("id") id: number): Promise<boolean> {
-    return this.userService.removeUser(id);
+  async deleteAccount(@Args("id") id: number,@Args("password") password: string): Promise<boolean> {
+    return this.userService.removeAccount(id, password);
   }
 
   @UseGuards(GqlJwtRefreshGuard)
@@ -138,6 +138,7 @@ export class AuthMutationsResolver {
       id: req.user.userId,
       code,
     }
+    console.log("the data of auth2: ", twoFActorAuthInput);
     const response =  await this.authService.authenticate_2fa(twoFActorAuthInput);
     const { res } = context;
     res.cookie('Refresh_token', response.refreshToken, {
