@@ -7,7 +7,7 @@ import React, {
 } from "react";
 
 import { Store } from "domain/DomainLayer";
-import { User } from "types/User.type";
+import { User } from "domain/model/User.type";
 
 type Props = {
   children: React.ReactNode;

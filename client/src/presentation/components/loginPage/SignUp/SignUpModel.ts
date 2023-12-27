@@ -1,5 +1,5 @@
 import Validate from "../../../../domain/validation";
-import { SignUpModelType } from "types/SignUp.type";
+import { SignUpModelType } from "domain/model/SignUp.type";
 import * as Yup from "yup";
 export class SignUpModel implements SignUpModelType {
   username: string;

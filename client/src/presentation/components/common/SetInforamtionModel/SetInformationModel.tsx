@@ -58,6 +58,7 @@ const SetInformationModel = () => {
               outline={true}
               Image={ProfileImg}
               stroke="#4B4947"
+              percentage={1}
             />
             <ChangeProfileInput type="file" />
             <ChangeProfileIcon>

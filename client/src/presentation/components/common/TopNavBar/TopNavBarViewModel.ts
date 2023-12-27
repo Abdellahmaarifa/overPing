@@ -1,10 +1,10 @@
 import {
   TopNavBarModelType,
   TopNavBarViewModelType,
-} from "types/TopNavBar.type";
-import { useUserQuery, UserQueryHookResult, UserQuery } from "gql";
+} from "domain/model/TopNavBar.type";
+import { useUserQuery, UserQueryHookResult, UserQuery } from "gql/index";
 import { useUserContext, Context } from "context/user.context";
-import { useLogoutMutation } from "gql";
+import { useLogoutMutation } from "gql/index";
 import { useNavigate } from "react-router-dom";
 
 class TopNavBarViewModel implements TopNavBarViewModelType {
@@ -30,14 +30,14 @@ class TopNavBarViewModel implements TopNavBarViewModelType {
     this.navigate("/login");
     await this.logoutMutation({
       variables: {
-        id: Number(this.userContext.user.id),
+        id: Number(this.userContext.user?.id),
       },
     });
   };
 
   showProfile = () => {
     console.log();
-    this.navigate(`/profile/${this.userContext.user.id}`);
+    this.navigate(`/profile/${this.userContext.user?.id}`);
   };
 }
 

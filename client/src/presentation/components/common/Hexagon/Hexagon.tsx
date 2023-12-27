@@ -16,7 +16,7 @@ const Hexagon = ({
   height,
   stroke,
 }: {
-  percentage?: number;
+  percentage: number;
   Image?: string;
   outline?: boolean;
   odd?: boolean;

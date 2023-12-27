@@ -40,8 +40,8 @@
       "helpers/*": [
         "infrastructure/helpers/*"
       ],
-      "gql": [
-        "data/gql/index"
+      "gql*": [
+        "data/gql*"
       ],
       "state/*": [
         "state/*"
@@ -61,7 +61,8 @@
   "include": [
     "src",
     "src/infrastructure/types",
-    "src/infrastructure/types/*"
+    "src/infrastructure/types/*",
+    "src/**/*"
   ],
   "references": [
     {

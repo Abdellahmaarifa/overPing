@@ -27,7 +27,7 @@ import {
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useSettingsContext } from "context/settings.context";
 import { useUserContext } from "context/user.context";
-import { useFindProfileByUserIdQuery } from "gql";
+import { useFindProfileByUserIdQuery } from "gql/index";
 const ProfileBanner = ({
   showFriendsList,
   setShowFriendsList,
@@ -48,13 +48,13 @@ const ProfileBanner = ({
   const { user } = useUserContext();
   const { data, loading, error } = useFindProfileByUserIdQuery({
     variables: {
-      userId: Number(user.id),
+      userId: Number(user?.id),
     },
   });
 
   const id = useParams()?.id;
   useEffect(() => {
-    if (Number(id) == user.id) setUserProfile(true);
+    if (id == user?.id) setUserProfile(true);
   }, []);
   console.log("data od the user: ", data, error);
   if (loading) return <h1>loading</h1>;
@@ -106,7 +106,7 @@ const ProfileBanner = ({
       </BannerMenuConatiner>
 
       <ProfileConatiner>
-        <Hexagon Image={Onep} outline={true} />
+        <Hexagon Image={Onep} outline={true} percentage={1} />
         <ProfileInfo>
           <ProfileName>abdellah</ProfileName>
           <ProfileLevel>Level : 5</ProfileLevel>

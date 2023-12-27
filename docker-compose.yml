@@ -1,7 +1,6 @@
-version: '3.7'
+version: "3.7"
 services:
-
-  # # CLIENT SERVICE FOR PRODUCTION #
+  # CLIENT SERVICE FOR PRODUCTION #
   # client:
   #   build:
   #     context: ./client
@@ -14,15 +13,15 @@ services:
   #   restart: always
   #   container_name: client
   #   profiles:
-  #     - production
-  # # CLIENT SERVICE FOR DEVELOPMENT # 
+  #     - development
+  # CLIENT SERVICE FOR DEVELOPMENT #
   # client-dev:
   #   build:
   #     context: ./client
   #     dockerfile: Dockerfile
   #     target: development
-  #   # env_file:
-  #     # - ./client/.env
+  #   env_file:
+  #     - ./client/.env
   #   volumes:
   #     - ./client/node_modules:/app/node_modules
   #     - ./client/src:/app/src
@@ -31,7 +30,6 @@ services:
   #     - webapp
   #   ports:
   #     - 5173:5173
-  #   command: npm run dev
   #   stdin_open: true
   #   restart: always
   #   container_name: client
@@ -58,11 +56,11 @@ services:
       - production
       - development
 
-#   DATABASE SERVICE FOR MEDIA DEV AND PROD #
+  #   DATABASE SERVICE FOR MEDIA DEV AND PROD #
 
   postgres_media_db:
     image: postgres
- 
+
     environment:
       - POSTGRES_DB=${MEDIA_DB_NAME}
       - POSTGRES_USER=${MEDIA_DB_USER}
@@ -79,7 +77,7 @@ services:
       - production
       - development
 
-#   DATABASE SERVICE FOR PROFILE DEV AND PROD #
+  #   DATABASE SERVICE FOR PROFILE DEV AND PROD #
 
   postgress_profile_db:
     image: postgres
@@ -90,7 +88,7 @@ services:
       - POSTGRES_USER=${PROFILE_DB_USER}
       - POSTGRES_PASSWORD=${PROFILE_DB_PASSWORD}
     ports:
-      -  "${PROFILE_DB_PORT}:5432"
+      - "${PROFILE_DB_PORT}:5432"
     networks:
       - webapp
     volumes:
@@ -109,7 +107,7 @@ services:
       - webapp
       - database
     restart: always
-    command: [ 'node', 'main.js']
+    command: ["node", "main.js"]
     container_name: gateway
     profiles:
       - production
@@ -150,7 +148,7 @@ services:
     ports:
       - ${AUTH_PORT}:3001
       - ${PRISMA_STUDIO_PORT}:5555
-      
+
     volumes:
       - ./api/apps/auth:/usr/src/app/apps/auth
       - ./api/libs:/usr/src/app/libs
@@ -163,7 +161,7 @@ services:
     profiles:
       - development
 
-# PROFILE SERVICE FOR DEVELOPMENT #
+  # PROFILE SERVICE FOR DEVELOPMENT #
   profile:
     build:
       context: ./api
@@ -177,7 +175,7 @@ services:
     ports:
       - ${PROFILE_PORT}:3003
       - ${PRISMA_STUDIO_PROFILE_PORT}:5555
-      
+
     volumes:
       - ./api/apps/profile:/usr/src/app/apps/profile
       - ./api/libs:/usr/src/app/libs
@@ -190,7 +188,7 @@ services:
     profiles:
       - development
 
-# MATCHMAKING SERVICE FOR DEVELOPMENT #
+  # MATCHMAKING SERVICE FOR DEVELOPMENT #
   matchmaking:
     build:
       context: ./api
@@ -212,7 +210,7 @@ services:
     profiles:
       - development
 
-# MATCHMAKING SERVICE FOR DEVELOPMENT #
+  # MATCHMAKING SERVICE FOR DEVELOPMENT #
 
   media:
     build:
@@ -237,9 +235,9 @@ services:
     profiles:
       - development
 
-# RABBBITMQ SERVER #
+  # RABBBITMQ SERVER #
   rabbitmq:
-    image: rabbitmq:3-management 
+    image: rabbitmq:3-management
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASSWORD}
@@ -256,10 +254,9 @@ services:
     profiles:
       - development
       - production
-    
+
 networks:
   webapp:
     driver: bridge
   database:
     driver: bridge
-

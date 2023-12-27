@@ -1,14 +1,14 @@
 import { useLoginContext } from "context/login.context";
 import { FormikProps } from "formik";
-import { sleep } from "helpers";
+import { sleep } from "helpers/index";
 import { FormEvent } from "react";
 import toast from "react-hot-toast";
 import {
   SignUpModelType,
   SignUpViewModelType,
   SignUpViewState,
-} from "types/SignUp.type";
-import { useRegisterMutation } from "gql";
+} from "domain/model/SignUp.type";
+import { useRegisterMutation } from "gql/index";
 import { SignUpModel } from "./SignUpModel";
 
 class SignUpViewModel implements SignUpViewModelType {

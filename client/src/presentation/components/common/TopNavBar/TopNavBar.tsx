@@ -95,11 +95,11 @@ const TopNavBar = () => {
           }}
         >
           <UserImage>
-            {<img src={user.profilePhoto} alt="" tw="w-full h-full" />}
+            {<img src={user?.profilePhoto} alt="" tw="w-full h-full" />}
           </UserImage>
           <UserInfo>
             <UserInfoNameConatiner>
-              <UserInfoName>{user.username}</UserInfoName>
+              <UserInfoName>{user?.username}</UserInfoName>
               <UserInfoIcon>
                 <DownArrowIcon />
               </UserInfoIcon>

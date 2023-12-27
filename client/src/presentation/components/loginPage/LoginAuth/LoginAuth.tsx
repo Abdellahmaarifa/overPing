@@ -2,7 +2,7 @@ import BtnBack from "assets/login/btn-back.svg?react";
 import Button from "components/common/Button/Button";
 import Input from "components/common/Input/Input";
 import StepLink from "components/common/StepLink/StepLink";
-import { useAuthenticate_2faMutation } from "gql";
+import { useAuthenticate_2faMutation } from "gql/index";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { AuthContainer, AuthHeader } from "./LoginAuth.style";

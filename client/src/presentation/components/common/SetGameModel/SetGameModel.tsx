@@ -56,6 +56,8 @@ const SetGameModel = () => {
       <Switcher
         title="Choose your own map"
         description="select this option to upload your favorit map"
+        enable={false}
+        onChange={() => {}}
       />
       <Button
         $size="md"

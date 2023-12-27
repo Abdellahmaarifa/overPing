@@ -1,6 +1,6 @@
 import { useSettingsContext } from "context/settings.context";
 import { useUserContext } from "context/user.context";
-import { useDeleteAccountMutation } from "gql";
+import { useDeleteAccountMutation } from "gql/index";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Button from "../Button/Button";
@@ -30,7 +30,7 @@ const DeleteModel = () => {
       await toast.promise(
         deleteAccount({
           variables: {
-            id: Number(user.id),
+            id: Number(user?.id),
             password: pass,
           },
         }),

@@ -13,16 +13,20 @@ import {
   MatchTableHeader,
   MatchTableHeaderCell,
 } from "./MatchHistories.style";
-import { MatchResaultType } from "types/home.type";
-import { useUserQuery } from "gql";
+import { MatchResaultType } from "domain/model/home.type";
+import { useUserQuery } from "gql/index";
 import tw from "twin.macro";
 import { useEffect, useRef, useState } from "react";
 import Button from "components/common/Button/Button";
-import { sleep } from "helpers";
+import { sleep } from "helpers/index";
 import StepLink from "components/common/StepLink/StepLink";
 
 const MatchHistories = ({ active }: { active: boolean }) => {
-  const { data, loading, error } = useUserQuery();
+  const { data, loading, error } = useUserQuery({
+    variables: {
+      id: 1,
+    },
+  });
   const [matchList, setMatchList] = useState<MatchResaultType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const seemoreRef = useRef<HTMLDivElement>(null);
@@ -57,10 +61,9 @@ const MatchHistories = ({ active }: { active: boolean }) => {
                   <MatchResaultSkeleton key={match.id} />
                 ) : (
                   <MatchResault
-                    key={id}
                     {...{
                       ...match,
-                      userImage: data?.user.profilePhoto as string,
+                      userImage: (data as any)?.user?.profilePhoto as string,
                     }}
                   />
                 )

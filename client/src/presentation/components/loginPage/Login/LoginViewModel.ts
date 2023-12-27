@@ -1,12 +1,12 @@
 import { useUserContext } from "context/user.context";
-import { sleep, useStateWithGetSet } from "helpers";
+import { sleep, useStateWithGetSet } from "helpers/index";
 import { toast } from "react-hot-toast";
 import {
   LoginModelType,
   LoginViewModelType,
   LoginViewState,
-} from "types/Login.type";
-import { useLoginMutation } from "gql";
+} from "domain/model/Login.type";
+import { useLoginMutation } from "gql/index";
 import { LoginModel } from "./LoginModel";
 import { Navigate } from "react-router-dom";
 

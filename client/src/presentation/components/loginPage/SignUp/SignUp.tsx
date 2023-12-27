@@ -11,14 +11,14 @@ import PhotoIcon from "assets/login/photoIcon.svg?react";
 import { SignUpContainer, SignUpGroup, SignUpHeading } from "./SignUp.style";
 
 import { motion } from "framer-motion";
-import { useStateWithGetSet } from "helpers";
-import { SignUpModelType, SignUpViewModelType } from "types/SignUp.type";
+import { useStateWithGetSet } from "helpers/index";
+import { SignUpModelType, SignUpViewModelType } from "domain/model/SignUp.type";
 import NotShowPass from "assets/login/notShowPass.svg?react";
 import ShowPassIcon from "assets/login/showPass.svg?react";
 import { SignUpModel, SignUpModelSchema } from "./SignUpModel";
 import SignUpViewModel from "./SignUpViewModel";
 const a = tw``;
-import {useHelloQuery} from "../../../../data/gql"
+import { useHelloQuery } from "../../../../data/gql";
 interface FormStepProps {
   viewModel: SignUpViewModelType;
   formikProps?: FormikProps<SignUpModelType>;
@@ -171,8 +171,8 @@ const SignUpFormStepFour = ({ viewModel, formikProps }: FormStepProps) => {
 };
 
 const SignUp = () => {
-  const {data} = useHelloQuery();
-  console.log("this is data: ",data);
+  const { data } = useHelloQuery();
+  console.log("this is data: ", data);
   const viewModel = new SignUpViewModel({
     fieldName: useStateWithGetSet(""),
     avatar: useStateWithGetSet(""),

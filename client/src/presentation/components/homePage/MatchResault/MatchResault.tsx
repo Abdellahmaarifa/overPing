@@ -1,5 +1,5 @@
 import Skeleton from "react-loading-skeleton";
-import { MatchResaultType } from "types/home.type";
+import { MatchResaultType } from "domain/model/home.type";
 import {
   MatchTableCell,
   MatchTableDateCell,
@@ -16,7 +16,7 @@ import {
   ScoreSeperator,
   UserRofile,
 } from "./MatchResault.style";
-import { withPad } from "helpers";
+import { withPad } from "helpers/index";
 import tw from "twin.macro";
 const temp = tw.a``;
 const MatchResault = ({

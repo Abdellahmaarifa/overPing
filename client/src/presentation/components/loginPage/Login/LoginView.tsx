@@ -5,7 +5,7 @@ import NotShowPass from "assets/login/notShowPass.svg?react";
 import ShowPassIcon from "assets/login/showPass.svg?react";
 import LoginViewModel from "./LoginViewModel";
 import { Group } from "./Login.style";
-import { LoginModelType } from "types/Login.type";
+import { LoginModelType } from "domain/model/Login.type";
 
 const LoginView = () => {
   const viewModel = new LoginViewModel();
