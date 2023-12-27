@@ -30,6 +30,16 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import { GWMediaService } from './microservices/media/services/gw.media.service';
 import { TWOFATokenStrategy } from "./microservices/auth/strategies/twoFA.starategy";
 import { MeidaController } from './microservices/media/controllers/gw.media.controller';
+import { MediaMutationsResolver } from './microservices/media/graphql/mutations/gw.media.mutation';
+
+
+
+
+
+
+
+
+
 @Module({
   imports: [
     PassportModule,
@@ -62,6 +72,7 @@ import { MeidaController } from './microservices/media/controllers/gw.media.cont
     provide: 'PUB_SUB',
     useValue: new PubSub(),
     },
+    
     GWMediaService,
     GwMatchMakingService, 
     GatewayService,
@@ -71,6 +82,7 @@ import { MeidaController } from './microservices/media/controllers/gw.media.cont
     MatchMakingQueryResolver,
     MatchMakingMutationsResolver,
     ProfileQueryResolver,
+    MediaMutationsResolver,
     UserProifleMutationsResolver,
     WalletMutationsResolver,
     AuthQueryResolver,

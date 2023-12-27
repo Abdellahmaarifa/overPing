@@ -10,4 +10,8 @@ export class UpdateProfileInput {
     @Field({ nullable: true })
     @IsString()
     about?: string
+
+    @Field({nullable: true})
+    @IsString()
+    bgImageUrl?: string
   }

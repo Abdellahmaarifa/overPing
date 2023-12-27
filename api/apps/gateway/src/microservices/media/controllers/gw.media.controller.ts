@@ -14,16 +14,25 @@ export class MeidaController {
 		private readonly configService: ConfigService,
 		 ){}
 
-    @Get(':imageName')
-    async getProfileImg(@Res() res: Response, @Param('imageName') imageName: string, ){
-        const imageBuffer = await this.mediaService.getFileUrl(imageName);
+    @Get('avatar/:imageName')
+    async getUserAvatarImg(@Res() res: Response, @Param('imageName') imageName: string, ){
+        const imageBuffer = await this.mediaService.getAvatarImg(imageName);
         
         const mimeType = 'image/png';
 
         res.setHeader('Content-Type', mimeType);
         res.send(Buffer.from(imageBuffer))
+    }
 
+    @Get('profileBackGound/:imageName')
+    async getProfileBgImg(@Res() res: Response, @Param('imageName') imageName: string, ){
+        const imageBuffer = await this.mediaService.getPorfileBgImg(imageName);
+        const mimeType = 'image/png';
+
+        res.setHeader('Content-Type', mimeType);
+        res.send(Buffer.from(imageBuffer))
 
     }
+    
 
 }

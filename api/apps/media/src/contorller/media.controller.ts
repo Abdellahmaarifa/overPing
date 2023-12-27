@@ -7,14 +7,27 @@ import { FileUpload } from 'graphql-upload';
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
-  @MessagePattern({ role: 'file', cmd: 'upload-profile-img'})
-  uploadProfileImg(file: any){
-    return this.mediaService.uploadProfileImg(file);
+  //=======================update img========================
+  @MessagePattern({ role: 'file', cmd: 'update-avatar-img'})
+  updateAavatarImg(file: any){
+    return this.mediaService.updateAavatarImg(file);
   }
 
-  @MessagePattern({ role: 'file', cmd: 'get-profile-img'})
-  async getFileUrl(file: string){
-    return this.mediaService.getFileUrl(file);
+  @MessagePattern({ role: 'file', cmd: 'update-bgProfile-img'})
+  updateProfileBg(file: any){
+    return this.mediaService.updateProfileBgImg(file);
+  }
+
+
+  //==========================get image=====================
+  @MessagePattern({ role: 'file', cmd: 'get-avatar-img'})
+  async getAvatar(file: string){
+    return this.mediaService.getAvatarImg(file);
+  }
+
+  @MessagePattern({ role: 'file', cmd: 'get-profileBg-img'})
+  async getBgProfileImg(file: string){
+    return this.mediaService.getBgProfileImg(file);
   }
 
   // @EventPattern({ role: 'file', cmd: 'upload-profile-img'})

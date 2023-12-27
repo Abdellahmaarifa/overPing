@@ -46,10 +46,8 @@ export class GatewayService {
 			userId: respond.user.id,
 			username: respond.user.username
 		})
-		const imgUrl = await this.mediaService.uploadProfileImg(file);
-		this.userService.updateUser(respond.user.id, {
-			profileImgUrl : imgUrl
-		})
+		const imgUrl = await this.mediaService.updateAvatarImg(respond.user.id, file);
+		const img = await this.mediaService.updateProfileBg(respond.user.id, file);
 		return (respond);
 	}
 

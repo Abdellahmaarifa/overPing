@@ -19,6 +19,7 @@ model UserProfile {
   about        String                     @default("Chatting my way through life on [overPing]. Let's keep the conversations rolling! 📱✨ #Connected")
   created_at   DateTime                   @default(now())
   updated_at   DateTime                   @updatedAt
+  bgImageUrl   String                     @default("backgroundUrlImg.png")
   gameStatus   GameStatus?
   achievements UserProfileToAchievement[]
   wallet       Wallet?
@@ -39,24 +40,24 @@ model Wallet {
 model GameStatus {
   id              Int         @id @default(autoincrement())
   user_id         Int         @unique
-  userPofile      UserProfile @relation(fields: [user_id], references: [user_id])
   matchesLoss     Int         @default(0)
   matchesWon      Int         @default(0)
   totalMatches    Int         @default(0)
   win_streak      Int         @default(0)
   best_win_streak Int         @default(0)
+  userPofile      UserProfile @relation(fields: [user_id], references: [user_id])
   statistics      Statistics?
 }
 
 model Statistics {
   id                      Int        @id @default(autoincrement())
   user_id                 Int        @unique
-  gameStatus              GameStatus @relation(fields: [user_id], references: [user_id])
   strict_shot_goals       Int        @default(0)
   rebounded_goals         Int        @default(0)
   starts_collected        Int        @default(0)
   clean_sheets            Int        @default(0)
   successive_clean_sheets Int        @default(0)
+  gameStatus              GameStatus @relation(fields: [user_id], references: [user_id])
 }
 
 model GameMatch {
