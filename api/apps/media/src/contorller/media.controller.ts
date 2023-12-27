@@ -1,25 +1,25 @@
 import { Controller, Get } from '@nestjs/common';
 import { MediaService } from '../services/media.service';
-import { EventPattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern } from '@nestjs/microservices';
 import { FileUpload } from 'graphql-upload';
 
 @Controller()
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
-  @EventPattern({ role: 'file', cmd: 'upload-profile-img'})
-  uploadProfileImg(file: FileUpload){
+  @MessagePattern({ role: 'file', cmd: 'upload-profile-img'})
+  uploadProfileImg(file: any){
     return this.mediaService.uploadProfileImg(file);
   }
 
-  @EventPattern({ role: 'file', cmd: 'upload-profile-img'})
-  uploadProfileBackgroundImg(file: FileUpload){
-    return this.mediaService.uploadProfileBackgroundImg(file);
+  @MessagePattern({ role: 'file', cmd: 'get-profile-img'})
+  async getFileUrl(file: string){
+    return this.mediaService.getFileUrl(file);
   }
 
-  @EventPattern({ role: 'file', cmd: 'upload-profile-img'})
-  uploadchatImg(file: FileUpload){
-    this.mediaService.uploadchatImg(file);
-  }
+  // @EventPattern({ role: 'file', cmd: 'upload-profile-img'})
+  // uploadchatImg(file: FileUpload){
+  //   this.mediaService.uploadchatImg(file);
+  // }
    
 }

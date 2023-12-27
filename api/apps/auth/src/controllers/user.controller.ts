@@ -5,7 +5,7 @@ import { UserCreationDto } from '../dto';
 import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { UpdateProfileDto } from '../dto/user.updateProfileId.dto';
-
+import { UpdateUserDto } from '../dto/user.update.dto';
 @Controller()
 export class UserController {
   constructor(
@@ -44,8 +44,10 @@ export class UserController {
     return this.userService.remove(id);
   }
 
-  
-
+  @MessagePattern({ role: 'user', cmd: 'update' })
+  async updateUser(input : { id : number , data: UpdateUserDto}): Promise<boolean> {
+    return this.userService.updateUser(input.id, input.data);
+  }
 
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {
     if (!user) {
@@ -55,8 +57,6 @@ export class UserController {
       });
     }
   }
-
-
 
   private handleUsersNotFound(users: IAuthUser[], errorMessage: string): void {
     if (!users) {

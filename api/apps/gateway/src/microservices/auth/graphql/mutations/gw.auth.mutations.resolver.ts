@@ -68,7 +68,6 @@ export class AuthMutationsResolver {
     @Context() ctx,
     @Args('userCreationInput') userCreationInput: UserCreationInput,
     @Args('profileImage', { type: () => GraphQLUpload, nullable: true }) file?: FileUpload): Promise<GQLUserModel> {
-    console.log("signUp action activated");
     const response = await this.authService.signUp(userCreationInput, file);
     const {res} = ctx;
     res.cookie('Refresh_token', response.refreshToken, {

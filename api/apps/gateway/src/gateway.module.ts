@@ -27,9 +27,9 @@ import { PubSub } from 'graphql-subscriptions';
 import { MatchMakingMutationsResolver } from './microservices/matchMaking/graphql/mutations/gw.matchMaking.mutation.resolver';
 import { GwMatchmakingController } from './microservices/matchMaking/controller/gw.matchmaking.controller';
 import { graphqlUploadExpress } from 'graphql-upload';
-import { GWMediaService } from './microservices/auth/services/gw.media.service';
+import { GWMediaService } from './microservices/media/services/gw.media.service';
 import { TWOFATokenStrategy } from "./microservices/auth/strategies/twoFA.starategy";
-
+import { MeidaController } from './microservices/media/controllers/gw.media.controller';
 @Module({
   imports: [
     PassportModule,
@@ -84,6 +84,7 @@ import { TWOFATokenStrategy } from "./microservices/auth/strategies/twoFA.starat
     UserAccessAuthorizationGuard,
   ],
   controllers:[
+    MeidaController,
     AuthController,
     GwMatchmakingController,
   ]

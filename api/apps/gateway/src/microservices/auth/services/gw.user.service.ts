@@ -122,6 +122,21 @@ export class UserService {
 			return response;
 	}
 
-   
+    async updateUser(userid: number , data:{
+        profileImgUrl? : string;
+        email?: string;
+    }){
+        this.clientService.sendMessageWithPayload(
+            this.client,
+            {
+                role: 'user',
+                cmd: 'update'
+            },
+            {
+                id: userid,
+                data
+            }
+        )
+    }
 
 }

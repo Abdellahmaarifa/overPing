@@ -8,6 +8,7 @@ import { RpcExceptionService } from '@app/common/exception-handling';
 import { UpdateProfileDto } from '../dto/user.updateProfileId.dto'; 
 import {User, Prisma } from "@prisma/client";
 import { PrismaError } from '@app/common/exception-handling';
+import { UpdateUserDto } from '../dto/user.update.dto';
 
 @Injectable()
 export class UserService {
@@ -194,6 +195,31 @@ export class UserService {
 		  );
 		return(exists);
 	}
+	private async isUserExistById(id: number) : Promise<boolean>{
+		const exists = !!await this.prisma.user.findFirst(
+			{
+			  where: {
+				id
+			  }
+			}
+		  );
+		return(exists);
+	}
 
-	
+
+	async updateUser(userId: number , input: UpdateUserDto) : Promise<boolean>{
+		const exists = await this.isUserExistById(userId);
+		if (!exists){
+			this.rpcExceptionService.throwBadRequest(`User with ID ${userId} not found.`)
+		}
+		const user =  await this.prisma.user.update({
+			where: { id : userId },
+			data: input
+		});
+
+		if (!user){
+			return false;
+		}
+		return true;
+	}
 }

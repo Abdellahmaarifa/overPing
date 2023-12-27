@@ -13,7 +13,7 @@ import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { GwProfileService } from 'apps/gateway/src/microservices/profile/services/gw.profile.service';
 import { UserService } from './gw.user.service';
 import { FileUpload } from 'graphql-upload';
-import { GWMediaService } from './gw.media.service';
+import { GWMediaService } from '../../media/services/gw.media.service';
 
 @Injectable()
 export class GatewayService {
@@ -46,8 +46,10 @@ export class GatewayService {
 			userId: respond.user.id,
 			username: respond.user.username
 		})
-		// this.mediaService.uploadProfileImg(file);
-		
+		const imgUrl = await this.mediaService.uploadProfileImg(file);
+		this.userService.updateUser(respond.user.id, {
+			profileImgUrl : imgUrl
+		})
 		return (respond);
 	}
 

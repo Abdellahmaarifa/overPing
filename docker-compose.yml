@@ -230,6 +230,7 @@ services:
     volumes:
       - ./api/apps/media:/usr/src/app/apps/media
       - ./api/libs:/usr/src/app/libs
+      - ./api/apps/media/uploads:/usr/src/app/apps/media/uploads
     depends_on:
       - rabbitmq
       - gateway-dev
