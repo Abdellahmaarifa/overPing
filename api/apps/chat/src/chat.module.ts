@@ -9,6 +9,7 @@ import { ChannelService } from './services/channel.service';
 import { CheckersService } from './services/checkers.service';
 import { DirectMessageGateway } from './gateways/directMessage.gateway';
 import { NotificationsGateway } from './gateways/notifications.gateway';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { NotificationsGateway } from './gateways/notifications.gateway';
     ChannelController,
   ],
   providers: [
+    PrismaService,
     RpcExceptionService,
     DirectMessageService,
     ChannelService,

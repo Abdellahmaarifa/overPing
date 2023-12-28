@@ -4,7 +4,7 @@ import { Server, Socket } from 'socket.io';
 import { AddMessageInDMdto } from '../dto';
 import { DirectMessageService } from '../services/directMessage.service';
 import { CheckersService } from '../services/checkers.service';
-import { PrismaService } from 'apps/auth/prisma/prisma.service';
+import { PrismaService } from 'apps/chat/prisma/prisma.service';
 
 @WebSocketGateway({
   cors: true,

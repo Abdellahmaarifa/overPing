@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { PrismaService } from 'apps/auth/prisma/prisma.service';
+import { PrismaService } from 'apps/chat/prisma/prisma.service';
 
 @WebSocketGateway({
   cors: true,
