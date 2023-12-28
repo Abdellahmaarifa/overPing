@@ -1,0 +1,52 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PROFILE_DATABASE_URL")
+}
+
+model UserProfile {
+  id           Int                        @id @default(autoincrement())
+  user_id      Int                        @unique
+  nickname     String                     @unique
+  title        String
+  rank         Int?
+  xp           Int                        @default(0)
+  about        String                     @default("Chatting my way through life on [overPing]. Let's keep the conversations rolling! 📱✨ #Connected")
+  created_at   DateTime                   @default(now())
+  updated_at   DateTime                   @updatedAt
+  achievements UserProfileToAchievement[]
+  wallet       Wallet?
+
+  @@index([user_id, xp(sort: Desc), nickname])
+}
+
+model Wallet {
+  id            Int         @id @default(autoincrement())
+  balance       Int         @default(1500)
+  userProfileId Int         @unique
+  betAmount     Int?        @default(0)
+  userProfile   UserProfile @relation(fields: [userProfileId], references: [user_id])
+
+  @@unique([id, userProfileId])
+}
+
+model Achievement {
+  id            Int                        @id @default(autoincrement())
+  title         String
+  requirement   String
+  description   String
+  UsersProfiles UserProfileToAchievement[]
+}
+
+model UserProfileToAchievement {
+  userProfileId Int
+  achievementId Int
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  userProfile   UserProfile @relation(fields: [userProfileId], references: [user_id])
+
+  @@id([userProfileId, achievementId])
+}
