@@ -1,19 +1,20 @@
 version: "3.7"
 services:
   # CLIENT SERVICE FOR PRODUCTION #
-  # client:
-  #   build:
-  #     context: ./client
-  #     dockerfile: Dockerfile
-  #     target: production
-  #   networks:
-  #     - webapp
-  #   ports:
-  #     - 80:80
-  #   restart: always
-  #   container_name: client
-  #   profiles:
-  #     - development
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: production
+    networks:
+      - webapp
+    ports:
+      - 80:80
+    restart: always
+    container_name: client
+    profiles:
+      - production
+
   # CLIENT SERVICE FOR DEVELOPMENT #
   # client-dev:
   #   build:
@@ -99,20 +100,20 @@ services:
       - development
 
   # GATEWAY SERVICE FOR PRODUCTION #
-  gateway:
-    build:
-      context: ./api/apps/gateway
-      dockerfile: Dockerfile
-    networks:
-      - webapp
-      - database
-    restart: always
-    command: ["node", "main.js"]
-    container_name: gateway
-    profiles:
-      - production
+  # gateway:
+  #   build:
+  #     context: ./api/apps/gateway
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - webapp
+  #     - database
+  #   restart: always
+  #   command: ["node", "main.js"]
+  #   container_name: gateway
+  #   profiles:
+  #     - production
   # GATEWAY SERVICE FOR DEVELOPMENT #
-  gateway-dev:
+  gateway:
     build:
       context: ./api
       dockerfile: ./apps/gateway/Dockerfile
@@ -133,6 +134,7 @@ services:
     container_name: gateway
     profiles:
       - development
+      - production
 
   # AUTH SERVICE FOR DEVELOPMENT #
   auth:
@@ -155,11 +157,12 @@ services:
     depends_on:
       - rabbitmq
       - postgres_auth_db
-      - gateway-dev
+      - gateway
     restart: always
     container_name: auth
     profiles:
       - development
+      - production
 
   # PROFILE SERVICE FOR DEVELOPMENT #
   profile:
@@ -182,11 +185,12 @@ services:
     depends_on:
       - rabbitmq
       - postgress_profile_db
-      - gateway-dev
+      - gateway
     restart: always
     container_name: profile
     profiles:
       - development
+      - production
 
   # MATCHMAKING SERVICE FOR DEVELOPMENT #
   matchmaking:
@@ -205,10 +209,11 @@ services:
       - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
-      - gateway-dev
+      - gateway
     restart: always
     profiles:
       - development
+      - production
 
   # MATCHMAKING SERVICE FOR DEVELOPMENT #
 
@@ -230,10 +235,11 @@ services:
       - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
-      - gateway-dev
+      - gateway
     restart: always
     profiles:
       - development
+      - production
 
   # RABBBITMQ SERVER #
   rabbitmq:

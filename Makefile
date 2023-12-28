@@ -5,7 +5,7 @@ COMPOSE_FILE := docker-compose.yml
 COMPOSE := docker-compose -f $(COMPOSE_FILE) --env-file=./api/.env
 
 # Define targets
-.PHONY: start stop restart logs clean clean-all client
+.PHONY: start stop restart logs clean fclean client
 
 
 
@@ -17,7 +17,7 @@ build:
 	$(COMPOSE) --profile development build
 
 # Start services (production profile)
-start-production:
+ship:
 	$(COMPOSE) --profile production up -d
 
 
@@ -42,14 +42,17 @@ logs:
 
 # starting the client service
 client:
-	$(COMPOSE) --profile development up client-dev	
+	docker stop client
+	docker rm client
+	docker rmi overping_client
+	$(COMPOSE) --profile production up -d client
 
 # Clean up containers
 clean:
 	$(COMPOSE) down --remove-orphans
 
 # Clean up containers, volumes, and networks
-clean-all:
+fclean:
 	docker system prune -a -f
 
 # Define the default target when you run 'make' with no arguments
@@ -62,12 +65,12 @@ help:
 	@echo "Targets:"
 	@echo "  build               Build Docker Compose services"
 	@echo "  start               Start services (development profile)"
-	@echo "  start-production    Start services (production profile)"
+	@echo "  ship    Start services (production profile)"
 	@echo "  stop                Stop services"
 	@echo "  restart             Restart services (development profile)"
 	@echo "  restart-production  Restart services (production profile)"
 	@echo "  logs                View container logs (development profile)"
 	@echo "  client              Start the client service (development profile)"
 	@echo "  clean               Clean up containers (leave volumes and networks)"
-	@echo "  clean-all           Clean up containers, volumes, and networks"
+	@echo "  fclean              Clean up containers, volumes, and networks"
 	@echo "  help                Show this help message"

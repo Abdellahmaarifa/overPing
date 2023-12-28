@@ -40,6 +40,7 @@ const HELLO = `
     }
   }
 `;
+
 const graphqlEndpoint = "http://localhost:5500/graphql";
 const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);

@@ -80,10 +80,10 @@ const TopNavBar = () => {
             setOpenMobileMenu(!openMobileMenu);
           }}
         >
-          <MobileMenuIconElm elm="1" open={openMobileMenu} />
-          <MobileMenuIconElm elm="2" open={openMobileMenu} />
-          <MobileMenuIconElm elm="3" open={openMobileMenu} />
-          <MobileMenuIconElm elm="4" open={openMobileMenu} />
+          <MobileMenuIconElm $elm="1" open={openMobileMenu} />
+          <MobileMenuIconElm $elm="2" open={openMobileMenu} />
+          <MobileMenuIconElm $elm="3" open={openMobileMenu} />
+          <MobileMenuIconElm $elm="4" open={openMobileMenu} />
         </MobileMenuIcon>
         <UserBoxSeparator></UserBoxSeparator>
         {/* USER STATUS BOX */}

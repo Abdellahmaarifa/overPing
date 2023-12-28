@@ -45,7 +45,7 @@ export const MobileMenuIcon = tw.div`
 `;
 
 export const MobileMenuIconElm: (props: {
-  elm: string;
+  $elm: string;
   open: boolean;
 }) => string = styled.div`
   ${() => tw`absolute
@@ -57,13 +57,13 @@ export const MobileMenuIconElm: (props: {
     rotate-0
     [transition: .25s ease-in-out]
     rounded-[10px]`}
-  ${({ elm }) => elm === "1" && tw`top-[2px]`}
-    ${({ elm }) => (elm === "2" || elm === "3") && tw`top-[10px]`}
-    ${({ elm }) => elm === "4" && tw`top-[18px]`}
-    ${({ elm, open }) =>
-    (elm === "1" || elm === "4") && open && tw`top-[10px] w-[0] left-1/2`}
-    ${({ elm, open }) => elm === "2" && open && tw`rotate-[45deg]`}
-    ${({ elm, open }) => elm === "3" && open && tw`-rotate-[45deg]`}
+  ${({ $elm }) => $elm === "1" && tw`top-[2px]`}
+    ${({ $elm }) => ($elm === "2" || $elm === "3") && tw`top-[10px]`}
+    ${({ $elm }) => $elm === "4" && tw`top-[18px]`}
+    ${({ $elm, open }) =>
+    ($elm === "1" || $elm === "4") && open && tw`top-[10px] w-[0] left-1/2`}
+    ${({ $elm, open }) => $elm === "2" && open && tw`rotate-[45deg]`}
+    ${({ $elm, open }) => $elm === "3" && open && tw`-rotate-[45deg]`}
 `;
 
 export const UserBoxSeparator = tw.div`

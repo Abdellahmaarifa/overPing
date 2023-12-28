@@ -61,6 +61,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
                   <MatchResaultSkeleton key={match.id} />
                 ) : (
                   <MatchResault
+                    key={id}
                     {...{
                       ...match,
                       userImage: (data as any)?.user?.profilePhoto as string,
