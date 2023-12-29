@@ -151,6 +151,7 @@ const SignUpFormStepFour = ({ viewModel, formikProps }: FormStepProps) => {
                 avatar.set(fileReader.result as string);
               }
             };
+            if (e.target.files?.length === 0) return;
             fileReader.readAsDataURL(
               e.target.files ? e.target.files[0] : new Blob()
             );

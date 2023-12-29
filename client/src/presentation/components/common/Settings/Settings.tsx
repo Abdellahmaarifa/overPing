@@ -30,7 +30,9 @@ const Settings = () => {
       {settingsNav === SETTINGS_LINKS.USER_INFORMATION && (
         <SetInformationModel />
       )}
-      {settingsNav === SETTINGS_LINKS.GAME_LOOK && <SetGameModel />}
+      {/*
+        settingsNav === SETTINGS_LINKS.GAME_LOOK && <SetGameModel />
+        */}
       {settingsNav === SETTINGS_LINKS.SECURITY_PASSWORD && <SetPasswordModel />}
       {settingsNav == SETTINGS_LINKS.SECURITY_TWO_FACTOR_AUTH && (
         <SetTwoFactorAuthModel />

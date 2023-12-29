@@ -36,9 +36,11 @@ const SettingsModel = () => {
       >
         security
       </SettingModelLink>
-      <SettingModelLink onClick={(e) => navigate(e, SETTINGS_LINKS.GAME_LOOK)}>
+      {/*
+        <SettingModelLink onClick={(e) => navigate(e, SETTINGS_LINKS.GAME_LOOK)}>
         Game look
       </SettingModelLink>
+      */}
       <SettingModelLinkDanger
         onClick={(e) => navigate(e, SETTINGS_LINKS.DELETE_ACCOUNT)}
       >
