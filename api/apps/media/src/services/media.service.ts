@@ -19,9 +19,10 @@ export class MediaService {
     buffer: Buffer
   }): Promise<string> {
     const uploadDir = this.configService.get<string>('storage.useravatar.uploadDir');
+    const url = this.configService.get<string>('URL.userAvatarUrl');
     const imgName = await this.generateName(file.filename);
     await this.saveImg(uploadDir, imgName, file.buffer);
-    return ("http://localhost:5500/image/avatar/" + imgName);
+    return (url + imgName);
   }
 
   async updateProfileBgImg(file: {
@@ -32,9 +33,10 @@ export class MediaService {
     buffer: Buffer
   }): Promise<string> {
     const uploadDir = this.configService.get<string>('storage.profileBg.uploadDir');
+    const url = this.configService.get<string>('URL.profileBgUrl');
     const imgName = await this.generateName(file.filename);
     await this.saveImg(uploadDir, imgName, file.buffer);
-    return ("http://localhost:5500image/profileBackGound/" + imgName);
+    return (url + imgName);
   }
 
 
