@@ -9,9 +9,7 @@ import mime from 'mime';
 export class MediaService {
   private readonly logger = new Logger(MediaService.name);
 
-  constructor(private readonly configService: ConfigService) {
-    console.log("pwd ", process.cwd())
-  }
+  constructor(private readonly configService: ConfigService) {}
 
   async updateAavatarImg(file: {
     filename: string,
@@ -23,7 +21,7 @@ export class MediaService {
     const uploadDir = this.configService.get<string>('storage.useravatar.uploadDir');
     const imgName = await this.generateName(file.filename);
     await this.saveImg(uploadDir, imgName, file.buffer);
-    return ("http://image/avatar/" + imgName);
+    return ("http://localhost:5500/image/avatar/" + imgName);
   }
 
   async updateProfileBgImg(file: {
@@ -36,7 +34,7 @@ export class MediaService {
     const uploadDir = this.configService.get<string>('storage.profileBg.uploadDir');
     const imgName = await this.generateName(file.filename);
     await this.saveImg(uploadDir, imgName, file.buffer);
-    return ("http://image/profileBackGound/" + imgName);
+    return ("http://localhost:5500image/profileBackGound/" + imgName);
   }
 
 

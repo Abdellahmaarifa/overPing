@@ -65,17 +65,14 @@ export class FriendService {
   }
 
   async getFriendshipRequests(userId: number) {
-    // Get friendship requests where the user is the recipient and the status is PENDING
     const requests = await this.prisma.friendship.findMany({
       where: {
         userB: userId,
         status: 'PENDING',
       },
     });
-    // Extract requesterIds from the requests
-    console.log('requests: ', requests);
+
     const requesterIds = requests.map((request) => request.userA);
-    // Get user information for the requesters
     const requesters = this.clientService.sendMessageWithPayload(
       this.client,
       {
@@ -89,7 +86,6 @@ export class FriendService {
   }
 
   async getBlockedUsers(userId: number) {
-    // Get friendships where the user is involved and the status is BLOCKED
     const blockedFriendships = await this.prisma.friendship.findMany({
       where: {
         status: FriendshipStatus.BLOCKED,
@@ -99,7 +95,6 @@ export class FriendService {
     const filteredBlockedUserIds = blockedFriendships.map((blocked) =>
       blocked.userA === userId ? blocked.userB : blocked.userA,
     );
-    // Get user information for the blocked users
     const blockedUsers = this.clientService.sendMessageWithPayload(
       this.client,
       {
@@ -114,7 +109,6 @@ export class FriendService {
 
   /*
   async getSuggestedUsers(userId: number, limit: number = 10): Promise<User[]> {
-    // Get the user's existing friends
     const existingFriends = await this.prisma.friendship.findMany({
       where: {
         status: FriendshipStatus.ACCEPTED,
@@ -125,16 +119,13 @@ export class FriendService {
       },
     });
 
-    // Extract user ids from existing friendships
     const existingFriendIds = existingFriends.flatMap((friendship) => [
       friendship.userA,
       friendship.userB,
     ]);
 
-    // Exclude existing friends and the user themselves
     const excludedUserIds = [...existingFriendIds, userId];
 
-    // Get suggested users who are not already friends
     const suggestedUsers = await this.prisma.user.findMany({
       where: {
         id: {
@@ -151,7 +142,6 @@ export class FriendService {
   //=============the actions ======================
 
   async addFriend(userId: number, friendId: number): Promise<boolean> {
-    // Check if a friendship request already exists between the users
 
     const existingRequest = await this.checkExistingFriendship(
       userId,
@@ -163,7 +153,7 @@ export class FriendService {
       );
     }
 
-    // Create a new friendship request
+
     const newRequest = await this.prisma.friendship.create({
       data: {
         userA: userId,
@@ -181,10 +171,8 @@ export class FriendService {
   }
 
   async removeFriend(userId: number, friendId: number): Promise<boolean> {
-    // Check if a friendship request already exists between the users
     try {
       const friend = await this.getFriendship(userId, friendId, 'FRIEND');
-      // Create a new friendship request
       await this.prisma.friendship.delete({
         where: {
           id: friend.id,
@@ -309,8 +297,7 @@ export class FriendService {
 
 //===========================================
 async getSuggestedUsers(userId: number): Promise<number[]> {
-  // Get the friends of the user
-  const userFriends = await this.prismaService.friendship.findMany({
+  const userFriends = await this.prisma.friendship.findMany({
     where: {
       status: 'FRIEND',
       OR: [
@@ -320,7 +307,6 @@ async getSuggestedUsers(userId: number): Promise<number[]> {
     },
   });
 
-  // Extract user IDs from the friends
   const userFriendIds = userFriends.flatMap((friendship) => {
     if (friendship.userA === userId) {
       return friendship.userB;
@@ -330,7 +316,7 @@ async getSuggestedUsers(userId: number): Promise<number[]> {
   });
 
   // Get friends of friends
-  const suggestedUsers = await this.prismaService.friendship.findMany({
+  const suggestedUsers = await this.prisma.friendship.findMany({
     where: {
       status: 'FRIEND',
       OR: [
