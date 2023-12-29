@@ -1,20 +1,20 @@
 version: '3.7'
 services:
 
-  # # CLIENT SERVICE FOR PRODUCTION #
-  # client:
-  #   build:
-  #     context: ./client
-  #     dockerfile: Dockerfile
-  #     target: production
-  #   networks:
-  #     - webapp
-  #   ports:
-  #     - 80:80
-  #   restart: always
-  #   container_name: client
-  #   profiles:
-  #     - production
+  # CLIENT SERVICE FOR PRODUCTION #
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: production
+    networks:
+      - webapp
+    ports:
+      - 80:80
+    restart: always
+    container_name: client
+    profiles:
+      - production
   # # CLIENT SERVICE FOR DEVELOPMENT # 
   # client-dev:
   #   build:

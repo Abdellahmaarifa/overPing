@@ -7,7 +7,7 @@ import React, {
 } from "react";
 
 import { Store } from "domain/DomainLayer";
-import { User } from "types/User.type";
+import { User } from "domain/model/User.type";
 
 type Props = {
   children: React.ReactNode;
@@ -40,6 +40,7 @@ const HELLO = `
     }
   }
 `;
+
 const graphqlEndpoint = "http://localhost:5500/graphql";
 const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);

@@ -13,7 +13,9 @@ const StepLink = (props: {
     <BackLinkContainer onClick={props.onClick}>
       <BackIcon>{props.children}</BackIcon>
 
-      <BackLink>{`Stpe ${registerStep + 1} of ${props.lastStep + 1}`}</BackLink>
+      <BackLink>{`Stpe ${registerStep + 1} of ${
+        props.lastStep! + 1
+      }`}</BackLink>
     </BackLinkContainer>
   );
 };

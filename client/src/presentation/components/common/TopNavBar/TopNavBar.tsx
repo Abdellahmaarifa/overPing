@@ -80,10 +80,10 @@ const TopNavBar = () => {
             setOpenMobileMenu(!openMobileMenu);
           }}
         >
-          <MobileMenuIconElm elm="1" open={openMobileMenu} />
-          <MobileMenuIconElm elm="2" open={openMobileMenu} />
-          <MobileMenuIconElm elm="3" open={openMobileMenu} />
-          <MobileMenuIconElm elm="4" open={openMobileMenu} />
+          <MobileMenuIconElm $elm="1" open={openMobileMenu} />
+          <MobileMenuIconElm $elm="2" open={openMobileMenu} />
+          <MobileMenuIconElm $elm="3" open={openMobileMenu} />
+          <MobileMenuIconElm $elm="4" open={openMobileMenu} />
         </MobileMenuIcon>
         <UserBoxSeparator></UserBoxSeparator>
         {/* USER STATUS BOX */}
@@ -95,11 +95,11 @@ const TopNavBar = () => {
           }}
         >
           <UserImage>
-            {<img src={user.profilePhoto} alt="" tw="w-full h-full" />}
+            {<img src={user?.profilePhoto} alt="" tw="w-full h-full" />}
           </UserImage>
           <UserInfo>
             <UserInfoNameConatiner>
-              <UserInfoName>{user.username}</UserInfoName>
+              <UserInfoName>{user?.username}</UserInfoName>
               <UserInfoIcon>
                 <DownArrowIcon />
               </UserInfoIcon>

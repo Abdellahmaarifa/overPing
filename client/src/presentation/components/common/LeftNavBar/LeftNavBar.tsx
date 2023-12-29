@@ -12,7 +12,7 @@ import { useChatContext } from "context/chat.context";
 import { useLayoutContext } from "context/layout.context";
 import { useSettingsContext } from "context/settings.context";
 import { useUserContext } from "context/user.context";
-import { useLogoutMutation } from "gql";
+import { useLogoutMutation } from "gql/index";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -95,7 +95,7 @@ const Navbar = () => {
           navigate("/login");
           await logout({
             variables: {
-              id: Number(user.id),
+              id: Number(user?.id),
             },
           });
         }}

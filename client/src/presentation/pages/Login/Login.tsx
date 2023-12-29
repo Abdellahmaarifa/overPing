@@ -10,7 +10,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { useLoginMutation, useRegisterMutation } from "gql";
+import { useLoginMutation, useRegisterMutation } from "gql/index";
 import { FormContainer, PageContainer } from "./Login.style";
 const Login = () => {
   const location = useLocation();
@@ -34,7 +34,7 @@ const Login = () => {
         password: "test",
       },
     });
-    const accessToken = res.data?.login?.accessToken;
+    const accessToken = (res.data as any)?.login?.accessToken;
     signIn({ token: accessToken ? accessToken : null });
     console.log(res);
   }

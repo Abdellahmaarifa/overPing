@@ -1,12 +1,12 @@
 import { useUserContext } from "context/user.context";
-import { sleep, useStateWithGetSet } from "helpers";
+import { sleep, useStateWithGetSet } from "helpers/index";
 import { toast } from "react-hot-toast";
 import {
   LoginModelType,
   LoginViewModelType,
   LoginViewState,
-} from "types/Login.type";
-import { useLoginMutation } from "gql";
+} from "domain/model/Login.type";
+import { useLoginMutation } from "gql/index";
 import { LoginModel } from "./LoginModel";
 import { Navigate } from "react-router-dom";
 
@@ -76,10 +76,7 @@ class LoginViewModel implements LoginViewModelType {
         // });
       } catch (err: any) {
         console.log("comes from the server: ", err);
-        if (
-          err?.message ==
-          "Two-factor authentication is required. Please provide the 2FA code."
-        ) {
+        if (err?.message == "Two-factor") {
           // try 2factor auth:
           window.location.replace("/login?step=verification");
         }

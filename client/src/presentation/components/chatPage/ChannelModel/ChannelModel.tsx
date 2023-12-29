@@ -56,6 +56,8 @@ const ChannelModel = () => {
           <Switcher
             title="Private channel"
             description="Only selected members and roles will be able to view this channel."
+            enable={false}
+            onChange={() => {}}
           />
         </CreateChannelModelField>
         <CreateChannelModelField>

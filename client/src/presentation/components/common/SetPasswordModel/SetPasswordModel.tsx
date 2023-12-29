@@ -13,7 +13,7 @@ import { useUserContext } from "context/user.context";
 import {
   useEnableTwoFactorAuthMutation,
   useVerifyTwoFactorAuthMutation,
-} from "gql";
+} from "gql/index";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import tw from "twin.macro";
@@ -23,7 +23,7 @@ const SetPasswordModel = () => {
   const { user, updateUser } = useUserContext();
   const [enable, setEnable] = useState(false);
   const [showVerificationModel, setShowVerificationMdel] = useState(false);
-  const [QRcodeImg, setQRcodeImg] = useState<String | undefined>("");
+  const [QRcodeImg, setQRcodeImg] = useState<string | undefined>("");
   const [QRcode, setQRcode] = useState<string | null>(null);
   const [enableTwoFactor] = useEnableTwoFactorAuthMutation();
   const [verifyTwoFactorAuth] = useVerifyTwoFactorAuthMutation();
@@ -36,7 +36,7 @@ const SetPasswordModel = () => {
   } = useSettingsContext();
   console.log("this is the user: ", user);
   useEffect(() => {
-    setEnable(user?.twoStepVerificationEnabled);
+    setEnable(user?.twoStepVerificationEnabled!);
   }, []);
 
   const setTwoFactorAuth = async () => {
@@ -47,7 +47,7 @@ const SetPasswordModel = () => {
       await toast.promise(
         enableTwoFactor({
           variables: {
-            id: Number(user.id),
+            id: Number(user?.id),
           },
         }),
         {
@@ -84,7 +84,7 @@ const SetPasswordModel = () => {
             setShowVerificationMdel(false);
             setEnable(true);
             setTimeout(() => {
-              updateUser({ ...user, twoStepVerificationEnabled: true });
+              updateUser({ ...user!, twoStepVerificationEnabled: true });
             }, 1000);
             return "2FA is enabled.";
           },
@@ -165,7 +165,7 @@ const SetPasswordModel = () => {
             onClick={() => {
               if (!showVerificationModel || !QRcode) return;
               console.log("sending .. ", QRcode);
-              verifyQr(Number(user.id), QRcode!);
+              verifyQr(Number(user?.id), QRcode!);
             }}
           />
         </SetPassField>

@@ -2,7 +2,7 @@ import PingBoy from "assets/home/ping_boy.png";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useNavigate } from "react-router-dom";
-import { useUserQuery } from "gql";
+import { useUserQuery } from "gql/index";
 import {
   BannerContainer,
   BannerImage,
@@ -33,7 +33,7 @@ const HomeBanner = () => {
         <BannerTitle>
           {
             <>
-              Welcome Back <Span>{user.username}</Span>
+              Welcome Back <Span>{user?.username}</Span>
             </>
           }
         </BannerTitle>

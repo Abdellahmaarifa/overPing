@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Dispatch, SetStateAction } from "react";
-import { LoginModelType } from "types/Login.type";
+import { LoginModelType } from "domain/model/Login.type";
 
 export class LoginModel implements LoginModelType {
   email: string;

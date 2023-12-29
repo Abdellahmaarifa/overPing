@@ -9,7 +9,6 @@ import {
 } from '../graphql/input';
 import { JwtPayloadDto } from '@app/common/auth/dto';
 import { AuthResponseDto } from '@app/common';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { GwProfileService } from 'apps/gateway/src/microservices/profile/services/gw.profile.service';
 import { UserService } from './gw.user.service';
 import { FileUpload } from 'graphql-upload';

@@ -1,3 +1,5 @@
+import { AnyObject } from "yup";
+
 export interface MatchResaultType {
   id: string;
   userImage: string;
@@ -7,4 +9,5 @@ export interface MatchResaultType {
   matchDate: Date;
   points: number;
   level: number;
+  key?: any;
 }

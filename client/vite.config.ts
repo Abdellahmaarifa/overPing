@@ -2,6 +2,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
+//import removeConsole from "vite-plugin-remove-console";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -28,6 +29,7 @@ export default defineConfig({
     nodePolyfills({
       protocolImports: true,
     }),
+    // removeConsole(),
   ],
   resolve: {
     alias: {

@@ -4,7 +4,6 @@ import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from "@app/rabbit-mq";
 import {GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto';
 import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
-import { UserProfileUpdateInput } from '../graphql/input/UserProfileUpdate.input';
 import { GwProfileService } from "../../profile/services/gw.profile.service";
 @Injectable()
 export class UserService {
@@ -100,18 +99,20 @@ export class UserService {
         return (response);
     }
 
-    async removeUser(id: number) : Promise<boolean>{
-        const response = await this.clientService.sendMessageWithPayload(
-            this.client,
-            {
-                role: 'user',
-                cmd: 'delete-user'
-            },
-            id
-        )
-        return (response);
+    async removeAccount(id: number, password: string): Promise<boolean> {
+      const response = await this.clientService.sendMessageWithPayload(
+        this.client,
+        {
+          role: 'user',
+          cmd: 'delete-user',
+        },
+        {
+          id,
+          password,
+        },
+      );
+      return response;
     }
-
 
     async getUserByRefreshTokenMatch(refreshToken : GetRefreshUserDto){
 		const response = await this.clientService.sendMessageWithPayload(

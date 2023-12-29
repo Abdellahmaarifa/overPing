@@ -73,12 +73,12 @@ export type Mutation = {
   UpdateUserProfile: Scalars['Boolean']['output'];
   authenticate_2fa: GqlUserModel;
   createProfile: GqlUserProfileModel;
+  deleteAccount: Scalars['Boolean']['output'];
   enableTwoFactorAuth: Scalars['String']['output'];
   joinMatchmakingQueue?: Maybe<Scalars['Boolean']['output']>;
   logOut: Scalars['Boolean']['output'];
   placeBet?: Maybe<Scalars['Boolean']['output']>;
   refresh: Scalars['String']['output'];
-  removeUser: Scalars['Boolean']['output'];
   removeUserProfile: Scalars['Boolean']['output'];
   resolveBet?: Maybe<Scalars['Boolean']['output']>;
   signIn: GqlUserModel;
@@ -104,6 +104,12 @@ export type MutationCreateProfileArgs = {
 };
 
 
+export type MutationDeleteAccountArgs = {
+  id: Scalars['Float']['input'];
+  password: Scalars['String']['input'];
+};
+
+
 export type MutationEnableTwoFactorAuthArgs = {
   id: Scalars['Float']['input'];
 };
@@ -121,11 +127,6 @@ export type MutationLogOutArgs = {
 
 export type MutationPlaceBetArgs = {
   transferFundsInput: PlaceBetInput;
-};
-
-
-export type MutationRemoveUserArgs = {
-  id: Scalars['Float']['input'];
 };
 
 
@@ -296,12 +297,13 @@ export type UserQueryVariables = Exact<{
 
 export type UserQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean } };
 
-export type RemoveUserProfileMutationVariables = Exact<{
-  userId: Scalars['Float']['input'];
+export type DeleteAccountMutationVariables = Exact<{
+  id: Scalars['Float']['input'];
+  password: Scalars['String']['input'];
 }>;
 
 
-export type RemoveUserProfileMutation = { __typename?: 'Mutation', removeUserProfile: boolean };
+export type DeleteAccountMutation = { __typename?: 'Mutation', deleteAccount: boolean };
 
 export type UpdateUserProfileMutationVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -628,37 +630,38 @@ export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQ
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
-export const RemoveUserProfileDocument = gql`
-    mutation removeUserProfile($userId: Float!) {
-  removeUserProfile(userId: $userId)
+export const DeleteAccountDocument = gql`
+    mutation deleteAccount($id: Float!, $password: String!) {
+  deleteAccount(id: $id, password: $password)
 }
     `;
-export type RemoveUserProfileMutationFn = Apollo.MutationFunction<RemoveUserProfileMutation, RemoveUserProfileMutationVariables>;
+export type DeleteAccountMutationFn = Apollo.MutationFunction<DeleteAccountMutation, DeleteAccountMutationVariables>;
 
 /**
- * __useRemoveUserProfileMutation__
+ * __useDeleteAccountMutation__
  *
- * To run a mutation, you first call `useRemoveUserProfileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveUserProfileMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useDeleteAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAccountMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [removeUserProfileMutation, { data, loading, error }] = useRemoveUserProfileMutation({
+ * const [deleteAccountMutation, { data, loading, error }] = useDeleteAccountMutation({
  *   variables: {
- *      userId: // value for 'userId'
+ *      id: // value for 'id'
+ *      password: // value for 'password'
  *   },
  * });
  */
-export function useRemoveUserProfileMutation(baseOptions?: Apollo.MutationHookOptions<RemoveUserProfileMutation, RemoveUserProfileMutationVariables>) {
+export function useDeleteAccountMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAccountMutation, DeleteAccountMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveUserProfileMutation, RemoveUserProfileMutationVariables>(RemoveUserProfileDocument, options);
+        return Apollo.useMutation<DeleteAccountMutation, DeleteAccountMutationVariables>(DeleteAccountDocument, options);
       }
-export type RemoveUserProfileMutationHookResult = ReturnType<typeof useRemoveUserProfileMutation>;
-export type RemoveUserProfileMutationResult = Apollo.MutationResult<RemoveUserProfileMutation>;
-export type RemoveUserProfileMutationOptions = Apollo.BaseMutationOptions<RemoveUserProfileMutation, RemoveUserProfileMutationVariables>;
+export type DeleteAccountMutationHookResult = ReturnType<typeof useDeleteAccountMutation>;
+export type DeleteAccountMutationResult = Apollo.MutationResult<DeleteAccountMutation>;
+export type DeleteAccountMutationOptions = Apollo.BaseMutationOptions<DeleteAccountMutation, DeleteAccountMutationVariables>;
 export const UpdateUserProfileDocument = gql`
     mutation UpdateUserProfile($userId: Float!, $UpdateProfileInput: UpdateProfileInput!) {
   UpdateUserProfile(userId: $userId, UpdateProfileInput: $UpdateProfileInput)

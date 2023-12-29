@@ -40,8 +40,8 @@ export class UserController {
   }
 
   @MessagePattern({ role: 'user', cmd: 'delete-user' })
-  async remove(id: number): Promise<boolean> {
-    return this.userService.remove(id);
+  async remove(input: { id: number; password: string }): Promise<boolean> {
+    return this.userService.remove(input.id, input.password);
   }
 
   @MessagePattern({ role: 'user', cmd: 'update' })

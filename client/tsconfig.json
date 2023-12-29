@@ -20,6 +20,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "noImplicitAny": false,
     "baseUrl": "./src",
     "paths": {
       "components/*": [
@@ -40,8 +41,8 @@
       "helpers/*": [
         "infrastructure/helpers/*"
       ],
-      "gql": [
-        "data/gql/index"
+      "gql*": [
+        "data/gql*"
       ],
       "state/*": [
         "state/*"
@@ -61,7 +62,8 @@
   "include": [
     "src",
     "src/infrastructure/types",
-    "src/infrastructure/types/*"
+    "src/infrastructure/types/*",
+    "src/**/*"
   ],
   "references": [
     {
