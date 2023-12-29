@@ -59,6 +59,7 @@ export class ProfileService {
         where: { id: id },
         include: {
           wallet: true,
+          gameStatus: true,
         },
       });
       return userProfile;
@@ -76,6 +77,7 @@ export class ProfileService {
         where: { user_id: userId },
         include: {
           wallet: true,
+          gameStatus: true,
         },
       });
       return userProfile;

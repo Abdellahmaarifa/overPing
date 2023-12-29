@@ -10,7 +10,10 @@ export class GQLUserModel {
     username: string;
 
     @Field()
-    email: string;
+    email?: string;
+
+    @Field()
+    profileImgUrl: string;
     
     @Field({ nullable: true })
     googleId?: string;
@@ -20,7 +23,7 @@ export class GQLUserModel {
 
 
     @Field()
-    twoStepVerificationEnabled: boolean;
+    twoStepVerificationEnabled?: boolean;
     
     
     @Field({ nullable: true })

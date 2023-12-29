@@ -1,0 +1,1 @@
+export type FriendshipStatusType = "FRIEND" | "PENDING" | "REJECTED" | "BLOCKED";

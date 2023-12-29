@@ -1,5 +1,6 @@
 import { Field, ObjectType, ID } from "@nestjs/graphql";
 import { GQLWalletModel } from './graphqlWallet';
+import { GQLGameStatusModel } from './graphqlGameStatus';
 @ObjectType()
 export class GQLUserProfileModel {
     @Field(() => ID)
@@ -27,8 +28,6 @@ export class GQLUserProfileModel {
     wallet: GQLWalletModel
 
     @Field()
-    created_at: Date
+    gameStatus: GQLGameStatusModel
 
-    @Field()
-    updated_at: Date
 }

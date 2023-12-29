@@ -65,6 +65,7 @@ export class UserService {
 					id: true,
 					email: true,
 					username: true,
+					profileImgUrl: true,
 					googleId: true,
 					fortyTwoId: true,
 					twoStepVerificationEnabled: true,
@@ -222,4 +223,23 @@ export class UserService {
 		}
 		return true;
 	}
+
+	
+	async findUserByIds(friendIds: number[]): Promise<IAuthUser[]> {
+		console.log("friends id: ", friendIds)
+		const friends = await this.prisma.user.findMany({
+		  where: {
+			id: {
+			  in: friendIds,
+			},
+		  },
+		  select: {
+			id: true,
+			username: true,
+			profileImgUrl: true,
+		},
+		});
+		console.log("friends: ", friends);
+		return friends;
+	  }
 }

@@ -72,6 +72,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/media/tsconfig.app.json"
       }
+    },
+    "friend": {
+      "type": "application",
+      "root": "apps/friend",
+      "entryFile": "main",
+      "sourceRoot": "apps/friend/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/friend/tsconfig.app.json"
+      }
     }
   }
 }

@@ -49,6 +49,11 @@ export class UserController {
     return this.userService.updateUser(input.id, input.data);
   }
 
+  @MessagePattern({role: 'user', cmd: 'findUsersByIds'})
+  async findUsersByIds(friendIds: number[]): Promise<IAuthUser[]> {
+    return this.userService.findUserByIds(friendIds);
+  }
+
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {
     if (!user) {
       this.rpcExceptionService.throwCatchedException({

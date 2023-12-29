@@ -17,7 +17,7 @@ import { LoggerService } from '@app/common';
 import { JwtRefreshTokenStrategy } from './microservices/auth/strategies/jwt.refreshToken.strategy';
 import { UserAccessAuthorizationGuard } from './microservices/auth/guards/user-auth.guard';
 import { GwProfileService } from './microservices/profile/services/gw.profile.service';
-import { ProfileQueryResolver } from './microservices/profile/graphql/queries/gw.profile.guery.resolver';
+import { ProfileQueryResolver } from './microservices/profile/graphql/queries/gw.profile.query.resolver';
 import { UserProifleMutationsResolver } from './microservices/profile/graphql/mutations/gw.profile.mutations.resolver';
 import { WalletMutationsResolver } from './microservices/profile/graphql/mutations/gw.wallet.user.mutations.resolver';
 import { GwWalletService } from './microservices/profile/services/gw.wallet.service';
@@ -31,9 +31,9 @@ import { GWMediaService } from './microservices/media/services/gw.media.service'
 import { TWOFATokenStrategy } from "./microservices/auth/strategies/twoFA.starategy";
 import { MeidaController } from './microservices/media/controllers/gw.media.controller';
 import { MediaMutationsResolver } from './microservices/media/graphql/mutations/gw.media.mutation';
-
-
-
+import { FriendMutationsResolver } from './microservices/friend/graphql/mutaions/gw.friend.mutations.resolver';
+import { FriendQueryResolver } from './microservices/friend/graphql/queries/gw.frined.query.resolvert';
+import { GwFriendService } from './microservices/friend/services/gw.friend.service';
 
 
 
@@ -67,12 +67,13 @@ import { MediaMutationsResolver } from './microservices/media/graphql/mutations/
   RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),
   RabbitMqModule.forClientProxy(IRmqSeverName.MATCH_MAKING),
   RabbitMqModule.forClientProxy(IRmqSeverName.MEDIA),
+  RabbitMqModule.forClientProxy(IRmqSeverName.FRIEND),
 ],
   providers: [{
     provide: 'PUB_SUB',
     useValue: new PubSub(),
     },
-    
+    GwFriendService,
     GWMediaService,
     GwMatchMakingService, 
     GatewayService,
@@ -81,11 +82,13 @@ import { MediaMutationsResolver } from './microservices/media/graphql/mutations/
     GwWalletService,
     MatchMakingQueryResolver,
     MatchMakingMutationsResolver,
+    FriendMutationsResolver,
     ProfileQueryResolver,
     MediaMutationsResolver,
     UserProifleMutationsResolver,
     WalletMutationsResolver,
     AuthQueryResolver,
+    FriendQueryResolver,
     AuthMutationsResolver,
     TWOFATokenStrategy,
     FortyTwoStrategy,

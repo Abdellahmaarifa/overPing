@@ -1,4 +1,5 @@
 import { IWallet } from './IWallet';
+import { IGameStatus } from './IGameStatus'
 export class IUserProfile {
     id: number
     user_id: number
@@ -8,6 +9,5 @@ export class IUserProfile {
     rank: number
     about: string
     wallet: IWallet
-    created_at: Date
-    updated_at: Date
+    gameStatus: IGameStatus
 }

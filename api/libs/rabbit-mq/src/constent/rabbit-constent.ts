@@ -16,5 +16,8 @@ export const RABBIT_SERVICES: Record<IRmqSeverName, { queue: string }> = {
     },
     [IRmqSeverName.MEDIA]: {
         queue: 'media_queue'
+    },
+    [IRmqSeverName.FRIEND]: {
+        queue: 'friend_queue'
     }
 }

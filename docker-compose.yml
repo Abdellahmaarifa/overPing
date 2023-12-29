@@ -60,24 +60,24 @@ services:
 
 #   DATABASE SERVICE FOR MEDIA DEV AND PROD #
 
-  postgres_media_db:
-    image: postgres
+  # postgres_media_db:
+  #   image: postgres
  
-    environment:
-      - POSTGRES_DB=${MEDIA_DB_NAME}
-      - POSTGRES_USER=${MEDIA_DB_USER}
-      - POSTGRES_PASSWORD=${MEDIA_DB_PASSWORD}
-    ports:
-      - "${MEDIA_DB_PORT}:5432"
-    volumes:
-      - ./database/data/media:/var/lib/postgresql/data/
-    restart: always
-    networks:
-      - webapp
-    container_name: postgres_media_db
-    profiles:
-      - production
-      - development
+  #   environment:
+  #     - POSTGRES_DB=${MEDIA_DB_NAME}
+  #     - POSTGRES_USER=${MEDIA_DB_USER}
+  #     - POSTGRES_PASSWORD=${MEDIA_DB_PASSWORD}
+  #   ports:
+  #     - "${MEDIA_DB_PORT}:5432"
+  #   volumes:
+  #     - ./database/data/media:/var/lib/postgresql/data/
+  #   restart: always
+  #   networks:
+  #     - webapp
+  #   container_name: postgres_media_db
+  #   profiles:
+  #     - production
+  #     - development
 
 #   DATABASE SERVICE FOR PROFILE DEV AND PROD #
 
@@ -99,6 +99,28 @@ services:
     profiles:
       - production
       - development
+
+#   DATABASE SERVICE FOR FRIEND DEV AND PROD #
+
+  postgres_friend_db:
+    image: postgres
+ 
+    environment:
+      - POSTGRES_DB=${FRIEND_DB_NAME}
+      - POSTGRES_USER=${FRIEND_DB_USER}
+      - POSTGRES_PASSWORD=${FRIEND_DB_PASSWORD}
+    ports:
+      - "${FRIEND_DB_PORT}:5432"
+    volumes:
+      - ./database/data/friend:/var/lib/postgresql/data/
+    restart: always
+    networks:
+      - webapp
+    container_name: postgres_friend_db
+    profiles:
+      - production
+      - development
+
 
   # GATEWAY SERVICE FOR PRODUCTION #
   gateway:
@@ -237,6 +259,33 @@ services:
     restart: always
     profiles:
       - development
+
+# FRIEND SERVICE FOR DEVELOPMENT #
+
+  friend:
+    build:
+      context: ./api
+      dockerfile: ./apps/friend/Dockerfile
+      target: development
+    command: yarn start:dev friend
+    container_name: friend
+    env_file:
+      - ./api/.env
+    ports:
+      - ${PRISMA_STUDIO_FRIEND_PORT}:5555
+    networks:
+      - webapp
+    volumes:
+      - ./api/apps/friend:/usr/src/app/apps/friend
+      - ./api/libs:/usr/src/app/libs
+    depends_on:
+      - rabbitmq
+      - gateway-dev
+      - auth
+    restart: always
+    profiles:
+      - development
+
 
 # RABBBITMQ SERVER #
   rabbitmq:
