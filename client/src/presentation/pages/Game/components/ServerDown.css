@@ -1,0 +1,27 @@
+.serverDown
+{
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+    display: inline-block;
+    text-align: center;
+}
+.parag
+{
+    width: 100%;
+    height: 10%;
+    background-color: white;
+    font-size: 5vmin;
+    color: black;
+
+}
+
+.image
+{
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    height: 90%;
+
+
+}

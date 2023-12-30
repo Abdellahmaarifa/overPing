@@ -1,0 +1,30 @@
+.p5Canvas {
+  z-index: 3;
+  border: 12px lightcoral;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  padding: auto auto; 
+  border-top: 1vmin solid rgb(4, 130, 130);
+  border-bottom: 1vmin solid rgb(4, 130, 130) ;
+  height: 80%;
+  width: 100%;
+  top: 20%;
+  text-align: center;
+  margin: auto;
+}
+.react-p5-wrapper
+{
+  z-index: 3;
+  border: 12px lightcoral;
+}
+/* 
+@media all and (orientation: portrait) {
+  body {
+      -webkit-transform: rotate(90deg); 
+      -moz-transform: rotate(90deg); 
+      -ms-transform: rotate(90deg); 
+      -o-transform: rotate(90deg); 
+      transform: rotate(90deg); 
+  }
+} */

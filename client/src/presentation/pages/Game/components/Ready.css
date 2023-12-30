@@ -1,0 +1,281 @@
+.ReadyContainer
+{
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    font-size: 0;
+    /* background-color: rgb(48, 48, 151); */
+    background: radial-gradient(25.64% 75.76% at 50% 50%, #134371 0%, #09152B 97.4%);
+
+}
+
+.ReadyState
+{
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    height: 20%;
+    z-index: 2;
+}
+
+.ReadyVs
+{
+    position: absolute;
+    display: inline-block;
+    z-index: 2;
+    top: 20%;
+    width: 100%;
+    height: 30%;
+}
+
+.ReadyCoins
+{
+    position: absolute;
+    display: inline-block;
+    z-index: 2;
+    top: 50%;
+    width: 100%;
+    height: 20%;
+    font-size: 0;
+    text-align: center;
+}
+
+
+.ReadyState > p , .ReadyVs > p
+{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    font-weight: bolder;
+    font-style: italic;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-align: center;
+    color: white; 
+    z-index: 4;
+}
+
+.ReadyState > p 
+{
+    padding-top: 3vh;
+    font-size: 5vmin;
+}
+
+.ReadyVs > p 
+{
+    padding-top: 13vh;
+    font-size: 5vmin;
+}
+
+.ReadyCoins > p 
+{
+    position: absolute;
+    width: 14%;
+    height: 30%;
+    left: 43%;
+    border-radius: 1vh;
+    text-align: center;
+    border: 0.1vh solid white;
+    font-size: 2vmin;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: white; 
+    /* padding: auto auto; */
+    margin-top: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ReadyFlashLight
+{
+    position: absolute;
+    z-index: 0;
+    top: 70%;
+    left: 41%;
+    width: 18%;
+    height: 0.6vmin;
+    border-radius: 50%;
+    background-color: rgb(225, 225, 225);
+    box-shadow: 0vh 0vw 0.7vh 0.6vh rgb(199, 199, 199);
+    text-align: center;
+}
+.ReadyFlashLight > p
+{
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    top: -3.5vmin;
+    /* left: 35%; */
+    z-index: 1;
+    color: white;
+    font-size: 6vmin;
+    font-weight: bolder;
+    font-style: italic;
+    font-family: 'Courier New', Courier, monospace;
+    /* margin-bottom: 2vh; */
+}
+
+.ReadyPlayer1
+{
+    position: absolute;
+    display: inline-block;
+    z-index: 5;
+    top: 15%;
+    left: 22%;
+    width: 17%;
+    height: 75%;
+    background-color: #1f70b7;
+    text-align: center;
+    transform: skew(5deg);
+}
+
+.ReadyPlyInside1
+{
+    display: inline-block;
+    width: 95%;
+    height: 90%;
+    margin: 0 1%; 
+    margin-top: 10%;
+    background-color: rgba(0, 0, 0, 0.3); 
+    text-align: center;
+}
+
+.ReadyAvatarR1Cover
+{
+    display: inline-block;
+    width: 70%;
+    height: 30%;
+    background-color: rgb(10, 36, 59) ;
+    clip-path    : polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+    padding: 2%;
+    /* margin-left: 3vw; */
+    margin-top: 20%;
+    transform: skew(-5deg);
+}
+
+.ReadyAvatarR1
+{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background-color: #134371;
+    background-image: url('../../public/images/question-mark.jpeg');
+    background-size: 100% 100%;
+    clip-path    : polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+}
+
+.ReadyPlayer2
+{
+    position: absolute;
+    display: inline-block;
+    z-index: 5;
+    top: 15%;
+    left : 61%;
+    width: 17%;
+    height: 75%;
+    background-color:  #DA989E;
+    font-size: 0;
+    text-align: center;
+    transform: skew(-5deg);
+}
+
+.ReadyPlyInside2
+{
+    display: inline-block;
+    width: 95%;
+    height: 90%;
+    margin: 0 1% ;
+    margin-top: 10%;
+    background-color: rgba(0, 0, 0, 0.3); 
+    text-align: center;
+}
+
+.ReadyAvatarR2Cover
+{
+    display: inline-block;
+    width: 70%;
+    height: 30%;
+    background-color: rgb(94, 59, 63)  ;
+    clip-path    : polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+    padding: 2%;
+    /* margin-left: 3vw; */
+    margin-top: 20%;
+    transform: skew(5deg);
+}
+
+.ReadyAvatarR2
+{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../public/images/question-mark.jpeg');
+    background-size: 100% 100%;
+    clip-path    : polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+}
+
+.ReadyPlayerName2 , .ReadyPlayerName1
+{
+    display: inline-block;
+    width: 100%;
+    height: 7%;
+    font-size: 0;
+    margin-top: 10%;
+    text-align: center; 
+}
+
+.ReadyPlayerName2 > p , .ReadyPlayerName1 > p
+{
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    font-size: 2vmin;
+    color: white;
+    vertical-align: top; 
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.ReadyDiposit1 , .ReadyDiposit2
+{
+    display: inline-block;
+    width: 50%;
+    height: 8%;
+    border-radius: 1vh;
+    font-size: 0;
+    background-color: #1f70b7;
+    margin: 2.5vh 4vw;   
+    border: 0.1vh solid white;
+    border-radius: 1vh;
+    text-align: center;
+}
+
+.ReadyDiposit1 > p , .ReadyDiposit2 > p
+{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    font-size: 2vmin;
+    color: white;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#ReadyAvatar1 , #ReadyAvatar2
+{
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width : 400px)
+{
+    .ReadyPlayer1 , .ReadyPlayer2, .ReadyAvatarR2Cover, .ReadyAvatarR1Cover 
+    {
+        transform: skew(0deg);
+    }
+}

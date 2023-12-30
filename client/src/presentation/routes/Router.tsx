@@ -12,6 +12,10 @@ import Profile from "pages/Profile/Profile";
 import Tournament from "pages/Tournament/Tournament";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+//game
+import Game from "pages/Game/Game";
+import { playerOne, playerTwo } from "pages/Game/Game";
+//end
 
 const Router = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +58,7 @@ const Router = () => {
           {AuthRoute(ROUTE_ENDPOINTS.LEADER_BOARD, <LeaderBoard />)}
           {AuthRoute(ROUTE_ENDPOINTS.TOURNAMENT, <Tournament />)}
           {AuthRoute(ROUTE_ENDPOINTS.PROFILE, <Profile />)}
+          {AuthRoute(ROUTE_ENDPOINTS.GAME, <Game playerOne={playerOne} playerTwo={playerTwo}/>)}
         </Route>
         {PublicRoute(ROUTE_ENDPOINTS.LOGIN, <Login />)}
         <Route path={ROUTE_ENDPOINTS.HOME} element={<LandingPage />} />

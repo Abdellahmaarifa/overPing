@@ -8,4 +8,5 @@ export const ROUTE_ENDPOINTS = {
   CHAT_DM: "/chat/dm/:id",
   CHAT_CHANNEL: "/chat/channel/:id",
   HOME: "/",
+  GAME: "/game",
 };
