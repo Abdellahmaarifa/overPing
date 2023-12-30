@@ -29,6 +29,29 @@ export type CreateProfileInput = {
   username: Scalars['String']['input'];
 };
 
+export type GqlFriendShipeStatus = {
+  __typename?: 'GQLFriendShipeStatus';
+  blocker?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  status: Scalars['String']['output'];
+  userA: Scalars['ID']['output'];
+  userB: Scalars['ID']['output'];
+};
+
+export type GqlFriendsModel = {
+  __typename?: 'GQLFriendsModel';
+  friends: Array<GqlUserModel>;
+};
+
+export type GqlGameStatusModel = {
+  __typename?: 'GQLGameStatusModel';
+  best_win_streak: Scalars['Float']['output'];
+  matchesLoss: Scalars['Float']['output'];
+  matchesWon: Scalars['Float']['output'];
+  totalMatches: Scalars['Float']['output'];
+  win_streak: Scalars['Float']['output'];
+};
+
 export type GqlUserModel = {
   __typename?: 'GQLUserModel';
   createdAt?: Maybe<Scalars['DateTime']['output']>;
@@ -36,6 +59,7 @@ export type GqlUserModel = {
   fortyTwoId?: Maybe<Scalars['String']['output']>;
   googleId?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  profileImgUrl: Scalars['String']['output'];
   twoStepVerificationEnabled: Scalars['Boolean']['output'];
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
   username: Scalars['String']['output'];
@@ -44,12 +68,12 @@ export type GqlUserModel = {
 export type GqlUserProfileModel = {
   __typename?: 'GQLUserProfileModel';
   about: Scalars['String']['output'];
-  created_at: Scalars['DateTime']['output'];
+  bgImageUrl: Scalars['String']['output'];
+  gameStatus: GqlGameStatusModel;
   id: Scalars['ID']['output'];
   nickname: Scalars['String']['output'];
   rank: Scalars['Float']['output'];
   title: Scalars['String']['output'];
-  updated_at: Scalars['DateTime']['output'];
   user_id: Scalars['Float']['output'];
   wallet: GqlWalletModel;
   xp: Scalars['Float']['output'];
@@ -71,7 +95,10 @@ export type JoinMatchmakingInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   UpdateUserProfile: Scalars['Boolean']['output'];
+  acceptFriendship: Scalars['Boolean']['output'];
+  addFriend: Scalars['Boolean']['output'];
   authenticate_2fa: GqlUserModel;
+  blockUser: Scalars['Boolean']['output'];
   createProfile: GqlUserProfileModel;
   deleteAccount: Scalars['Boolean']['output'];
   enableTwoFactorAuth: Scalars['String']['output'];
@@ -79,11 +106,15 @@ export type Mutation = {
   logOut: Scalars['Boolean']['output'];
   placeBet?: Maybe<Scalars['Boolean']['output']>;
   refresh: Scalars['String']['output'];
+  removeFriend: Scalars['Boolean']['output'];
   removeUserProfile: Scalars['Boolean']['output'];
   resolveBet?: Maybe<Scalars['Boolean']['output']>;
   signIn: GqlUserModel;
   signUp: GqlUserModel;
   transferFunds?: Maybe<Scalars['Boolean']['output']>;
+  unblockUser: Scalars['Boolean']['output'];
+  updateProfileBgImg: Scalars['String']['output'];
+  updateUserAvatarImg: Scalars['String']['output'];
   verifyTwoFactorAuth: Scalars['Boolean']['output'];
 };
 
@@ -94,8 +125,26 @@ export type MutationUpdateUserProfileArgs = {
 };
 
 
+export type MutationAcceptFriendshipArgs = {
+  friendId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
+
+export type MutationAddFriendArgs = {
+  friendId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
+
 export type MutationAuthenticate_2faArgs = {
   code: Scalars['String']['input'];
+};
+
+
+export type MutationBlockUserArgs = {
+  friendId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
 };
 
 
@@ -130,6 +179,12 @@ export type MutationPlaceBetArgs = {
 };
 
 
+export type MutationRemoveFriendArgs = {
+  friendId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
+
 export type MutationRemoveUserProfileArgs = {
   userId: Scalars['Float']['input'];
 };
@@ -156,6 +211,22 @@ export type MutationTransferFundsArgs = {
 };
 
 
+export type MutationUnblockUserArgs = {
+  friendId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
+
+export type MutationUpdateProfileBgImgArgs = {
+  image?: InputMaybe<Scalars['Upload']['input']>;
+};
+
+
+export type MutationUpdateUserAvatarImgArgs = {
+  image?: InputMaybe<Scalars['Upload']['input']>;
+};
+
+
 export type MutationVerifyTwoFactorAuthArgs = {
   code: Scalars['String']['input'];
   id: Scalars['Float']['input'];
@@ -179,7 +250,11 @@ export type Query = {
   findProfileById?: Maybe<GqlUserProfileModel>;
   findProfileByUserId?: Maybe<GqlUserProfileModel>;
   findUserById: GqlUserModel;
+  getBlockedUsers: GqlFriendsModel;
+  getFriendship: GqlFriendShipeStatus;
+  getFriendshipRequests: GqlFriendsModel;
   getUser: GqlUserModel;
+  getUserFriends: GqlFriendsModel;
   hello: Scalars['String']['output'];
   helloT: Scalars['String']['output'];
 };
@@ -196,6 +271,27 @@ export type QueryFindProfileByUserIdArgs = {
 
 
 export type QueryFindUserByIdArgs = {
+  userId: Scalars['Float']['input'];
+};
+
+
+export type QueryGetBlockedUsersArgs = {
+  userId: Scalars['Float']['input'];
+};
+
+
+export type QueryGetFriendshipArgs = {
+  friendId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
+
+export type QueryGetFriendshipRequestsArgs = {
+  userId: Scalars['Float']['input'];
+};
+
+
+export type QueryGetUserFriendsArgs = {
   userId: Scalars['Float']['input'];
 };
 
@@ -222,6 +318,7 @@ export type TransferFundsInput = {
 
 export type UpdateProfileInput = {
   about?: InputMaybe<Scalars['String']['input']>;
+  bgImageUrl?: InputMaybe<Scalars['String']['input']>;
   nickname?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -256,7 +353,7 @@ export type FindProfileByUserIdQueryVariables = Exact<{
 }>;
 
 
-export type FindProfileByUserIdQuery = { __typename?: 'Query', findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, user_id: number, nickname: string, title: string, xp: number, rank: number, about: string } | null };
+export type FindProfileByUserIdQuery = { __typename?: 'Query', findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, user_id: number, nickname: string, title: string, xp: number, rank: number, about: string, bgImageUrl: string, wallet: { __typename?: 'GQLWalletModel', id: string, balance: number, user_id: number, betAmount: number }, gameStatus: { __typename?: 'GQLGameStatusModel', matchesLoss: number, matchesWon: number, totalMatches: number, win_streak: number, best_win_streak: number } } | null };
 
 export type RegisterMutationVariables = Exact<{
   profilePhoto: Scalars['Upload']['input'];
@@ -295,7 +392,7 @@ export type UserQueryVariables = Exact<{
 }>;
 
 
-export type UserQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean } };
+export type UserQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean, profileImgUrl: string, createdAt?: any | null, updatedAt?: any | null } };
 
 export type DeleteAccountMutationVariables = Exact<{
   id: Scalars['Float']['input'];
@@ -312,6 +409,13 @@ export type UpdateUserProfileMutationVariables = Exact<{
 
 
 export type UpdateUserProfileMutation = { __typename?: 'Mutation', UpdateUserProfile: boolean };
+
+export type AccountQueryVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type AccountQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean, profileImgUrl: string }, findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, nickname: string, title: string, xp: number, rank: number, about: string, bgImageUrl: string, wallet: { __typename?: 'GQLWalletModel', id: string, balance: number, betAmount: number }, gameStatus: { __typename?: 'GQLGameStatusModel', matchesLoss: number, matchesWon: number, totalMatches: number, win_streak: number, best_win_streak: number } } | null };
 
 
 export const HelloDocument = gql`
@@ -343,8 +447,13 @@ export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Hell
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options);
         }
+export function useHelloSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<HelloQuery, HelloQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options);
+        }
 export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
+export type HelloSuspenseQueryHookResult = ReturnType<typeof useHelloSuspenseQuery>;
 export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($password: String!, $email: String!) {
@@ -422,6 +531,20 @@ export const FindProfileByUserIdDocument = gql`
     xp
     rank
     about
+    bgImageUrl
+    wallet {
+      id
+      balance
+      user_id
+      betAmount
+    }
+    gameStatus {
+      matchesLoss
+      matchesWon
+      totalMatches
+      win_streak
+      best_win_streak
+    }
   }
 }
     `;
@@ -450,8 +573,13 @@ export function useFindProfileByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<FindProfileByUserIdQuery, FindProfileByUserIdQueryVariables>(FindProfileByUserIdDocument, options);
         }
+export function useFindProfileByUserIdSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<FindProfileByUserIdQuery, FindProfileByUserIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FindProfileByUserIdQuery, FindProfileByUserIdQueryVariables>(FindProfileByUserIdDocument, options);
+        }
 export type FindProfileByUserIdQueryHookResult = ReturnType<typeof useFindProfileByUserIdQuery>;
 export type FindProfileByUserIdLazyQueryHookResult = ReturnType<typeof useFindProfileByUserIdLazyQuery>;
+export type FindProfileByUserIdSuspenseQueryHookResult = ReturnType<typeof useFindProfileByUserIdSuspenseQuery>;
 export type FindProfileByUserIdQueryResult = Apollo.QueryResult<FindProfileByUserIdQuery, FindProfileByUserIdQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($profilePhoto: Upload!, $userName: String!, $password: String!, $email: String!) {
@@ -599,6 +727,9 @@ export const UserDocument = gql`
     email
     username
     twoStepVerificationEnabled
+    profileImgUrl
+    createdAt
+    updatedAt
   }
 }
     `;
@@ -627,8 +758,13 @@ export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQ
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, options);
         }
+export function useUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<UserQuery, UserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+        }
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
+export type UserSuspenseQueryHookResult = ReturnType<typeof useUserSuspenseQuery>;
 export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
 export const DeleteAccountDocument = gql`
     mutation deleteAccount($id: Float!, $password: String!) {
@@ -694,3 +830,68 @@ export function useUpdateUserProfileMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateUserProfileMutationHookResult = ReturnType<typeof useUpdateUserProfileMutation>;
 export type UpdateUserProfileMutationResult = Apollo.MutationResult<UpdateUserProfileMutation>;
 export type UpdateUserProfileMutationOptions = Apollo.BaseMutationOptions<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
+export const AccountDocument = gql`
+    query Account($userId: Float!) {
+  findUserById(userId: $userId) {
+    id
+    email
+    username
+    twoStepVerificationEnabled
+    profileImgUrl
+  }
+  findProfileByUserId(userId: $userId) {
+    id
+    nickname
+    title
+    xp
+    rank
+    about
+    bgImageUrl
+    wallet {
+      id
+      balance
+      betAmount
+    }
+    gameStatus {
+      matchesLoss
+      matchesWon
+      totalMatches
+      win_streak
+      best_win_streak
+    }
+  }
+}
+    `;
+
+/**
+ * __useAccountQuery__
+ *
+ * To run a query within a React component, call `useAccountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAccountQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useAccountQuery(baseOptions: Apollo.QueryHookOptions<AccountQuery, AccountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AccountQuery, AccountQueryVariables>(AccountDocument, options);
+      }
+export function useAccountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AccountQuery, AccountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AccountQuery, AccountQueryVariables>(AccountDocument, options);
+        }
+export function useAccountSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<AccountQuery, AccountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<AccountQuery, AccountQueryVariables>(AccountDocument, options);
+        }
+export type AccountQueryHookResult = ReturnType<typeof useAccountQuery>;
+export type AccountLazyQueryHookResult = ReturnType<typeof useAccountLazyQuery>;
+export type AccountSuspenseQueryHookResult = ReturnType<typeof useAccountSuspenseQuery>;
+export type AccountQueryResult = Apollo.QueryResult<AccountQuery, AccountQueryVariables>;

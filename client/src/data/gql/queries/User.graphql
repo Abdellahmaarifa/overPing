@@ -14,6 +14,9 @@ query User($id: Float!) {
     email
     username
     twoStepVerificationEnabled
+    profileImgUrl
+    createdAt
+    updatedAt
   }
 }
 
@@ -28,4 +31,36 @@ mutation UpdateUserProfile(
   $UpdateProfileInput: UpdateProfileInput!
 ) {
   UpdateUserProfile(userId: $userId, UpdateProfileInput: $UpdateProfileInput)
+}
+
+query Account($userId: Float!) {
+  findUserById(userId: $userId) {
+    id
+    email
+    username
+    twoStepVerificationEnabled
+    profileImgUrl
+  }
+
+  findProfileByUserId(userId: $userId) {
+    id
+    nickname
+    title
+    xp
+    rank
+    about
+    bgImageUrl
+    wallet {
+      id
+      balance
+      betAmount
+    }
+    gameStatus {
+      matchesLoss
+      matchesWon
+      totalMatches
+      win_streak
+      best_win_streak
+    }
+  }
 }

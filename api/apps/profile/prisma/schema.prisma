@@ -19,7 +19,7 @@ model UserProfile {
   about        String                     @default("Chatting my way through life on [overPing]. Let's keep the conversations rolling! 📱✨ #Connected")
   created_at   DateTime                   @default(now())
   updated_at   DateTime                   @updatedAt
-  bgImageUrl   String                     @default("backgroundUrlImg.png")
+  bgImageUrl   String                     @default("http://localhost:5500/image/profileBackGound/defaultCover.jpg")
   gameStatus   GameStatus?
   achievements UserProfileToAchievement[]
   wallet       Wallet?

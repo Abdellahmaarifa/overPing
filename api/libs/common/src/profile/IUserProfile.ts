@@ -8,6 +8,7 @@ export class IUserProfile {
     xp: number
     rank: number
     about: string
+    bgImageUrl: string
     wallet: IWallet
     gameStatus: IGameStatus
 }

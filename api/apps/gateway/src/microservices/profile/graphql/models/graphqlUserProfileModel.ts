@@ -25,6 +25,9 @@ export class GQLUserProfileModel {
     about: string
 
     @Field()
+    bgImageUrl: string
+
+    @Field()
     wallet: GQLWalletModel
 
     @Field()

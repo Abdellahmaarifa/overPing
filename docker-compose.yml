@@ -1,6 +1,5 @@
-version: '3.7'
+version: "3.7"
 services:
-
   # CLIENT SERVICE FOR PRODUCTION #
   client:
     build:
@@ -15,7 +14,7 @@ services:
     container_name: client
     profiles:
       - production
-  # # CLIENT SERVICE FOR DEVELOPMENT # 
+  # # CLIENT SERVICE FOR DEVELOPMENT #
   # client-dev:
   #   build:
   #     context: ./client
@@ -58,11 +57,11 @@ services:
       - production
       - development
 
-#   DATABASE SERVICE FOR MEDIA DEV AND PROD #
+  #   DATABASE SERVICE FOR MEDIA DEV AND PROD #
 
   # postgres_media_db:
   #   image: postgres
- 
+
   #   environment:
   #     - POSTGRES_DB=${MEDIA_DB_NAME}
   #     - POSTGRES_USER=${MEDIA_DB_USER}
@@ -79,7 +78,7 @@ services:
   #     - production
   #     - development
 
-#   DATABASE SERVICE FOR PROFILE DEV AND PROD #
+  #   DATABASE SERVICE FOR PROFILE DEV AND PROD #
 
   postgress_profile_db:
     image: postgres
@@ -90,7 +89,7 @@ services:
       - POSTGRES_USER=${PROFILE_DB_USER}
       - POSTGRES_PASSWORD=${PROFILE_DB_PASSWORD}
     ports:
-      -  "${PROFILE_DB_PORT}:5432"
+      - "${PROFILE_DB_PORT}:5432"
     networks:
       - webapp
     volumes:
@@ -100,11 +99,11 @@ services:
       - production
       - development
 
-#   DATABASE SERVICE FOR FRIEND DEV AND PROD #
+  #   DATABASE SERVICE FOR FRIEND DEV AND PROD #
 
   postgres_friend_db:
     image: postgres
- 
+
     environment:
       - POSTGRES_DB=${FRIEND_DB_NAME}
       - POSTGRES_USER=${FRIEND_DB_USER}
@@ -121,22 +120,21 @@ services:
       - production
       - development
 
-
   # GATEWAY SERVICE FOR PRODUCTION #
-  gateway:
-    build:
-      context: ./api/apps/gateway
-      dockerfile: Dockerfile
-    networks:
-      - webapp
-      - database
-    restart: always
-    command: [ 'node', 'main.js']
-    container_name: gateway
-    profiles:
-      - production
+  # gateway:
+  #   build:
+  #     context: ./api/apps/gateway
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - webapp
+  #     - database
+  #   restart: always
+  #   command: [ 'node', 'main.js']
+  #   container_name: gateway
+  #   profiles:
+  #     - production
   # GATEWAY SERVICE FOR DEVELOPMENT #
-  gateway-dev:
+  gateway:
     build:
       context: ./api
       dockerfile: ./apps/gateway/Dockerfile
@@ -157,6 +155,7 @@ services:
     container_name: gateway
     profiles:
       - development
+      - production
 
   # AUTH SERVICE FOR DEVELOPMENT #
   auth:
@@ -172,20 +171,21 @@ services:
     ports:
       - ${AUTH_PORT}:3001
       - ${PRISMA_STUDIO_PORT}:5555
-      
+
     volumes:
       - ./api/apps/auth:/usr/src/app/apps/auth
       - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
       - postgres_auth_db
-      - gateway-dev
+      - gateway
     restart: always
     container_name: auth
     profiles:
       - development
+      - production
 
-# PROFILE SERVICE FOR DEVELOPMENT #
+  # PROFILE SERVICE FOR DEVELOPMENT #
   profile:
     build:
       context: ./api
@@ -199,20 +199,21 @@ services:
     ports:
       - ${PROFILE_PORT}:3003
       - ${PRISMA_STUDIO_PROFILE_PORT}:5555
-      
+
     volumes:
       - ./api/apps/profile:/usr/src/app/apps/profile
       - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
       - postgress_profile_db
-      - gateway-dev
+      - gateway
     restart: always
     container_name: profile
     profiles:
       - development
+      - production
 
-# MATCHMAKING SERVICE FOR DEVELOPMENT #
+  # MATCHMAKING SERVICE FOR DEVELOPMENT #
   matchmaking:
     build:
       context: ./api
@@ -229,12 +230,13 @@ services:
       - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
-      - gateway-dev
+      - gateway
     restart: always
     profiles:
       - development
+      - production
 
-# MATCHMAKING SERVICE FOR DEVELOPMENT #
+  # MATCHMAKING SERVICE FOR DEVELOPMENT #
 
   media:
     build:
@@ -255,12 +257,13 @@ services:
       - ./api/apps/media/uploads:/usr/src/app/apps/media/uploads
     depends_on:
       - rabbitmq
-      - gateway-dev
+      - gateway
     restart: always
     profiles:
       - development
+      - production
 
-# FRIEND SERVICE FOR DEVELOPMENT #
+  # FRIEND SERVICE FOR DEVELOPMENT #
 
   friend:
     build:
@@ -280,16 +283,16 @@ services:
       - ./api/libs:/usr/src/app/libs
     depends_on:
       - rabbitmq
-      - gateway-dev
+      - gateway
       - auth
     restart: always
     profiles:
       - development
+      - production
 
-
-# RABBBITMQ SERVER #
+  # RABBBITMQ SERVER #
   rabbitmq:
-    image: rabbitmq:3-management 
+    image: rabbitmq:3-management
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASSWORD}
@@ -306,10 +309,9 @@ services:
     profiles:
       - development
       - production
-    
+
 networks:
   webapp:
     driver: bridge
   database:
     driver: bridge
-

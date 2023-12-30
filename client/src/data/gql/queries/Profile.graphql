@@ -7,5 +7,19 @@ query findProfileByUserId($userId: Float!) {
     xp
     rank
     about
+    bgImageUrl
+    wallet {
+      id
+      balance
+      user_id
+      betAmount
+    }
+    gameStatus {
+      matchesLoss
+      matchesWon
+      totalMatches
+      win_streak
+      best_win_streak
+    }
   }
 }
