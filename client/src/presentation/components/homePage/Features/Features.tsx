@@ -33,19 +33,19 @@ const Features = () => {
         </FeatureBox>
         <FeatureSecondary>
           <Feature
-            onClick={() => navigate("/game?computer")}
+            onClick={() => navigate("/game?type=computer")}
             bgGradient={greenGradient}
             title="Computer"
             FeatureIcon={ComputerIcon}
           />
           <Feature
-            onClick={() => navigate("/game?friends")}
+            onClick={() => navigate("/game?type=friends")}
             bgGradient={redBlueGradient}
             title="Friends"
             FeatureIcon={PaddelIcon}
           />
           <Feature
-            onClick={() => navigate("game?tournament")}
+            onClick={() => navigate("game?type=tournament")}
             bgGradient={yellowPinkGradient}
             title="Tournament"
             FeatureIcon={TrophyIcon}

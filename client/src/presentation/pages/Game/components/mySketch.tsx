@@ -71,6 +71,7 @@ let resizeCanvas = (game : Game) : void =>
       Sounds.soundButton.size(game.canvasPranetDiv.elt.clientWidth / 14)
       Sounds.soundButton.style("z-index", "6");
       Sounds.soundButton.style("font-size", "1.5vmin");
+      Sounds.soundButton.style("color", "black");
       Sounds.soundButton.style("background-color", "white");
       Sounds.soundButton.position(game.canvasPranetDiv.elt.clientWidth / 2 - (game.canvasPranetDiv.elt.clientWidth / 28 ), 0, 'absolute')
     }
@@ -441,6 +442,7 @@ function setup(game : Game)
       Sounds.soundButton.parent("#muteBtn")
       Sounds.soundButton.size(game.canvasPranetDiv.elt.clientWidth / 14)
       Sounds.soundButton.style("z-index", "6");
+      Sounds.soundButton.style("color", "black");
       Sounds.soundButton.style("font-size", "1.5vmin");
       Sounds.soundButton.style("background-color", "white");
       Sounds.soundButton.position(game.canvasPranetDiv.elt.clientWidth / 2 - (game.canvasPranetDiv.elt.clientWidth / 28 ), 0, 'absolute');
