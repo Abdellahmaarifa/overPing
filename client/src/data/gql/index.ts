@@ -15,7 +15,6 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  DateTime: { input: any; output: any; }
   Upload: { input: any; output: any; }
 };
 
@@ -54,14 +53,13 @@ export type GqlGameStatusModel = {
 
 export type GqlUserModel = {
   __typename?: 'GQLUserModel';
-  createdAt?: Maybe<Scalars['DateTime']['output']>;
   email: Scalars['String']['output'];
   fortyTwoId?: Maybe<Scalars['String']['output']>;
   googleId?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   profileImgUrl: Scalars['String']['output'];
+  showUpdateWin: Scalars['Boolean']['output'];
   twoStepVerificationEnabled: Scalars['Boolean']['output'];
-  updatedAt?: Maybe<Scalars['DateTime']['output']>;
   username: Scalars['String']['output'];
 };
 
@@ -114,6 +112,7 @@ export type Mutation = {
   transferFunds?: Maybe<Scalars['Boolean']['output']>;
   unblockUser: Scalars['Boolean']['output'];
   updateProfileBgImg: Scalars['String']['output'];
+  updateUser: Scalars['Boolean']['output'];
   updateUserAvatarImg: Scalars['String']['output'];
   verifyTwoFactorAuth: Scalars['Boolean']['output'];
 };
@@ -218,12 +217,19 @@ export type MutationUnblockUserArgs = {
 
 
 export type MutationUpdateProfileBgImgArgs = {
-  image?: InputMaybe<Scalars['Upload']['input']>;
+  image: Scalars['Upload']['input'];
+  userId: Scalars['Float']['input'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  userUpdateInput: UpdateUserInput;
 };
 
 
 export type MutationUpdateUserAvatarImgArgs = {
-  image?: InputMaybe<Scalars['Upload']['input']>;
+  image: Scalars['Upload']['input'];
+  userId: Scalars['Float']['input'];
 };
 
 
@@ -322,11 +328,77 @@ export type UpdateProfileInput = {
   nickname?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateUserInput = {
+  email: Scalars['String']['input'];
+  showUpdateWin: Scalars['Boolean']['input'];
+};
+
 export type UserCreationInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
 };
+
+export type GetUserFriendsQueryVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type GetUserFriendsQuery = { __typename?: 'Query', getUserFriends: { __typename?: 'GQLFriendsModel', friends: Array<{ __typename?: 'GQLUserModel', id: string, username: string, profileImgUrl: string }> } };
+
+export type GetFriendshipRequestsQueryVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type GetFriendshipRequestsQuery = { __typename?: 'Query', getFriendshipRequests: { __typename?: 'GQLFriendsModel', friends: Array<{ __typename?: 'GQLUserModel', id: string, username: string, profileImgUrl: string }> } };
+
+export type GetBlockedUsersQueryVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type GetBlockedUsersQuery = { __typename?: 'Query', getBlockedUsers: { __typename?: 'GQLFriendsModel', friends: Array<{ __typename?: 'GQLUserModel', id: string, username: string, profileImgUrl: string }> } };
+
+export type AddFriendMutationVariables = Exact<{
+  userId: Scalars['Float']['input'];
+  friendId: Scalars['Float']['input'];
+}>;
+
+
+export type AddFriendMutation = { __typename?: 'Mutation', addFriend: boolean };
+
+export type RemoveFriendMutationVariables = Exact<{
+  userId: Scalars['Float']['input'];
+  friendId: Scalars['Float']['input'];
+}>;
+
+
+export type RemoveFriendMutation = { __typename?: 'Mutation', removeFriend: boolean };
+
+export type AcceptFriendshipMutationVariables = Exact<{
+  userId: Scalars['Float']['input'];
+  friendId: Scalars['Float']['input'];
+}>;
+
+
+export type AcceptFriendshipMutation = { __typename?: 'Mutation', acceptFriendship: boolean };
+
+export type BlockUserMutationVariables = Exact<{
+  userId: Scalars['Float']['input'];
+  friendId: Scalars['Float']['input'];
+}>;
+
+
+export type BlockUserMutation = { __typename?: 'Mutation', blockUser: boolean };
+
+export type UnblockUserMutationVariables = Exact<{
+  userId: Scalars['Float']['input'];
+  friendId: Scalars['Float']['input'];
+}>;
+
+
+export type UnblockUserMutation = { __typename?: 'Mutation', unblockUser: boolean };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -392,7 +464,7 @@ export type UserQueryVariables = Exact<{
 }>;
 
 
-export type UserQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean, profileImgUrl: string, createdAt?: any | null, updatedAt?: any | null } };
+export type UserQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean, profileImgUrl: string } };
 
 export type DeleteAccountMutationVariables = Exact<{
   id: Scalars['Float']['input'];
@@ -402,6 +474,13 @@ export type DeleteAccountMutationVariables = Exact<{
 
 export type DeleteAccountMutation = { __typename?: 'Mutation', deleteAccount: boolean };
 
+export type AccountQueryVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type AccountQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean, profileImgUrl: string }, findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, nickname: string, title: string, xp: number, rank: number, about: string, bgImageUrl: string, wallet: { __typename?: 'GQLWalletModel', id: string, balance: number, betAmount: number }, gameStatus: { __typename?: 'GQLGameStatusModel', matchesLoss: number, matchesWon: number, totalMatches: number, win_streak: number, best_win_streak: number } } | null };
+
 export type UpdateUserProfileMutationVariables = Exact<{
   userId: Scalars['Float']['input'];
   UpdateProfileInput: UpdateProfileInput;
@@ -410,14 +489,322 @@ export type UpdateUserProfileMutationVariables = Exact<{
 
 export type UpdateUserProfileMutation = { __typename?: 'Mutation', UpdateUserProfile: boolean };
 
-export type AccountQueryVariables = Exact<{
+export type UpdateUserAvatarImgMutationVariables = Exact<{
   userId: Scalars['Float']['input'];
+  AvatarImage: Scalars['Upload']['input'];
 }>;
 
 
-export type AccountQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean, profileImgUrl: string }, findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, nickname: string, title: string, xp: number, rank: number, about: string, bgImageUrl: string, wallet: { __typename?: 'GQLWalletModel', id: string, balance: number, betAmount: number }, gameStatus: { __typename?: 'GQLGameStatusModel', matchesLoss: number, matchesWon: number, totalMatches: number, win_streak: number, best_win_streak: number } } | null };
+export type UpdateUserAvatarImgMutation = { __typename?: 'Mutation', updateUserAvatarImg: string };
+
+export type UpdateProfileBgImgMutationVariables = Exact<{
+  userId: Scalars['Float']['input'];
+  BgImage: Scalars['Upload']['input'];
+}>;
 
 
+export type UpdateProfileBgImgMutation = { __typename?: 'Mutation', updateProfileBgImg: string };
+
+export type UpdateUserMutationVariables = Exact<{
+  userUpdateInput: UpdateUserInput;
+}>;
+
+
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: boolean };
+
+
+export const GetUserFriendsDocument = gql`
+    query getUserFriends($userId: Float!) {
+  getUserFriends(userId: $userId) {
+    friends {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserFriendsQuery__
+ *
+ * To run a query within a React component, call `useGetUserFriendsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserFriendsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserFriendsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetUserFriendsQuery(baseOptions: Apollo.QueryHookOptions<GetUserFriendsQuery, GetUserFriendsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserFriendsQuery, GetUserFriendsQueryVariables>(GetUserFriendsDocument, options);
+      }
+export function useGetUserFriendsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserFriendsQuery, GetUserFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserFriendsQuery, GetUserFriendsQueryVariables>(GetUserFriendsDocument, options);
+        }
+export function useGetUserFriendsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserFriendsQuery, GetUserFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserFriendsQuery, GetUserFriendsQueryVariables>(GetUserFriendsDocument, options);
+        }
+export type GetUserFriendsQueryHookResult = ReturnType<typeof useGetUserFriendsQuery>;
+export type GetUserFriendsLazyQueryHookResult = ReturnType<typeof useGetUserFriendsLazyQuery>;
+export type GetUserFriendsSuspenseQueryHookResult = ReturnType<typeof useGetUserFriendsSuspenseQuery>;
+export type GetUserFriendsQueryResult = Apollo.QueryResult<GetUserFriendsQuery, GetUserFriendsQueryVariables>;
+export const GetFriendshipRequestsDocument = gql`
+    query getFriendshipRequests($userId: Float!) {
+  getFriendshipRequests(userId: $userId) {
+    friends {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetFriendshipRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetFriendshipRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendshipRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendshipRequestsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetFriendshipRequestsQuery(baseOptions: Apollo.QueryHookOptions<GetFriendshipRequestsQuery, GetFriendshipRequestsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFriendshipRequestsQuery, GetFriendshipRequestsQueryVariables>(GetFriendshipRequestsDocument, options);
+      }
+export function useGetFriendshipRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFriendshipRequestsQuery, GetFriendshipRequestsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFriendshipRequestsQuery, GetFriendshipRequestsQueryVariables>(GetFriendshipRequestsDocument, options);
+        }
+export function useGetFriendshipRequestsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetFriendshipRequestsQuery, GetFriendshipRequestsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetFriendshipRequestsQuery, GetFriendshipRequestsQueryVariables>(GetFriendshipRequestsDocument, options);
+        }
+export type GetFriendshipRequestsQueryHookResult = ReturnType<typeof useGetFriendshipRequestsQuery>;
+export type GetFriendshipRequestsLazyQueryHookResult = ReturnType<typeof useGetFriendshipRequestsLazyQuery>;
+export type GetFriendshipRequestsSuspenseQueryHookResult = ReturnType<typeof useGetFriendshipRequestsSuspenseQuery>;
+export type GetFriendshipRequestsQueryResult = Apollo.QueryResult<GetFriendshipRequestsQuery, GetFriendshipRequestsQueryVariables>;
+export const GetBlockedUsersDocument = gql`
+    query getBlockedUsers($userId: Float!) {
+  getBlockedUsers(userId: $userId) {
+    friends {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetBlockedUsersQuery__
+ *
+ * To run a query within a React component, call `useGetBlockedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBlockedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBlockedUsersQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetBlockedUsersQuery(baseOptions: Apollo.QueryHookOptions<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>(GetBlockedUsersDocument, options);
+      }
+export function useGetBlockedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>(GetBlockedUsersDocument, options);
+        }
+export function useGetBlockedUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>(GetBlockedUsersDocument, options);
+        }
+export type GetBlockedUsersQueryHookResult = ReturnType<typeof useGetBlockedUsersQuery>;
+export type GetBlockedUsersLazyQueryHookResult = ReturnType<typeof useGetBlockedUsersLazyQuery>;
+export type GetBlockedUsersSuspenseQueryHookResult = ReturnType<typeof useGetBlockedUsersSuspenseQuery>;
+export type GetBlockedUsersQueryResult = Apollo.QueryResult<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>;
+export const AddFriendDocument = gql`
+    mutation addFriend($userId: Float!, $friendId: Float!) {
+  addFriend(userId: $userId, friendId: $friendId)
+}
+    `;
+export type AddFriendMutationFn = Apollo.MutationFunction<AddFriendMutation, AddFriendMutationVariables>;
+
+/**
+ * __useAddFriendMutation__
+ *
+ * To run a mutation, you first call `useAddFriendMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddFriendMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addFriendMutation, { data, loading, error }] = useAddFriendMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useAddFriendMutation(baseOptions?: Apollo.MutationHookOptions<AddFriendMutation, AddFriendMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddFriendMutation, AddFriendMutationVariables>(AddFriendDocument, options);
+      }
+export type AddFriendMutationHookResult = ReturnType<typeof useAddFriendMutation>;
+export type AddFriendMutationResult = Apollo.MutationResult<AddFriendMutation>;
+export type AddFriendMutationOptions = Apollo.BaseMutationOptions<AddFriendMutation, AddFriendMutationVariables>;
+export const RemoveFriendDocument = gql`
+    mutation removeFriend($userId: Float!, $friendId: Float!) {
+  removeFriend(userId: $userId, friendId: $friendId)
+}
+    `;
+export type RemoveFriendMutationFn = Apollo.MutationFunction<RemoveFriendMutation, RemoveFriendMutationVariables>;
+
+/**
+ * __useRemoveFriendMutation__
+ *
+ * To run a mutation, you first call `useRemoveFriendMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveFriendMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeFriendMutation, { data, loading, error }] = useRemoveFriendMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useRemoveFriendMutation(baseOptions?: Apollo.MutationHookOptions<RemoveFriendMutation, RemoveFriendMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveFriendMutation, RemoveFriendMutationVariables>(RemoveFriendDocument, options);
+      }
+export type RemoveFriendMutationHookResult = ReturnType<typeof useRemoveFriendMutation>;
+export type RemoveFriendMutationResult = Apollo.MutationResult<RemoveFriendMutation>;
+export type RemoveFriendMutationOptions = Apollo.BaseMutationOptions<RemoveFriendMutation, RemoveFriendMutationVariables>;
+export const AcceptFriendshipDocument = gql`
+    mutation acceptFriendship($userId: Float!, $friendId: Float!) {
+  acceptFriendship(userId: $userId, friendId: $friendId)
+}
+    `;
+export type AcceptFriendshipMutationFn = Apollo.MutationFunction<AcceptFriendshipMutation, AcceptFriendshipMutationVariables>;
+
+/**
+ * __useAcceptFriendshipMutation__
+ *
+ * To run a mutation, you first call `useAcceptFriendshipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptFriendshipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptFriendshipMutation, { data, loading, error }] = useAcceptFriendshipMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useAcceptFriendshipMutation(baseOptions?: Apollo.MutationHookOptions<AcceptFriendshipMutation, AcceptFriendshipMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AcceptFriendshipMutation, AcceptFriendshipMutationVariables>(AcceptFriendshipDocument, options);
+      }
+export type AcceptFriendshipMutationHookResult = ReturnType<typeof useAcceptFriendshipMutation>;
+export type AcceptFriendshipMutationResult = Apollo.MutationResult<AcceptFriendshipMutation>;
+export type AcceptFriendshipMutationOptions = Apollo.BaseMutationOptions<AcceptFriendshipMutation, AcceptFriendshipMutationVariables>;
+export const BlockUserDocument = gql`
+    mutation blockUser($userId: Float!, $friendId: Float!) {
+  blockUser(userId: $userId, friendId: $friendId)
+}
+    `;
+export type BlockUserMutationFn = Apollo.MutationFunction<BlockUserMutation, BlockUserMutationVariables>;
+
+/**
+ * __useBlockUserMutation__
+ *
+ * To run a mutation, you first call `useBlockUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBlockUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [blockUserMutation, { data, loading, error }] = useBlockUserMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useBlockUserMutation(baseOptions?: Apollo.MutationHookOptions<BlockUserMutation, BlockUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BlockUserMutation, BlockUserMutationVariables>(BlockUserDocument, options);
+      }
+export type BlockUserMutationHookResult = ReturnType<typeof useBlockUserMutation>;
+export type BlockUserMutationResult = Apollo.MutationResult<BlockUserMutation>;
+export type BlockUserMutationOptions = Apollo.BaseMutationOptions<BlockUserMutation, BlockUserMutationVariables>;
+export const UnblockUserDocument = gql`
+    mutation unblockUser($userId: Float!, $friendId: Float!) {
+  unblockUser(userId: $userId, friendId: $friendId)
+}
+    `;
+export type UnblockUserMutationFn = Apollo.MutationFunction<UnblockUserMutation, UnblockUserMutationVariables>;
+
+/**
+ * __useUnblockUserMutation__
+ *
+ * To run a mutation, you first call `useUnblockUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnblockUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unblockUserMutation, { data, loading, error }] = useUnblockUserMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useUnblockUserMutation(baseOptions?: Apollo.MutationHookOptions<UnblockUserMutation, UnblockUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnblockUserMutation, UnblockUserMutationVariables>(UnblockUserDocument, options);
+      }
+export type UnblockUserMutationHookResult = ReturnType<typeof useUnblockUserMutation>;
+export type UnblockUserMutationResult = Apollo.MutationResult<UnblockUserMutation>;
+export type UnblockUserMutationOptions = Apollo.BaseMutationOptions<UnblockUserMutation, UnblockUserMutationVariables>;
 export const HelloDocument = gql`
     query hello {
   helloT
@@ -728,8 +1115,6 @@ export const UserDocument = gql`
     username
     twoStepVerificationEnabled
     profileImgUrl
-    createdAt
-    updatedAt
   }
 }
     `;
@@ -798,38 +1183,6 @@ export function useDeleteAccountMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteAccountMutationHookResult = ReturnType<typeof useDeleteAccountMutation>;
 export type DeleteAccountMutationResult = Apollo.MutationResult<DeleteAccountMutation>;
 export type DeleteAccountMutationOptions = Apollo.BaseMutationOptions<DeleteAccountMutation, DeleteAccountMutationVariables>;
-export const UpdateUserProfileDocument = gql`
-    mutation UpdateUserProfile($userId: Float!, $UpdateProfileInput: UpdateProfileInput!) {
-  UpdateUserProfile(userId: $userId, UpdateProfileInput: $UpdateProfileInput)
-}
-    `;
-export type UpdateUserProfileMutationFn = Apollo.MutationFunction<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
-
-/**
- * __useUpdateUserProfileMutation__
- *
- * To run a mutation, you first call `useUpdateUserProfileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateUserProfileMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateUserProfileMutation, { data, loading, error }] = useUpdateUserProfileMutation({
- *   variables: {
- *      userId: // value for 'userId'
- *      UpdateProfileInput: // value for 'UpdateProfileInput'
- *   },
- * });
- */
-export function useUpdateUserProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>(UpdateUserProfileDocument, options);
-      }
-export type UpdateUserProfileMutationHookResult = ReturnType<typeof useUpdateUserProfileMutation>;
-export type UpdateUserProfileMutationResult = Apollo.MutationResult<UpdateUserProfileMutation>;
-export type UpdateUserProfileMutationOptions = Apollo.BaseMutationOptions<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
 export const AccountDocument = gql`
     query Account($userId: Float!) {
   findUserById(userId: $userId) {
@@ -895,3 +1248,130 @@ export type AccountQueryHookResult = ReturnType<typeof useAccountQuery>;
 export type AccountLazyQueryHookResult = ReturnType<typeof useAccountLazyQuery>;
 export type AccountSuspenseQueryHookResult = ReturnType<typeof useAccountSuspenseQuery>;
 export type AccountQueryResult = Apollo.QueryResult<AccountQuery, AccountQueryVariables>;
+export const UpdateUserProfileDocument = gql`
+    mutation UpdateUserProfile($userId: Float!, $UpdateProfileInput: UpdateProfileInput!) {
+  UpdateUserProfile(userId: $userId, UpdateProfileInput: $UpdateProfileInput)
+}
+    `;
+export type UpdateUserProfileMutationFn = Apollo.MutationFunction<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
+
+/**
+ * __useUpdateUserProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserProfileMutation, { data, loading, error }] = useUpdateUserProfileMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      UpdateProfileInput: // value for 'UpdateProfileInput'
+ *   },
+ * });
+ */
+export function useUpdateUserProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>(UpdateUserProfileDocument, options);
+      }
+export type UpdateUserProfileMutationHookResult = ReturnType<typeof useUpdateUserProfileMutation>;
+export type UpdateUserProfileMutationResult = Apollo.MutationResult<UpdateUserProfileMutation>;
+export type UpdateUserProfileMutationOptions = Apollo.BaseMutationOptions<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
+export const UpdateUserAvatarImgDocument = gql`
+    mutation updateUserAvatarImg($userId: Float!, $AvatarImage: Upload!) {
+  updateUserAvatarImg(userId: $userId, image: $AvatarImage)
+}
+    `;
+export type UpdateUserAvatarImgMutationFn = Apollo.MutationFunction<UpdateUserAvatarImgMutation, UpdateUserAvatarImgMutationVariables>;
+
+/**
+ * __useUpdateUserAvatarImgMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserAvatarImgMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserAvatarImgMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserAvatarImgMutation, { data, loading, error }] = useUpdateUserAvatarImgMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      AvatarImage: // value for 'AvatarImage'
+ *   },
+ * });
+ */
+export function useUpdateUserAvatarImgMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserAvatarImgMutation, UpdateUserAvatarImgMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserAvatarImgMutation, UpdateUserAvatarImgMutationVariables>(UpdateUserAvatarImgDocument, options);
+      }
+export type UpdateUserAvatarImgMutationHookResult = ReturnType<typeof useUpdateUserAvatarImgMutation>;
+export type UpdateUserAvatarImgMutationResult = Apollo.MutationResult<UpdateUserAvatarImgMutation>;
+export type UpdateUserAvatarImgMutationOptions = Apollo.BaseMutationOptions<UpdateUserAvatarImgMutation, UpdateUserAvatarImgMutationVariables>;
+export const UpdateProfileBgImgDocument = gql`
+    mutation updateProfileBgImg($userId: Float!, $BgImage: Upload!) {
+  updateProfileBgImg(userId: $userId, image: $BgImage)
+}
+    `;
+export type UpdateProfileBgImgMutationFn = Apollo.MutationFunction<UpdateProfileBgImgMutation, UpdateProfileBgImgMutationVariables>;
+
+/**
+ * __useUpdateProfileBgImgMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileBgImgMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileBgImgMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileBgImgMutation, { data, loading, error }] = useUpdateProfileBgImgMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      BgImage: // value for 'BgImage'
+ *   },
+ * });
+ */
+export function useUpdateProfileBgImgMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProfileBgImgMutation, UpdateProfileBgImgMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProfileBgImgMutation, UpdateProfileBgImgMutationVariables>(UpdateProfileBgImgDocument, options);
+      }
+export type UpdateProfileBgImgMutationHookResult = ReturnType<typeof useUpdateProfileBgImgMutation>;
+export type UpdateProfileBgImgMutationResult = Apollo.MutationResult<UpdateProfileBgImgMutation>;
+export type UpdateProfileBgImgMutationOptions = Apollo.BaseMutationOptions<UpdateProfileBgImgMutation, UpdateProfileBgImgMutationVariables>;
+export const UpdateUserDocument = gql`
+    mutation updateUser($userUpdateInput: UpdateUserInput!) {
+  updateUser(userUpdateInput: $userUpdateInput)
+}
+    `;
+export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
+
+/**
+ * __useUpdateUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ *   variables: {
+ *      userUpdateInput: // value for 'userUpdateInput'
+ *   },
+ * });
+ */
+export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
+      }
+export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
+export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
+export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;

@@ -3,7 +3,10 @@ export type User = {
   id?: string;
   email?: string;
   username?: string;
-  profilePhoto?: string;
+  profileImgUrl?: string;
   twoStepVerificationEnabled?: boolean;
   __typename?: "UserResponse" | undefined;
+  createdAt?: string;
+  updatedAt?: string;
+  showUpdateWin?: boolean;
 };

@@ -14,9 +14,15 @@ import {
   FriendsSearchConatiner,
 } from "./Friends.style";
 
-import { faker } from "@faker-js/faker";
-import { useEffect, useState } from "react";
+import { da, faker, fakerSK } from "@faker-js/faker";
+import { Suspense, useEffect, useState } from "react";
 import UserProfile from "components/friends/UserProfile/UserProfile";
+import {
+  useGetBlockedUsersQuery,
+  useGetBlockedUsersLazyQuery,
+  useGetBlockedUsersSuspenseQuery,
+} from "gql/index";
+import { useUserContext } from "context/user.context";
 const FILTERS = {
   ONLINE: "online friends",
   REQUEST: "friens request",
@@ -28,12 +34,15 @@ const Friends = () => {
   const [openFilterList, setOpenFilterList] = useState(false);
   const [filter, setFilter] = useState(FILTERS.ONLINE);
   const [friends, setFriends] = useState<User[]>([]);
-
+  const { user } = useUserContext();
+  // const {data} = useGetBlockedUsersSuspenseQuery();
   useEffect(() => {
+    // get firnds based on the filter!
+
     setFriends(getFriends());
   }, [filter]);
 
-  console.log(seachValue);
+  //console.log(data);
   const handleFilter = (e: any) => {
     setFilter(e.target.innerHTML);
     setOpenFilterList(false);
@@ -74,68 +83,72 @@ const Friends = () => {
     );
   }
   return (
-    <FriendsConatiner onClick={() => setOpenFilterList(false)}>
-      <FriendsFilterConatiner>
-        <FriendsSearchConatiner>
-          <FriendSearch
-            placeholder="Search"
-            maxLength={30}
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
-          <FriendSearchIcon>
-            <SearchIcon />
-          </FriendSearchIcon>
-        </FriendsSearchConatiner>
-        <FriendsFilter
-          onClick={(e) => {
-            setOpenFilterList(!openFilterList);
-            e.stopPropagation();
-          }}
-        >
-          <FriendsFilterHeader>{filter}</FriendsFilterHeader>
-          <DownIcon />
-          {openFilterList && (
-            <FilterList>
-              <FilterListItem onClick={handleFilter}>
-                {FILTERS.ONLINE}
-              </FilterListItem>
-              <FilterListItem onClick={handleFilter}>
-                {FILTERS.REQUEST}
-              </FilterListItem>
-              <FilterListItem onClick={handleFilter}>
-                {FILTERS.SUGGESTION}
-              </FilterListItem>
-              <FilterListItem onClick={handleFilter}>
-                {FILTERS.BLOCKED}
-              </FilterListItem>
-            </FilterList>
-          )}
-        </FriendsFilter>
-      </FriendsFilterConatiner>
+    <Suspense fallback={<div>Loading...</div>}>
+      <FriendsConatiner onClick={() => setOpenFilterList(false)}>
+        <FriendsFilterConatiner>
+          <FriendsSearchConatiner>
+            <FriendSearch
+              placeholder="Search"
+              maxLength={30}
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
+            <FriendSearchIcon>
+              <SearchIcon />
+            </FriendSearchIcon>
+          </FriendsSearchConatiner>
+          <FriendsFilter
+            onClick={(e) => {
+              setOpenFilterList(!openFilterList);
+              e.stopPropagation();
+            }}
+          >
+            <FriendsFilterHeader>{filter}</FriendsFilterHeader>
+            <DownIcon />
+            {openFilterList && (
+              <FilterList>
+                <FilterListItem onClick={handleFilter}>
+                  {FILTERS.ONLINE}
+                </FilterListItem>
+                <FilterListItem onClick={handleFilter}>
+                  {FILTERS.REQUEST}
+                </FilterListItem>
+                <FilterListItem onClick={handleFilter}>
+                  {FILTERS.SUGGESTION}
+                </FilterListItem>
+                <FilterListItem onClick={handleFilter}>
+                  {FILTERS.BLOCKED}
+                </FilterListItem>
+              </FilterList>
+            )}
+          </FriendsFilter>
+        </FriendsFilterConatiner>
 
-      <FriendList>
-        {friendsData.map((friend) => (
-          <UserProfile
-            primaryAction={getPrimaryAction()}
-            secondaryAction={getSecondaryAction()}
-            name={friend.name}
-            image={friend.image}
-          />
-        ))}
-      </FriendList>
-    </FriendsConatiner>
+        <FriendList>
+          {friendsData.map((friend) => (
+            <UserProfile
+              primaryAction={getPrimaryAction()}
+              secondaryAction={getSecondaryAction()}
+              name={friend.username}
+              image={friend.profileImgUrl}
+            />
+          ))}
+        </FriendList>
+      </FriendsConatiner>
+    </Suspense>
   );
 };
 
 interface User {
-  name: string;
-  image: string;
+  id: string;
+  username: string;
+  profileImgUrl: string;
 }
 
 const createRandomUser = (): User => {
   return {
-    name: faker.person.firstName(),
-    image: faker.image.urlPicsumPhotos(),
+    id: faker.string.uuid(),
+    username: faker.person.firstName(),
+    profileImgUrl: faker.image.urlPicsumPhotos(),
   };
 };
 const getFriends = (): User[] =>

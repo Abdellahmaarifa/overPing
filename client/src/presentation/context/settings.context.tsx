@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-const SETTINGS_LINKS = {
+export const SETTINGS_LINKS = {
   HOME: "home",
   USER_INFORMATION: "userInformation",
   GAME_LOOK: "gameLook",

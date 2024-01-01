@@ -41,11 +41,11 @@ const SettingsModel = () => {
         Game look
       </SettingModelLink>
       */}
-      <SettingModelLinkDanger
+      {/* <SettingModelLinkDanger
         onClick={(e) => navigate(e, SETTINGS_LINKS.DELETE_ACCOUNT)}
       >
         Delete Account
-      </SettingModelLinkDanger>
+      </SettingModelLinkDanger> */}
     </SettingMenuContainer>
   );
 };

@@ -22,6 +22,15 @@ const Validate = {
       .oneOf([Yup.ref(matchField)], "Passwords must match")
       .required("Password Confirmation is required")
       .matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
+  nickname: () =>
+    Yup.string()
+      .min(6, "Must be at least 6 characters")
+      .max(20, "Must be less than 20 characters")
+      .matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
+  about: () =>
+    Yup.string()
+      .min(50, "Must be at least 50 characters")
+      .max(150, "Must be less than 150 characters"),
 };
 
 export default Validate;

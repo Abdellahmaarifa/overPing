@@ -5,7 +5,6 @@ export class IAuthUser {
     fortyTwoId?: string;
     refreshToken?: string;
     profileId: number;
-    createdAt?: Date;
-    updatedAt?: Date;
+    showUpdateWin?: boolean;
   }
   

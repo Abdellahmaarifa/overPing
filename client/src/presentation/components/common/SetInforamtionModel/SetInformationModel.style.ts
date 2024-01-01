@@ -47,6 +47,7 @@ export const ChangeProfile = tw.div`
     relative
     -bottom-[40px]
     left-[27px]
+    w-fit
 `;
 
 export const ChangeProfileInput = tw.input`

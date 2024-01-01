@@ -19,7 +19,6 @@ export const HexagonImage = tw.div`
 absolute overflow-hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  w-[90%] h-[90%]
               bg-cover bg-center
           [clip-path: polygon( 0% 23.737%,50.152% 0%,99.311% 23.737%,99.311% 77.436%,50.152% 99.228%,0% 77.436%,0% 23.737% )]
-      
 `;
 
 export const HexagonMask = tw(ProfileShape)`

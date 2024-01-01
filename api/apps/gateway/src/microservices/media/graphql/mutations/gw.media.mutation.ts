@@ -12,23 +12,20 @@ export class MediaMutationsResolver {
   @UseGuards(AccessTokenGuard)
   @Mutation(() => String)
   async updateUserAvatarImg(
-    @Context() ctx,
-    @Args('image', { type: () => GraphQLUpload, nullable: true })
+    @Args('userId') userId: number,
+    @Args('image', { type: () => GraphQLUpload })
     file?: FileUpload,
   ): Promise<string> {
-    const { res } = ctx;
-    const userId = res.user.id;
     return this.mediaService.updateAvatarImg(userId, file);
   }
 
+  @UseGuards(AccessTokenGuard)
   @Mutation(() => String)
   async updateProfileBgImg(
-    @Context() ctx,
-    @Args('image', { type: () => GraphQLUpload, nullable: true })
+    @Args('userId') userId: number,
+    @Args('image', { type: () => GraphQLUpload })
     file?: FileUpload,
   ): Promise<string> {
-    const { res } = ctx;
-    const userId = res.user.id;
     return this.mediaService.updateProfileBg(userId, file);
   }
 }

@@ -7,7 +7,7 @@ export class IAuthUser {
     fortyTwoId?: string;
     refreshToken?: string;
     twoStepVerificationEnabled?: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
+    showUpdateWin?: Boolean;
 }
   
+
