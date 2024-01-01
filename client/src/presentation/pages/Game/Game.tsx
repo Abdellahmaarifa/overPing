@@ -15,95 +15,41 @@ import BetterLuck from "./components/BetterLuck";
 import ServerDown from './components/ServerDown';
 import { useUserContext } from "context/user.context";
 import { gql } from 'apollo-server-express';
-
+import { UserProfile } from 'components/chatPage/CharRightSide/ChatRightSide.style';
+import { useAccountQuery, useFindProfileByUserIdQuery } from "gql/index";
+import {useSearchParams} from "react-router-dom"
+import ReadyRobot from './components/ReadyRobot';
 let gameCapsule: GameContainer = new GameContainer();
 
 let playerOne : UserInfo = new UserInfo(tabId, "", 0, 0, "hunter X111", "/images/kilua.jpg", "", 0, 0, 0, 0, 0, 0);
 let playerTwo : UserInfo | undefined = new UserInfo(tabId, "", 0, 0, "machi +", "/images/machi.jpg", "", 0, 0, 0, 0, 0, 0);
-let robot     : UserInfo = new UserInfo(tabId, "", playerOne.matchWager, playerOne.modePlaying, "Mr Robot <|o_o|>", "/images/robot.jpg", "", 0, 0 ,0, 12, 0, 0)
+let robot     : UserInfo = new UserInfo(tabId, "", playerOne.matchWager, playerOne.modePlaying, "Mr Robot <|o_o|>", "/images/robot.jpg", "/images/badge-3.png", 10, 10 ,10, 12, 10, 0)
 
 
 
 function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlayerTwo} : { playerOne : UserInfo , playerTwo : UserInfo | undefined })
 {
     
-    //let { user } =  useUserContext();
-
-   /* const FIND_PROFILE_BY_USER_ID = gql`
-        query findProfileByUserId($userId: Float!) {
-        findProfileByUserId(userId: $userId) {
-            id
-            user_id
-            nickname
-            title
-            xp
-            rank
-            about
-        }
-    }
-    `;*/
-    //console.log(user);
-
-   /* const { loading, error, data } = useQuery(FIND_PROFILE_BY_USER_ID, {
-        variables: { user.id },
+    const { user } =  useUserContext();
+    const { data, loading, error } = useAccountQuery({
+        variables: {
+          userId: Number(user?.id),
+        },
       });
+    const [params] = useSearchParams()
+
     
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error.message}</p>;
-    
-    const userProfile = data.findProfileByUserId;
-      */
-    let isMobileSet: boolean = false;
+   // console.log("params: ", params.get("type"));
+    console.log("The data ----->: ", user, "--->\n", data);
 
-    function isMobileOrTablet() : boolean 
+
+
+    /*useEffect(() => 
     {
-        const userAgent = navigator.userAgent.toLowerCase();
-        return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
-    }
+    }, []);*/
 
-    function isLandscape(): boolean 
-    {
-        const aspectRatio = window.innerWidth / window.innerHeight;
-        const isLandscape = aspectRatio > 1; // Landscape if aspect ratio is greater than 1
-    
-        return isLandscape;
-    }
 
-    useEffect(() => 
-    {
-        const intervalId = setInterval(() => 
-        {
-          if (isMobileOrTablet() && isMobileSet === false) 
-          {
-            console.log("It's a mobile");
-            document.body.classList.add('bodyMobileClass');
 
-            isMobileSet = true;
-          }
-          else if (isMobileOrTablet() === false && isMobileSet === true) 
-          {
-            console.log('It is not a mobile');
-
-            document.body.classList.remove('bodyMobileClass');
-            isMobileSet = false;
-          }
-
-          
-        }, 1000);
-    
-        return () => {
-          clearInterval(intervalId); // Clear the interval when the component is unmounted
-        };
-    }, []);
-
-    let [matchState, setMatchState] = useState<boolean | undefined>(undefined);
-
-    let updateMatchState = (newState : boolean) =>
-    {
-        setMatchState(newState);
-    }
-
-    // let readyState : boolean = true;
     let [playerTwo, setPlayerTwoState] = useState(
         {
             socket         : renamePlayerTwo?.socket,
@@ -130,7 +76,6 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         newBestWinStreak : number , newMatchPlayed : number, newLevel: number, newTournentPlayed : number,
         newTournentWon : number, newPlayWithMouse : number ) => 
     {
-        // console.log("in the update state  : ", playerTwo)    
         setPlayerTwoState({...playerTwo, playWithRobot : newPlayWithRobot, 
             tabId : newTabId, matchId : newMatchId, matchWager: newMatchWager,
              modePlaying : newModePlaying, userName : newUserName, 
@@ -139,13 +84,9 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
              matchPlyed : newMatchPlayed, level : newLevel, 
              tournentPlayed : newTournentPlayed, tournentWon : newTournentWon,
              playWithMouse : newPlayWithMouse});
-        // console.log("update called : ", playerTwo);
     };
 
-    let updateUserInfoWagerAndModeTwo = (newWager : number, newMode : number) =>
-    {
-        setPlayerTwoState({...playerTwo, matchWager : newWager, modePlaying : newMode});
-    }
+
 
     let [playerOne , SetUserInfoData] = useState({
         socket         : renamePlayerOne.socket,
@@ -168,6 +109,18 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
 
     const [readyState, setReadyState] = useState(true);
     
+    let [matchState, setMatchState] = useState<boolean | undefined>(undefined);
+
+    let updateMatchState = (newState : boolean) =>
+    {
+        setMatchState(newState);
+    }
+
+    let updateUserInfoWagerAndModeTwo = (newWager : number, newMode : number) =>
+    {
+        setPlayerTwoState({...playerTwo, matchWager : newWager, modePlaying : newMode});
+    }
+
     let updateUserInfoWagerAndMode = (newWager : number, newMode : number) =>
     {
         SetUserInfoData( {...playerOne, matchWager : newWager, modePlaying : newMode});
@@ -208,50 +161,69 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         setServerState(newState);
     }
 
-    if (playerOne.playWithRobot === true)
+    if (params.get("type") === "computer")
     {
+        playerOne.playWithRobot = true;   
         robot.matchWager = playerOne.matchWager;
         robot.modePlaying = playerOne.modePlaying;
-        
     }
-    // return (
-    //     <>
-    //         <Info  playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateMatchState={updateMatchState}/>
-    //         <App  gameCapsule={gameCapsule} playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateMatchState={updateMatchState} />
-    //     </>
-    // )
 
-    if (playerOne.playWithMouse === 0)
-        return (< Util playerOne={playerOne} updateUserInfoUtil={UpdateUserInfoUtil}/>);
-    else if (playerOne.modePlaying === 0)
-        return ( <Modes playerOne={playerOne} updateUserInfoMode={updateUserInfoMode}/>);
-    else if (playerOne.matchWager === 0)
-        return ( < Deposit playerOne={playerOne} updateUserInfoWager={updateuserinfoWager}/>);
-    else if (playerOne.matchId.length === 0 && playerOne.playWithRobot === false)
-        return (<Waiting playerOne={ playerOne } playerTwo={ playerTwo as UserInfo }
-             updateRobotOpetion={updateRobotOpetion} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo}  />) 
-    if (playerOne.matchId.length > 0 && playerOne.playWithRobot === false && readyState)
-        return (< Ready playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateReadyState={updateReadyState} updateUserInfoWagerAndMode={updateUserInfoWagerAndMode} updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId}/>)
-    else if (playerOne.playWithRobot === true && readyState )
-        return (< Ready playerOne={playerOne} playerTwo={robot} updateReadyState={updateReadyState} updateUserInfoWagerAndMode={updateUserInfoWagerAndMode}  updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId}/>)
-    else if (matchState === undefined)
+    if (loading) 
+        return <h1>loading...</h1>;
+    else if (error)
+        return <h1>Error!</h1>
+    else
     {
-        if (isServerDown === true)
-            return ( <ServerDown/>);
-        else
-            return (
-                <>
-                    <Info  playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateMatchState={updateMatchState} />
-                    <App  gameCapsule={gameCapsule} playerOne={playerOne} playerTwo={playerTwo as UserInfo}
-                     updateMatchState={updateMatchState} updateServerState={updateServerState}/>
-                </>
-            )
+       playerOne.userName = user?.username as string;
+       playerOne.userAvatar = data?.findUserById.profileImgUrl as string;
+       playerOne.matchPlyed = data?.findProfileByUserId?.gameStatus.totalMatches as number;
+       playerOne.matchWon = data?.findProfileByUserId?.gameStatus.matchesWon as number;
+       playerOne.bestWinStreak = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
+       playerOne.level = data?.findProfileByUserId?.xp as number;
+       playerOne.tournentWon = data?.findProfileByUserId?.gameStatus.win_streak as number;
+       playerOne.tournentPlayed = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
+       
+        if (data?.findProfileByUserId?.rank  as number < 100)
+            playerOne.userLogo = "/public/images/badge-1.png"
+        if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
+            playerOne.userLogo = "/public/images/badge-2.png";
+        if (data?.findProfileByUserId?.rank  as number >= 200)
+            playerOne.userLogo = "/public/images/badge-3.png";
+    
+        if (playerOne.playWithMouse === 0)
+            return (< Util playerOne={playerOne} updateUserInfoUtil={UpdateUserInfoUtil}/>);
+        else if (playerOne.modePlaying === 0)
+            return ( <Modes playerOne={playerOne} updateUserInfoMode={updateUserInfoMode}/>);
+        else if (playerOne.matchWager === 0)
+            return ( < Deposit playerOne={playerOne} updateUserInfoWager={updateuserinfoWager}/>);
+        else if (playerOne.matchId.length === 0 && playerOne.playWithRobot === false)
+            return (<Waiting playerOne={ playerOne } playerTwo={ playerTwo as UserInfo }
+                 updateRobotOpetion={updateRobotOpetion} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo}  />) 
+        if (playerOne.matchId.length > 0 && playerOne.playWithRobot === false && readyState)
+            return (< Ready playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateReadyState={updateReadyState} updateUserInfoWagerAndMode={updateUserInfoWagerAndMode} updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId}/>)
+        else if (playerOne.playWithRobot === true && readyState )
+        {
+            return (< ReadyRobot playerOne={playerOne} playerTwo={playerTwo as UserInfo} robot={robot} updateReadyState={updateReadyState} updateUserInfoWagerAndMode={updateUserInfoWagerAndMode}  updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo} />)
+        }
+        else if (matchState === undefined)
+        {
+            if (isServerDown === true)
+                return ( <ServerDown/>);
+            else
+                return (
+                    <>
+                        <Info  playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateMatchState={updateMatchState} />
+                        <App  gameCapsule={gameCapsule} playerOne={playerOne} playerTwo={playerTwo as UserInfo}
+                         updateMatchState={updateMatchState} updateServerState={updateServerState}/>
+                    </>
+                )
+        }
+        else if (matchState === true)
+            return (< Congratulation playerOne={playerOne} playerTwo={playerTwo as UserInfo} />)
+        else if (matchState === false)
+            return (< BetterLuck playerOne={playerOne} playerTwo={playerTwo as UserInfo} />)
+        return (null)
     }
-    else if (matchState === true)
-        return (< Congratulation playerOne={playerOne} playerTwo={playerTwo as UserInfo} />)
-    else if (matchState === false)
-        return (< BetterLuck playerOne={playerOne} playerTwo={playerTwo as UserInfo} />)
-    return (null)
 }
   
 export default ParentComponent;

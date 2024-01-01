@@ -21,6 +21,10 @@ function Info({playerOne, playerTwo, updateMatchState} : InfoProps)
     const [rightGoal, setRightGoal] = useState(0);
     const [playerNumber, setPlayerNumber] = useState(0);
     const [ID, setUsrId] = useState("A" + playerOne.matchId);
+
+
+    console.log("Logo ===> : ", playerOne.userLogo);
+    console.log("Logo ===> : ", playerTwo.userLogo);
     
     //get room Match id before establish a connection
     useEffect(() => 
@@ -124,13 +128,17 @@ function Info({playerOne, playerTwo, updateMatchState} : InfoProps)
         let leftImgInfo : HTMLElement | null = document.getElementById("infoAvatar1");
         let rightImg : HTMLElement | null = document.getElementById("infoAvatar02");
         let rightImgInfo : HTMLElement | null = document.getElementById("infoAvatar2");
+        let leftTeam : HTMLElement | null = document.getElementById("leftTeam");
+        let rightTeam : HTMLElement | null = document.getElementById("rightTeam");
         
-        if (leftImg && leftImgInfo && rightImg && rightImgInfo)
+        if (leftImg && leftImgInfo && rightImg && rightImgInfo && leftTeam && rightTeam)
         {
             leftImg.setAttribute('src', playerTwo.userAvatar);
             leftImgInfo.setAttribute('src', playerTwo.userAvatar);
             rightImg.setAttribute('src', playerOne.userAvatar );
             rightImgInfo.setAttribute('src', playerOne.userAvatar );
+            leftTeam.setAttribute('src', playerTwo.userLogo);
+            rightTeam.setAttribute('src', playerOne.userLogo);
         }
     }, 100)
 
@@ -203,20 +211,20 @@ function Info({playerOne, playerTwo, updateMatchState} : InfoProps)
                     <div className="player1Container">
                         <div className="info1">
                             <div className="avatar1Border">
-                                <div className="info1Avatar1" onClick={() =>  setHovered1(false)}><img id="infoAvatar1" src="question-mark.jpeg" alt="imgA"></img></div>
+                                <div className="info1Avatar1" onClick={() =>  setHovered1(false)}><img id="infoAvatar1" src={playerTwo.userAvatar} alt="imgA"></img></div>
                             </div>
                             <div className="achievement">
-                                <div className="userName"><p>{playerOne.userName}</p></div>
+                                <div className="userName"><p>{playerTwo.userName}</p></div>
                                 <div className="shields">
-                                    <span className="shld">🐲 **</span>
-                                    <span className="shld">🔑 *</span>
-                                    <span className="shld">🌋 *****</span>
-                                    <span className="shld">🍄 ****</span>
-                                    <span className="shld">💎 ***</span>
-                                    <span className="shld">🍫 ****</span>
+                                    <span className="shld">Game Won : {playerTwo.matchWon}</span>
+                                    <span className="shld">Best Win : {playerTwo.bestWinStreak}</span>
+                                    <span className="shld">Game Played : {playerTwo.matchPlyed}</span>
+                                    <span className="shld">xp : {playerTwo.level}</span>
+                                    <span className="shld">win streak : {playerTwo.tournentWon}</span>
+                                    <span className="shld">matches loss : {playerTwo.tournentPlayed}</span>
                                 </div>
                             </div>
-                            <div className="team"></div>
+                            <div className="team"><img id="leftTeam" src={playerTwo.userLogo} alt="badge"/></div>
                         </div>
                         <div className="player1InfoFooter">
                             <div className="player1LeftFooter"></div>
@@ -239,20 +247,20 @@ function Info({playerOne, playerTwo, updateMatchState} : InfoProps)
                     <div className="player2Container">
                         <div className="info2">
                             <div className="avatar1Border">
-                            <div className="info2Avatar2" onClick={() => setHovered2(false)} ><img id="infoAvatar2" src="question-mark.jpeg" alt="imgA"></img></div>
+                            <div className="info2Avatar2" onClick={() => setHovered2(false)} ><img id="infoAvatar2" src={playerOne.userAvatar} alt="imgA"></img></div>
                             </div>
                             <div className="achievement">
-                                <div className="userName"><p>{playerTwo.userName}</p></div>
+                                <div className="userName"><p>{playerOne.userName}</p></div>
                                 <div className="shields">
-                                    <span className="shld">💰 ***</span>
-                                    <span className="shld">🐳 *****</span>
-                                    <span className="shld">🔮 **</span>
-                                    <span className="shld">🏜 *****</span>
-                                    <span className="shld">🥇 ***</span>
-                                    <span className="shld">🍹 *****</span>
+                                    <span className="shld">Game Won : {playerOne.matchWon}</span>
+                                    <span className="shld">Best Win : {playerOne.bestWinStreak}</span>
+                                    <span className="shld">Game Played : {playerOne.matchPlyed}</span>
+                                    <span className="shld">xp : {playerOne.level}</span>
+                                    <span className="shld">win streak : {playerOne.tournentWon}</span>
+                                    <span className="shld">matches loss : {playerOne.tournentPlayed}</span>
                                 </div>
                             </div>
-                            <div className="team"></div>
+                            <div className="team"><img id="rightTeam" src={playerTwo.userLogo} alt="badge"/></div>
                         </div>
                         <div className="player2InfoFooter">
                             <div className="player2LeftFooter"></div>
