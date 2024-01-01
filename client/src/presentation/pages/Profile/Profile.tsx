@@ -9,15 +9,21 @@ import { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { ProfileConatiner } from "./Profile.style";
 import tw from "twin.macro";
-import { useAccountQuery, useFindProfileByUserIdQuery } from "gql/index";
+import {
+  BlockUserDocument,
+  useAccountQuery,
+  useFindProfileByUserIdQuery,
+} from "gql/index";
 import { useUserContext } from "context/user.context";
 import { ProfileType } from "domain/model/Profile.type";
 import { useNavigate, useParams } from "react-router-dom";
 import { GetUserProfile } from "helpers/index";
+import { useApolloClient } from "@apollo/client";
 
 const Profile = () => {
   const [showExtraMenu, setShowExtraMenu] = useState(false);
   const navigate = useNavigate();
+  const client = useApolloClient();
   // const [isLoading, setIsLoading] = useState(true);
   let { user, profile } = useUserContext();
   const id = useParams()?.id;
@@ -44,6 +50,22 @@ const Profile = () => {
   // console.log("this is the profile: ", profile);
   //
   console.log("this is the final profile: ", profile);
+
+  const blockUser = () => {
+    client
+      .mutate({
+        mutation: BlockUserDocument,
+        variables: {
+          userId: Number(user?.id),
+          friendId: Number(id),
+        },
+      })
+      .then((data) => {
+        // if the user blocked you should refrech the page
+      })
+      .catch((err) => console.log("you can't", err));
+  };
+
   return (
     <ProfileConatiner>
       <div tw="w-full relative max-w-[1126px] min-w-[300px]">
@@ -56,7 +78,7 @@ const Profile = () => {
 
         {showExtraMenu && (
           <ExtraMenu>
-            <ExtraLink>Block friend</ExtraLink>
+            <ExtraLink onClick={() => blockUser()}>Block friend</ExtraLink>
             <ExtraLink>remove friend</ExtraLink>
           </ExtraMenu>
         )}

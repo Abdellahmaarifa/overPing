@@ -86,4 +86,5 @@ export const ExtraLink = tw.a`
     font-inter
     capitalize
     [font-weight: 600]
+    cursor-pointer
 `;

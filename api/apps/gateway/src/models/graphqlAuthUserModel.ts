@@ -25,7 +25,7 @@ export class GQLUserModel {
     @Field()
     twoStepVerificationEnabled?: boolean;
 
-    @Field()
-    showUpdateWin: boolean;
+    @Field({nullable: true })
+    showUpdateWin?: boolean;
   }
   

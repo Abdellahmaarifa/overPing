@@ -18,7 +18,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/api/test/jest-e2e.json",
-    "seed:achievement": "ts-node ./apps/profile/src/scripts/seed.achievement.ts"
+    "seed:achievement": "ts-node ./apps/profile/src/scripts/seed.achievement.ts",
+    "generate:auth:prisma": "cd ./apps/auth/prisma && prisma generate --schema schema.prisma",
+    "generate:friend:prisma": "cd ./apps/friend/prisma && prisma generate --schema schema.prisma",
+    "generate:prfile:prisma": "cd ./apps/profile/prisma && prisma generate --schema schema.prisma"
   },
   "dependencies": {
     "@apollo/server": "^4.9.5",

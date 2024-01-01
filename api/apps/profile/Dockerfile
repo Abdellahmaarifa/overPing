@@ -9,15 +9,15 @@ RUN yarn global add prisma @prisma/client
 
 WORKDIR /usr/src/app
 
-# Copy package.json and yarn.lock to leverage Docker cache
-COPY package*.json yarn.lock ./
 
 # Install dependencies
-RUN yarn install --verbose
 
 # Copy the rest of the application code
 COPY . .
 
+RUN yarn install --verbose
+
+RUN yarn run generate:profile:prisma
 # Build the application
 RUN yarn build
 

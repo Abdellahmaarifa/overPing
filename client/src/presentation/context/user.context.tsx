@@ -24,6 +24,7 @@ export type Context = {
   updateUser: (user: User) => void;
   profile: ProfileType | null;
   updateProfile: (profile: ProfileType) => void;
+  store: Store | null;
 };
 
 const UserContext = createContext<Context>({
@@ -34,6 +35,7 @@ const UserContext = createContext<Context>({
   updateUser: (user: User) => {},
   profile: null,
   updateProfile: (profile: ProfileType) => {},
+  store: null,
 });
 
 const HELLO = `
@@ -87,7 +89,6 @@ const graphqlEndpoint = "http://localhost:5500/graphql";
 const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<ProfileType | null>(null);
-
   const signOut = useCallback(() => {
     //store.setToken(null);
     setUser(null);
@@ -183,8 +184,18 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
       updateUser,
       profile,
       updateProfile,
+      store,
     }),
-    [signIn, signOut, restoreUser, user, updateUser, profile, updateProfile]
+    [
+      signIn,
+      signOut,
+      restoreUser,
+      user,
+      updateUser,
+      profile,
+      updateProfile,
+      store,
+    ]
   );
 
   return (
