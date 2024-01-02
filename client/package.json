@@ -11,7 +11,8 @@
     "build": "tsc && vite build",
     "serve": "vite preview",
     "mock-server": "nodemon -e ts -w ./src/infrastructure/mock -x  tsx ./src/infrastructure/mock/server.ts",
-    "gen": "graphql-codegen --config codegen.ts"
+    "gen": "graphql-codegen --config codegen.ts",
+    "seed": "tsx ./src/infrastructure/mock/seed.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.8.8",
