@@ -34,6 +34,7 @@ import { MediaMutationsResolver } from './microservices/media/graphql/mutations/
 import { FriendMutationsResolver } from './microservices/friend/graphql/mutaions/gw.friend.mutations.resolver';
 import { FriendQueryResolver } from './microservices/friend/graphql/queries/gw.frined.query.resolvert';
 import { GwFriendService } from './microservices/friend/services/gw.friend.service';
+import { GWChatModule } from "./microservices/chat/gw.chat.module";
 
 
 
@@ -44,6 +45,7 @@ import { GwFriendService } from './microservices/friend/services/gw.friend.servi
   imports: [
     PassportModule,
     RabbitMqModule,
+    GWChatModule,
     GraphQLModule.forRoot({
       driver:ApolloDriver,
       autoSchemaFile: join(process.cwd(), './graphql/schema.gql'),
@@ -66,6 +68,7 @@ import { GwFriendService } from './microservices/friend/services/gw.friend.servi
   RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
   RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),
   RabbitMqModule.forClientProxy(IRmqSeverName.MATCH_MAKING),
+  RabbitMqModule.forClientProxy(IRmqSeverName.CHAT),
   RabbitMqModule.forClientProxy(IRmqSeverName.MEDIA),
   RabbitMqModule.forClientProxy(IRmqSeverName.FRIEND),
 ],

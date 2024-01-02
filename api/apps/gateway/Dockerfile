@@ -7,7 +7,7 @@ RUN yarn global add @nestjs/cli
 WORKDIR /usr/src/app
 
 # Copy package.json and yarn.lock to leverage Docker cache
-#COPY package*.json yarn.lock ./
+# COPY package*.json yarn.lock ./
 
 # Install dependencies
 

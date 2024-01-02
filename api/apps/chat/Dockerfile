@@ -9,22 +9,20 @@ RUN yarn global add prisma @prisma/client
 
 WORKDIR /usr/src/app
 
-# Copy package.json and yarn.lock to leverage Docker cache
 
+
+# Copy the rest of the application code
 COPY . .
 
 # Install dependencies
 RUN yarn install --verbose
 
 # Generate Prisma client
-RUN yarn run gen:profile:prisma
-
-# Copy the rest of the application code
+RUN yarn run gen:chat:prisma
 
 # Build the application
 RUN yarn build
 
-# Generate Prisma client
 
 # Create a new image for production
 FROM node:21.1.0-alpine as production
@@ -60,4 +58,4 @@ RUN prisma generate
 USER node
 
 # Start the application
-CMD ["node", "dist/apps/profile/main"]
+CMD ["node", "dist/apps/auth/main"]

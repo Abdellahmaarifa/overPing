@@ -1,0 +1,100 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CHAT_DATABASE_URL")
+}
+
+model Channel {
+  id            Int             @id @default(autoincrement())
+  owner_id      Int
+  name          String
+  description   String?
+  visibility    String
+  password      String?
+  admins        Admins[]
+  members       Members[]
+  bannedMembers BannedMembers[]
+  messages      Messages[]
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+
+  @@index(fields: [id, name])
+}
+
+model DirectMessage {
+  id         Int        @id @default(autoincrement())
+  user1_id   Int
+  user2_id   Int
+  messages   Messages[]
+  created_at DateTime   @default(now())
+
+  @@index(fields: [id, user2_id])
+}
+
+model Messages {
+  id         Int            @id @default(autoincrement())
+  sender_id  Int
+  text       String
+  updated    Boolean        @default(false)
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
+  dm         DirectMessage? @relation(fields: [dmId], references: [id], onDelete: Cascade)
+  dmId       Int?
+  channel    Channel?       @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId  Int?
+}
+
+model Members {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId Int
+}
+
+model Admins {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId Int
+}
+
+model BannedMembers {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId Int
+}
+
+model MutedMembers {
+  id             Int      @id @default(autoincrement())
+  channel_id     Int
+  mutedMember_id Int
+  expiry         DateTime
+}
+
+model BlockedUsers {
+  id             Int @id @default(autoincrement())
+  user_id        Int
+  blockedUser_id Int
+}
+
+model GameRequest {
+  id         Int      @id @default(autoincrement())
+  sender_id  Int
+  target_id  Int
+  gameType   String
+  status     String // pending, accepted, declined
+  created_at DateTime @default(now())
+}
+
+model Notifications {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  sender_id  Int
+  text       String
+  created_at DateTime @default(now())
+}

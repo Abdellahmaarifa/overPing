@@ -120,6 +120,29 @@ services:
       - production
       - development
 
+
+  # DATABASE SERVICE FOR CHAT DEV AND PROD #
+  postgres_chat_db:
+    image: postgres
+    container_name: postgres_chat_db
+    env_file:
+      - ./api/.env
+    environment:
+      - POSTGRES_DB=${CHAT_DB_NAME}
+      - POSTGRES_USER=${CHAT_DB_USER}
+      - POSTGRES_PASSWORD=${CHAT_DB_PASSWORD}
+    ports:
+      -  "${CHAT_DB_PORT}:5432"
+    networks:
+      - webapp
+    volumes:
+      - ./database/data/chat:/var/lib/postgresql/data/
+    restart: always
+    profiles:
+      - production
+      - development
+
+
   # GATEWAY SERVICE FOR PRODUCTION #
   # gateway:
   #   build:
@@ -236,7 +259,7 @@ services:
       - development
       - production
 
-  # MATCHMAKING SERVICE FOR DEVELOPMENT #
+  # MEDIA SERVICE FOR DEVELOPMENT #
 
   media:
     build:
@@ -286,6 +309,33 @@ services:
       - gateway
       - auth
     restart: always
+    profiles:
+      - development
+      - production
+
+  # CHAT SERVICE FOR DEVELOPMENT #
+  chat:
+    build:
+      context: ./api
+      dockerfile: ./apps/chat/Dockerfile
+      target: development
+    command: yarn start:dev chat
+    env_file:
+      - ./api/.env
+    networks:
+      - webapp
+    ports:
+      - ${CHAT_PORT}:3005
+      - ${PRISMA_STUDIO_CHAT_PORT}:5555
+      
+    volumes:
+      - ./api:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - postgres_chat_db
+      - gateway
+    restart: always
+    container_name: chat
     profiles:
       - development
       - production
