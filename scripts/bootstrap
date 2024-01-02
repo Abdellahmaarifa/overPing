@@ -1,19 +1,19 @@
 #!/bin/bash
 
-docker exec auth rm -rf /usr/app/apps/auth/prisma/migrations
+docker exec auth rm -rf /usr/app/apps/auth/prisma/migrations && echo "the migrations dir is deleted"
 docker exec auth sh -c 'cd /usr/src/app/apps/auth/prisma &&  yes | prisma migrate dev'
 docker exec auth sh -c 'npx prisma generate --schema=/usr/src/app/apps/auth/prisma/schema.prisma'
 docker restart auth
 
 
 
-docker exec profile rm -rf /usr/app/apps/profile/prisma/migrations
+docker exec profile rm -rf /usr/app/apps/profile/prisma/migrations && echo "the migrations dir is deleted"
 docker exec profile sh -c 'cd /usr/src/app/apps/profile/prisma &&  yes | prisma migrate dev'
 docker exec profile sh -c 'npx prisma generate --schema=/usr/src/app/apps/profile/prisma/schema.prisma'
 docker restart profile
 
-docker exec media rm -rf /usr/app/apps/media/prisma/migrations
-docker exec media sh -c 'cd /usr/src/app/apps/media/prisma &&  yes | prisma migrate dev'
-docker exec media sh -c 'npx prisma generate --schema=/usr/src/app/apps/media/prisma/schema.prisma'
-docker restart media 
+docker exec friend rm -rf /usr/app/apps/friend/prisma/migrations && echo "the migrations dir is deleted"
+docker exec friend sh -c 'cd /usr/src/app/apps/friend/prisma &&  yes | prisma migrate dev'
+docker exec friend sh -c 'npx prisma generate --schema=/usr/src/app/apps/friend/prisma/schema.prisma'
+docker restart friend 
 
