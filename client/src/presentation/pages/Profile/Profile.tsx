@@ -22,6 +22,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { GetUserProfile } from "helpers/index";
 import { useApolloClient } from "@apollo/client";
 import { FriendshipStatusType } from "domain/model/helpers.type";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const [showExtraMenu, setShowExtraMenu] = useState(false);
@@ -76,19 +77,29 @@ const Profile = () => {
   //
   console.log("this is the final profile: ", userProfile);
 
-  const blockUser = () => {
-    client
-      .mutate({
+  const blockUser = async () => {
+    await toast.promise(
+      client.mutate({
         mutation: BlockUserDocument,
         variables: {
           userId: Number(user?.id),
           friendId: Number(id),
         },
-      })
-      .then((data) => {
-        // if the user blocked you should refrech the page
-      })
-      .catch((err) => console.log("you can't", err));
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          console.log(data);
+          setShowExtraMenu(false);
+          return "user blocked successfuly!";
+        },
+        error: (err) => {
+          console.log(err);
+          setShowExtraMenu(false);
+          return "something went wrong.";
+        },
+      }
+    );
   };
 
   //if (isLoading) return <h1>loading..</h1>;
