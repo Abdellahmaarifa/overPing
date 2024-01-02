@@ -4,6 +4,7 @@ import FriendsIcon from "assets/common/friends.svg?react";
 import GamepadIcon from "assets/common/game-pad.svg?react";
 import SettingsIcon from "assets/common/settings.svg?react";
 import UserAddIcon from "assets/common/user-add.svg?react";
+import PendingIcon from "assets/common/pending.svg?react";
 import Badge from "assets/profile/badge.png";
 import DemoCover from "assets/profile/cover.jpg";
 import Onep from "assets/profile/onep.jpg";
@@ -30,6 +31,7 @@ import { useUserContext } from "context/user.context";
 import { useAddFriendMutation, useFindProfileByUserIdQuery } from "gql/index";
 import { ProfileType } from "domain/model/Profile.type";
 import { FriendshipStatusType } from "domain/model/helpers.type";
+import toast, { Toaster } from "react-hot-toast";
 const ProfileBanner = ({
   showExtraMenu,
   setShowExtraMenu,
@@ -53,25 +55,29 @@ const ProfileBanner = ({
     settingsModel: [settingModel, setSettingModel],
   } = useSettingsContext();
   const { user } = useUserContext();
-  const sendRequest = () => {
-    addFriend({
-      variables: {
-        userId: Number(user?.id),
-        friendId: Number(id),
-      },
-    })
-      .then((data) => {
-        console.log(data);
-        setFriendStatus("PENDING");
-      })
-      .catch((err) => {
-        console.log("this is from profile an error: ", err);
-      });
-
-    // update friend status
-
-    // check if error reload the page
+  const sendRequest = async () => {
+    await toast.promise(
+      addFriend({
+        variables: {
+          userId: Number(user?.id),
+          friendId: Number(id),
+        },
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          console.log(data);
+          setFriendStatus("PENDING");
+          return "your request is done successfuly";
+        },
+        error: (err) => {
+          console.log(err);
+          return "something went wrong.";
+        },
+      }
+    );
   };
+  console.log("stsus: ", friendsStatus);
   return (
     <BannerConatiner
       style={{
@@ -102,15 +108,17 @@ const ProfileBanner = ({
         ) : (
           <>
             <BannerMenuButton>
-              <GamepadIcon onClick={() => navigate("/game")} />
+              <GamepadIcon
+                onClick={() => navigate(`/game/type=friends?id=${profile?.id}`)}
+              />
             </BannerMenuButton>
             <BannerMenuButton>
-              <ChatIcon onClick={() => navigate(`/chat/${profile?.id}`)} />
+              <ChatIcon onClick={() => navigate(`/chat/dm/${profile?.id}`)} />
             </BannerMenuButton>
             <BannerMenuButton>
               {friendsStatus === "PENDING" ? (
-                <h1>pandding..</h1>
-              ) : friendsStatus !== "FRIEND" ? (
+                <PendingIcon />
+              ) : friendsStatus === null ? (
                 <UserAddIcon onClick={() => sendRequest()} />
               ) : null}
             </BannerMenuButton>
@@ -132,6 +140,7 @@ const ProfileBanner = ({
           <ProfileLevel>Level : {profile?.level}</ProfileLevel>
         </ProfileInfo>
       </ProfileConatiner>
+      <Toaster position="top-center" />
     </BannerConatiner>
   );
 };

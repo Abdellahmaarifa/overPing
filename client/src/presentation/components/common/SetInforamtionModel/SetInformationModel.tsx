@@ -58,6 +58,11 @@ const SetInformationModel = () => {
   const [updateCoverMutation] = useUpdateProfileBgImgMutation();
   const { restoreUser } = useUserContext();
   const navigate = useNavigate();
+  const goHome = () =>
+    setTimeout(() => {
+      navigate(0);
+      //window.location.replace(`/profile/${profile?.id}`);
+    }, 200);
   const updateProfile = async () => {
     if (!avatar && !about && !nickname && !cover) return;
     // VALIDATE THE DATA FIRST .
@@ -100,10 +105,7 @@ const SetInformationModel = () => {
         {
           loading: "please wait..",
           success: ({ data }: any) => {
-            setTimeout(() => {
-              //navigate(`/profile/${profile?.id}`);
-              //window.location.replace(`/profile/${profile?.id}`);
-            }, 200);
+            goHome();
             return "Profile updated!";
           },
           error: (err) => {
@@ -124,10 +126,7 @@ const SetInformationModel = () => {
           {
             loading: "please wait..",
             success: ({ data }: any) => {
-              setTimeout(() => {
-                //navigate(`/profile/${profile?.id}`);
-                //window.location.replace(`/profile/${profile?.id}`);
-              }, 200);
+              goHome();
               return "avatar updated!";
             },
             error: (err) => {
@@ -149,10 +148,7 @@ const SetInformationModel = () => {
           {
             loading: "please wait..",
             success: ({ data }: any) => {
-              setTimeout(() => {
-                //navigate(`/profile/${profile?.id}`);
-                //window.location.replace(`/profile/${profile?.id}`);
-              }, 200);
+              goHome();
               return "cover updated!";
             },
             error: (err) => {

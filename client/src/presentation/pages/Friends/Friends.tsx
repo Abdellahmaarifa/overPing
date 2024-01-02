@@ -20,12 +20,16 @@ import {
   useGetBlockedUsersSuspenseQuery,
   GetFriendshipRequestsDocument,
   AcceptFriendshipDocument,
+  RemoveFriendDocument,
   UnblockUserDocument,
+  AddFriendDocument,
 } from "gql/index";
 import { Suspense, useEffect, useState } from "react";
 import { useUserContext } from "context/user.context";
 import { useApolloClient } from "@apollo/client";
 import { sleep } from "helpers/index";
+import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 const FILTERS = {
   ONLINE: "online friends",
   REQUEST: "friens request",
@@ -39,6 +43,7 @@ const Friends = () => {
   const [friends, setFriends] = useState<User[]>([]);
   const client = useApolloClient();
   const { user } = useUserContext();
+  const navigate = useNavigate();
   // const {data} = useGetBlockedUsersSuspenseQuery();
 
   const getQuery = () => {
@@ -55,6 +60,12 @@ const Friends = () => {
         return GetBlockedUsersDocument;
     }
   };
+
+  const clearFriend = (friend: User) => {
+    const newFriendList = friends.filter((el) => el.id != friend.id);
+    setFriends(newFriendList);
+  };
+
   useEffect(() => {
     // get firnds based on the filter!
     const controller = new AbortController();
@@ -87,72 +98,162 @@ const Friends = () => {
   }, [filter]);
 
   // if (loading) return <h1>loading</h1>;
-  const acceptFriendReq = (friend) => () => {
+  const acceptFriendReq = (friend) => async () => {
     // logic here
-    client
-      .mutate({
+    await toast.promise(
+      client.mutate({
         mutation: AcceptFriendshipDocument,
         variables: {
           userId: Number(user?.id),
           friendId: Number(friend.id),
         },
-      })
-      .then((data) => {
-        console.log("well done!", data);
-      })
-      .catch((err) => {
-        console.log("This is an error: ", err);
-      });
-    console.log(friend);
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          console.log("well done!", data);
+          // delete the user from the current list
+          clearFriend(friend);
+          return "Friend request accepted";
+        },
+        error: (err) => {
+          console.log(err);
+          return "something went wrong.";
+        },
+      }
+    );
   };
+
+  const cancelFriendReq = (friend) => async () => {
+    await toast.promise(
+      client.mutate({
+        mutation: RemoveFriendDocument,
+        variables: {
+          userId: Number(user?.id),
+          friendId: Number(friend.id),
+        },
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          console.log("well done!", data);
+          // delete the user from the current list
+          clearFriend(friend);
+          return "Friend request canceled";
+        },
+        error: (err) => {
+          console.log(err);
+          return "something went wrong.";
+        },
+      }
+    );
+  };
+
+  const sendFriendReq = (friend) => async () => {
+    await toast.promise(
+      client.mutate({
+        mutation: AddFriendDocument,
+        variables: {
+          userId: Number(user?.id),
+          friendId: Number(friend.id),
+        },
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          console.log("well done!", data);
+          // delete the user from the current list
+          clearFriend(friend);
+          return "Friend request sent";
+        },
+        error: (err) => {
+          console.log(err);
+          return "something went wrong.";
+        },
+      }
+    );
+  };
+
   const handleFilter = (e: any) => {
     setFilter(e.target.innerHTML);
     setOpenFilterList(false);
   };
 
-  const unclockFriend = (friend: User) => () => {
-    client
-      .mutate({
+  const unclockFriend = (friend: User) => async () => {
+    await toast.promise(
+      client.mutate({
         mutation: UnblockUserDocument,
         variables: {
           userId: Number(user?.id),
           friendId: Number(friend.id),
         },
-      })
-      .then((data) => {
-        console.log("well done!", data);
-      })
-      .catch((err) => {
-        console.log("This is an error: ", err);
-      });
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          clearFriend(friend);
+          console.log("well done!", data);
+          return "user unblocked successfully";
+        },
+        error: (err) => {
+          console.log(err);
+          return "something went wrong.";
+        },
+      }
+    );
   };
 
   const getPrimaryAction = (friend: User) => {
     switch (filter) {
       case FILTERS.ONLINE:
-        return { name: "Match", func: () => {} };
+        return {
+          name: "Match",
+          func: () => {
+            navigate(`/game?type=friends?id=${friend.id}`);
+          },
+        };
       case FILTERS.REQUEST:
         return { name: "Accept Friend", func: acceptFriendReq(friend) };
       case FILTERS.SUGGESTION:
-        return { name: "Add friend", func: () => {} };
+        return { name: "Add friend", func: sendFriendReq(friend) };
       case FILTERS.BLOCKED:
         return { name: "Unblock", func: unclockFriend(friend) };
       default:
-        return { name: "Match", func: () => {} };
+        return {
+          name: "Match",
+          func: () => {
+            navigate(`/game?type=friends?id=${friend.id}`);
+          },
+        };
     }
   };
   const getSecondaryAction = (friend) => {
     switch (filter) {
       case FILTERS.ONLINE:
-        return { name: "Message", func: () => {} };
+        return {
+          name: "Message",
+          func: () => {
+            navigate(`/chat/dm/${friend.id}`);
+          },
+        };
       case FILTERS.REQUEST:
-        return { name: "Cancel", func: () => {} };
+        return { name: "Cancel", func: cancelFriendReq(friend) };
       case FILTERS.SUGGESTION:
-        return { name: "Remove", func: () => {} };
+        return {
+          name: "Remove",
+          func: () => {
+            clearFriend(friend);
+          },
+        };
       case FILTERS.BLOCKED:
         return { name: "", func: () => {} };
       default:
-        return { name: "Message", func: () => {} };
+        return {
+          name: "Message",
+          func: () => {
+            navigate(`/chat/dm/${friend.id}`);
+          },
+        };
     }
   };
 
@@ -212,6 +313,7 @@ const Friends = () => {
           />
         ))}
       </FriendList>
+      <Toaster position="top-center" />
     </FriendsConatiner>
   );
 };
