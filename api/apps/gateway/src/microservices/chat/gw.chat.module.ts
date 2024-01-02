@@ -6,5 +6,6 @@ import { GwChannelService, GwDirectMessageService } from "./services";
     GwDirectMessageService,
     GwChannelService,
   ],
+ 
 })
 export class GWChatModule {}
