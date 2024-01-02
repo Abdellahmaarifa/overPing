@@ -2,10 +2,7 @@
 FROM node:21.1.0-alpine as development
 
 # Install @nestjs/cli globally
-RUN yarn global add @nestjs/cli
-
-# Install prisma globally
-RUN yarn global add prisma @prisma/client
+RUN yarn global add @nestjs/cli prisma@5.6.0 @prisma/client@5.6.0
 
 WORKDIR /usr/src/app
 
