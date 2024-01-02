@@ -27,24 +27,51 @@ import {
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useSettingsContext } from "context/settings.context";
 import { useUserContext } from "context/user.context";
-import { useFindProfileByUserIdQuery } from "gql/index";
+import { useAddFriendMutation, useFindProfileByUserIdQuery } from "gql/index";
 import { ProfileType } from "domain/model/Profile.type";
+import { FriendshipStatusType } from "domain/model/helpers.type";
 const ProfileBanner = ({
   showExtraMenu,
   setShowExtraMenu,
   isUserProfile,
   profile,
+  friendsStatus,
+  setFriendStatus,
+  id,
 }: {
   showExtraMenu: boolean;
   setShowExtraMenu: Dispatch<SetStateAction<boolean>>;
   isUserProfile: boolean;
   profile: ProfileType | null;
+  friendsStatus: FriendshipStatusType | null;
+  setFriendStatus: Dispatch<SetStateAction<FriendshipStatusType | null>>;
+  id: Number;
 }) => {
   const navigate = useNavigate();
+  const [addFriend] = useAddFriendMutation();
   const {
     settingsModel: [settingModel, setSettingModel],
   } = useSettingsContext();
+  const { user } = useUserContext();
+  const sendRequest = () => {
+    addFriend({
+      variables: {
+        userId: Number(user?.id),
+        friendId: Number(id),
+      },
+    })
+      .then((data) => {
+        console.log(data);
+        setFriendStatus("PENDING");
+      })
+      .catch((err) => {
+        console.log("this is from profile an error: ", err);
+      });
 
+    // update friend status
+
+    // check if error reload the page
+  };
   return (
     <BannerConatiner
       style={{
@@ -81,7 +108,11 @@ const ProfileBanner = ({
               <ChatIcon onClick={() => navigate(`/chat/${profile?.id}`)} />
             </BannerMenuButton>
             <BannerMenuButton>
-              <UserAddIcon />
+              {friendsStatus === "PENDING" ? (
+                <h1>pandding..</h1>
+              ) : friendsStatus !== "FRIEND" ? (
+                <UserAddIcon onClick={() => sendRequest()} />
+              ) : null}
             </BannerMenuButton>
             <BannerMenuButton>
               <DotsIcon onClick={() => setShowExtraMenu(!showExtraMenu)} />

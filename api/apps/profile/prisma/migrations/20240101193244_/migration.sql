@@ -10,7 +10,7 @@ CREATE TABLE "UserProfile" (
     "about" TEXT NOT NULL DEFAULT 'Chatting my way through life on [overPing]. Let''s keep the conversations rolling! 📱✨ #Connected',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
-    "bgImageUrl" TEXT NOT NULL DEFAULT 'http://localhost:5500/image/profileBg/defaultCover.jpg',
+    "bgImageUrl" TEXT NOT NULL DEFAULT 'http://localhost:5500/image/profileBackGound/defaultCover.jpg',
 
     CONSTRAINT "UserProfile_pkey" PRIMARY KEY ("id")
 );

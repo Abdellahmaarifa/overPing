@@ -58,7 +58,7 @@ export type GqlUserModel = {
   googleId?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   profileImgUrl: Scalars['String']['output'];
-  showUpdateWin: Scalars['Boolean']['output'];
+  showUpdateWin?: Maybe<Scalars['Boolean']['output']>;
   twoStepVerificationEnabled: Scalars['Boolean']['output'];
   username: Scalars['String']['output'];
 };
@@ -257,7 +257,7 @@ export type Query = {
   findProfileByUserId?: Maybe<GqlUserProfileModel>;
   findUserById: GqlUserModel;
   getBlockedUsers: GqlFriendsModel;
-  getFriendship: GqlFriendShipeStatus;
+  getFriendship?: Maybe<GqlFriendShipeStatus>;
   getFriendshipRequests: GqlFriendsModel;
   getUser: GqlUserModel;
   getUserFriends: GqlFriendsModel;
@@ -399,6 +399,14 @@ export type UnblockUserMutationVariables = Exact<{
 
 
 export type UnblockUserMutation = { __typename?: 'Mutation', unblockUser: boolean };
+
+export type GetFriendshipQueryVariables = Exact<{
+  userId: Scalars['Float']['input'];
+  friendId: Scalars['Float']['input'];
+}>;
+
+
+export type GetFriendshipQuery = { __typename?: 'Query', getFriendship?: { __typename?: 'GQLFriendShipeStatus', id: string, userA: string, userB: string, blocker?: string | null, status: string } | null };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -805,6 +813,51 @@ export function useUnblockUserMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UnblockUserMutationHookResult = ReturnType<typeof useUnblockUserMutation>;
 export type UnblockUserMutationResult = Apollo.MutationResult<UnblockUserMutation>;
 export type UnblockUserMutationOptions = Apollo.BaseMutationOptions<UnblockUserMutation, UnblockUserMutationVariables>;
+export const GetFriendshipDocument = gql`
+    query getFriendship($userId: Float!, $friendId: Float!) {
+  getFriendship(userId: $userId, friendId: $friendId) {
+    id
+    userA
+    userB
+    blocker
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetFriendshipQuery__
+ *
+ * To run a query within a React component, call `useGetFriendshipQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendshipQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendshipQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useGetFriendshipQuery(baseOptions: Apollo.QueryHookOptions<GetFriendshipQuery, GetFriendshipQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFriendshipQuery, GetFriendshipQueryVariables>(GetFriendshipDocument, options);
+      }
+export function useGetFriendshipLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFriendshipQuery, GetFriendshipQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFriendshipQuery, GetFriendshipQueryVariables>(GetFriendshipDocument, options);
+        }
+export function useGetFriendshipSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetFriendshipQuery, GetFriendshipQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetFriendshipQuery, GetFriendshipQueryVariables>(GetFriendshipDocument, options);
+        }
+export type GetFriendshipQueryHookResult = ReturnType<typeof useGetFriendshipQuery>;
+export type GetFriendshipLazyQueryHookResult = ReturnType<typeof useGetFriendshipLazyQuery>;
+export type GetFriendshipSuspenseQueryHookResult = ReturnType<typeof useGetFriendshipSuspenseQuery>;
+export type GetFriendshipQueryResult = Apollo.QueryResult<GetFriendshipQuery, GetFriendshipQueryVariables>;
 export const HelloDocument = gql`
     query hello {
   helloT

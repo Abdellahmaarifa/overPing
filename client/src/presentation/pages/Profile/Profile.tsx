@@ -11,6 +11,8 @@ import { ProfileConatiner } from "./Profile.style";
 import tw from "twin.macro";
 import {
   BlockUserDocument,
+  GetFriendshipDocument,
+  AccountDocument,
   useAccountQuery,
   useFindProfileByUserIdQuery,
 } from "gql/index";
@@ -19,37 +21,60 @@ import { ProfileType } from "domain/model/Profile.type";
 import { useNavigate, useParams } from "react-router-dom";
 import { GetUserProfile } from "helpers/index";
 import { useApolloClient } from "@apollo/client";
+import { FriendshipStatusType } from "domain/model/helpers.type";
 
 const Profile = () => {
   const [showExtraMenu, setShowExtraMenu] = useState(false);
+  const { user, profile } = useUserContext();
+  const [userProfile, setUserProfile] = useState<ProfileType | null>(profile);
   const navigate = useNavigate();
   const client = useApolloClient();
+  const [friendsStatus, setFriendStatus] =
+    useState<FriendshipStatusType | null>(null);
   // const [isLoading, setIsLoading] = useState(true);
-  let { user, profile } = useUserContext();
+
   const id = useParams()?.id;
-  let isLoading = false;
+  //let isLoading = false;
   // get other user profile
-  if (id != user?.id) {
-    const { data, loading, error } = useAccountQuery({
-      variables: {
-        userId: Number(id),
-      },
-    });
-    isLoading = loading;
 
-    if (data) {
-      // create profile from the data
-      profile = GetUserProfile(data);
-    } else {
-      // error getting data? maybe the user is not exist??
-      navigate("/error");
+  useEffect(() => {
+    if (id != user?.id) {
+      client
+        .query({
+          query: AccountDocument,
+          variables: {
+            userId: Number(id),
+          },
+        })
+        .then((data) => {
+          console.log("gettign the data: ", data);
+          setUserProfile(GetUserProfile(data?.data));
+        })
+        .catch((err) => {
+          console.log(err);
+          navigate("/error");
+        });
     }
-  }
+    client
+      .query({
+        query: GetFriendshipDocument,
+        variables: {
+          userId: Number(user?.id),
+          friendId: Number(id),
+        },
+      })
+      .then((data) => {
+        console.log("relation: ", data);
+        setFriendStatus(data?.data?.getFriendship?.status);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id]);
 
-  if (isLoading) return <h1>loading..</h1>;
   // console.log("this is the profile: ", profile);
   //
-  console.log("this is the final profile: ", profile);
+  console.log("this is the final profile: ", userProfile);
 
   const blockUser = () => {
     client
@@ -66,6 +91,7 @@ const Profile = () => {
       .catch((err) => console.log("you can't", err));
   };
 
+  //if (isLoading) return <h1>loading..</h1>;
   return (
     <ProfileConatiner>
       <div tw="w-full relative max-w-[1126px] min-w-[300px]">
@@ -73,7 +99,10 @@ const Profile = () => {
           showExtraMenu={showExtraMenu}
           setShowExtraMenu={setShowExtraMenu}
           isUserProfile={id === user?.id}
-          profile={profile}
+          profile={userProfile}
+          friendsStatus={friendsStatus}
+          id={Number(id)}
+          setFriendStatus={setFriendStatus}
         />
 
         {showExtraMenu && (
@@ -84,7 +113,8 @@ const Profile = () => {
         )}
       </div>
       {/*showFriendList && <FriendList />*/}
-      <ProfileBioInfo profile={profile} />
+      <ProfileBioInfo profile={userProfile} />
+      <Toaster position="top-center" />
     </ProfileConatiner>
   );
 };

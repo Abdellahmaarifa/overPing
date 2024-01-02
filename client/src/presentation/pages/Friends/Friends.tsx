@@ -19,10 +19,13 @@ import {
   GetBlockedUsersDocument,
   useGetBlockedUsersSuspenseQuery,
   GetFriendshipRequestsDocument,
+  AcceptFriendshipDocument,
+  UnblockUserDocument,
 } from "gql/index";
 import { Suspense, useEffect, useState } from "react";
 import { useUserContext } from "context/user.context";
 import { useApolloClient } from "@apollo/client";
+import { sleep } from "helpers/index";
 const FILTERS = {
   ONLINE: "online friends",
   REQUEST: "friens request",
@@ -36,7 +39,6 @@ const Friends = () => {
   const [friends, setFriends] = useState<User[]>([]);
   const client = useApolloClient();
   const { user } = useUserContext();
-
   // const {data} = useGetBlockedUsersSuspenseQuery();
 
   const getQuery = () => {
@@ -55,58 +57,102 @@ const Friends = () => {
   };
   useEffect(() => {
     // get firnds based on the filter!
-
+    const controller = new AbortController();
     client
       .query({
         query: getQuery(),
         variables: {
           userId: Number(user?.id),
         },
+        context: {
+          fetchOptions: {
+            signal: controller.signal,
+          },
+        },
       })
       .then((data) => {
-        if (filter === FILTERS.REQUEST)
+        if (filter === FILTERS.REQUEST) {
           setFriends(data.data.getFriendshipRequests.friends);
-        if (filter === FILTERS.BLOCKED)
+        } else if (filter === FILTERS.BLOCKED)
           setFriends(data.data.getBlockedUsers.friends);
+        else {
+          setFriends([]);
+        }
         console.log("hola: ", data);
       })
       .catch((err) => console.log(err));
 
+    return () => controller.abort();
     //setFriends(getFriends());
   }, [filter]);
 
   // if (loading) return <h1>loading</h1>;
-
+  const acceptFriendReq = (friend) => () => {
+    // logic here
+    client
+      .mutate({
+        mutation: AcceptFriendshipDocument,
+        variables: {
+          userId: Number(user?.id),
+          friendId: Number(friend.id),
+        },
+      })
+      .then((data) => {
+        console.log("well done!", data);
+      })
+      .catch((err) => {
+        console.log("This is an error: ", err);
+      });
+    console.log(friend);
+  };
   const handleFilter = (e: any) => {
     setFilter(e.target.innerHTML);
     setOpenFilterList(false);
   };
-  const getPrimaryAction = () => {
+
+  const unclockFriend = (friend: User) => () => {
+    client
+      .mutate({
+        mutation: UnblockUserDocument,
+        variables: {
+          userId: Number(user?.id),
+          friendId: Number(friend.id),
+        },
+      })
+      .then((data) => {
+        console.log("well done!", data);
+      })
+      .catch((err) => {
+        console.log("This is an error: ", err);
+      });
+  };
+
+  const getPrimaryAction = (friend: User) => {
     switch (filter) {
       case FILTERS.ONLINE:
-        return "Match";
+        return { name: "Match", func: () => {} };
       case FILTERS.REQUEST:
-        return "Accept Friend";
+        return { name: "Accept Friend", func: acceptFriendReq(friend) };
       case FILTERS.SUGGESTION:
-        return "Add friend";
+        return { name: "Add friend", func: () => {} };
       case FILTERS.BLOCKED:
-        return "Unblock";
+        return { name: "Unblock", func: unclockFriend(friend) };
       default:
-        return "Match";
+        return { name: "Match", func: () => {} };
     }
   };
-  const getSecondaryAction = () => {
+  const getSecondaryAction = (friend) => {
     switch (filter) {
       case FILTERS.ONLINE:
-        return "Message";
+        return { name: "Message", func: () => {} };
       case FILTERS.REQUEST:
-        return "Cancel";
+        return { name: "Cancel", func: () => {} };
       case FILTERS.SUGGESTION:
-        return "Remove";
+        return { name: "Remove", func: () => {} };
       case FILTERS.BLOCKED:
-        return "";
+        return { name: "", func: () => {} };
       default:
-        return "Message";
+        return { name: "Message", func: () => {} };
     }
   };
 
@@ -156,10 +202,11 @@ const Friends = () => {
         </FriendsFilter>
       </FriendsFilterConatiner>
       <FriendList>
-        {friendsData.map((friend) => (
+        {friendsData.map((friend, id) => (
           <UserProfile
-            primaryAction={getPrimaryAction()}
-            secondaryAction={getSecondaryAction()}
+            key={id}
+            primaryAction={getPrimaryAction(friend)}
+            secondaryAction={getSecondaryAction(friend)}
             name={friend.username}
             image={friend.profileImgUrl}
           />

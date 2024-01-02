@@ -45,3 +45,13 @@ mutation blockUser($userId: Float!, $friendId: Float!) {
 mutation unblockUser($userId: Float!, $friendId: Float!) {
   unblockUser(userId: $userId, friendId: $friendId)
 }
+
+query getFriendship($userId: Float!, $friendId: Float!) {
+  getFriendship(userId: $userId, friendId: $friendId) {
+    id
+    userA
+    userB
+    blocker
+    status
+  }
+}

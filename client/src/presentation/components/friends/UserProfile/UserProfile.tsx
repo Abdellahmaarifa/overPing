@@ -12,11 +12,13 @@ const UserProfile = ({
   secondaryAction,
   name,
   image,
+  key,
 }: {
-  primaryAction?: string;
-  secondaryAction?: string;
+  primaryAction?: any;
+  secondaryAction?: any;
   name: string;
   image: string;
+  key: number;
 }) => {
   return (
     <FriendProfile>
@@ -29,15 +31,21 @@ const UserProfile = ({
         <FriendName>{name}</FriendName>
       </FriendImageConatiner>
       <FriendAction>
-        {primaryAction && (
-          <Button $text={primaryAction} $size="auto" $theme="blue" />
-        )}
-        {secondaryAction && (
+        {primaryAction.name && (
           <Button
-            $text={secondaryAction}
+            $text={primaryAction.name}
+            $size="auto"
+            $theme="blue"
+            onClick={primaryAction.func}
+          />
+        )}
+        {secondaryAction.name && (
+          <Button
+            $text={secondaryAction.name}
             $transparent={true}
             $border={true}
             $size="auto"
+            onClick={secondaryAction.func}
           />
         )}
       </FriendAction>

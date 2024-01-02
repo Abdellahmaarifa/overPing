@@ -32,7 +32,7 @@ export class GwFriendService {
      )
   }
 
-  async getFriendship(userId: number, friendId: number) : Promise<FriendshipDTO>{
+  async getFriendship(userId: number, friendId: number) : Promise<FriendshipDTO | null>{
     const status =  await this.clientService.sendMessageWithPayload(
        this.client,
        {

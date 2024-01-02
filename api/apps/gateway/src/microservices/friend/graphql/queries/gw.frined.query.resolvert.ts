@@ -11,8 +11,8 @@ export class    FriendQueryResolver {
         private readonly friendService: GwFriendService,
     ) {}
 
-    @Query(() => GQLFriendShipeStatus)
-    async getFriendship(@Args('userId') userId: number ,@Args('friendId') friendId: number): Promise<GQLFriendShipeStatus>{
+    @Query(() => GQLFriendShipeStatus, { nullable: true})
+    async getFriendship(@Args('userId') userId: number ,@Args('friendId') friendId: number): Promise<GQLFriendShipeStatus | null>{
        return await this.friendService.getFriendship(userId, friendId);
     }
 
