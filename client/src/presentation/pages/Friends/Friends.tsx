@@ -260,7 +260,7 @@ const Friends = () => {
   let friendsData = friends;
   if (seachValue) {
     friendsData = friends.filter((e) =>
-      e.name.toLowerCase().includes(seachValue.toLowerCase())
+      e.username.toLowerCase().includes(seachValue.toLowerCase())
     );
   }
   return (
