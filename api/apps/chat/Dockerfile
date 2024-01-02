@@ -10,19 +10,19 @@ RUN yarn global add prisma @prisma/client
 WORKDIR /usr/src/app
 
 
-# Install dependencies
 
 # Copy the rest of the application code
 COPY . .
 
+# Install dependencies
 RUN yarn install --verbose
 
-RUN yarn run generate:profile:prisma
+# Generate Prisma client
+RUN yarn run generate:chat:prisma
+
 # Build the application
 RUN yarn build
 
-# Generate Prisma client
-RUN prisma generate
 
 # Create a new image for production
 FROM node:21.1.0-alpine as production
@@ -58,4 +58,4 @@ RUN prisma generate
 USER node
 
 # Start the application
-CMD ["node", "dist/apps/profile/main"]
+CMD ["node", "dist/apps/auth/main"]
