@@ -1,0 +1,47 @@
+# ALL FREINDS
+query getUserFriends($userId: Float!) {
+  getUserFriends(userId: $userId) {
+    friends {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+# ALL REQUETS
+query getFriendshipRequests($userId: Float!) {
+  getFriendshipRequests(userId: $userId) {
+    friends {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+# ALL BLOCKED
+query getBlockedUsers($userId: Float!) {
+  getBlockedUsers(userId: $userId) {
+    friends {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+
+mutation addFriend($userId: Float!, $friendId: Float!) {
+  addFriend(userId: $userId, friendId: $friendId)
+}
+
+mutation removeFriend($userId: Float!, $friendId: Float!) {
+  removeFriend(userId: $userId, friendId: $friendId)
+}
+mutation acceptFriendship($userId: Float!, $friendId: Float!) {
+  acceptFriendship(userId: $userId, friendId: $friendId)
+}
+mutation blockUser($userId: Float!, $friendId: Float!) {
+  blockUser(userId: $userId, friendId: $friendId)
+}
+mutation unblockUser($userId: Float!, $friendId: Float!) {
+  unblockUser(userId: $userId, friendId: $friendId)
+}

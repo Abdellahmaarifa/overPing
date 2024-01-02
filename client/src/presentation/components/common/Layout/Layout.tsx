@@ -8,10 +8,13 @@ import { Outlet } from "react-router-dom";
 
 import useChatContextProvider, { useChatContext } from "context/chat.context";
 import useSettingsContextProvider from "context/settings.context";
+import { useUserContext } from "context/user.context";
+import { useAccountQuery } from "gql/index";
+import { GetUserProfile } from "helpers/index";
 import tw from "twin.macro";
-import Settings from "../Settings/Settings";
 import ConfirmModel from "../ConfirmModel/ConfirmModel";
-import './layout.css' //added by tariq elbouhali
+import Settings from "../Settings/Settings";
+
 const temp = tw.a``;
 
 const LayoutOutlet = () => {
@@ -25,7 +28,8 @@ const LayoutOutlet = () => {
     showChannelMenu: [showChannelMenu, setShowChannelMenu],
   } = useChatContext();
   return (
-    <div id='layout'
+    <div
+      id="layout"
       tw="w-full min-h-screen h-screen max-h-fit p-0 overflow-scroll pt-[65px] md:ml-[72px] flex justify-center "
       onClick={() => {
         setOpenUserMenu(false);

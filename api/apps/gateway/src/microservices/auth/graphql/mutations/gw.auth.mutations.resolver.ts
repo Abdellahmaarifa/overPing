@@ -23,6 +23,10 @@ import {
 } from '../input';
 import { TwoFAModel } from 'apps/gateway/src/models/graphqlTwoFAModel';
 import {HttpException} from "@nestjs/common";
+import { AccessTokenGuard } from '../../guards/accessToken.guard';
+import { UserProfileUpdateInput } from '../input/UserProfileUpdate.input';
+import { UpdateUserInput } from '../input/userUpdate.input';
+import { GqlJwtAuthGuard } from '../../guards/gql.accessToken.guard';
 
 @Resolver()
 export class AuthMutationsResolver {
@@ -154,4 +158,14 @@ export class AuthMutationsResolver {
 
     return (response.user);
   }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation ( () => Boolean)
+  async updateUser(@Context() cxt, @Args('userUpdateInput') updateInput: UpdateUserInput ): Promise<boolean>{
+      // return this.userService.updateUser(updateInput);
+      const {id} = cxt.req.user;
+
+      return this.userService.updateUser(id, updateInput);
+  }
+
 }

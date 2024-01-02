@@ -141,7 +141,7 @@ const SignUpFormStepFour = ({ viewModel, formikProps }: FormStepProps) => {
       <div tw="relative overflow-hidden w-[159px] h-[159px] bg-[#4C5258] rounded-[24px] [&>*]:w-[48px] [&>*]:h-[48px] flex justify-center items-center">
         <input
           name="avatar"
-          accept="image/*"
+          accept="image/png, image/jpeg"
           onChange={(e) => {
             //formikProps?.handleChange(e);
             const fileReader = new FileReader();

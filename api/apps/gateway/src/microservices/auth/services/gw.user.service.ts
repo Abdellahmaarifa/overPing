@@ -126,8 +126,9 @@ export class UserService {
     async updateUser(userid: number , data:{
         profileImgUrl? : string;
         email?: string;
-    }){
-        this.clientService.sendMessageWithPayload(
+        showUpdateWin?: boolean;
+    }) : Promise<boolean>{
+       return  this.clientService.sendMessageWithPayload(
             this.client,
             {
                 role: 'user',

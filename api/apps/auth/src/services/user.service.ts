@@ -47,16 +47,13 @@ export class UserService {
     fortyTwoId,
     email,
   }: UserCreationDto): Promise<IAuthUser> {
-    const exists = await this.isUserExist(username);
-    if (exists) {
-      throw this.rpcExceptionService.throwBadRequest(`Resource already exists`);
-    }
-
     try {
+      const exists = await this.isUserExist(username);
+      if (exists) {
+        throw this.rpcExceptionService.throwBadRequest(`Resource already exists`);
+      }
       console.log('the error: ', password, username);
       const hashedPassword = password ? await argon2.hash(password) : undefined;
-
-      const currentDate = new Date();
 
       return this.prisma.user.create({
         data: {
@@ -67,8 +64,6 @@ export class UserService {
           fortyTwoId,
           twoFactorSecret: '',
           twoStepVerificationEnabled: false,
-          createdAt: currentDate,
-          updatedAt: currentDate,
         },
         select: {
           id: true,
@@ -79,7 +74,8 @@ export class UserService {
           fortyTwoId: true,
           twoStepVerificationEnabled: true,
           createdAt: true,
-          updatedAt: true,
+        updatedAt: true,
+        showUpdateWin: true,
         },
       });
     } catch (error) {
@@ -119,10 +115,12 @@ export class UserService {
         password: false,
         googleId: true,
         fortyTwoId: true,
+        profileImgUrl: true,
         createdAt: true,
         updatedAt: true,
+        showUpdateWin: true,
       },
-    })) as IAuthUser[];
+    }));
   }
 
   async remove(id: number, password: string): Promise<boolean> {
@@ -210,6 +208,7 @@ export class UserService {
   }
 
   private async isUserExist(username: string): Promise<boolean> {
+    console.log("check if user")
     const exists = !!(await this.prisma.user.findFirst({
       where: {
         username: username,

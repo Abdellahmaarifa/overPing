@@ -7,7 +7,9 @@ import React, {
 } from "react";
 
 import { Store } from "domain/DomainLayer";
+import { ProfileType } from "domain/model/Profile.type";
 import { User } from "domain/model/User.type";
+import { GetUserProfile } from "helpers/index";
 
 type Props = {
   children: React.ReactNode;
@@ -20,6 +22,9 @@ export type Context = {
   restoreUser: (callback?: () => void) => void;
   user: User | null;
   updateUser: (user: User) => void;
+  profile: ProfileType | null;
+  updateProfile: (profile: ProfileType) => void;
+  store: Store | null;
 };
 
 const UserContext = createContext<Context>({
@@ -28,6 +33,9 @@ const UserContext = createContext<Context>({
   restoreUser: () => {},
   user: null,
   updateUser: (user: User) => {},
+  profile: null,
+  updateProfile: (profile: ProfileType) => {},
+  store: null,
 });
 
 const HELLO = `
@@ -37,13 +45,50 @@ const HELLO = `
       username
       email
       twoStepVerificationEnabled
+      profileImgUrl   
+      showUpdateWin
     }
   }
 `;
+
+const PROFILE_QUERY = `
+  query Account($userId: Float!) {
+    findUserById(userId: $userId) {
+      id
+      email
+      username
+      twoStepVerificationEnabled
+      profileImgUrl
+    }
+
+    findProfileByUserId(userId: $userId) {
+      id
+      nickname
+      title
+      xp
+      rank
+      about
+      bgImageUrl
+      wallet {
+        id
+        balance
+        betAmount
+      }
+      gameStatus {
+        matchesLoss
+        matchesWon
+        totalMatches
+        win_streak
+        best_win_streak
+      }
+    }
+  }
+`;
+
 const graphqlEndpoint = "http://localhost:5500/graphql";
 const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
-
+  const [profile, setProfile] = useState<ProfileType | null>(null);
   const signOut = useCallback(() => {
     //store.setToken(null);
     setUser(null);
@@ -91,9 +136,30 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
       });
       const userRes = await userData.json();
 
-      console.log(userRes?.data?.getUser);
+      console.log("from user context: ", userRes?.data?.getUser);
       setUser(userRes?.data?.getUser);
 
+      // set the profile
+      if (!profile && userRes?.data?.getUser?.id) {
+        const profileData = await fetch(graphqlEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-apollo-operation-name": "something",
+            // Add any other headers if needed
+          },
+          body: JSON.stringify({
+            query: PROFILE_QUERY,
+            variables: {
+              userId: Number(userRes?.data?.getUser.id),
+            },
+          }),
+          credentials: "include",
+        });
+        const profileRes = await profileData.json();
+        console.log("resualt of the query: ", profileRes.data);
+        setProfile(GetUserProfile(profileRes.data));
+      }
       //setUser(user);
       //if (res?.accessToken) setUser({ token: res?.accessToken, ...user });
       callback && callback();
@@ -105,6 +171,10 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   const updateUser = (user: User) => {
     setUser(user);
   };
+
+  const updateProfile = (profile: ProfileType) => {
+    setProfile(profile);
+  };
   const contextValue = useMemo(
     () => ({
       signIn,
@@ -112,8 +182,20 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
       restoreUser,
       user,
       updateUser,
+      profile,
+      updateProfile,
+      store,
     }),
-    [signIn, signOut, restoreUser, user, updateUser]
+    [
+      signIn,
+      signOut,
+      restoreUser,
+      user,
+      updateUser,
+      profile,
+      updateProfile,
+      store,
+    ]
   );
 
   return (

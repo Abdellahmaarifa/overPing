@@ -28,40 +28,27 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useSettingsContext } from "context/settings.context";
 import { useUserContext } from "context/user.context";
 import { useFindProfileByUserIdQuery } from "gql/index";
+import { ProfileType } from "domain/model/Profile.type";
 const ProfileBanner = ({
-  showFriendsList,
-  setShowFriendsList,
   showExtraMenu,
   setShowExtraMenu,
+  isUserProfile,
+  profile,
 }: {
-  showFriendsList: boolean;
-  setShowFriendsList: Dispatch<SetStateAction<boolean>>;
   showExtraMenu: boolean;
   setShowExtraMenu: Dispatch<SetStateAction<boolean>>;
+  isUserProfile: boolean;
+  profile: ProfileType | null;
 }) => {
-  const [userProfile, setUserProfile] = useState(false);
   const navigate = useNavigate();
   const {
     settingsModel: [settingModel, setSettingModel],
   } = useSettingsContext();
 
-  const { user } = useUserContext();
-  const { data, loading, error } = useFindProfileByUserIdQuery({
-    variables: {
-      userId: Number(user?.id),
-    },
-  });
-
-  const id = useParams()?.id;
-  useEffect(() => {
-    if (id == user?.id) setUserProfile(true);
-  }, []);
-  console.log("data od the user: ", data, error);
-  if (loading) return <h1>loading</h1>;
   return (
     <BannerConatiner
       style={{
-        background: `linear-gradient(90deg, rgba(128, 12, 52, 0.7) 0%, rgb(16, 85, 138, .7) 100%), url(${DemoCover}) center center no-repeat`,
+        background: `linear-gradient(90deg, rgba(128, 12, 52, 0.7) 0%, rgb(16, 85, 138, .7) 100%), url(${profile?.cover}) center center no-repeat`,
         backgroundSize: "cover",
       }}
     >
@@ -69,19 +56,17 @@ const ProfileBanner = ({
         <BannerBadgeImage>
           <img src={Badge} />
         </BannerBadgeImage>
-        <BannerBadgeGrade>#234</BannerBadgeGrade>
+        <BannerBadgeGrade>#{profile?.rank}</BannerBadgeGrade>
       </BannerBadge>
       <BannerMenuConatiner>
         <BannerMenuMask id="mask"></BannerMenuMask>
-        {userProfile ? (
+        {isUserProfile ? (
           <>
             <BannerMenuButton>
               <ChatIcon onClick={() => navigate("/chat")} />
             </BannerMenuButton>
             <BannerMenuButton>
-              <FriendsIcon
-                onClick={() => setShowFriendsList(!showFriendsList)}
-              />
+              <FriendsIcon onClick={() => navigate("/friends")} />
             </BannerMenuButton>
             <BannerMenuButton>
               <SettingsIcon onClick={() => setSettingModel(true)} />
@@ -93,7 +78,7 @@ const ProfileBanner = ({
               <GamepadIcon onClick={() => navigate("/game")} />
             </BannerMenuButton>
             <BannerMenuButton>
-              <ChatIcon onClick={() => navigate("/chat")} />
+              <ChatIcon onClick={() => navigate(`/chat/${profile?.id}`)} />
             </BannerMenuButton>
             <BannerMenuButton>
               <UserAddIcon />
@@ -106,10 +91,14 @@ const ProfileBanner = ({
       </BannerMenuConatiner>
 
       <ProfileConatiner>
-        <Hexagon Image={Onep} outline={true} percentage={1} />
+        <Hexagon
+          Image={profile?.avatar}
+          outline={true}
+          percentage={profile?.level!}
+        />
         <ProfileInfo>
-          <ProfileName>abdellah</ProfileName>
-          <ProfileLevel>Level : 5</ProfileLevel>
+          <ProfileName>{profile?.nickname}</ProfileName>
+          <ProfileLevel>Level : {profile?.level}</ProfileLevel>
         </ProfileInfo>
       </ProfileConatiner>
     </BannerConatiner>

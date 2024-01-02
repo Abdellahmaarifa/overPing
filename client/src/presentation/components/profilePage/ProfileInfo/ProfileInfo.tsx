@@ -25,6 +25,7 @@ import GameIcon from "assets/profile/game-icon.svg?react";
 import TournamentPlayedIcon from "assets/profile/tournament-played-icon.svg?react";
 import TournamentWonIcon from "assets/profile/tournament-won-icon.svg?react";
 import React from "react";
+import { ProfileType } from "domain/model/Profile.type";
 
 const a = tw.div``;
 
@@ -34,14 +35,14 @@ const Badge = ({
   rank,
 }: {
   status: string;
-  rank: number;
+  rank?: number;
   children: JSX.Element;
 }) => {
   return (
     <ProfileBadge>
       <ProfileBadgeIcon>{children}</ProfileBadgeIcon>
       <ProfileBadgeInfo>
-        <ProfileBadgeRank>10</ProfileBadgeRank>
+        <ProfileBadgeRank>{rank}</ProfileBadgeRank>
         <ProfileBadgeName>{status}</ProfileBadgeName>
       </ProfileBadgeInfo>
     </ProfileBadge>
@@ -55,7 +56,7 @@ const STATUS = [
   "tournament palyed",
   "tournament won",
 ];
-const ProfileBioInfo = () => {
+const ProfileBioInfo = ({ profile }: { profile: ProfileType | null }) => {
   return (
     <ProfileInfoConatiner>
       <ProfileInfoTab>
@@ -78,30 +79,31 @@ const ProfileBioInfo = () => {
       </ProfileInfoTab>
       <ProfileInfoBody>
         <ProfileStatus>
-          <Badge rank={10} status="Game Won">
+          <Badge rank={profile?.status.matchesWon} status="Game Won">
             <WinIcon />
           </Badge>
-          <Badge rank={10} status="Best Win Streak">
+          <Badge
+            rank={profile?.status.best_win_streak}
+            status="Best Win Streak"
+          >
             <BestIcon />
           </Badge>
-          <Badge rank={10} status="Game Played">
+          <Badge rank={profile?.status.totalMatches} status="Game Played">
             <GameIcon />
           </Badge>
-          <Badge rank={10} status="xp">
+          <Badge rank={profile?.status.xp} status="xp">
             <WinIcon />
           </Badge>
-          <Badge rank={10} status="Tournament played">
+          <Badge rank={0} status="Tournament played">
             <TournamentPlayedIcon />
           </Badge>
-          <Badge rank={10} status="Tournament Won">
+          <Badge rank={0} status="Tournament Won">
             <TournamentWonIcon />
           </Badge>
         </ProfileStatus>
         <ProfileBioConatiner>
           <BioHeader>About</BioHeader>
-          <ProfileBio>
-            {faker.lorem.paragraph().slice(0, 130).toString()}
-          </ProfileBio>
+          <ProfileBio>{profile?.about}</ProfileBio>
         </ProfileBioConatiner>
         <Achievement />
         <ProfileMatchResault />

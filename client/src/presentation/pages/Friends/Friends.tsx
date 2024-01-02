@@ -1,6 +1,5 @@
 import SearchIcon from "assets/common/search.svg?react";
 import DownIcon from "assets/common/select-down.svg?react";
-import Button from "components/common/Button/Button";
 import {
   FilterList,
   FilterListItem,
@@ -13,10 +12,17 @@ import {
   FriendsFilterHeader,
   FriendsSearchConatiner,
 } from "./Friends.style";
-
 import { faker } from "@faker-js/faker";
-import { useEffect, useState } from "react";
 import UserProfile from "components/friends/UserProfile/UserProfile";
+import {
+  useGetBlockedUsersQuery,
+  GetBlockedUsersDocument,
+  useGetBlockedUsersSuspenseQuery,
+  GetFriendshipRequestsDocument,
+} from "gql/index";
+import { Suspense, useEffect, useState } from "react";
+import { useUserContext } from "context/user.context";
+import { useApolloClient } from "@apollo/client";
 const FILTERS = {
   ONLINE: "online friends",
   REQUEST: "friens request",
@@ -28,12 +34,49 @@ const Friends = () => {
   const [openFilterList, setOpenFilterList] = useState(false);
   const [filter, setFilter] = useState(FILTERS.ONLINE);
   const [friends, setFriends] = useState<User[]>([]);
+  const client = useApolloClient();
+  const { user } = useUserContext();
 
+  // const {data} = useGetBlockedUsersSuspenseQuery();
+
+  const getQuery = () => {
+    switch (filter) {
+      case FILTERS.ONLINE:
+        return GetBlockedUsersDocument;
+      case FILTERS.REQUEST:
+        return GetFriendshipRequestsDocument;
+      case FILTERS.SUGGESTION:
+        return GetBlockedUsersDocument;
+      case FILTERS.BLOCKED:
+        return GetBlockedUsersDocument;
+      default:
+        return GetBlockedUsersDocument;
+    }
+  };
   useEffect(() => {
-    setFriends(getFriends());
+    // get firnds based on the filter!
+
+    client
+      .query({
+        query: getQuery(),
+        variables: {
+          userId: Number(user?.id),
+        },
+      })
+      .then((data) => {
+        if (filter === FILTERS.REQUEST)
+          setFriends(data.data.getFriendshipRequests.friends);
+        if (filter === FILTERS.BLOCKED)
+          setFriends(data.data.getBlockedUsers.friends);
+        console.log("hola: ", data);
+      })
+      .catch((err) => console.log(err));
+
+    //setFriends(getFriends());
   }, [filter]);
 
-  console.log(seachValue);
+  // if (loading) return <h1>loading</h1>;
+
   const handleFilter = (e: any) => {
     setFilter(e.target.innerHTML);
     setOpenFilterList(false);
@@ -112,14 +155,13 @@ const Friends = () => {
           )}
         </FriendsFilter>
       </FriendsFilterConatiner>
-
       <FriendList>
         {friendsData.map((friend) => (
           <UserProfile
             primaryAction={getPrimaryAction()}
             secondaryAction={getSecondaryAction()}
-            name={friend.name}
-            image={friend.image}
+            name={friend.username}
+            image={friend.profileImgUrl}
           />
         ))}
       </FriendList>
@@ -128,14 +170,16 @@ const Friends = () => {
 };
 
 interface User {
-  name: string;
-  image: string;
+  id: string;
+  username: string;
+  profileImgUrl: string;
 }
 
 const createRandomUser = (): User => {
   return {
-    name: faker.person.firstName(),
-    image: faker.image.urlPicsumPhotos(),
+    id: faker.string.uuid(),
+    username: faker.person.firstName(),
+    profileImgUrl: faker.image.urlPicsumPhotos(),
   };
 };
 const getFriends = (): User[] =>

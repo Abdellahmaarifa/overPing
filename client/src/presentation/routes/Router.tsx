@@ -58,7 +58,10 @@ const Router = () => {
           {AuthRoute(ROUTE_ENDPOINTS.LEADER_BOARD, <LeaderBoard />)}
           {AuthRoute(ROUTE_ENDPOINTS.TOURNAMENT, <Tournament />)}
           {AuthRoute(ROUTE_ENDPOINTS.PROFILE, <Profile />)}
-          {AuthRoute(ROUTE_ENDPOINTS.GAME, <Game playerOne={playerOne} playerTwo={playerTwo}/>)}
+          {AuthRoute(
+            ROUTE_ENDPOINTS.GAME,
+            <Game playerOne={playerOne} playerTwo={playerTwo} />
+          )}
         </Route>
         {PublicRoute(ROUTE_ENDPOINTS.LOGIN, <Login />)}
         <Route path={ROUTE_ENDPOINTS.HOME} element={<LandingPage />} />

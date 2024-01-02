@@ -1,12 +1,3 @@
-# query User {
-#   user {
-#     id
-#     email
-#     userName
-#     profilePhoto
-#   }
-# }
-
 # GET THE User
 query User($id: Float!) {
   findUserById(userId: $id) {
@@ -15,22 +6,12 @@ query User($id: Float!) {
     username
     twoStepVerificationEnabled
     profileImgUrl
-    createdAt
-    updatedAt
   }
 }
 
 # DELETE THE User
 mutation deleteAccount($id: Float!, $password: String!) {
   deleteAccount(id: $id, password: $password)
-}
-
-# UPDATE THE User
-mutation UpdateUserProfile(
-  $userId: Float!
-  $UpdateProfileInput: UpdateProfileInput!
-) {
-  UpdateUserProfile(userId: $userId, UpdateProfileInput: $UpdateProfileInput)
 }
 
 query Account($userId: Float!) {
@@ -63,4 +44,23 @@ query Account($userId: Float!) {
       best_win_streak
     }
   }
+}
+
+mutation UpdateUserProfile(
+  $userId: Float!
+  $UpdateProfileInput: UpdateProfileInput!
+) {
+  UpdateUserProfile(userId: $userId, UpdateProfileInput: $UpdateProfileInput)
+}
+
+mutation updateUserAvatarImg($userId: Float!, $AvatarImage: Upload!) {
+  updateUserAvatarImg(userId: $userId, image: $AvatarImage)
+}
+
+mutation updateProfileBgImg($userId: Float!, $BgImage: Upload!) {
+  updateProfileBgImg(userId: $userId, image: $BgImage)
+}
+
+mutation updateUser($userUpdateInput: UpdateUserInput!) {
+  updateUser(userUpdateInput: $userUpdateInput)
 }

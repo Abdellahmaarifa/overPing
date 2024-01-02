@@ -34,7 +34,9 @@ export const authLink = (token: string | null) =>
         authorization: token ? `Bearer ${token}` : "",
       },
     };
-  }).concat(errorLink).concat(httpLink);
+  })
+    .concat(errorLink)
+    .concat(httpLink);
 
 export const initApolloClient = (): ApolloClient<NormalizedCacheObject> => {
   const client = new ApolloClient({

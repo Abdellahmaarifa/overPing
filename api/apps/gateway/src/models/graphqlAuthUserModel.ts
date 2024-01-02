@@ -12,7 +12,7 @@ export class GQLUserModel {
     @Field()
     email?: string;
 
-    @Field()
+  @Field()
     profileImgUrl: string;
     
     @Field({ nullable: true })
@@ -24,12 +24,8 @@ export class GQLUserModel {
 
     @Field()
     twoStepVerificationEnabled?: boolean;
-    
-    
-    @Field({ nullable: true })
-    createdAt?: Date;
 
-    @Field({ nullable: true })
-    updatedAt?: Date;
+    @Field({nullable: true })
+    showUpdateWin?: boolean;
   }
   

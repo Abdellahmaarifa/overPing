@@ -11,7 +11,7 @@ datasource db {
 model User {
   id                         Int      @id @default(autoincrement())
   username                   String   @unique
-  email                      String 
+  email                      String
   profileImgUrl              String   @default("http://localhost:5500/image/avatar/defaultAvatar.jpg")
   password                   String?
   googleId                   String?  @unique
@@ -21,4 +21,5 @@ model User {
   twoStepVerificationEnabled Boolean  @default(false)
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
+  showUpdateWin              Boolean  @default(false)
 }

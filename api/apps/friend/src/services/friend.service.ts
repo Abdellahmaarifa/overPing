@@ -213,6 +213,27 @@ export class FriendService {
   }
 
   async blockUser(userId: number, friendId: number) {
+    const existingFriendship3 = await this.checkExistingFriendship(
+      userId,
+      friendId,
+    );
+    try {
+    if (!existingFriendship3){
+      console.log("tring to block user ");
+      const blockedFriendship = await this.prisma.friendship.create({
+        data: {
+          userA: userId,
+          userB: friendId,
+          status: 'BLOCKED',
+          blocker: userId,
+        },
+      });
+      return true; 
+    }
+  }catch(error){
+      this.rpcExceptionService.throwBadRequest('Error blocking user');
+    }
+
     const existingFriendship = await this.getFriendship(
       userId,
       friendId,

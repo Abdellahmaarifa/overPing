@@ -18,7 +18,11 @@ COPY . .
 RUN yarn install --verbose
 
 # Generate Prisma client
+<<<<<<< HEAD
 RUN yarn run gen:auth:prisma
+=======
+RUN yarn run generate:auth:prisma
+>>>>>>> f4b6f0c3bc21b47603cf92a3db739d4960c0f646
 
 # Build the application
 RUN yarn build
