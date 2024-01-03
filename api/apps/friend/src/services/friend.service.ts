@@ -107,6 +107,22 @@ export class FriendService {
     return blockedUsers;
   }
 
+
+  async getWhoBlockedUser(userId: number) {
+    const blockedFriendships = await this.prisma.friendship.findMany({
+      where: {
+        status: FriendshipStatus.BLOCKED,
+        OR: [{ userA: userId }, { userB: userId }],
+      },
+    });
+
+    const filteredBlockedUserIds = blockedFriendships.map((blocked) =>
+      (blocked.blocker === userId && blocked.userA === userId) ? blocked.userB : blocked.userA,
+    );
+    return filteredBlockedUserIds;
+  }
+
+
   /*
   async getSuggestedUsers(userId: number, limit: number = 10): Promise<User[]> {
     const existingFriends = await this.prisma.friendship.findMany({

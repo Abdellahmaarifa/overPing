@@ -32,6 +32,11 @@ export class FriendController {
   async getBlockedUsers(input: {userId: number}) : Promise<IAuthUser>{
      return this.friendService.getBlockedUsers(input.userId);
   }
+  
+  @MessagePattern({ role: 'friend', cmd: 'getWhoBlockedUser' })
+  async getWhoBlockedUser(input: {userId: number}) : Promise<IAuthUser>{
+     return this.friendService.getWhoBlockedUser(input.userId);
+  }
 
   @MessagePattern({ role: 'friend', cmd: 'removeFriend' })
   async removeFriend(data : {userId: number, friendId: number}) : Promise<boolean>{

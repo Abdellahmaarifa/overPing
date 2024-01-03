@@ -32,9 +32,9 @@ export class UserController {
     return user;
   }
 
-  @MessagePattern({ role: 'user', cmd: 'findAll' })
-  async findAll(): Promise<IAuthUser[]> {
-    const users: IAuthUser[] = await this.userService.findAll();
+  @MessagePattern({ role: 'user', cmd: 'findAllUsers' })
+  async findAllUsers(pageNumber: number): Promise<IAuthUser[]> {
+    const users: IAuthUser[] = await this.userService.findAllUsers(pageNumber);
     this.handleUsersNotFound(users, 'Failed to query users');
     return users;
   }
@@ -53,6 +53,7 @@ export class UserController {
   async findUsersByIds(friendIds: number[]): Promise<IAuthUser[]> {
     return this.userService.findUserByIds(friendIds);
   }
+
 
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {
     if (!user) {

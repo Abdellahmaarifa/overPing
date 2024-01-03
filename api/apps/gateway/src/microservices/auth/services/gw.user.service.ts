@@ -10,6 +10,8 @@ export class UserService {
     constructor(
         @Inject(IRmqSeverName.AUTH)
         private readonly client: ClientProxy,
+        @Inject(IRmqSeverName.FRIEND)
+        private readonly friendClient: ClientProxy,
         private readonly clientService: RabbitMqService,
         private readonly profileService: GwProfileService,
 
@@ -87,16 +89,33 @@ export class UserService {
         return (response);//for now
     }
 
-    async findAll() {
-        const response = await this.clientService.sendMessageWithoutPayload(
+    async findAllUsers(userId: number, pageNumber: number) {
+        const users = await this.clientService.sendMessageWithPayload(
             this.client,
             {
                 role: 'user',
-                cmd: 'findAll'
+                cmd: 'findAllUsers'
             },
-
+            pageNumber
         )
-        return (response);
+        console.log("start geting blocked the users....")
+        const blockedUsers = await this.clientService.sendMessageWithPayload(
+            this.friendClient,
+            {
+                role: 'friend',
+                cmd: "getWhoBlockedUser"
+            },
+            {
+                userId
+            }
+        )
+        // console.log("blockedUsers: ", blockedUsers)
+        if (blockedUsers.length <= 0){
+            return users.filter(user => user.id !== userId);
+        }
+        const nonBlockedUsers = users.filter(user => user.id !== userId && !blockedUsers.includes(user.id));
+        // console.log("blocked user", userId, " .... ", nonBlockedUsers);
+        return (nonBlockedUsers);
     }
 
     async removeAccount(id: number, password: string): Promise<boolean> {
