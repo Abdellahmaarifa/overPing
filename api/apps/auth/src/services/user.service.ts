@@ -106,20 +106,19 @@ export class UserService {
     }
   }
 
-  async findAll(): Promise<IAuthUser[]> {
+  async findAllUsers(pageNumber: number = 1, pageSize: number = 10): Promise<IAuthUser[]> {
+    const skip = (pageNumber - 1) * pageSize;
     return (await this.prisma.user.findMany({
       select: {
         id: true,
         username: true,
+        email: true,
         // Exclude the 'password' field from the query result
         password: false,
-        googleId: true,
-        fortyTwoId: true,
         profileImgUrl: true,
-        createdAt: true,
-        updatedAt: true,
-        showUpdateWin: true,
       },
+      skip,
+      take: pageSize,
     }));
   }
 

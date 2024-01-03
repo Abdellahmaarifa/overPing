@@ -5,6 +5,7 @@ import { AuthCredentialsInput } from '../input';
 import { GatewayService, UserService } from '../../services';
 import { UseGuards } from '@nestjs/common';
 import { GqlJwtAuthGuard } from '../../guards/gql.accessToken.guard';
+import { AccessTokenGuard } from '../../guards/accessToken.guard';
 
 
 
@@ -28,10 +29,11 @@ export class AuthQueryResolver {
     }
 
 
-
+    @UseGuards(GqlJwtAuthGuard)
     @Query(() => [GQLUserModel])
-    async findAllUsers(): Promise<GQLUserModel[]> {
-        const users: GQLUserModel[] = await this.userService.findAll();
+    async findAllUsers(@Context() ctx, @Args('pageNumber') pageNumber: number): Promise<GQLUserModel[]> {
+        const userId = ctx.req.user.id;
+        const users: GQLUserModel[] = await this.userService.findAllUsers(userId, pageNumber);
         return users;
     }
 

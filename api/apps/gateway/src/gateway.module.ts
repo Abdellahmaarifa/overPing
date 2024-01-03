@@ -53,15 +53,14 @@ import { GwDirectMessageService } from "./microservices/chat/services";
       cors: {
         credentials: true,
         origin: true
-      //   origin: ["http://localhost:5173"],
       },
-      playground: true,
-      // installSubscriptionHandlers: true,
+      playground : true,
+      installSubscriptionHandlers: true, // This enables WebSocket subscriptions
       subscriptions: {
-        'graphql-ws': {
-          path: '/graphql'
-        },
-      }
+    'graphql-ws': {
+      path: '/graphql',
+    },
+  },
     
     }),
   RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
