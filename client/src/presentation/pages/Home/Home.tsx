@@ -9,15 +9,15 @@ import { useSettingsContext, SETTINGS_LINKS } from "context/settings.context";
 import { useUpdateUserMutation } from "gql/index";
 
 const Home = () => {
-  const { user } = useUserContext();
+  const { user, profile, updateUser } = useUserContext();
   const { settingsModel, settingsNav } = useSettingsContext();
-  const [updateUser] = useUpdateUserMutation();
+  const [updateUserMutation] = useUpdateUserMutation();
   useEffect(() => {
     if (user) {
       if (!user.showUpdateWin) {
         settingsModel[1](true);
         settingsNav[1](SETTINGS_LINKS.USER_INFORMATION);
-        updateUser({
+        updateUserMutation({
           variables: {
             userUpdateInput: {
               showUpdateWin: true,
@@ -25,6 +25,7 @@ const Home = () => {
             },
           },
         });
+        updateUser({ ...user, showUpdateWin: true });
       }
     }
   }, []);

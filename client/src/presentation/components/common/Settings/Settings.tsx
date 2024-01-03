@@ -12,6 +12,7 @@ import SetInformationModel from "../SetInforamtionModel/SetInformationModel";
 import SetGameModel from "../SetGameModel/SetGameModel";
 import SetPasswordModel from "../SetPasswordModel/SetPasswordModel";
 import SetTwoFactorAuthModel from "../SetTwoFactorAuthModel/SetTwoFactorAuthModel";
+import { useUserContext } from "context/user.context";
 // the default model
 
 const Settings = () => {
@@ -24,8 +25,13 @@ const Settings = () => {
   const {
     mobileMenuState: [openMobileMenu, setOpenMobileMenu],
   } = useLayoutContext();
+  const { restoreUser } = useUserContext();
   return settingsModel ? (
-    <SettingConatiner onClick={() => !openMobileMenu && resetSettings()}>
+    <SettingConatiner
+      onClick={() => {
+        !openMobileMenu && resetSettings();
+      }}
+    >
       {settingsNav === SETTINGS_LINKS.HOME && <SettingsModel />}
       {settingsNav === SETTINGS_LINKS.USER_INFORMATION && (
         <SetInformationModel />

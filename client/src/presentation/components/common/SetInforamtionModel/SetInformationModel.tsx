@@ -56,14 +56,15 @@ const SetInformationModel = () => {
   const [updateProfileMutation] = useUpdateUserProfileMutation();
   const [updateAvatarMutation] = useUpdateUserAvatarImgMutation();
   const [updateCoverMutation] = useUpdateProfileBgImgMutation();
-  const { restoreUser } = useUserContext();
+  const { restoreUser, user, updateProfile } = useUserContext();
   const navigate = useNavigate();
   const goHome = () =>
     setTimeout(() => {
-      navigate(0);
+      //restoreUser();
+      //navigate(0);
       //window.location.replace(`/profile/${profile?.id}`);
-    }, 200);
-  const updateProfile = async () => {
+    }, 0);
+  const updateUserProfile = async () => {
     if (!avatar && !about && !nickname && !cover) return;
     // VALIDATE THE DATA FIRST .
     try {
@@ -92,29 +93,36 @@ const SetInformationModel = () => {
         nickname,
         about
       );
-      await toast.promise(
-        updateProfileMutation({
-          variables: {
-            userId: Number(profile?.id),
-            UpdateProfileInput: {
-              nickname: nickname ? nickname : profile?.nickname,
-              about: about ? about : profile?.about,
+      if (nickname || about) {
+        await toast.promise(
+          updateProfileMutation({
+            variables: {
+              userId: Number(profile?.id),
+              UpdateProfileInput: {
+                nickname: nickname ? nickname : profile?.nickname,
+                about: about ? about : profile?.about,
+              },
             },
-          },
-        }),
-        {
-          loading: "please wait..",
-          success: ({ data }: any) => {
-            goHome();
-            return "Profile updated!";
-          },
-          error: (err) => {
-            console.log("profile update err: ", err);
-            return "something went wrong";
-          },
-        }
-      );
+          }),
+          {
+            loading: "please wait..",
+            success: ({ data }: any) => {
+              // goHome();
+              // console.log("this after update: da", data);
 
+              setNickname(nickname ? nickname! : profile?.nickname!);
+              setAbout(about ? about! : profile?.about!);
+              if (about && nickname) return "Profile updated!";
+              else if (about) return "About updated!";
+              else return "Nickname updated!";
+            },
+            error: (err) => {
+              console.log("profile update err: ", err);
+              return "something went wrong";
+            },
+          }
+        );
+      }
       if (avatar) {
         await toast.promise(
           updateAvatarMutation({
@@ -126,7 +134,11 @@ const SetInformationModel = () => {
           {
             loading: "please wait..",
             success: ({ data }: any) => {
-              goHome();
+              setAvatarUrl(data.updateUserAvatarImg);
+              console.log("this is after updating the profile", profile, data);
+              //goHome();
+              // update
+              console.log(profile);
               return "avatar updated!";
             },
             error: (err) => {
@@ -148,7 +160,9 @@ const SetInformationModel = () => {
           {
             loading: "please wait..",
             success: ({ data }: any) => {
-              goHome();
+              //goHome();
+              setCoverUrl(data.updateProfileBgImg);
+              console.log("cover data: ", data);
               return "cover updated!";
             },
             error: (err) => {
@@ -158,6 +172,15 @@ const SetInformationModel = () => {
           }
         );
       }
+
+      // update the profile in the state
+      updateProfile({
+        ...profile!,
+        nickname: nickname ? nickname! : profile?.nickname!,
+        about: about ? about! : profile?.about!,
+        avatar: avtarUrl ? encodeURI(avtarUrl as string) : profile?.avatar!,
+        cover: coverUrl ? encodeURI(coverUrl as string) : profile?.cover!,
+      });
     } catch (err) {
       toast.error("something went wrong.");
       console.log("error: - ", err);
@@ -283,7 +306,7 @@ const SetInformationModel = () => {
           $text="submit change"
           $size="auto"
           $disabled={!avatar && !about && !nickname && !cover}
-          onClick={() => updateProfile()}
+          onClick={() => updateUserProfile()}
         />
       </ChangeInfoField>
       <Toaster position="top-center" />

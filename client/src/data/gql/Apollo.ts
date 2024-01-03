@@ -1,5 +1,6 @@
 import {
   ApolloClient,
+  DefaultOptions,
   InMemoryCache,
   NormalizedCacheObject,
 } from "@apollo/client";
@@ -38,6 +39,16 @@ export const authLink = (token: string | null) =>
     .concat(errorLink)
     .concat(httpLink);
 
+const defaultOptions: DefaultOptions = {
+  watchQuery: {
+    fetchPolicy: "no-cache",
+    errorPolicy: "ignore",
+  },
+  query: {
+    fetchPolicy: "no-cache",
+    errorPolicy: "all",
+  },
+};
 export const initApolloClient = (): ApolloClient<NormalizedCacheObject> => {
   const client = new ApolloClient({
     cache: new InMemoryCache(),
