@@ -3,11 +3,15 @@ import {
   DefaultOptions,
   InMemoryCache,
   NormalizedCacheObject,
+  split,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 
 import { onError } from "@apollo/client/link/error";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { createClient } from "graphql-ws";
 
 // Log any GraphQL errors or network error that occurred
 const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -25,6 +29,24 @@ export const httpLink = createUploadLink({
   credentials: "include",
 });
 
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: "ws://localhost:5500/graphql",
+  })
+);
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    );
+  },
+  wsLink,
+  httpLink
+);
+
 export const authLink = (token: string | null) =>
   setContext((_, { headers }) => {
     return {
@@ -37,7 +59,7 @@ export const authLink = (token: string | null) =>
     };
   })
     .concat(errorLink)
-    .concat(httpLink);
+    .concat(splitLink);
 
 const defaultOptions: DefaultOptions = {
   watchQuery: {
