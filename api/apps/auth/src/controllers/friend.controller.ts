@@ -3,7 +3,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import { IUser } from '@app/common/auth/interface/auth.user.interface';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { FriendshipService } from '../services/friend.servicet';
-
+import { FriendshipStatus } from '@app/common/friend/dto/friendshipStatus';
 
 @Controller()
 export class FriendshipController {
@@ -61,5 +61,10 @@ export class FriendshipController {
   @MessagePattern({ role: 'user', cmd: 'getSuggestedFriends'})
   async getSuggestedFriends(input: {userId: number, limit: number }): Promise<IUser[]> {
     return await this.friendService.getSuggestedFriends(input.userId, input.limit);
+  }
+
+  @MessagePattern({ role: 'user', cmd: 'getFrienshipStatus'})
+  async getFriendshipStatus({userId, friendId}): Promise<FriendshipStatus>{
+    return await this.friendService.getFriendshipStatus(userId, friendId);
   }
 }

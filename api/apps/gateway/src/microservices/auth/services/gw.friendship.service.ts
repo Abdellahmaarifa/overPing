@@ -3,7 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IUser } from '@app/common';
-
+import { FriendshipStatus } from '@app/common/friend/dto/friendshipStatus';
 
 
 @Injectable()
@@ -139,6 +139,20 @@ async getSuggestedFriends(userId: number, limit: number ): Promise<IUser[]> {
             limit
         }
     )  
+}
+
+  async getFriendshipStatus(userId: number, friendId: number): Promise<FriendshipStatus> {
+    return await this.clientService.sendMessageWithPayload(
+        this.client,
+        {
+            role: 'user',
+            cmd: 'getFrienshipStatus'
+        },
+        {
+            userId,
+            friendId
+        }
+    )
 }
 
 }

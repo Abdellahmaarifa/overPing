@@ -1,10 +1,12 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, HttpException } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { CreateProfileInput } from '../graphql/input/createUserProfileInput';
 import { IUserProfile } from '@app/common/profile/IUserProfile';
 import { UpdateProfileInput } from '../graphql/input/updateUserProfileInput';
+import { GwFriendshipService } from '../../auth/services/gw.friendship.service';
+import { FriendshipStatus } from '@app/common/friend/dto/friendshipStatus';
 
 @Injectable()
 export class GwProfileService {
@@ -12,6 +14,7 @@ export class GwProfileService {
         @Inject(IRmqSeverName.PROFILE)
         private client: ClientProxy,
         private readonly clientService: RabbitMqService,
+        private readonly friendshipService: GwFriendshipService
     ) { }
 
   
@@ -53,6 +56,11 @@ export class GwProfileService {
     }
 
     async findProfileByUserId(userId: number, id: number) : Promise<IUserProfile>{
+        const isUserblocked = await this.friendshipService.getFriendshipStatus(userId, id);
+        console.log("profile: ", isUserblocked)
+        if (isUserblocked === FriendshipStatus.BlockedBy){
+            throw new HttpException( "premission deine", 404)
+        }
         return await this.clientService.sendMessageWithPayload(
             this.client,
             {
@@ -60,7 +68,6 @@ export class GwProfileService {
                 cmd: 'find-profile-by-userId',
             },
             id
-            // not forget to change userId name to id in profile 
         );
     }
 

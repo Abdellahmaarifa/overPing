@@ -31,9 +31,6 @@ import { GWMediaService } from './microservices/media/services/gw.media.service'
 import { TWOFATokenStrategy } from "./microservices/auth/strategies/twoFA.starategy";
 import { MeidaController } from './microservices/media/controllers/gw.media.controller';
 import { MediaMutationsResolver } from './microservices/media/graphql/mutations/gw.media.mutation';
-import { FriendMutationsResolver } from './microservices/friend/graphql/mutaions/gw.friend.mutations.resolver';
-import { FriendQueryResolver } from './microservices/friend/graphql/queries/gw.frined.query.resolvert';
-import { GwFriendService } from './microservices/friend/services/gw.friend.service';
 import { GWChatModule } from "./microservices/chat/gw.chat.module";
 import { GwChannelService } from "./microservices/chat/services";
 import { GwDirectMessageService } from "./microservices/chat/services";

@@ -4,7 +4,7 @@ import { PrismaService } from 'apps/auth/prisma/prisma.service';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { User, Prisma } from '@prisma/client';
 import { PrismaError } from '@app/common/exception-handling';
-
+import { FriendshipStatus } from '@app/common/friend/dto/friendshipStatus';
 
 
 
@@ -151,6 +151,16 @@ export class FriendshipService {
   
 
 
+  private async hasSentFriendRequest(senderId: number, receiverId: number): Promise<boolean> {
+    const user = await this.prisma.user.findUnique(
+    { 
+        where: { id: senderId },
+        include: {friendRequests: true}
+    });
+    return user.friendRequests.some((request) => request.id === receiverId);
+  }
+
+
   // get user data of friendship
 
   async getBlockedUsers(userId: number): Promise<IUser[]>{
@@ -231,4 +241,48 @@ export class FriendshipService {
 
     return users;
   }
+
+
+
+  /// frindship status 
+
+
+  async getFriendshipStatus(userId: number, friendId: number): Promise<FriendshipStatus> {
+
+    const areFriends = await this.areUsersFriends(userId, friendId);
+
+    if (areFriends) {
+      return FriendshipStatus.Friends;
+    }
+    const hasSentRequest = await this.hasSentFriendRequest(userId, friendId);
+
+    if (hasSentRequest) {
+      return FriendshipStatus.RequestSent;
+    }
+    const hasReceivedRequest = await this.hasSentFriendRequest(friendId, userId);
+
+    if (hasReceivedRequest) {
+      return FriendshipStatus.RequestReceived;
+    }
+    const hasBlocked = await this.areUsersBlocked(userId, friendId);
+    
+    if (hasBlocked){
+      return FriendshipStatus.Blocked
+    }
+    const hasBlockedBy = await this.areUsersBlocked(friendId, userId);
+
+    if (hasBlockedBy){
+      return FriendshipStatus.BlockedBy
+    }
+
+    return FriendshipStatus.NotFriends;
+  }
+
+
+
+
+
 }
+
+
+

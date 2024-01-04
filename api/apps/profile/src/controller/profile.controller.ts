@@ -29,8 +29,8 @@ export class ProfileController {
   }
 
   @MessagePattern({ role: 'profile', cmd: 'find-profile-by-userId'})
-  async findProfileByUserId(userId: number) : Promise<IUserProfile>{
-     return this.profileService.findOneByUserId(userId);
+  async findProfileByUserId(id: number) : Promise<IUserProfile>{
+     return this.profileService.findOneByUserId(id);
   }
   @MessagePattern({role: 'profile', cmd: 'remove-Profile'})
   async removeProfile(userId: number) : Promise<boolean>{
