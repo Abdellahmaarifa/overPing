@@ -300,4 +300,67 @@ export class UserService {
     console.log('friends: ', friends);
     return friends;
   }
+
+
+  async getOnlineFriends( userId, pageNumber, limit ): Promise<IUser[]> {
+    const exists = await this.isUserExistById(userId);
+    if (!exists) {
+      this.rpcExceptionService.throwBadRequest(
+        `User with ID ${userId} not found.`,
+      );
+    }
+
+    const friends = await this.prisma.user.findMany({
+      where: {
+        friends: {
+          some: {
+            id: userId,
+            lastSeen: {
+              gte: new Date(new Date().getTime() - 5 * 60 * 1000), 
+            },
+          },
+        },
+      },
+      take: limit,
+      skip: (pageNumber - 1) * limit,
+    });
+
+    return friends; 
+  }
+
+
+  async getOnlineUsers( pageNumber, limit ): Promise<IUser[]> {
+    const onlineUsers = await this.prisma.user.findMany({
+      where: {
+        lastSeen: {
+          gte: new Date(new Date().getTime() - 5 * 60 * 1000), //last 5 minutes 
+        },
+      },
+      take: limit,
+      skip: (pageNumber - 1) * limit,
+    });
+
+    return onlineUsers;
+  }
+
+
+  async updateUserStatus(userId: number , time : number) : Promise<boolean>{
+    const exists = await this.isUserExistById(userId);
+    if (!exists) {
+      this.rpcExceptionService.throwBadRequest(
+        `User with ID ${userId} not found.`,
+      );
+    }
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data:{
+        lastSeen: new Date(time)
+      }
+    });
+
+    if (!user) {
+      return false;
+    }
+    return true;
+  }
 }

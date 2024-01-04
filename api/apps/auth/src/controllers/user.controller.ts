@@ -63,6 +63,20 @@ export class UserController {
     return this.userService.findUserByIds(friendIds);
   }
 
+  @MessagePattern({role: 'user', cmd: 'update-user-status'})
+  async updateUserStatus({userId, time}) : Promise<boolean>{
+      return this.userService.updateUserStatus(userId, time);
+  }
+
+  @MessagePattern({role: 'user', cmd: 'getOnlineUsers'})
+  async getOnlineUsers({ pageNumber, limit}) : Promise<IUser[]>{
+      return this.userService.getOnlineUsers(pageNumber, limit);
+  }
+
+  @MessagePattern({role: 'user', cmd: 'getOnlineFriends'})
+  async getOnlineFriends({userId, pageNumber, limit}) : Promise<IUser[]>{
+      return this.userService.getOnlineFriends(userId, pageNumber, limit);
+  }
 
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {
     if (!user) {

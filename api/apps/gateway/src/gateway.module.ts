@@ -36,7 +36,7 @@ import { GwChannelService } from "./microservices/chat/services";
 import { GwDirectMessageService } from "./microservices/chat/services";
 import { GwFriendMutationsResolver } from './microservices/auth/graphql/mutations/gw.friendship.mutaions.resolver';
 import { FriendshipQueryResolver } from './microservices/auth/graphql/queries/gw.friend.query.resolver';
-
+import { UserStatusService } from './microservices/auth/services/gw.userStatus.service';
 
 @Module({
   imports: [
@@ -71,6 +71,9 @@ import { FriendshipQueryResolver } from './microservices/auth/graphql/queries/gw
     provide: 'PUB_SUB',
     useValue: new PubSub(),
     },
+    //user status service
+      UserStatusService,
+    // end of suer status 
     //friend
     FriendshipQueryResolver,
     GwFriendshipService,

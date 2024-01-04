@@ -22,8 +22,8 @@ model User {
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
   showUpdateWin              Boolean  @default(false)
-  lastseen                   DateTime
-  inGame                     Boolean
+  lastSeen                   DateTime @default(now())
+  inGame                     Boolean  @default(false)
 
     // Friends and FriendOf relations
   friends  User[] @relation("friends")
