@@ -9,5 +9,12 @@ export class IAuthUser {
     twoStepVerificationEnabled?: boolean;
     showUpdateWin?: boolean;
 }
+
+export class IUser {
+    id: number;
+    username: string;
+    email: string;
+    profileImgUrl: string;
+}
   
 

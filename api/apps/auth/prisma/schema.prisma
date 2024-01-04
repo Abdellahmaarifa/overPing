@@ -22,4 +22,18 @@ model User {
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
   showUpdateWin              Boolean  @default(false)
+  lastseen                   DateTime
+  inGame                     Boolean
+
+    // Friends and FriendOf relations
+  friends  User[] @relation("friends")
+  friendOf User[] @relation("friends")
+
+  // Block system relation
+  blocks    User[] @relation("blocks")
+  blockedBy User[] @relation("blocks")
+
+   // Friend requests and pending friends relations
+  friendRequests User[] @relation("friendRequests")
+  pendingFriends User[] @relation("friendRequests")
 }

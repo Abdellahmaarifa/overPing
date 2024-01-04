@@ -12,7 +12,7 @@ import { FortyTwoStrategy } from './microservices/auth/strategies/42.strategy';
 import { GoogleStrategy } from './microservices/auth/strategies/google.strategy';
 import { JwtAccessTokenStrategy } from './microservices/auth/strategies/jwt.accessToken.strategy';
 import { AuthController } from './microservices/auth/controllers/gw.auth.controller';
-import { UserService } from './microservices/auth/services';
+import { UserService, GwFriendshipService } from './microservices/auth/services';
 import { LoggerService } from '@app/common';
 import { JwtRefreshTokenStrategy } from './microservices/auth/strategies/jwt.refreshToken.strategy';
 import { UserAccessAuthorizationGuard } from './microservices/auth/guards/user-auth.guard';
@@ -37,8 +37,8 @@ import { GwFriendService } from './microservices/friend/services/gw.friend.servi
 import { GWChatModule } from "./microservices/chat/gw.chat.module";
 import { GwChannelService } from "./microservices/chat/services";
 import { GwDirectMessageService } from "./microservices/chat/services";
-
-
+import { GwFriendMutationsResolver } from './microservices/auth/graphql/mutations/gw.friendship.mutaions.resolver';
+import { FriendshipQueryResolver } from './microservices/auth/graphql/queries/gw.friend.query.resolver';
 
 
 @Module({
@@ -74,11 +74,16 @@ import { GwDirectMessageService } from "./microservices/chat/services";
     provide: 'PUB_SUB',
     useValue: new PubSub(),
     },
+    //friend
+    FriendshipQueryResolver,
+    GwFriendshipService,
+    GwFriendMutationsResolver,
+    //end of friend
     //chat 
     GwDirectMessageService,
     GwChannelService,
     //end of chat
-    GwFriendService,
+    // GwFriendService,
     GWMediaService,
     GwMatchMakingService, 
     GatewayService,
@@ -87,13 +92,13 @@ import { GwDirectMessageService } from "./microservices/chat/services";
     GwWalletService,
     MatchMakingQueryResolver,
     MatchMakingMutationsResolver,
-    FriendMutationsResolver,
+    // FriendMutationsResolver,
     ProfileQueryResolver,
     MediaMutationsResolver,
     UserProifleMutationsResolver,
     WalletMutationsResolver,
     AuthQueryResolver,
-    FriendQueryResolver,
+    // FriendQueryResolver,
     AuthMutationsResolver,
     TWOFATokenStrategy,
     FortyTwoStrategy,

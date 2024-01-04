@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
+import { IAuthUser, IUser } from '@app/common/auth/interface/auth.user.interface';
 import { UserCreationDto } from '../dto';
 import { PrismaService } from 'apps/auth/prisma/prisma.service';
 import * as argon2 from 'argon2';
@@ -106,20 +106,61 @@ export class UserService {
     }
   }
 
-  async findAllUsers(pageNumber: number = 1, pageSize: number = 10): Promise<IAuthUser[]> {
+  async findUserById(userId: number, id: number) : Promise<IUser> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { 
+          id,
+          blocks: {
+            none: {
+              id: userId,
+            },
+          },
+         },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          password: false,
+          profileImgUrl: true,
+        },
+      });
+
+      return user;
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
+  }
+
+  async findAllUsers(
+    pageNumber: number = 1,
+    pageSize: number = 10,
+    userId: number
+  ): Promise<IUser[]> {
     const skip = (pageNumber - 1) * pageSize;
-    return (await this.prisma.user.findMany({
+    const users = await this.prisma.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+        blocks: {
+          none: {
+            id: userId,
+          },
+        },
+      },
       select: {
         id: true,
         username: true,
         email: true,
-        // Exclude the 'password' field from the query result
         password: false,
         profileImgUrl: true,
       },
       skip,
       take: pageSize,
-    }));
+    });
+    console.log("users: ", users);
+    return users;
   }
 
   async remove(id: number, password: string): Promise<boolean> {

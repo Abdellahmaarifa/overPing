@@ -13,7 +13,7 @@ import { FriendshipDTO } from '@app/common/friend/dto/friendshipDto';
 @Injectable()
 export class GwFriendService {
     constructor(
-        @Inject(IRmqSeverName.FRIEND)
+        @Inject(IRmqSeverName.AUTH)
         private client: ClientProxy,
         private readonly clientService: RabbitMqService,
     ) { }
@@ -22,7 +22,7 @@ export class GwFriendService {
      return await this.clientService.sendMessageWithPayload(
         this.client,
         {
-            role: 'friend',
+            role: 'user',
             cmd: 'add'
         },
         {

@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { UserService } from '../services/user.service';
 import { UserCreationDto } from '../dto';
-import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
+import { IAuthUser, IUser } from '@app/common/auth/interface/auth.user.interface';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { UpdateProfileDto } from '../dto/user.updateProfileId.dto';
 import { UpdateUserDto } from '../dto/user.update.dto';
@@ -32,12 +32,21 @@ export class UserController {
     return user;
   }
 
+  @MessagePattern({ role: 'user', cmd: 'findUserById' })
+  async findUserById({userId , id}): Promise<IUser> {
+    const user = await this.userService.findUserById(userId, id);
+    this.handleUserNotFound(user, `Failed to find user: ${id}`);
+    return user;
+  }
+
   @MessagePattern({ role: 'user', cmd: 'findAllUsers' })
-  async findAllUsers(pageNumber: number): Promise<IAuthUser[]> {
-    const users: IAuthUser[] = await this.userService.findAllUsers(pageNumber);
+  async findAllUsers({pageNumber, pageSize, userId}): Promise<IAuthUser[]> {
+    const users = await this.userService.findAllUsers(pageNumber,pageSize, userId);
     this.handleUsersNotFound(users, 'Failed to query users');
     return users;
   }
+
+  
 
   @MessagePattern({ role: 'user', cmd: 'delete-user' })
   async remove(input: { id: number; password: string }): Promise<boolean> {

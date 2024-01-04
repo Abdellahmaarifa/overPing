@@ -52,14 +52,15 @@ export class GwProfileService {
         );
     }
 
-    async findProfileByUserId(userId: number) : Promise<IUserProfile>{
+    async findProfileByUserId(userId: number, id: number) : Promise<IUserProfile>{
         return await this.clientService.sendMessageWithPayload(
             this.client,
             {
                 role: 'profile',
                 cmd: 'find-profile-by-userId',
             },
-            userId
+            id
+            // not forget to change userId name to id in profile 
         );
     }
 
