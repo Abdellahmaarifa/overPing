@@ -21,9 +21,9 @@ import {useSearchParams} from "react-router-dom"
 import ReadyRobot from './components/ReadyRobot';
 let gameCapsule: GameContainer = new GameContainer();
 
-let playerOne : UserInfo = new UserInfo(tabId, "", 0, 0, "hunter X111", "/images/kilua.jpg", "", 0, 0, 0, 0, 0, 0);
-let playerTwo : UserInfo | undefined = new UserInfo(tabId, "", 0, 0, "machi +", "/images/machi.jpg", "", 0, 0, 0, 0, 0, 0);
-let robot     : UserInfo = new UserInfo(tabId, "", playerOne.matchWager, playerOne.modePlaying, "Mr Robot <|o_o|>", "/images/robot.jpg", "/images/badge-3.png", 10, 10 ,10, 12, 10, 0)
+let playerOne : UserInfo = new UserInfo(tabId, "", 0, 0, "hunter X111", "/images/kilua.jpg", "", 0, 0, 0, 0, 0, 0, 0);
+let playerTwo : UserInfo | undefined = new UserInfo(tabId, "", 0, 0, "machi +", "/images/machi.jpg", "", 0, 0, 0, 0, 0, 0, 0);
+let robot     : UserInfo = new UserInfo(tabId, "", playerOne.matchWager, playerOne.modePlaying, "Mr Robot <|o_o|>", "/images/robot.jpg", "/images/badge-3.png", 10, 10 ,10, 12, 10, 0, 0)
 
 
 
@@ -67,7 +67,8 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
             level          : renamePlayerTwo?.level,
             tournentPlayed : renamePlayerTwo?.tournentPlayed,
             tournentWon    : renamePlayerTwo?.tournentWon,
-            playWithMouse  : renamePlayerTwo?.playWithMouse 
+            playWithMouse  : renamePlayerTwo?.playWithMouse,
+            userId         : renamePlayerTwo?.userId
         }
     );
 
@@ -104,7 +105,8 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         level          : renamePlayerOne.level,
         tournentPlayed : renamePlayerOne.tournentPlayed,
         tournentWon    : renamePlayerOne.tournentWon,
-        playWithMouse  : renamePlayerOne.playWithMouse
+        playWithMouse  : renamePlayerOne.playWithMouse,
+        userId         : renamePlayerOne.userId
     })
 
     const [readyState, setReadyState] = useState(true);
@@ -182,7 +184,9 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
        playerOne.level = data?.findProfileByUserId?.xp as number;
        playerOne.tournentWon = data?.findProfileByUserId?.gameStatus.win_streak as number;
        playerOne.tournentPlayed = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
-       
+       playerOne.userId = Number(data?.findUserById?.id);
+
+    //    console.log("---------------> " , data);
         if (data?.findProfileByUserId?.rank  as number < 100)
             playerOne.userLogo = "/public/images/badge-1.png"
         if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
