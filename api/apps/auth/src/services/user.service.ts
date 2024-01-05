@@ -72,6 +72,7 @@ export class UserService {
           profileImgUrl: true,
           googleId: true,
           fortyTwoId: true,
+          lastSeen: true,
           twoStepVerificationEnabled: true,
           createdAt: true,
         updatedAt: true,
@@ -122,6 +123,7 @@ export class UserService {
           username: true,
           email: true,
           password: false,
+          lastSeen: true,
           profileImgUrl: true,
         },
       });
@@ -154,6 +156,7 @@ export class UserService {
         username: true,
         email: true,
         password: false,
+        lastSeen: true,
         profileImgUrl: true,
       },
       skip,
