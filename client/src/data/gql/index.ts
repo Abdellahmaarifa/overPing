@@ -266,6 +266,11 @@ export type Query = {
 };
 
 
+export type QueryFindAllUsersArgs = {
+  pageNumber: Scalars['Float']['input'];
+};
+
+
 export type QueryFindProfileByIdArgs = {
   id: Scalars['Float']['input'];
 };
@@ -413,6 +418,14 @@ export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type HelloQuery = { __typename?: 'Query', helloT: string };
 
+export type JoinMatchGameMutationVariables = Exact<{
+  transferFundsInput: PlaceBetInput;
+  JoinMatchmakingInput: JoinMatchmakingInput;
+}>;
+
+
+export type JoinMatchGameMutation = { __typename?: 'Mutation', placeBet?: boolean | null, joinMatchmakingQueue?: boolean | null };
+
 export type LoginMutationVariables = Exact<{
   password: Scalars['String']['input'];
   email: Scalars['String']['input'];
@@ -427,6 +440,13 @@ export type LogoutMutationVariables = Exact<{
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logOut: boolean };
+
+export type MatchWaitingListSubscriptionVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type MatchWaitingListSubscription = { __typename?: 'Subscription', matchWaitingList: { __typename?: 'PingPongPayload', user1Id: number, user2Id: number, matchKey: string } };
 
 export type FindProfileByUserIdQueryVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -895,6 +915,41 @@ export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
 export type HelloSuspenseQueryHookResult = ReturnType<typeof useHelloSuspenseQuery>;
 export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
+export const JoinMatchGameDocument = gql`
+    mutation joinMatchGame($transferFundsInput: PlaceBetInput!, $JoinMatchmakingInput: JoinMatchmakingInput!) {
+  placeBet(transferFundsInput: $transferFundsInput)
+  joinMatchmakingQueue(JoinMatchmakingInput: $JoinMatchmakingInput)
+  placeBet(transferFundsInput: $transferFundsInput)
+  joinMatchmakingQueue(JoinMatchmakingInput: $JoinMatchmakingInput)
+}
+    `;
+export type JoinMatchGameMutationFn = Apollo.MutationFunction<JoinMatchGameMutation, JoinMatchGameMutationVariables>;
+
+/**
+ * __useJoinMatchGameMutation__
+ *
+ * To run a mutation, you first call `useJoinMatchGameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinMatchGameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinMatchGameMutation, { data, loading, error }] = useJoinMatchGameMutation({
+ *   variables: {
+ *      transferFundsInput: // value for 'transferFundsInput'
+ *      JoinMatchmakingInput: // value for 'JoinMatchmakingInput'
+ *   },
+ * });
+ */
+export function useJoinMatchGameMutation(baseOptions?: Apollo.MutationHookOptions<JoinMatchGameMutation, JoinMatchGameMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<JoinMatchGameMutation, JoinMatchGameMutationVariables>(JoinMatchGameDocument, options);
+      }
+export type JoinMatchGameMutationHookResult = ReturnType<typeof useJoinMatchGameMutation>;
+export type JoinMatchGameMutationResult = Apollo.MutationResult<JoinMatchGameMutation>;
+export type JoinMatchGameMutationOptions = Apollo.BaseMutationOptions<JoinMatchGameMutation, JoinMatchGameMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($password: String!, $email: String!) {
   signIn(authCredentials: {username: $email, password: $password}) {
@@ -961,6 +1016,38 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const MatchWaitingListDocument = gql`
+    subscription MatchWaitingList($userId: Float!) {
+  matchWaitingList(userId: $userId) {
+    user1Id
+    user2Id
+    matchKey
+  }
+}
+    `;
+
+/**
+ * __useMatchWaitingListSubscription__
+ *
+ * To run a query within a React component, call `useMatchWaitingListSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMatchWaitingListSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMatchWaitingListSubscription({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useMatchWaitingListSubscription(baseOptions: Apollo.SubscriptionHookOptions<MatchWaitingListSubscription, MatchWaitingListSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<MatchWaitingListSubscription, MatchWaitingListSubscriptionVariables>(MatchWaitingListDocument, options);
+      }
+export type MatchWaitingListSubscriptionHookResult = ReturnType<typeof useMatchWaitingListSubscription>;
+export type MatchWaitingListSubscriptionResult = Apollo.SubscriptionResult<MatchWaitingListSubscription>;
 export const FindProfileByUserIdDocument = gql`
     query findProfileByUserId($userId: Float!) {
   findProfileByUserId(userId: $userId) {

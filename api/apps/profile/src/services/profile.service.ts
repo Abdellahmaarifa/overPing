@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "apps/profile/prisma/prisma.service";
 import { UserTitle } from "../interface/title.user.interface";
 import { CreateProfileDto } from "../dto/createProfileDto";
-import { UserProfile } from "@prisma/client";
+import { Achievement, UserProfile, UserProfileToAchievement } from "@prisma/client";
 import { UpdateProfileDto } from "../dto/updateUserProfileDto";
 import { UpdateWalletDto } from "../dto/updateUserWalletDto";
 import { Prisma } from "@prisma/client";
@@ -87,6 +87,37 @@ export class ProfileService {
     }
   }
 
+  async getUserAchievements(userId: number): Promise<Achievement[]> {
+    try {
+      const achievementIds = await this.prisma.userProfileToAchievement.findMany({
+          where: {
+            userProfileId: userId,
+          },
+          include: { achievement: true },
+        }).then(
+          (userProfileToAchievements: UserProfileToAchievement[]) =>
+          userProfileToAchievements.map((dt) => dt.achievementId)
+        );
+      if (!achievementIds) {
+        this.rpcExceptionService.throwNotFound(`No achievements for User ID ${userId}`);
+      }
+      return await this.prisma.achievement.findMany({
+        where: {
+          id: { in: achievementIds },
+        }
+      }); 
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
+  }
+
+  async getAllAchievements(): Promise<Achievement[]> {
+    try {
+      return this.prisma.achievement.findMany();
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
+  }
 
 
   async update(userId: number, input: UpdateProfileDto): Promise<boolean> {

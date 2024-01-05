@@ -1,0 +1,13 @@
+
+mutation joinMatchGame(
+   $transferFundsInput:PlaceBetInput!
+   $JoinMatchmakingInput:JoinMatchmakingInput!
+){
+    placeBet(transferFundsInput:$transferFundsInput)
+    joinMatchmakingQueue(JoinMatchmakingInput:$JoinMatchmakingInput)
+    
+     placeBet(transferFundsInput:$transferFundsInput)
+    joinMatchmakingQueue(JoinMatchmakingInput:$JoinMatchmakingInput)
+
+}
+

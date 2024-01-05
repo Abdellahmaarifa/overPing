@@ -72,6 +72,7 @@ CREATE TABLE "Achievement" (
     "title" TEXT NOT NULL,
     "requirement" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "imageURL" TEXT NOT NULL,
 
     CONSTRAINT "Achievement_pkey" PRIMARY KEY ("id")
 );

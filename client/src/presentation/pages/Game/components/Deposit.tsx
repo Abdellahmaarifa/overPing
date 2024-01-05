@@ -2,6 +2,8 @@ import './Deposit.css'
 import UserInfo from './UserInfo';
 import { useState } from 'react';
 import { Howl, Howler } from 'howler';
+import { useJoinMatchGameMutation } from 'gql/index';
+import { useEffect } from 'react';
 
 Howler.volume(1.0);
 interface ModesProps 
@@ -10,8 +12,10 @@ interface ModesProps
     updateUserInfoWager: (newWager: number) => void;
 }
 
-let Deposite = ( { playerOne , updateUserInfoWager} : ModesProps  ) =>
+let Deposite =  ( { playerOne , updateUserInfoWager} : ModesProps  ) =>
 {
+    
+
     let selectSound : any = new Howl({
         src: ['/Sounds/click-menu.mp3'],
         onload: () => {
@@ -25,7 +29,7 @@ let Deposite = ( { playerOne , updateUserInfoWager} : ModesProps  ) =>
     
     let [Wager, setWager] = useState(0);
 
-    let validateWager = (Wager : number) =>
+    let validateWager =  (Wager : number) =>
     {
         if (Wager !== 0)
         {

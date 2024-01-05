@@ -5,23 +5,27 @@
 type GQLUserModel {
   id: ID!
   username: String!
+  email: String!
+  profileImgUrl: String!
   googleId: String
   fortyTwoId: String
   twoStepVerificationEnabled: Boolean!
-  createdAt: DateTime
-  updatedAt: DateTime
+  showUpdateWin: Boolean
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type GQLWalletModel {
   id: ID!
   balance: Float!
-  userProfileId: Float!
+  user_id: Float!
   betAmount: Float!
+}
+
+type GQLGameStatusModel {
+  matchesLoss: Float!
+  matchesWon: Float!
+  totalMatches: Float!
+  win_streak: Float!
+  best_win_streak: Float!
 }
 
 type GQLUserProfileModel {
@@ -32,9 +36,17 @@ type GQLUserProfileModel {
   xp: Float!
   rank: Float!
   about: String!
+  bgImageUrl: String!
   wallet: GQLWalletModel!
-  created_at: DateTime!
-  updated_at: DateTime!
+  gameStatus: GQLGameStatusModel!
+}
+
+type GQLAchievement {
+  id: ID!
+  title: String!
+  requirement: String!
+  description: String!
+  imageURL: String!
 }
 
 type PingPongPayload {
@@ -43,16 +55,43 @@ type PingPongPayload {
   matchKey: String!
 }
 
+type GQLFriendShipeStatus {
+  id: ID!
+  userA: ID!
+  userB: ID!
+  blocker: ID
+  status: String!
+}
+
+type GQLFriendsModel {
+  friends: [GQLUserModel!]!
+}
+
 type Query {
   hello: String!
   findProfileById(id: Float!): GQLUserProfileModel
   findProfileByUserId(userId: Float!): GQLUserProfileModel
-  findById(id: Float!): GQLUserModel!
-  findAll: [GQLUserModel!]!
+  getUserAchievements(userId: Float!): [GQLAchievement!]
+  getAllAchievements: [GQLAchievement!]
+  helloT: String!
+  findUserById(userId: Float!): GQLUserModel!
+  findAllUsers(pageNumber: Float!): [GQLUserModel!]!
+  getUser: GQLUserModel!
+  getFriendship(userId: Float!, friendId: Float!): GQLFriendShipeStatus
+  getUserFriends(userId: Float!): GQLFriendsModel!
+  getFriendshipRequests(userId: Float!): GQLFriendsModel!
+  getBlockedUsers(userId: Float!): GQLFriendsModel!
 }
 
 type Mutation {
   joinMatchmakingQueue(JoinMatchmakingInput: JoinMatchmakingInput!): Boolean
+  addFriend(userId: Float!, friendId: Float!): Boolean!
+  removeFriend(userId: Float!, friendId: Float!): Boolean!
+  acceptFriendship(userId: Float!, friendId: Float!): Boolean!
+  blockUser(userId: Float!, friendId: Float!): Boolean!
+  unblockUser(userId: Float!, friendId: Float!): Boolean!
+  updateUserAvatarImg(userId: Float!, image: Upload!): String!
+  updateProfileBgImg(userId: Float!, image: Upload!): String!
   createProfile(profileCredentials: CreateProfileInput!): GQLUserProfileModel!
   removeUserProfile(userId: Float!): Boolean!
   UpdateUserProfile(userId: Float!, UpdateProfileInput: UpdateProfileInput!): Boolean!
@@ -60,19 +99,23 @@ type Mutation {
   placeBet(transferFundsInput: PlaceBetInput!): Boolean
   resolveBet(resolveBetInput: ResolveBetInput!): Boolean
   signIn(authCredentials: AuthCredentialsInput!): GQLUserModel!
-  signUp(userCreationInput: UserCreationInput!): GQLUserModel!
+  signUp(userCreationInput: UserCreationInput!, profileImage: Upload): GQLUserModel!
   logOut(id: Float!): Boolean!
-  removeUser(id: Float!): Boolean!
+  deleteAccount(id: Float!, password: String!): Boolean!
   refresh: String!
   enableTwoFactorAuth(id: Float!): String!
   verifyTwoFactorAuth(id: Float!, code: String!): Boolean!
-  authenticate_2fa(id: Float!, code: String!): GQLUserModel!
+  authenticate_2fa(code: String!): GQLUserModel!
+  updateUser(userUpdateInput: UpdateUserInput!): Boolean!
 }
 
 input JoinMatchmakingInput {
   userId: Float!
   matchType: String!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input CreateProfileInput {
   userId: Float!
@@ -82,6 +125,7 @@ input CreateProfileInput {
 input UpdateProfileInput {
   nickname: String
   about: String
+  bgImageUrl: String
 }
 
 input TransferFundsInput {
@@ -91,12 +135,12 @@ input TransferFundsInput {
 }
 
 input PlaceBetInput {
-  walletId: Float!
+  userId: Float!
   betAmount: Float!
 }
 
 input ResolveBetInput {
-  walletId: Float!
+  userId: Float!
   isWinner: Boolean!
 }
 
@@ -109,6 +153,11 @@ input UserCreationInput {
   username: String!
   email: String!
   password: String!
+}
+
+input UpdateUserInput {
+  email: String!
+  showUpdateWin: Boolean!
 }
 
 type Subscription {
