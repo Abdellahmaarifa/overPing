@@ -71,6 +71,19 @@ export class MediaService {
     }
   }
 
+  async getAchievementImg(fileId: string): Promise<Buffer> {
+    const uploadDir = this.configService.get<string>('storage.achievement.uploadDir');
+    const filePath = join(uploadDir, `${fileId}`);
+    // const mimeType = mime.getType(filePath) || 'application/octet-stream';
+    // console.log("mimeType", mimeType);
+    try {
+      const fileBuffer = await fs.promises.readFile(filePath);
+      return fileBuffer;
+    } catch (error) {
+      this.logger.error(`File not found: ${error.message}`);
+    }
+  }
+
   private async  saveImg(uploadDir : string, imgName: string, buffer: Buffer){
     const filePath = join(uploadDir, imgName);
     try {
