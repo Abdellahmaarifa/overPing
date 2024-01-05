@@ -12,7 +12,7 @@ import { FortyTwoStrategy } from './microservices/auth/strategies/42.strategy';
 import { GoogleStrategy } from './microservices/auth/strategies/google.strategy';
 import { JwtAccessTokenStrategy } from './microservices/auth/strategies/jwt.accessToken.strategy';
 import { AuthController } from './microservices/auth/controllers/gw.auth.controller';
-import { UserService } from './microservices/auth/services';
+import { UserService, GwFriendshipService } from './microservices/auth/services';
 import { LoggerService } from '@app/common';
 import { JwtRefreshTokenStrategy } from './microservices/auth/strategies/jwt.refreshToken.strategy';
 import { UserAccessAuthorizationGuard } from './microservices/auth/guards/user-auth.guard';
@@ -31,15 +31,12 @@ import { GWMediaService } from './microservices/media/services/gw.media.service'
 import { TWOFATokenStrategy } from "./microservices/auth/strategies/twoFA.starategy";
 import { MeidaController } from './microservices/media/controllers/gw.media.controller';
 import { MediaMutationsResolver } from './microservices/media/graphql/mutations/gw.media.mutation';
-import { FriendMutationsResolver } from './microservices/friend/graphql/mutaions/gw.friend.mutations.resolver';
-import { FriendQueryResolver } from './microservices/friend/graphql/queries/gw.frined.query.resolvert';
-import { GwFriendService } from './microservices/friend/services/gw.friend.service';
 import { GWChatModule } from "./microservices/chat/gw.chat.module";
 import { GwChannelService } from "./microservices/chat/services";
 import { GwDirectMessageService } from "./microservices/chat/services";
-
-
-
+import { GwFriendMutationsResolver } from './microservices/auth/graphql/mutations/gw.friendship.mutaions.resolver';
+import { FriendshipQueryResolver } from './microservices/auth/graphql/queries/gw.friend.query.resolver';
+import { UserStatusService } from './microservices/auth/services/gw.userStatus.service';
 
 @Module({
   imports: [
@@ -74,11 +71,19 @@ import { GwDirectMessageService } from "./microservices/chat/services";
     provide: 'PUB_SUB',
     useValue: new PubSub(),
     },
+    //user status service
+      UserStatusService,
+    // end of suer status 
+    //friend
+    FriendshipQueryResolver,
+    GwFriendshipService,
+    GwFriendMutationsResolver,
+    //end of friend
     //chat 
     GwDirectMessageService,
     GwChannelService,
     //end of chat
-    GwFriendService,
+    // GwFriendService,
     GWMediaService,
     GwMatchMakingService, 
     GatewayService,
@@ -87,13 +92,13 @@ import { GwDirectMessageService } from "./microservices/chat/services";
     GwWalletService,
     MatchMakingQueryResolver,
     MatchMakingMutationsResolver,
-    FriendMutationsResolver,
+    // FriendMutationsResolver,
     ProfileQueryResolver,
     MediaMutationsResolver,
     UserProifleMutationsResolver,
     WalletMutationsResolver,
     AuthQueryResolver,
-    FriendQueryResolver,
+    // FriendQueryResolver,
     AuthMutationsResolver,
     TWOFATokenStrategy,
     FortyTwoStrategy,

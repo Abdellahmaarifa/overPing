@@ -3,7 +3,7 @@ import { ClientProxy } from "@nestjs/microservices";
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from "@app/rabbit-mq";
 import {GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto';
-import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
+import { IAuthUser, IUser } from '@app/common/auth/interface/auth.user.interface';
 import { GwProfileService } from "../../profile/services/gw.profile.service";
 @Injectable()
 export class UserService {
@@ -89,33 +89,35 @@ export class UserService {
         return (response);//for now
     }
 
-    async findAllUsers(userId: number, pageNumber: number) {
+    async findUserById(userId: number, id: number): Promise<IAuthUser> {
+        const response = await this.clientService.sendMessageWithPayload(
+            this.client,
+            {
+                role: 'user',
+                cmd: 'findUserById'
+            },
+            {
+                id,
+                userId,
+            }
+        )
+        return (response);//for now
+    }
+
+    async findAllUsers(userId: number, pageNumber: number, pageSize: number) :Promise <IUser[]>{
         const users = await this.clientService.sendMessageWithPayload(
             this.client,
             {
                 role: 'user',
                 cmd: 'findAllUsers'
             },
-            pageNumber
-        )
-        console.log("start geting blocked the users....")
-        const blockedUsers = await this.clientService.sendMessageWithPayload(
-            this.friendClient,
             {
-                role: 'friend',
-                cmd: "getWhoBlockedUser"
-            },
-            {
-                userId
+                userId,
+                pageSize,
+                pageNumber
             }
         )
-        // console.log("blockedUsers: ", blockedUsers)
-        if (blockedUsers.length <= 0){
-            return users.filter(user => user.id !== userId);
-        }
-        const nonBlockedUsers = users.filter(user => user.id !== userId && !blockedUsers.includes(user.id));
-        // console.log("blocked user", userId, " .... ", nonBlockedUsers);
-        return (nonBlockedUsers);
+        return users
     }
 
     async removeAccount(id: number, password: string): Promise<boolean> {
@@ -159,5 +161,8 @@ export class UserService {
             }
         )
     }
+
+
+
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
+import { IAuthUser, IUser } from '@app/common/auth/interface/auth.user.interface';
 import { UserCreationDto } from '../dto';
 import { PrismaService } from 'apps/auth/prisma/prisma.service';
 import * as argon2 from 'argon2';
@@ -72,6 +72,7 @@ export class UserService {
           profileImgUrl: true,
           googleId: true,
           fortyTwoId: true,
+          lastSeen: true,
           twoStepVerificationEnabled: true,
           createdAt: true,
         updatedAt: true,
@@ -106,20 +107,63 @@ export class UserService {
     }
   }
 
-  async findAllUsers(pageNumber: number = 1, pageSize: number = 10): Promise<IAuthUser[]> {
+  async findUserById(userId: number, id: number) : Promise<IUser> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { 
+          id,
+          blocks: {
+            none: {
+              id: userId,
+            },
+          },
+         },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          password: false,
+          lastSeen: true,
+          profileImgUrl: true,
+        },
+      });
+
+      return user;
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
+  }
+
+  async findAllUsers(
+    pageNumber: number = 1,
+    pageSize: number = 10,
+    userId: number
+  ): Promise<IUser[]> {
     const skip = (pageNumber - 1) * pageSize;
-    return (await this.prisma.user.findMany({
+    const users = await this.prisma.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+        blocks: {
+          none: {
+            id: userId,
+          },
+        },
+      },
       select: {
         id: true,
         username: true,
         email: true,
-        // Exclude the 'password' field from the query result
         password: false,
+        lastSeen: true,
         profileImgUrl: true,
       },
       skip,
       take: pageSize,
-    }));
+    });
+    console.log("users: ", users);
+    return users;
   }
 
   async remove(id: number, password: string): Promise<boolean> {
@@ -258,5 +302,68 @@ export class UserService {
     });
     console.log('friends: ', friends);
     return friends;
+  }
+
+
+  async getOnlineFriends( userId, pageNumber, limit ): Promise<IUser[]> {
+    const exists = await this.isUserExistById(userId);
+    if (!exists) {
+      this.rpcExceptionService.throwBadRequest(
+        `User with ID ${userId} not found.`,
+      );
+    }
+
+    const friends = await this.prisma.user.findMany({
+      where: {
+        friends: {
+          some: {
+            id: userId,
+            lastSeen: {
+              gte: new Date(new Date().getTime() - 5 * 60 * 1000), 
+            },
+          },
+        },
+      },
+      take: limit,
+      skip: (pageNumber - 1) * limit,
+    });
+
+    return friends; 
+  }
+
+
+  async getOnlineUsers( pageNumber, limit ): Promise<IUser[]> {
+    const onlineUsers = await this.prisma.user.findMany({
+      where: {
+        lastSeen: {
+          gte: new Date(new Date().getTime() - 5 * 60 * 1000), //last 5 minutes 
+        },
+      },
+      take: limit,
+      skip: (pageNumber - 1) * limit,
+    });
+
+    return onlineUsers;
+  }
+
+
+  async updateUserStatus(userId: number , time : number) : Promise<boolean>{
+    const exists = await this.isUserExistById(userId);
+    if (!exists) {
+      this.rpcExceptionService.throwBadRequest(
+        `User with ID ${userId} not found.`,
+      );
+    }
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data:{
+        lastSeen: new Date(time)
+      }
+    });
+
+    if (!user) {
+      return false;
+    }
+    return true;
   }
 }

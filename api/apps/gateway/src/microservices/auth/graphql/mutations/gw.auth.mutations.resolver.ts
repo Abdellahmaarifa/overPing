@@ -27,11 +27,13 @@ import { AccessTokenGuard } from '../../guards/accessToken.guard';
 import { UserProfileUpdateInput } from '../input/UserProfileUpdate.input';
 import { UpdateUserInput } from '../input/userUpdate.input';
 import { GqlJwtAuthGuard } from '../../guards/gql.accessToken.guard';
+import { UserStatusService } from '../../services/gw.userStatus.service';
 
 @Resolver()
 export class AuthMutationsResolver {
   constructor(private readonly authService: GatewayService,
     private readonly userService: UserService,
+    private readonly userStatusService: UserStatusService,
     private readonly loger: LoggerService) { }
 
    
@@ -166,6 +168,14 @@ export class AuthMutationsResolver {
       const {id} = cxt.req.user;
 
       return this.userService.updateUser(id, updateInput);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation ( () => Boolean)
+  async updateUserStatus(@Context() cxt, @Args('currentTime') currentTime: string ): Promise<boolean>{
+      // return this.userService.updateUser(updateInput);
+      const {id} = cxt.req.user;
+      return this.userStatusService.updateUserStatus(id, currentTime);
   }
 
 }
