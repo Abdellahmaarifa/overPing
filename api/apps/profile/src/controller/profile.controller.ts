@@ -6,6 +6,7 @@ import { UserProfile } from '@prisma/client';
 import { ProfileService } from '../services/profile.service';
 import { UpdateProfileDto } from '../dto/updateUserProfileDto';
 import { IUserProfile } from '@app/common/profile/IUserProfile';
+import { IAchievement } from '@app/common/profile/IAchievement';
 
 @Controller()
 export class ProfileController {
@@ -32,9 +33,18 @@ export class ProfileController {
   async findProfileByUserId(userId: number) : Promise<IUserProfile>{
      return this.profileService.findOneByUserId(userId);
   }
+
   @MessagePattern({role: 'profile', cmd: 'remove-Profile'})
   async removeProfile(userId: number) : Promise<boolean>{
     return this.profileService.remove(userId);
   }
 
+  @MessagePattern({role: 'profile', cmd: 'get-user-achievements'})
+  async getUserAchievements(userId: number): Promise<IAchievement[]> {
+    return this.profileService.getUserAchievements(userId);
+  }
+  @MessagePattern({role: 'profile', cmd: 'get-all-achievements'})
+  async getAllAchievements(): Promise<IAchievement[]> {
+    return this.profileService.getAllAchievements();
+  }
 }

@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { RpcExceptionService } from "@app/common/exception-handling";
-import { PrismaClient } from "@prisma/client";
 import { PrismaService } from "apps/profile/prisma/prisma.service";
 
 @Injectable()
@@ -108,7 +107,8 @@ export class AchievementService {
     if (achievementId !== null) {
       console.log(`Achievement ID for '${achievementTitle}': ${achievementId}`);
     } else {
-      console.log(`Achievement with title '${achievementTitle}' not found.`);
+      // console.log(`Achievement with title '${achievementTitle}' not found.`);
+      return null;
     }
     return achievementId;
   }

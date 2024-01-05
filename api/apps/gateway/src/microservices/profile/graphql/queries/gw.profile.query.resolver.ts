@@ -2,6 +2,8 @@ import { Resolver,Query, Args} from '@nestjs/graphql';
 import { GwProfileService } from '../../services/gw.profile.service';
 import { GQLUserProfileModel } from '../models/graphqlUserProfileModel';
 import { IUserProfile } from '@app/common/profile/IUserProfile';
+import { IAchievement } from '@app/common/profile/IAchievement';
+import { GQLAchievement } from '../models/graphqlAchievement';
 
 @Resolver()
 export class ProfileQueryResolver {
@@ -21,4 +23,13 @@ export class ProfileQueryResolver {
       return profile;
     }
 
+    @Query(() => [GQLAchievement] ,{ nullable: true })
+    async getUserAchievements(@Args('userId') userId: number): Promise<IAchievement[]> {
+      return this.profileService.getUserAchievements(userId);
+    }
+
+    @Query(() => [GQLAchievement] ,{ nullable: true })
+    async getAllAchievements(): Promise<IAchievement[]> {
+    return this.profileService.getAllAchievements();
+  }
 }

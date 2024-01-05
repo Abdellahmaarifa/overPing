@@ -5,6 +5,7 @@ import { RabbitMqService } from '@app/rabbit-mq';
 import { CreateProfileInput } from '../graphql/input/createUserProfileInput';
 import { IUserProfile } from '@app/common/profile/IUserProfile';
 import { UpdateProfileInput } from '../graphql/input/updateUserProfileInput';
+import { IAchievement } from '@app/common/profile/IAchievement';
 
 @Injectable()
 export class GwProfileService {
@@ -61,6 +62,27 @@ export class GwProfileService {
             },
             userId
         );
+    }
+
+    async getUserAchievements(userId: number): Promise<IAchievement[]> {
+      return await this.clientService.sendMessageWithPayload(
+        this.client,
+        {
+          role: 'profile',
+          cmd: 'get-user-achievements'
+        },
+        userId
+      );
+    }
+
+    async getAllAchievements(): Promise<IAchievement[]> {
+      return await this.clientService.sendMessageWithoutPayload(
+        this.client,    
+        {
+          role: 'profile',
+          cmd: 'get-all-achievements'
+        },
+      );
     }
 
     async removeProfile(userId: number) : Promise<boolean>{
