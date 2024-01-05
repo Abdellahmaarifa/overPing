@@ -6,7 +6,7 @@ export class IAuthUser {
     googleId?: string;
     fortyTwoId?: string;
     refreshToken?: string;
-    lastSeen?: string;
+    lastSeen?: Date;
     twoStepVerificationEnabled?: boolean;
     showUpdateWin?: boolean;
 }
@@ -15,7 +15,7 @@ export class IUser {
     id: number;
     username: string;
     email: string;
-    lastSeen: string;
+    lastSeen: Date;
     profileImgUrl: string;
 }
   

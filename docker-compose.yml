@@ -99,26 +99,7 @@ services:
       - production
       - development
 
-  #   DATABASE SERVICE FOR FRIEND DEV AND PROD #
 
-  postgres_friend_db:
-    image: postgres
-
-    environment:
-      - POSTGRES_DB=${FRIEND_DB_NAME}
-      - POSTGRES_USER=${FRIEND_DB_USER}
-      - POSTGRES_PASSWORD=${FRIEND_DB_PASSWORD}
-    ports:
-      - "${FRIEND_DB_PORT}:5432"
-    volumes:
-      - ./database/data/friend:/var/lib/postgresql/data/
-    restart: always
-    networks:
-      - webapp
-    container_name: postgres_friend_db
-    profiles:
-      - production
-      - development
 
 
   # DATABASE SERVICE FOR CHAT DEV AND PROD #
@@ -286,32 +267,6 @@ services:
       - development
       - production
 
-  # FRIEND SERVICE FOR DEVELOPMENT #
-
-  friend:
-    build:
-      context: ./api
-      dockerfile: ./apps/friend/Dockerfile
-      target: development
-    command: yarn start:dev friend
-    container_name: friend
-    env_file:
-      - ./api/.env
-    ports:
-      - ${PRISMA_STUDIO_FRIEND_PORT}:5555
-    networks:
-      - webapp
-    volumes:
-      - ./api/apps/friend:/usr/src/app/apps/friend
-      - ./api/libs:/usr/src/app/libs
-    depends_on:
-      - rabbitmq
-      - gateway
-      - auth
-    restart: always
-    profiles:
-      - development
-      - production
 
   # CHAT SERVICE FOR DEVELOPMENT #
   chat:

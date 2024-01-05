@@ -12,8 +12,3 @@ docker exec profile sh -c 'cd /usr/src/app/apps/profile/prisma &&  yes | prisma 
 docker exec profile sh -c 'npx prisma generate --schema=/usr/src/app/apps/profile/prisma/schema.prisma'
 docker restart profile
 
-docker exec friend rm -rf /usr/app/apps/friend/prisma/migrations && echo "the migrations dir is deleted"
-docker exec friend sh -c 'cd /usr/src/app/apps/friend/prisma &&  yes | prisma migrate dev'
-docker exec friend sh -c 'npx prisma generate --schema=/usr/src/app/apps/friend/prisma/schema.prisma'
-docker restart friend 
-

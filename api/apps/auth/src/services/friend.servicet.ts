@@ -173,6 +173,7 @@ export class FriendshipService {
                         id: true,
                         username: true,
                         email: true,
+                        lastSeen: true,
                         profileImgUrl: true,
                     }
                 },
@@ -195,16 +196,26 @@ export class FriendshipService {
                         id: true,
                         username: true,
                         email: true,
+                        lastSeen: true,
                         profileImgUrl: true,
                     }
                 },
+                friendOf: {
+                  select: {
+                      id: true,
+                      username: true,
+                      email: true,
+                      lastSeen: true,
+                      profileImgUrl: true,
+                  }
+              },
             } 
         });
     if (!user){
       throw this.rpcExceptionService.throwBadRequest('User not found.');
     }
-    console.log("user: ", user)
-    return user.friends;
+    const allFriends = user.friends.concat(user.friendOf);
+    return allFriends;
   }
 
   async getFriendsRequests(userId: number): Promise<IUser[]>{
@@ -218,6 +229,7 @@ export class FriendshipService {
                         id: true,
                         username: true,
                         email: true,
+                        lastSeen: true,
                         profileImgUrl: true,
                     }
                 },
@@ -249,6 +261,11 @@ export class FriendshipService {
 
   async getFriendshipStatus(userId: number, friendId: number): Promise<FriendshipStatus> {
 
+    const existingRequest = await this.prisma.user
+    .findUnique({ where: { id: userId } })
+    .friendRequests({
+      where: { id: friendId },
+    });
     const areFriends = await this.areUsersFriends(userId, friendId);
 
     if (areFriends) {
