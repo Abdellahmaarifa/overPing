@@ -54,6 +54,7 @@ const TopNavBar = () => {
     showChannelMenu: [showChannelMenu, setShowChannelMenu],
   } = useChatContext();
   const { user, profile } = viewModel.userContext;
+  console.log("this is the profiel from top menu: ", profile);
   //if (error) console.log(error);
   return (
     <TopNavBarContainer

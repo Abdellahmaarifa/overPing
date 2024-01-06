@@ -1,0 +1,17 @@
+query getUserAchievements($userId: Float!) {
+  getUserAchievements(userId: $userId) {
+    title
+    requirement
+    description
+    imageURL
+  }
+}
+
+query getAllAchievements {
+  getAllAchievements {
+    title
+    requirement
+    description
+    imageURL
+  }
+}

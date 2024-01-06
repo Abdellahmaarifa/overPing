@@ -50,34 +50,34 @@ const ProfileBanner = ({
   id: Number;
 }) => {
   const navigate = useNavigate();
-  const [addFriend] = useAddFriendMutation();
+  // const [addFriend] = useAddFriendMutation();
   const {
     settingsModel: [settingModel, setSettingModel],
   } = useSettingsContext();
   const { user } = useUserContext();
   const sendRequest = async () => {
-    await toast.promise(
-      addFriend({
-        variables: {
-          userId: Number(user?.id),
-          friendId: Number(id),
-        },
-      }),
-      {
-        loading: "please wait..",
-        success: (data) => {
-          console.log(data);
-          setFriendStatus("PENDING");
-          return "your request is done successfuly";
-        },
-        error: (err) => {
-          console.log(err);
-          return "something went wrong.";
-        },
-      }
-    );
+    // await toast.promise(
+    //   addFriend({
+    //     variables: {
+    //       userId: Number(user?.id),
+    //       friendId: Number(id),
+    //     },
+    //   }),
+    //   {
+    //     loading: "please wait..",
+    //     success: (data) => {
+    //       console.log(data);
+    //       setFriendStatus("PENDING");
+    //       return "your request is done successfuly";
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //       return "something went wrong.";
+    //     },
+    //   }
+    // );
   };
-  console.log("stsus: ", friendsStatus);
+  // console.log("stsus: ", friendsStatus);
   return (
     <BannerConatiner
       style={{

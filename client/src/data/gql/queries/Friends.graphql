@@ -1,57 +1,98 @@
-# ALL FREINDS
-query getUserFriends($userId: Float!) {
-  getUserFriends(userId: $userId) {
-    friends {
-      id
-      username
-      profileImgUrl
-    }
-  }
-}
-# ALL REQUETS
-query getFriendshipRequests($userId: Float!) {
-  getFriendshipRequests(userId: $userId) {
-    friends {
-      id
-      username
-      profileImgUrl
-    }
-  }
-}
 # ALL BLOCKED
-query getBlockedUsers($userId: Float!) {
-  getBlockedUsers(userId: $userId) {
-    friends {
-      id
-      username
-      profileImgUrl
-    }
+
+query getBlockedUsers {
+  getBlockedUsers {
+    id
+    username
+    profileImgUrl
   }
 }
 
-mutation addFriend($userId: Float!, $friendId: Float!) {
-  addFriend(userId: $userId, friendId: $friendId)
-}
+# ALL FRIENDS
 
-mutation removeFriend($userId: Float!, $friendId: Float!) {
-  removeFriend(userId: $userId, friendId: $friendId)
-}
-mutation acceptFriendship($userId: Float!, $friendId: Float!) {
-  acceptFriendship(userId: $userId, friendId: $friendId)
-}
-mutation blockUser($userId: Float!, $friendId: Float!) {
-  blockUser(userId: $userId, friendId: $friendId)
-}
-mutation unblockUser($userId: Float!, $friendId: Float!) {
-  unblockUser(userId: $userId, friendId: $friendId)
-}
-
-query getFriendship($userId: Float!, $friendId: Float!) {
-  getFriendship(userId: $userId, friendId: $friendId) {
+query getUserFriends {
+  getUserFriends {
     id
-    userA
-    userB
-    blocker
+    username
+    profileImgUrl
+  }
+}
+
+# ALL FRIENDS REQUESTS
+
+query getFriendsRequests {
+  getFriendsRequests {
+    id
+    username
+    profileImgUrl
+  }
+}
+
+# ALL Suggested FRIENDS
+
+query getSuggestedFriends($limit: Float!) {
+  getSuggestedFriends(limit: $limit) {
+    id
+    username
+    profileImgUrl
+  }
+}
+
+# FRIENDS STATUS
+query getFriendshipStatus($friendId: Float!) {
+  getFriendshipStatus(friendId: $friendId) {
     status
   }
+}
+
+query findPagesOfUsers($pageNumber: Float!, $pageSize: Float!) {
+  findPagesOfUsers(pageNumber: $pageNumber, pageSize: $pageSize) {
+    id
+    username
+    profileImgUrl
+  }
+}
+
+query findAllUsers {
+  findAllUsers {
+    id
+    username
+    profileImgUrl
+  }
+}
+
+query getOnlineUsers($pageNumber: Float!, $limit: Float!) {
+  getOnlineUsers(pageNumber: $pageNumber, limit: $limit) {
+    id
+    username
+    profileImgUrl
+  }
+}
+
+query getOnlineFriends($pageNumber: Float!, $limit: Float!) {
+  getOnlineFriends(pageNumber: $pageNumber, limit: $limit) {
+    id
+    username
+    profileImgUrl
+  }
+}
+
+mutation sendFriendRequest($receiverId: Float!) {
+  sendFriendRequest(receiverId: $receiverId)
+}
+
+mutation acceptFriendRequest($friendId: Float!) {
+  acceptFriendRequest(friendId: $friendId)
+}
+
+mutation blockUser($blockedUserId: Float!) {
+  blockUser(blockedUserId: $blockedUserId)
+}
+
+mutation unblockUser($unblockedUserId: Float!) {
+  unblockUser(unblockedUserId: $unblockedUserId)
+}
+
+mutation unfriendUser($friendId: Float!) {
+  unfriendUser(friendId: $friendId)
 }

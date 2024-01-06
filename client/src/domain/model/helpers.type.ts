@@ -4,4 +4,10 @@ export type StateWithGetSet<T> = {
   set: Dispatch<SetStateAction<T>>;
 };
 
-export type FriendshipStatusType = "FRIEND" | "PENDING" | "BLOCKED";
+export type FriendshipStatusType =
+  | "FRIENDS"
+  | "REQUEST_SENT"
+  | "REQUEST_RECEIVED"
+  | "NOT_FRIENDS"
+  | "BLOCKED"
+  | "BLOCKED_BY";

@@ -262,6 +262,7 @@ export type PlaceBetInput = {
 export type Query = {
   __typename?: 'Query';
   findAllUsers: Array<GqliUserModel>;
+  findPagesOfUsers: Array<GqliUserModel>;
   findProfileById?: Maybe<GqlUserProfileModel>;
   findProfileByUserId?: Maybe<GqlUserProfileModel>;
   findUserById: GqlUserModel;
@@ -280,7 +281,7 @@ export type Query = {
 };
 
 
-export type QueryFindAllUsersArgs = {
+export type QueryFindPagesOfUsersArgs = {
   pageNumber: Scalars['Float']['input'];
   pageSize: Scalars['Float']['input'];
 };
@@ -364,6 +365,111 @@ export type UserCreationInput = {
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
 };
+
+export type GetUserAchievementsQueryVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type GetUserAchievementsQuery = { __typename?: 'Query', getUserAchievements?: Array<{ __typename?: 'GQLAchievement', title: string, requirement: string, description: string, imageURL: string }> | null };
+
+export type GetAllAchievementsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllAchievementsQuery = { __typename?: 'Query', getAllAchievements?: Array<{ __typename?: 'GQLAchievement', title: string, requirement: string, description: string, imageURL: string }> | null };
+
+export type GetBlockedUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBlockedUsersQuery = { __typename?: 'Query', getBlockedUsers: Array<{ __typename?: 'GQLIUserModel', id: number, username: string, profileImgUrl: string }> };
+
+export type GetUserFriendsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserFriendsQuery = { __typename?: 'Query', getUserFriends: Array<{ __typename?: 'GQLIUserModel', id: number, username: string, profileImgUrl: string }> };
+
+export type GetFriendsRequestsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFriendsRequestsQuery = { __typename?: 'Query', getFriendsRequests: Array<{ __typename?: 'GQLIUserModel', id: number, username: string, profileImgUrl: string }> };
+
+export type GetSuggestedFriendsQueryVariables = Exact<{
+  limit: Scalars['Float']['input'];
+}>;
+
+
+export type GetSuggestedFriendsQuery = { __typename?: 'Query', getSuggestedFriends: Array<{ __typename?: 'GQLIUserModel', id: number, username: string, profileImgUrl: string }> };
+
+export type GetFriendshipStatusQueryVariables = Exact<{
+  friendId: Scalars['Float']['input'];
+}>;
+
+
+export type GetFriendshipStatusQuery = { __typename?: 'Query', getFriendshipStatus: { __typename?: 'GQLFriendshipStatusModel', status: string } };
+
+export type FindPagesOfUsersQueryVariables = Exact<{
+  pageNumber: Scalars['Float']['input'];
+  pageSize: Scalars['Float']['input'];
+}>;
+
+
+export type FindPagesOfUsersQuery = { __typename?: 'Query', findPagesOfUsers: Array<{ __typename?: 'GQLIUserModel', id: number, username: string, profileImgUrl: string }> };
+
+export type FindAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindAllUsersQuery = { __typename?: 'Query', findAllUsers: Array<{ __typename?: 'GQLIUserModel', id: number, username: string, profileImgUrl: string }> };
+
+export type GetOnlineUsersQueryVariables = Exact<{
+  pageNumber: Scalars['Float']['input'];
+  limit: Scalars['Float']['input'];
+}>;
+
+
+export type GetOnlineUsersQuery = { __typename?: 'Query', getOnlineUsers: Array<{ __typename?: 'GQLUserModel', id: string, username: string, profileImgUrl: string }> };
+
+export type GetOnlineFriendsQueryVariables = Exact<{
+  pageNumber: Scalars['Float']['input'];
+  limit: Scalars['Float']['input'];
+}>;
+
+
+export type GetOnlineFriendsQuery = { __typename?: 'Query', getOnlineFriends: Array<{ __typename?: 'GQLUserModel', id: string, username: string, profileImgUrl: string }> };
+
+export type SendFriendRequestMutationVariables = Exact<{
+  receiverId: Scalars['Float']['input'];
+}>;
+
+
+export type SendFriendRequestMutation = { __typename?: 'Mutation', sendFriendRequest: boolean };
+
+export type AcceptFriendRequestMutationVariables = Exact<{
+  friendId: Scalars['Float']['input'];
+}>;
+
+
+export type AcceptFriendRequestMutation = { __typename?: 'Mutation', acceptFriendRequest: boolean };
+
+export type BlockUserMutationVariables = Exact<{
+  blockedUserId: Scalars['Float']['input'];
+}>;
+
+
+export type BlockUserMutation = { __typename?: 'Mutation', blockUser: boolean };
+
+export type UnblockUserMutationVariables = Exact<{
+  unblockedUserId: Scalars['Float']['input'];
+}>;
+
+
+export type UnblockUserMutation = { __typename?: 'Mutation', unblockUser: boolean };
+
+export type UnfriendUserMutationVariables = Exact<{
+  friendId: Scalars['Float']['input'];
+}>;
+
+
+export type UnfriendUserMutation = { __typename?: 'Mutation', unfriendUser: boolean };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -492,7 +598,629 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: boolean };
 
+export type UpdateUserStatusMutationVariables = Exact<{
+  currentTime: Scalars['String']['input'];
+}>;
 
+
+export type UpdateUserStatusMutation = { __typename?: 'Mutation', updateUserStatus: boolean };
+
+
+export const GetUserAchievementsDocument = gql`
+    query getUserAchievements($userId: Float!) {
+  getUserAchievements(userId: $userId) {
+    title
+    requirement
+    description
+    imageURL
+  }
+}
+    `;
+
+/**
+ * __useGetUserAchievementsQuery__
+ *
+ * To run a query within a React component, call `useGetUserAchievementsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserAchievementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserAchievementsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetUserAchievementsQuery(baseOptions: Apollo.QueryHookOptions<GetUserAchievementsQuery, GetUserAchievementsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserAchievementsQuery, GetUserAchievementsQueryVariables>(GetUserAchievementsDocument, options);
+      }
+export function useGetUserAchievementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserAchievementsQuery, GetUserAchievementsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserAchievementsQuery, GetUserAchievementsQueryVariables>(GetUserAchievementsDocument, options);
+        }
+export function useGetUserAchievementsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserAchievementsQuery, GetUserAchievementsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserAchievementsQuery, GetUserAchievementsQueryVariables>(GetUserAchievementsDocument, options);
+        }
+export type GetUserAchievementsQueryHookResult = ReturnType<typeof useGetUserAchievementsQuery>;
+export type GetUserAchievementsLazyQueryHookResult = ReturnType<typeof useGetUserAchievementsLazyQuery>;
+export type GetUserAchievementsSuspenseQueryHookResult = ReturnType<typeof useGetUserAchievementsSuspenseQuery>;
+export type GetUserAchievementsQueryResult = Apollo.QueryResult<GetUserAchievementsQuery, GetUserAchievementsQueryVariables>;
+export const GetAllAchievementsDocument = gql`
+    query getAllAchievements {
+  getAllAchievements {
+    title
+    requirement
+    description
+    imageURL
+  }
+}
+    `;
+
+/**
+ * __useGetAllAchievementsQuery__
+ *
+ * To run a query within a React component, call `useGetAllAchievementsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllAchievementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllAchievementsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllAchievementsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllAchievementsQuery, GetAllAchievementsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllAchievementsQuery, GetAllAchievementsQueryVariables>(GetAllAchievementsDocument, options);
+      }
+export function useGetAllAchievementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllAchievementsQuery, GetAllAchievementsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllAchievementsQuery, GetAllAchievementsQueryVariables>(GetAllAchievementsDocument, options);
+        }
+export function useGetAllAchievementsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAllAchievementsQuery, GetAllAchievementsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAllAchievementsQuery, GetAllAchievementsQueryVariables>(GetAllAchievementsDocument, options);
+        }
+export type GetAllAchievementsQueryHookResult = ReturnType<typeof useGetAllAchievementsQuery>;
+export type GetAllAchievementsLazyQueryHookResult = ReturnType<typeof useGetAllAchievementsLazyQuery>;
+export type GetAllAchievementsSuspenseQueryHookResult = ReturnType<typeof useGetAllAchievementsSuspenseQuery>;
+export type GetAllAchievementsQueryResult = Apollo.QueryResult<GetAllAchievementsQuery, GetAllAchievementsQueryVariables>;
+export const GetBlockedUsersDocument = gql`
+    query getBlockedUsers {
+  getBlockedUsers {
+    id
+    username
+    profileImgUrl
+  }
+}
+    `;
+
+/**
+ * __useGetBlockedUsersQuery__
+ *
+ * To run a query within a React component, call `useGetBlockedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBlockedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBlockedUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBlockedUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>(GetBlockedUsersDocument, options);
+      }
+export function useGetBlockedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>(GetBlockedUsersDocument, options);
+        }
+export function useGetBlockedUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>(GetBlockedUsersDocument, options);
+        }
+export type GetBlockedUsersQueryHookResult = ReturnType<typeof useGetBlockedUsersQuery>;
+export type GetBlockedUsersLazyQueryHookResult = ReturnType<typeof useGetBlockedUsersLazyQuery>;
+export type GetBlockedUsersSuspenseQueryHookResult = ReturnType<typeof useGetBlockedUsersSuspenseQuery>;
+export type GetBlockedUsersQueryResult = Apollo.QueryResult<GetBlockedUsersQuery, GetBlockedUsersQueryVariables>;
+export const GetUserFriendsDocument = gql`
+    query getUserFriends {
+  getUserFriends {
+    id
+    username
+    profileImgUrl
+  }
+}
+    `;
+
+/**
+ * __useGetUserFriendsQuery__
+ *
+ * To run a query within a React component, call `useGetUserFriendsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserFriendsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserFriendsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserFriendsQuery(baseOptions?: Apollo.QueryHookOptions<GetUserFriendsQuery, GetUserFriendsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserFriendsQuery, GetUserFriendsQueryVariables>(GetUserFriendsDocument, options);
+      }
+export function useGetUserFriendsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserFriendsQuery, GetUserFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserFriendsQuery, GetUserFriendsQueryVariables>(GetUserFriendsDocument, options);
+        }
+export function useGetUserFriendsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserFriendsQuery, GetUserFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserFriendsQuery, GetUserFriendsQueryVariables>(GetUserFriendsDocument, options);
+        }
+export type GetUserFriendsQueryHookResult = ReturnType<typeof useGetUserFriendsQuery>;
+export type GetUserFriendsLazyQueryHookResult = ReturnType<typeof useGetUserFriendsLazyQuery>;
+export type GetUserFriendsSuspenseQueryHookResult = ReturnType<typeof useGetUserFriendsSuspenseQuery>;
+export type GetUserFriendsQueryResult = Apollo.QueryResult<GetUserFriendsQuery, GetUserFriendsQueryVariables>;
+export const GetFriendsRequestsDocument = gql`
+    query getFriendsRequests {
+  getFriendsRequests {
+    id
+    username
+    profileImgUrl
+  }
+}
+    `;
+
+/**
+ * __useGetFriendsRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetFriendsRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendsRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendsRequestsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFriendsRequestsQuery(baseOptions?: Apollo.QueryHookOptions<GetFriendsRequestsQuery, GetFriendsRequestsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFriendsRequestsQuery, GetFriendsRequestsQueryVariables>(GetFriendsRequestsDocument, options);
+      }
+export function useGetFriendsRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFriendsRequestsQuery, GetFriendsRequestsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFriendsRequestsQuery, GetFriendsRequestsQueryVariables>(GetFriendsRequestsDocument, options);
+        }
+export function useGetFriendsRequestsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetFriendsRequestsQuery, GetFriendsRequestsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetFriendsRequestsQuery, GetFriendsRequestsQueryVariables>(GetFriendsRequestsDocument, options);
+        }
+export type GetFriendsRequestsQueryHookResult = ReturnType<typeof useGetFriendsRequestsQuery>;
+export type GetFriendsRequestsLazyQueryHookResult = ReturnType<typeof useGetFriendsRequestsLazyQuery>;
+export type GetFriendsRequestsSuspenseQueryHookResult = ReturnType<typeof useGetFriendsRequestsSuspenseQuery>;
+export type GetFriendsRequestsQueryResult = Apollo.QueryResult<GetFriendsRequestsQuery, GetFriendsRequestsQueryVariables>;
+export const GetSuggestedFriendsDocument = gql`
+    query getSuggestedFriends($limit: Float!) {
+  getSuggestedFriends(limit: $limit) {
+    id
+    username
+    profileImgUrl
+  }
+}
+    `;
+
+/**
+ * __useGetSuggestedFriendsQuery__
+ *
+ * To run a query within a React component, call `useGetSuggestedFriendsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSuggestedFriendsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSuggestedFriendsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetSuggestedFriendsQuery(baseOptions: Apollo.QueryHookOptions<GetSuggestedFriendsQuery, GetSuggestedFriendsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSuggestedFriendsQuery, GetSuggestedFriendsQueryVariables>(GetSuggestedFriendsDocument, options);
+      }
+export function useGetSuggestedFriendsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSuggestedFriendsQuery, GetSuggestedFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSuggestedFriendsQuery, GetSuggestedFriendsQueryVariables>(GetSuggestedFriendsDocument, options);
+        }
+export function useGetSuggestedFriendsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetSuggestedFriendsQuery, GetSuggestedFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetSuggestedFriendsQuery, GetSuggestedFriendsQueryVariables>(GetSuggestedFriendsDocument, options);
+        }
+export type GetSuggestedFriendsQueryHookResult = ReturnType<typeof useGetSuggestedFriendsQuery>;
+export type GetSuggestedFriendsLazyQueryHookResult = ReturnType<typeof useGetSuggestedFriendsLazyQuery>;
+export type GetSuggestedFriendsSuspenseQueryHookResult = ReturnType<typeof useGetSuggestedFriendsSuspenseQuery>;
+export type GetSuggestedFriendsQueryResult = Apollo.QueryResult<GetSuggestedFriendsQuery, GetSuggestedFriendsQueryVariables>;
+export const GetFriendshipStatusDocument = gql`
+    query getFriendshipStatus($friendId: Float!) {
+  getFriendshipStatus(friendId: $friendId) {
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetFriendshipStatusQuery__
+ *
+ * To run a query within a React component, call `useGetFriendshipStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendshipStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendshipStatusQuery({
+ *   variables: {
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useGetFriendshipStatusQuery(baseOptions: Apollo.QueryHookOptions<GetFriendshipStatusQuery, GetFriendshipStatusQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFriendshipStatusQuery, GetFriendshipStatusQueryVariables>(GetFriendshipStatusDocument, options);
+      }
+export function useGetFriendshipStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFriendshipStatusQuery, GetFriendshipStatusQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFriendshipStatusQuery, GetFriendshipStatusQueryVariables>(GetFriendshipStatusDocument, options);
+        }
+export function useGetFriendshipStatusSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetFriendshipStatusQuery, GetFriendshipStatusQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetFriendshipStatusQuery, GetFriendshipStatusQueryVariables>(GetFriendshipStatusDocument, options);
+        }
+export type GetFriendshipStatusQueryHookResult = ReturnType<typeof useGetFriendshipStatusQuery>;
+export type GetFriendshipStatusLazyQueryHookResult = ReturnType<typeof useGetFriendshipStatusLazyQuery>;
+export type GetFriendshipStatusSuspenseQueryHookResult = ReturnType<typeof useGetFriendshipStatusSuspenseQuery>;
+export type GetFriendshipStatusQueryResult = Apollo.QueryResult<GetFriendshipStatusQuery, GetFriendshipStatusQueryVariables>;
+export const FindPagesOfUsersDocument = gql`
+    query findPagesOfUsers($pageNumber: Float!, $pageSize: Float!) {
+  findPagesOfUsers(pageNumber: $pageNumber, pageSize: $pageSize) {
+    id
+    username
+    profileImgUrl
+  }
+}
+    `;
+
+/**
+ * __useFindPagesOfUsersQuery__
+ *
+ * To run a query within a React component, call `useFindPagesOfUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindPagesOfUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindPagesOfUsersQuery({
+ *   variables: {
+ *      pageNumber: // value for 'pageNumber'
+ *      pageSize: // value for 'pageSize'
+ *   },
+ * });
+ */
+export function useFindPagesOfUsersQuery(baseOptions: Apollo.QueryHookOptions<FindPagesOfUsersQuery, FindPagesOfUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindPagesOfUsersQuery, FindPagesOfUsersQueryVariables>(FindPagesOfUsersDocument, options);
+      }
+export function useFindPagesOfUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindPagesOfUsersQuery, FindPagesOfUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindPagesOfUsersQuery, FindPagesOfUsersQueryVariables>(FindPagesOfUsersDocument, options);
+        }
+export function useFindPagesOfUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<FindPagesOfUsersQuery, FindPagesOfUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FindPagesOfUsersQuery, FindPagesOfUsersQueryVariables>(FindPagesOfUsersDocument, options);
+        }
+export type FindPagesOfUsersQueryHookResult = ReturnType<typeof useFindPagesOfUsersQuery>;
+export type FindPagesOfUsersLazyQueryHookResult = ReturnType<typeof useFindPagesOfUsersLazyQuery>;
+export type FindPagesOfUsersSuspenseQueryHookResult = ReturnType<typeof useFindPagesOfUsersSuspenseQuery>;
+export type FindPagesOfUsersQueryResult = Apollo.QueryResult<FindPagesOfUsersQuery, FindPagesOfUsersQueryVariables>;
+export const FindAllUsersDocument = gql`
+    query findAllUsers {
+  findAllUsers {
+    id
+    username
+    profileImgUrl
+  }
+}
+    `;
+
+/**
+ * __useFindAllUsersQuery__
+ *
+ * To run a query within a React component, call `useFindAllUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindAllUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindAllUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindAllUsersQuery(baseOptions?: Apollo.QueryHookOptions<FindAllUsersQuery, FindAllUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindAllUsersQuery, FindAllUsersQueryVariables>(FindAllUsersDocument, options);
+      }
+export function useFindAllUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllUsersQuery, FindAllUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindAllUsersQuery, FindAllUsersQueryVariables>(FindAllUsersDocument, options);
+        }
+export function useFindAllUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<FindAllUsersQuery, FindAllUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FindAllUsersQuery, FindAllUsersQueryVariables>(FindAllUsersDocument, options);
+        }
+export type FindAllUsersQueryHookResult = ReturnType<typeof useFindAllUsersQuery>;
+export type FindAllUsersLazyQueryHookResult = ReturnType<typeof useFindAllUsersLazyQuery>;
+export type FindAllUsersSuspenseQueryHookResult = ReturnType<typeof useFindAllUsersSuspenseQuery>;
+export type FindAllUsersQueryResult = Apollo.QueryResult<FindAllUsersQuery, FindAllUsersQueryVariables>;
+export const GetOnlineUsersDocument = gql`
+    query getOnlineUsers($pageNumber: Float!, $limit: Float!) {
+  getOnlineUsers(pageNumber: $pageNumber, limit: $limit) {
+    id
+    username
+    profileImgUrl
+  }
+}
+    `;
+
+/**
+ * __useGetOnlineUsersQuery__
+ *
+ * To run a query within a React component, call `useGetOnlineUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOnlineUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOnlineUsersQuery({
+ *   variables: {
+ *      pageNumber: // value for 'pageNumber'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetOnlineUsersQuery(baseOptions: Apollo.QueryHookOptions<GetOnlineUsersQuery, GetOnlineUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOnlineUsersQuery, GetOnlineUsersQueryVariables>(GetOnlineUsersDocument, options);
+      }
+export function useGetOnlineUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOnlineUsersQuery, GetOnlineUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOnlineUsersQuery, GetOnlineUsersQueryVariables>(GetOnlineUsersDocument, options);
+        }
+export function useGetOnlineUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetOnlineUsersQuery, GetOnlineUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetOnlineUsersQuery, GetOnlineUsersQueryVariables>(GetOnlineUsersDocument, options);
+        }
+export type GetOnlineUsersQueryHookResult = ReturnType<typeof useGetOnlineUsersQuery>;
+export type GetOnlineUsersLazyQueryHookResult = ReturnType<typeof useGetOnlineUsersLazyQuery>;
+export type GetOnlineUsersSuspenseQueryHookResult = ReturnType<typeof useGetOnlineUsersSuspenseQuery>;
+export type GetOnlineUsersQueryResult = Apollo.QueryResult<GetOnlineUsersQuery, GetOnlineUsersQueryVariables>;
+export const GetOnlineFriendsDocument = gql`
+    query getOnlineFriends($pageNumber: Float!, $limit: Float!) {
+  getOnlineFriends(pageNumber: $pageNumber, limit: $limit) {
+    id
+    username
+    profileImgUrl
+  }
+}
+    `;
+
+/**
+ * __useGetOnlineFriendsQuery__
+ *
+ * To run a query within a React component, call `useGetOnlineFriendsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOnlineFriendsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOnlineFriendsQuery({
+ *   variables: {
+ *      pageNumber: // value for 'pageNumber'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetOnlineFriendsQuery(baseOptions: Apollo.QueryHookOptions<GetOnlineFriendsQuery, GetOnlineFriendsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOnlineFriendsQuery, GetOnlineFriendsQueryVariables>(GetOnlineFriendsDocument, options);
+      }
+export function useGetOnlineFriendsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOnlineFriendsQuery, GetOnlineFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOnlineFriendsQuery, GetOnlineFriendsQueryVariables>(GetOnlineFriendsDocument, options);
+        }
+export function useGetOnlineFriendsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetOnlineFriendsQuery, GetOnlineFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetOnlineFriendsQuery, GetOnlineFriendsQueryVariables>(GetOnlineFriendsDocument, options);
+        }
+export type GetOnlineFriendsQueryHookResult = ReturnType<typeof useGetOnlineFriendsQuery>;
+export type GetOnlineFriendsLazyQueryHookResult = ReturnType<typeof useGetOnlineFriendsLazyQuery>;
+export type GetOnlineFriendsSuspenseQueryHookResult = ReturnType<typeof useGetOnlineFriendsSuspenseQuery>;
+export type GetOnlineFriendsQueryResult = Apollo.QueryResult<GetOnlineFriendsQuery, GetOnlineFriendsQueryVariables>;
+export const SendFriendRequestDocument = gql`
+    mutation sendFriendRequest($receiverId: Float!) {
+  sendFriendRequest(receiverId: $receiverId)
+}
+    `;
+export type SendFriendRequestMutationFn = Apollo.MutationFunction<SendFriendRequestMutation, SendFriendRequestMutationVariables>;
+
+/**
+ * __useSendFriendRequestMutation__
+ *
+ * To run a mutation, you first call `useSendFriendRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendFriendRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendFriendRequestMutation, { data, loading, error }] = useSendFriendRequestMutation({
+ *   variables: {
+ *      receiverId: // value for 'receiverId'
+ *   },
+ * });
+ */
+export function useSendFriendRequestMutation(baseOptions?: Apollo.MutationHookOptions<SendFriendRequestMutation, SendFriendRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendFriendRequestMutation, SendFriendRequestMutationVariables>(SendFriendRequestDocument, options);
+      }
+export type SendFriendRequestMutationHookResult = ReturnType<typeof useSendFriendRequestMutation>;
+export type SendFriendRequestMutationResult = Apollo.MutationResult<SendFriendRequestMutation>;
+export type SendFriendRequestMutationOptions = Apollo.BaseMutationOptions<SendFriendRequestMutation, SendFriendRequestMutationVariables>;
+export const AcceptFriendRequestDocument = gql`
+    mutation acceptFriendRequest($friendId: Float!) {
+  acceptFriendRequest(friendId: $friendId)
+}
+    `;
+export type AcceptFriendRequestMutationFn = Apollo.MutationFunction<AcceptFriendRequestMutation, AcceptFriendRequestMutationVariables>;
+
+/**
+ * __useAcceptFriendRequestMutation__
+ *
+ * To run a mutation, you first call `useAcceptFriendRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptFriendRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptFriendRequestMutation, { data, loading, error }] = useAcceptFriendRequestMutation({
+ *   variables: {
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useAcceptFriendRequestMutation(baseOptions?: Apollo.MutationHookOptions<AcceptFriendRequestMutation, AcceptFriendRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AcceptFriendRequestMutation, AcceptFriendRequestMutationVariables>(AcceptFriendRequestDocument, options);
+      }
+export type AcceptFriendRequestMutationHookResult = ReturnType<typeof useAcceptFriendRequestMutation>;
+export type AcceptFriendRequestMutationResult = Apollo.MutationResult<AcceptFriendRequestMutation>;
+export type AcceptFriendRequestMutationOptions = Apollo.BaseMutationOptions<AcceptFriendRequestMutation, AcceptFriendRequestMutationVariables>;
+export const BlockUserDocument = gql`
+    mutation blockUser($blockedUserId: Float!) {
+  blockUser(blockedUserId: $blockedUserId)
+}
+    `;
+export type BlockUserMutationFn = Apollo.MutationFunction<BlockUserMutation, BlockUserMutationVariables>;
+
+/**
+ * __useBlockUserMutation__
+ *
+ * To run a mutation, you first call `useBlockUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBlockUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [blockUserMutation, { data, loading, error }] = useBlockUserMutation({
+ *   variables: {
+ *      blockedUserId: // value for 'blockedUserId'
+ *   },
+ * });
+ */
+export function useBlockUserMutation(baseOptions?: Apollo.MutationHookOptions<BlockUserMutation, BlockUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BlockUserMutation, BlockUserMutationVariables>(BlockUserDocument, options);
+      }
+export type BlockUserMutationHookResult = ReturnType<typeof useBlockUserMutation>;
+export type BlockUserMutationResult = Apollo.MutationResult<BlockUserMutation>;
+export type BlockUserMutationOptions = Apollo.BaseMutationOptions<BlockUserMutation, BlockUserMutationVariables>;
+export const UnblockUserDocument = gql`
+    mutation unblockUser($unblockedUserId: Float!) {
+  unblockUser(unblockedUserId: $unblockedUserId)
+}
+    `;
+export type UnblockUserMutationFn = Apollo.MutationFunction<UnblockUserMutation, UnblockUserMutationVariables>;
+
+/**
+ * __useUnblockUserMutation__
+ *
+ * To run a mutation, you first call `useUnblockUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnblockUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unblockUserMutation, { data, loading, error }] = useUnblockUserMutation({
+ *   variables: {
+ *      unblockedUserId: // value for 'unblockedUserId'
+ *   },
+ * });
+ */
+export function useUnblockUserMutation(baseOptions?: Apollo.MutationHookOptions<UnblockUserMutation, UnblockUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnblockUserMutation, UnblockUserMutationVariables>(UnblockUserDocument, options);
+      }
+export type UnblockUserMutationHookResult = ReturnType<typeof useUnblockUserMutation>;
+export type UnblockUserMutationResult = Apollo.MutationResult<UnblockUserMutation>;
+export type UnblockUserMutationOptions = Apollo.BaseMutationOptions<UnblockUserMutation, UnblockUserMutationVariables>;
+export const UnfriendUserDocument = gql`
+    mutation unfriendUser($friendId: Float!) {
+  unfriendUser(friendId: $friendId)
+}
+    `;
+export type UnfriendUserMutationFn = Apollo.MutationFunction<UnfriendUserMutation, UnfriendUserMutationVariables>;
+
+/**
+ * __useUnfriendUserMutation__
+ *
+ * To run a mutation, you first call `useUnfriendUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnfriendUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unfriendUserMutation, { data, loading, error }] = useUnfriendUserMutation({
+ *   variables: {
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useUnfriendUserMutation(baseOptions?: Apollo.MutationHookOptions<UnfriendUserMutation, UnfriendUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnfriendUserMutation, UnfriendUserMutationVariables>(UnfriendUserDocument, options);
+      }
+export type UnfriendUserMutationHookResult = ReturnType<typeof useUnfriendUserMutation>;
+export type UnfriendUserMutationResult = Apollo.MutationResult<UnfriendUserMutation>;
+export type UnfriendUserMutationOptions = Apollo.BaseMutationOptions<UnfriendUserMutation, UnfriendUserMutationVariables>;
 export const HelloDocument = gql`
     query hello {
   helloT
@@ -1130,3 +1858,34 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const UpdateUserStatusDocument = gql`
+    mutation updateUserStatus($currentTime: String!) {
+  updateUserStatus(currentTime: $currentTime)
+}
+    `;
+export type UpdateUserStatusMutationFn = Apollo.MutationFunction<UpdateUserStatusMutation, UpdateUserStatusMutationVariables>;
+
+/**
+ * __useUpdateUserStatusMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserStatusMutation, { data, loading, error }] = useUpdateUserStatusMutation({
+ *   variables: {
+ *      currentTime: // value for 'currentTime'
+ *   },
+ * });
+ */
+export function useUpdateUserStatusMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserStatusMutation, UpdateUserStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserStatusMutation, UpdateUserStatusMutationVariables>(UpdateUserStatusDocument, options);
+      }
+export type UpdateUserStatusMutationHookResult = ReturnType<typeof useUpdateUserStatusMutation>;
+export type UpdateUserStatusMutationResult = Apollo.MutationResult<UpdateUserStatusMutation>;
+export type UpdateUserStatusMutationOptions = Apollo.BaseMutationOptions<UpdateUserStatusMutation, UpdateUserStatusMutationVariables>;

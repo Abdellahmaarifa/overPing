@@ -53,11 +53,10 @@ const HELLO = `
 
 const PROFILE_QUERY = `
   query Account($userId: Float!) {
-    findUserById(userId: $userId) {
+    findUserById(id: $userId) {
       id
       email
       username
-      twoStepVerificationEnabled
       profileImgUrl
     }
 
@@ -118,7 +117,7 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
         credentials: "include",
         method: "GET",
       });
-      const res = await data.json();
+      const res = await data?.json();
       console.log("the res: ", res);
       store.setToken(res?.Access_token);
 
@@ -157,14 +156,20 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
           credentials: "include",
         });
         const profileRes = await profileData.json();
-        console.log("resualt of the query: ", profileRes.data);
+        console.log(
+          "resualt of the query: ",
+          profileRes.data,
+          GetUserProfile(profileRes.data)
+        );
         setProfile(GetUserProfile(profileRes.data));
+        console.log("profile after done: ", profile);
       }
       //setUser(user);
       //if (res?.accessToken) setUser({ token: res?.accessToken, ...user });
       callback && callback();
     } catch (err) {
       console.log("the error of networking : ", err);
+      callback && callback();
     }
   };
 

@@ -52,26 +52,26 @@ const Profile = () => {
         })
         .then((data) => {
           console.log("gettign the data: ", data);
-          client
-            .query({
-              query: GetFriendshipDocument,
-              variables: {
-                userId: Number(user?.id),
-                friendId: Number(id),
-              },
-              fetchPolicy: "no-cache",
-            })
-            .then((data) => {
-              console.log("relation: ", data);
-              //if (data?.data?.getFriendship?.status === "BLOCKED") navigate("/error");
-              if (!data?.data?.getFriendship) setFriendStatus(null);
-              else setFriendStatus(data?.data?.getFriendship?.status);
-              setIsLoading(false);
-              // if the relation is blocked it should redirect to error page
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          // client
+          //   .query({
+          //     query: GetFriendshipDocument,
+          //     variables: {
+          //       userId: Number(user?.id),
+          //       friendId: Number(id),
+          //     },
+          //     fetchPolicy: "no-cache",
+          //   })
+          //   .then((data) => {
+          //     console.log("relation: ", data);
+          //     //if (data?.data?.getFriendship?.status === "BLOCKED") navigate("/error");
+          //     if (!data?.data?.getFriendship) setFriendStatus(null);
+          //     else setFriendStatus(data?.data?.getFriendship?.status);
+          //     setIsLoading(false);
+          //     // if the relation is blocked it should redirect to error page
+          //   })
+          //   .catch((err) => {
+          //     console.log(err);
+          //   });
           setUserProfile(GetUserProfile(data?.data));
         })
         .catch((err) => {
@@ -86,56 +86,55 @@ const Profile = () => {
   console.log("this is the final profile: ", userProfile);
 
   const blockUser = async () => {
-    await toast.promise(
-      client.mutate({
-        mutation: BlockUserDocument,
-        variables: {
-          userId: Number(user?.id),
-          friendId: Number(id),
-        },
-      }),
-      {
-        loading: "please wait..",
-        success: (data) => {
-          console.log(data);
-          setShowExtraMenu(false);
-          navigate("/friends?filter=blocked");
-          return "user blocked successfuly!";
-        },
-        error: (err) => {
-          console.log(err);
-          setShowExtraMenu(false);
-          return "something went wrong.";
-        },
-      }
-    );
-
+    // await toast.promise(
+    //   client.mutate({
+    //     mutation: BlockUserDocument,
+    //     variables: {
+    //       userId: Number(user?.id),
+    //       friendId: Number(id),
+    //     },
+    //   }),
+    //   {
+    //     loading: "please wait..",
+    //     success: (data) => {
+    //       console.log(data);
+    //       setShowExtraMenu(false);
+    //       navigate("/friends?filter=blocked");
+    //       return "user blocked successfuly!";
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //       setShowExtraMenu(false);
+    //       return "something went wrong.";
+    //     },
+    //   }
+    // );
     //window.location.replace("/friends?filter=blocked");
   };
 
   const removeFriend = async () => {
-    await toast.promise(
-      client.mutate({
-        mutation: RemoveFriendDocument,
-        variables: {
-          userId: Number(user?.id),
-          friendId: Number(id),
-        },
-      }),
-      {
-        loading: "please wait..",
-        success: (data) => {
-          console.log(data);
-          setShowExtraMenu(false);
-          return "your request is done successfuly";
-        },
-        error: (err) => {
-          console.log(err);
-          setShowExtraMenu(false);
-          return "something went wrong.";
-        },
-      }
-    );
+    // await toast.promise(
+    //   client.mutate({
+    //     mutation: RemoveFriendDocument,
+    //     variables: {
+    //       userId: Number(user?.id),
+    //       friendId: Number(id),
+    //     },
+    //   }),
+    //   {
+    //     loading: "please wait..",
+    //     success: (data) => {
+    //       console.log(data);
+    //       setShowExtraMenu(false);
+    //       return "your request is done successfuly";
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //       setShowExtraMenu(false);
+    //       return "something went wrong.";
+    //     },
+    //   }
+    // );
   };
 
   if (isLoading) return <h1>loading..</h1>;

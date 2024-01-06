@@ -46,20 +46,20 @@ const Friends = () => {
   const navigate = useNavigate();
   // const {data} = useGetBlockedUsersSuspenseQuery();
 
-  const getQuery = () => {
-    switch (filter) {
-      case FILTERS.ONLINE:
-        return GetBlockedUsersDocument;
-      case FILTERS.REQUEST:
-        return GetFriendshipRequestsDocument;
-      case FILTERS.SUGGESTION:
-        return GetBlockedUsersDocument;
-      case FILTERS.BLOCKED:
-        return GetBlockedUsersDocument;
-      default:
-        return GetBlockedUsersDocument;
-    }
-  };
+  // const getQuery = () => {
+  //   switch (filter) {
+  //     case FILTERS.ONLINE:
+  //       return GetBlockedUsersDocument;
+  //     case FILTERS.REQUEST:
+  //       return GetFriendshipRequestsDocument;
+  //     case FILTERS.SUGGESTION:
+  //       return GetBlockedUsersDocument;
+  //     case FILTERS.BLOCKED:
+  //       return GetBlockedUsersDocument;
+  //     default:
+  //       return GetBlockedUsersDocument;
+  //   }
+  // };
 
   const clearFriend = (friend: User) => {
     const newFriendList = friends.filter((el) => el.id != friend.id);
@@ -69,29 +69,29 @@ const Friends = () => {
   useEffect(() => {
     // get firnds based on the filter!
     const controller = new AbortController();
-    client
-      .query({
-        query: getQuery(),
-        variables: {
-          userId: Number(user?.id),
-        },
-        context: {
-          fetchOptions: {
-            signal: controller.signal,
-          },
-        },
-      })
-      .then((data) => {
-        if (filter === FILTERS.REQUEST) {
-          setFriends(data.data.getFriendshipRequests.friends);
-        } else if (filter === FILTERS.BLOCKED)
-          setFriends(data.data.getBlockedUsers.friends);
-        else {
-          setFriends([]);
-        }
-        console.log("hola: ", data);
-      })
-      .catch((err) => console.log(err));
+    // client
+    //   .query({
+    //     query: getQuery(),
+    //     variables: {
+    //       userId: Number(user?.id),
+    //     },
+    //     context: {
+    //       fetchOptions: {
+    //         signal: controller.signal,
+    //       },
+    //     },
+    //   })
+    //   .then((data) => {
+    //     if (filter === FILTERS.REQUEST) {
+    //       setFriends(data.data.getFriendshipRequests.friends);
+    //     } else if (filter === FILTERS.BLOCKED)
+    //       setFriends(data.data.getBlockedUsers.friends);
+    //     else {
+    //       setFriends([]);
+    //     }
+    //     console.log("hola: ", data);
+    //   })
+    //   .catch((err) => console.log(err));
 
     return () => controller.abort();
     //setFriends(getFriends());
@@ -100,78 +100,78 @@ const Friends = () => {
   // if (loading) return <h1>loading</h1>;
   const acceptFriendReq = (friend) => async () => {
     // logic here
-    await toast.promise(
-      client.mutate({
-        mutation: AcceptFriendshipDocument,
-        variables: {
-          userId: Number(user?.id),
-          friendId: Number(friend.id),
-        },
-      }),
-      {
-        loading: "please wait..",
-        success: (data) => {
-          console.log("well done!", data);
-          // delete the user from the current list
-          clearFriend(friend);
-          return "Friend request accepted";
-        },
-        error: (err) => {
-          console.log(err);
-          return "something went wrong.";
-        },
-      }
-    );
+    // await toast.promise(
+    //   client.mutate({
+    //     mutation: AcceptFriendshipDocument,
+    //     variables: {
+    //       userId: Number(user?.id),
+    //       friendId: Number(friend.id),
+    //     },
+    //   }),
+    //   {
+    //     loading: "please wait..",
+    //     success: (data) => {
+    //       console.log("well done!", data);
+    //       // delete the user from the current list
+    //       clearFriend(friend);
+    //       return "Friend request accepted";
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //       return "something went wrong.";
+    //     },
+    //   }
+    // );
   };
 
   const cancelFriendReq = (friend) => async () => {
-    await toast.promise(
-      client.mutate({
-        mutation: RemoveFriendDocument,
-        variables: {
-          userId: Number(user?.id),
-          friendId: Number(friend.id),
-        },
-      }),
-      {
-        loading: "please wait..",
-        success: (data) => {
-          console.log("well done!", data);
-          // delete the user from the current list
-          clearFriend(friend);
-          return "Friend request canceled";
-        },
-        error: (err) => {
-          console.log(err);
-          return "something went wrong.";
-        },
-      }
-    );
+    // await toast.promise(
+    //   client.mutate({
+    //     mutation: RemoveFriendDocument,
+    //     variables: {
+    //       userId: Number(user?.id),
+    //       friendId: Number(friend.id),
+    //     },
+    //   }),
+    //   {
+    //     loading: "please wait..",
+    //     success: (data) => {
+    //       console.log("well done!", data);
+    //       // delete the user from the current list
+    //       clearFriend(friend);
+    //       return "Friend request canceled";
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //       return "something went wrong.";
+    //     },
+    //   }
+    // );
   };
 
   const sendFriendReq = (friend) => async () => {
-    await toast.promise(
-      client.mutate({
-        mutation: AddFriendDocument,
-        variables: {
-          userId: Number(user?.id),
-          friendId: Number(friend.id),
-        },
-      }),
-      {
-        loading: "please wait..",
-        success: (data) => {
-          console.log("well done!", data);
-          // delete the user from the current list
-          clearFriend(friend);
-          return "Friend request sent";
-        },
-        error: (err) => {
-          console.log(err);
-          return "something went wrong.";
-        },
-      }
-    );
+    // await toast.promise(
+    //   client.mutate({
+    //     mutation: AddFriendDocument,
+    //     variables: {
+    //       userId: Number(user?.id),
+    //       friendId: Number(friend.id),
+    //     },
+    //   }),
+    //   {
+    //     loading: "please wait..",
+    //     success: (data) => {
+    //       console.log("well done!", data);
+    //       // delete the user from the current list
+    //       clearFriend(friend);
+    //       return "Friend request sent";
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //       return "something went wrong.";
+    //     },
+    //   }
+    // );
   };
 
   const handleFilter = (e: any) => {
@@ -180,27 +180,27 @@ const Friends = () => {
   };
 
   const unclockFriend = (friend: User) => async () => {
-    await toast.promise(
-      client.mutate({
-        mutation: UnblockUserDocument,
-        variables: {
-          userId: Number(user?.id),
-          friendId: Number(friend.id),
-        },
-      }),
-      {
-        loading: "please wait..",
-        success: (data) => {
-          clearFriend(friend);
-          console.log("well done!", data);
-          return "user unblocked successfully";
-        },
-        error: (err) => {
-          console.log(err);
-          return "something went wrong.";
-        },
-      }
-    );
+    // await toast.promise(
+    //   client.mutate({
+    //     mutation: UnblockUserDocument,
+    //     variables: {
+    //       userId: Number(user?.id),
+    //       friendId: Number(friend.id),
+    //     },
+    //   }),
+    //   {
+    //     loading: "please wait..",
+    //     success: (data) => {
+    //       clearFriend(friend);
+    //       console.log("well done!", data);
+    //       return "user unblocked successfully";
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //       return "something went wrong.";
+    //     },
+    //   }
+    // );
   };
 
   const getPrimaryAction = (friend: User) => {
