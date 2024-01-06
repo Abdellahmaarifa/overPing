@@ -37,6 +37,9 @@ import { GwDirectMessageService } from "./microservices/chat/services";
 import { GwFriendMutationsResolver } from './microservices/auth/graphql/mutations/gw.friendship.mutaions.resolver';
 import { FriendshipQueryResolver } from './microservices/auth/graphql/queries/gw.friend.query.resolver';
 import { UserStatusService } from './microservices/auth/services/gw.userStatus.service';
+import { ChannelResolver } from "./microservices/chat/graphql/mutations/gw.channels.mutations.resolver";
+import { DirectMessageResolver } from "./microservices/chat/graphql/mutations/gw.directMessages.mutations.resolver";
+import { ChatQueryResolver } from "./microservices/chat/graphql/queries/gw.chat.query";
 
 @Module({
   imports: [
@@ -79,9 +82,12 @@ import { UserStatusService } from './microservices/auth/services/gw.userStatus.s
     GwFriendshipService,
     GwFriendMutationsResolver,
     //end of friend
-    //chat 
+    //chat
+    ChatQueryResolver,
     GwDirectMessageService,
     GwChannelService,
+    ChannelResolver,
+    DirectMessageResolver,
     //end of chat
     // GwFriendService,
     GWMediaService,

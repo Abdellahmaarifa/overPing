@@ -80,7 +80,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
     const message = this.channelService.addMessage(data);
     if (message) {
-      const channel = await this.channelService.findById(data.channelId);
+      const channel = await this.channelService.findById(data.channelId, userId);
       client.to(channel.id.toString()).emit('recMessageFromChannel', message);
     }
   }

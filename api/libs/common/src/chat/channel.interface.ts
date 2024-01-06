@@ -11,6 +11,11 @@ export class IChannel {
   messages:      IMessage[]
 }
 
+export class IChannelSearch {
+  id:   number
+  name: string
+}
+
 export class IAdmins {
   userId:  number
 }

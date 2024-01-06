@@ -1,4 +1,4 @@
-import { IChannel, IMembers, IMessage } from '@app/common/chat';
+import { IChannel, IChannelSearch, IMembers, IMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
@@ -15,11 +15,20 @@ export class ChannelController {
   constructor(
     private readonly channelService : ChannelService,
     private readonly checkers: CheckersService,
+    private readonly rpcExceptionService: RpcExceptionService
   ) {}
 
   @MessagePattern({role: 'channel', cmd: 'find-channel-by-id'})
-  async findDirectMessageById(payload: number) : Promise<IChannel> {
-    return await this.channelService.findById(payload);
+  async findChannelById(payload: any) : Promise<IChannel> {
+    const {id, user_id} = payload;
+    const res = await this.channelService.findById(id, user_id);
+    return res;
+  }
+
+  @MessagePattern({role: 'channel', cmd: 'find-channels-by-name'})
+  async findChannelsByName(channelName: string) : Promise<IChannelSearch[]> {
+    const res = await this.channelService.findByName(channelName);
+    return res;
   }
 
   @MessagePattern({role: 'channel', cmd: 'find-members-by-id'})
@@ -56,20 +65,25 @@ export class ChannelController {
   @MessagePattern({role: 'channel', cmd: 'join'})
   async joinChannel(payload: MemberOfChanneldto) : Promise<IChannel> {
     const {userId, channelId, password} = payload;
+    
+    if (!(await this.channelService.checkForChannel(channelId))) {
+      this.rpcExceptionService.throwNotFound(`Failed to find channel ${channelId}`)
+    }
+    
     const visibility = await this.checkers.channelVisibility(channelId);
     switch (visibility) {
       case 'protected': {
         if (password) {
           return await this.channelService.joinProtectedChannel(userId, channelId, password);
         } else {
-          return null;
+          this.rpcExceptionService.throwInternalError('Failed to join Protected Channel: password required')
         }
       }
       case 'public': {
         return await this.channelService.joinPublicChannel(userId, channelId);
       }
       default: {
-        return null;
+        this.rpcExceptionService.throwUnauthorised(`You're not allowed to join the channel !!! PRIVATE CHANNEL !!!`);
       }
     }
   }

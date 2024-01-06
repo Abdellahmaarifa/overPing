@@ -1,5 +1,4 @@
 import { RpcExceptionService } from '@app/common/exception-handling';
-// import { FriendshipDTO } from '@app/common/friend/dto/friendshipDto';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable } from '@nestjs/common';
@@ -13,12 +12,13 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class CheckersService {
   constructor(
-    @Inject(IRmqSeverName.FRIEND)
-    private readonly client: ClientProxy,
-    private readonly clientService: RabbitMqService,
+    // @Inject(IRmqSeverName.FRIEND)
+    // private readonly client: ClientProxy,
+    // private readonly clientService: RabbitMqService,
     private prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly rpcExceptionService: RpcExceptionService,
   ) {}
 
   async isOwner(userId: number, channelId: number): Promise<boolean> {
@@ -75,7 +75,7 @@ export class CheckersService {
     // });
     // return !!blockedMember;
 
-    // const friendShip: FriendshipDTO = await this.clientService.sendMessageWithPayload(
+    // const friendShip = await this.clientService.sendMessageWithPayload(
     //   this.client,
     //   {
     //       role: 'friend',
@@ -133,16 +133,33 @@ export class CheckersService {
   }
 
   async hashPassword(password: string) : Promise<string> {
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // const salt = await bcrypt.genSalt();
+    // const hashedPassword = await bcrypt.hash(password, salt);
+    const argon2 = require('argon2');
+    const hashedPassword = await argon2.hash(password);
     return hashedPassword;
   }
-
+  
   async isPasswordMatched(hashedPassword: string, providedPassword: string ) {
-    const isMatch = await bcrypt.compare(providedPassword, hashedPassword);
+    // const isMatch = await bcrypt.compare(providedPassword, hashedPassword);
+    const argon2 = require('argon2');
+    const isMatch = await argon2.verify(hashedPassword, providedPassword);
     return isMatch;
   }
 
+  async channelSecurityValidation(visibility: string, password: string): Promise<boolean> {
+    const emptyPassword = await this.isEmpty(password);
+    if (visibility === 'protected' && emptyPassword) {
+      return false;
+    } else if (visibility !== 'protected' && !emptyPassword) {
+      return false;
+    }
+    return true
+  }
+
+  async isEmpty(str: string): Promise<Boolean> {
+    return str === '' || str === null || str === undefined;
+  }
 
   async getUserId(client: Socket) : Promise<number | null> {
     try {
@@ -155,11 +172,11 @@ export class CheckersService {
         return user.sub;
       }
     } catch (error) {
-      // if (error.expiredAt) {
-      //   this.rpcExceptionService.throwUnauthorised(
-      //     'Token has expired, please sign in',
-      //   );
-      // }
+      if (error.expiredAt) {
+        this.rpcExceptionService.throwUnauthorised(
+          'Token has expired, please sign in',
+        );
+      }
       return null;
     }
   }

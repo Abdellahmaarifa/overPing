@@ -26,12 +26,6 @@ export class GQLChannelModel {
 
   @Field()
   messages: GQLMessageModel[];
-
-  @Field()
-  created_at: Date;
-  
-  @Field()
-  updated_at: Date;
 }
 
 @ObjectType()

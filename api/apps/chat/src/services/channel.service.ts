@@ -1,4 +1,4 @@
-import { IChannel, IMembers, IMessage } from '@app/common/chat';
+import { IChannel, IChannelSearch, IMembers, IMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { Injectable } from '@nestjs/common';
 import { AddMessageInChanneldto, CreateChanneldto,
@@ -11,26 +11,88 @@ import { CheckersService } from './checkers.service';
 export class ChannelService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly checkers: CheckersService
+    private readonly checkers: CheckersService,
+    private readonly rpcExceptionService: RpcExceptionService,
     ) {}
 
-  async findById(channelID: number) : Promise<any> {
-    return await this.prisma.channel.findUnique({
-      where: { id: channelID },
+    async findById(id: number, user_id: number) : Promise<IChannel> {
+      if (!(await this.checkers.isMember(user_id, id))) {
+        this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
+      }
+      const channel = await this.prisma.channel.findUnique({
+        where: { id },
+        include: {
+          admins: true,
+          members: true,
+          messages: {
+            orderBy: { created_at: 'desc' },
+            take: 30,
+          },
+        },
+      });
+    
+      if (!channel) {
+        this.rpcExceptionService.throwNotFound(`Failed to find channel: ${id}`)
+      }
+
+      return await this.filterChannelMessages(channel, user_id);
+    }
+
+    async getChannelById(id: number, user_id: number) : Promise<IChannel> {
+      const channel = await this.prisma.channel.findUnique({
+        where: { id },
+        include: {
+          admins: true,
+          members: true,
+          messages: {
+            orderBy: { created_at: 'desc' },
+            take: 30,
+          },
+        },
+      });
+    
+      if (!channel) {
+        this.rpcExceptionService.throwNotFound(`Failed to find channel: ${id}`)
+      }
+
+      return await this.filterChannelMessages(channel, user_id);
+    }
+
+    async findByName(channelName: string) : Promise<IChannelSearch[]> {
+      const channels = await this.prisma.channel.findMany({
+        where: {
+          name : { contains: channelName },
+          NOT: { visibility: 'private' },
+        },
+        select: {
+          id: true,
+          name: true,
+          password: false
+        }
+      });
+      return channels;
+    }
+
+  async getUserChannels(userId: number) : Promise<IChannel[]> {
+    const linkedChannels = await this.prisma.members.findMany({
+      where: { userId },
+      select: { channelId: true }
+    });
+  
+    const channelIds = linkedChannels.map((member) => member.channelId);
+
+    const userChannels = await this.prisma.channel.findMany({
+      where: {
+        id: { in: channelIds },
+      },
       include: {
-        admins: { select: { userId: true } },
-        members: { select: { userId: true } },
-        messages: { orderBy: { created_at: 'asc' } },
+        admins: true,
+        members: true,
+        messages: true
       }
     });
-  }
-
-  async getUserChannels(userId: number) : Promise<number[]> {
-    const channels = await this.prisma.members.findMany({
-      where: { userId },
-      select: { channelId: true },
-    });
-    return channels.map((member) => member.channelId);
+  
+    return userChannels;
   } 
 
   async findMembersById(channelID: number) : Promise<IMembers[]> {
@@ -42,51 +104,47 @@ export class ChannelService {
   }
 
   async checkForChannel(id: number) : Promise<Boolean> {
-    try {
-      const existedChannel = await this.prisma.channel.findUnique({
-        where: { id }
-      });
-      return !!!existedChannel;
-    }
-    catch (error) {
-      console.log(`Failed to find channel: ${id}`)
-      return false;
-    }
-  }
-
-  async create(data: CreateChanneldto) : Promise<any> {
-    // if (data.visibility != 'public'
-    //  && data.visibility != 'private'
-    //  && data.visibility != 'protected') {
-    //   data.visibility = 'public';
-    // }
-    // if (data.visibility == 'protected' && !data.password) {
-    //   return null;
-    // } else if (data.visibility == 'public' || data.visibility == 'private') {
-    //   data.password = null;
-    // }
-    const description = "Our community is built on the fundamental principle of shared learning. As you explore the world of web and mobile development, we want to provide you with a platform to discover new things, learn new tricks, and unlock your full potential.";
-    const hashedPassword = await this.checkers.hashPassword( data.password );
-
-    return this.prisma.channel.create({
-      data: {
-        owner_id: data.userId,
-        name: data.channelName,
-        description: data.description ?? description,
-        visibility: data.visibility,
-        password: hashedPassword,
-        admins: { create: [{userId: data.userId}] },
-        members: { create: [{userId: data.userId}] },
-      },
-      include: {
-        admins: { select: { userId: true } },
-        members: { select: { userId: true } },
-        messages: { orderBy: { created_at: 'asc' } },
-      }
+    const existedChannel = await this.prisma.channel.findUnique({
+      where: { id }
     });
+    return !!!existedChannel;
   }
 
-  async update(data: UpdateChanneldto) : Promise<any> {
+  async create(data: CreateChanneldto) : Promise<IChannel> {
+    const isValid = await this.checkers.channelSecurityValidation(
+      data.visibility,
+      data.password,
+    );
+    if (isValid) {
+      const description = "Our community is built on the fundamental principle of shared learning. As you explore the world of web and mobile development, we want to provide you with a platform to discover new things, learn new tricks, and unlock your full potential.";
+      let hashedPassword: string = '';
+      if (data.visibility === 'protected') {
+        hashedPassword = await this.checkers.hashPassword( data.password );
+      }
+
+      return this.prisma.channel.create({
+        data: {
+          owner_id: data.userId,
+          name: data.channelName,
+          description: data.description ?? description,
+          visibility: data.visibility,
+          password: hashedPassword,
+          admins: { create: [{userId: data.userId}] },
+          members: { create: [{userId: data.userId}] },
+        },
+        include: {
+          admins: { select: { userId: true } },
+          members: { select: { userId: true } },
+          messages: { orderBy: { created_at: 'asc' } },
+        }
+      });
+    }
+    else {
+      this.rpcExceptionService.throwInternalError('Failed to create channel: check the provided visibility requirement');
+    }
+  }
+
+  async update(data: UpdateChanneldto) : Promise<IChannel> {
     const channel = await this.prisma.channel.findUnique({
       where: {
         id: data.channelId,
@@ -131,7 +189,7 @@ export class ChannelService {
     return true;
   }
 
-  async addMessage(data: AddMessageInChanneldto) : Promise<any> {
+  async addMessage(data: AddMessageInChanneldto) : Promise<IMessage> {
     return await this.prisma.messages.create({
       data: {
         sender_id: data.userId,
@@ -141,7 +199,7 @@ export class ChannelService {
     });
   }
 
-  async updateMessage(data: UpdateMessageInChanneldto) : Promise<any> {
+  async updateMessage(data: UpdateMessageInChanneldto) : Promise<IMessage> {
     const message = await this.prisma.messages.findUnique({
       where: {
         id: data.messageId,
@@ -197,7 +255,7 @@ export class ChannelService {
         channel: { connect: { id: channelID } },
       }
     });
-    return await this.findById(channelID);
+    return await this.getChannelById(channelID, userID);
   }
 
   async joinProtectedChannel(userID: number, channelID: number, password: string) : Promise<IChannel> {
@@ -216,7 +274,7 @@ export class ChannelService {
         channel: { connect: { id: channelID } },
       }
     });
-    return await this.findById(channelID);
+    return await this.getChannelById(channelID, userID);
   }
 
   async leave(userID: number, channelID: number) : Promise<Boolean> {
@@ -340,6 +398,31 @@ export class ChannelService {
       }
     });
     return true;
+  }
+
+
+  /********* HELPERS **********/
+
+  async filterChannelMessages(channel: IChannel, user_id: number) {
+
+    let unblockedMemberIds = await Promise.all(
+      channel.members.map(async (member) => {
+        const memberId = member.userId;
+        if (user_id === memberId) {
+          return null;
+        }
+        const isBlocked = await this.checkers.isBlocked(user_id, memberId);
+        return isBlocked ? null : memberId;
+      })
+    );
+  
+    unblockedMemberIds = unblockedMemberIds.filter((id) => id !== null);
+  
+    channel.messages = channel.messages.filter(
+        (message) => unblockedMemberIds.includes(message.sender_id)
+      );
+  
+    return channel;
   }
 }
 

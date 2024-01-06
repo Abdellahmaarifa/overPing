@@ -17,12 +17,12 @@ export class CreateChannelInput {
   @MaxLength(20)
   channelName: string;
 
-  @Field()
+  @Field({nullable: true})
   @IsString()
   @IsOptional()
   description: string;
 
-  @Field()
+  @Field({nullable: true})
   @IsString()
   @IsOptional()
   @IsIn(['public', 'private', 'protected'])
@@ -54,7 +54,7 @@ export class UpdateChannelInput {
   @IsOptional()
   channelName: string;
 
-  @Field()
+  @Field({nullable: true})
   @IsString()
   @IsOptional()
   description: string;
@@ -65,7 +65,7 @@ export class UpdateChannelInput {
   @IsIn(['public', 'private', 'protected'])
   visibility: string;
 
-  @Field()
+  @Field({nullable: true})
   @IsString()
   @MinLength(4)
   @MaxLength(30)

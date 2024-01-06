@@ -19,7 +19,7 @@ export class DirectMessageController {
   }
 
   @MessagePattern({role: 'direct-message', cmd: 'create'})
-  async createDirectMessage(payload: any) : Promise<IDirectMessage> {
+  async createDirectMessage(payload: any) : Promise<any> {
   const {userID, targetID} = payload;
     return await this.directMessageService.create(userID, targetID);
   }
@@ -30,7 +30,7 @@ export class DirectMessageController {
   }
 
   @MessagePattern({role: 'direct-message', cmd: 'update-message'})
-  async updateMessageInDM(payload: UpdateMessageInDMdto) : Promise<IMessage> {
+  async updateMessageInDM(payload: UpdateMessageInDMdto) : Promise<any> {
     return await this.directMessageService.updateMessage(payload);
   }
 

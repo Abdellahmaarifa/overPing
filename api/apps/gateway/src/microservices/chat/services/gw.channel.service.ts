@@ -14,25 +14,60 @@ export class GwChannelService {
     private readonly clientService: RabbitMqService,
   ) { }
 
-  async findChannelById(channelID: number) : Promise<IChannel>{
+  async getUserChannels(userID: number) : Promise<IChannel[]> {
+    return await this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+          role: 'channel',
+          cmd: 'get-all',
+      },
+      userID
+    );
+  }
+
+  async getChannelMessages(userID: number, groupID: number, page: number) : Promise<IMessage[]> {
+    const payload = {
+      id: groupID,
+      user_id: userID,
+      page
+    };
+    return await this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+          role: 'channel',
+          cmd: 'get-messages',
+      },
+      payload
+    );
+  }
+
+  async findChannelById(userID: number, channelID: number) : Promise<IChannel>{
+    const payload = {
+      id: channelID,
+      user_id: userID,
+    };
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
             role: 'channel',
             cmd: 'find-channel-by-id',
         },
-        channelID
+        payload
     );
   }
 
-  async findChannelMembersById(channelID: number) : Promise<IMembers[]>{
+  async findChannelMembersById(userID: number, channelID: number) : Promise<IMembers[]>{
+    const payload = {
+      id: channelID,
+      user_id: userID,
+    };
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
             role: 'channel',
             cmd: 'find-members-by-id',
         },
-        channelID
+        payload
     );
   }
 

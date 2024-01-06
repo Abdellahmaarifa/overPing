@@ -13,14 +13,45 @@ export class GwDirectMessageService {
     private readonly clientService: RabbitMqService,
   ) { }
 
-  async findDirectMessageById(directMessageID: number) : Promise<IDirectMessage> {
+  async getUserDirectMessages(userID: number) : Promise<IDirectMessage[]> {
+    return await this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+          role: 'direct-message',
+          cmd: 'get-all',
+      },
+      userID
+    );
+  }
+
+  async findDirectMessageById(userID: number, groupID: number) : Promise<IDirectMessage> {
+    const payload = {
+      id: groupID,
+      user_id: userID,
+    };    
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
             role: 'direct-message',
             cmd: 'find-by-id',
         },
-        directMessageID
+        payload
+    );
+  }
+
+  async getDMMessages(userID: number, groupID: number, page: number) : Promise<IMessage[]> {
+    const payload = {
+      id: groupID,
+      user_id: userID,
+      page
+    };
+    return await this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+          role: 'direct-message',
+          cmd: 'get-messages',
+      },
+      payload
     );
   }
 

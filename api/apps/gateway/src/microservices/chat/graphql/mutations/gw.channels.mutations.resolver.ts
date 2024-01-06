@@ -12,8 +12,11 @@ import {
 import { GQLChannelModel, GQLMessageModel } from 'apps/gateway/src/models/chat';
 
 @Resolver()
-export class ChatResolver {
+export class ChannelResolver {
   constructor(private readonly channelService: GwChannelService) {}
+
+  /***************** CHANNEL ACTIONS ****************/
+  /******* create ******* update ***** delete *******/
 
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => GQLChannelModel)
@@ -33,6 +36,10 @@ export class ChatResolver {
     return this.channelService.deleteChannel( userID, channelID );
   }
   
+
+  /***************** MESSAGES ACTIONS ****************/
+  /******* update ********************* delete *******/
+
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => GQLMessageModel)
   async updateMessageInChannel(@Args('data') data: UpdateMessageInput) : Promise<GQLMessageModel> {
@@ -45,9 +52,14 @@ export class ChatResolver {
     return this.channelService.deleteMessageInChannel( data );
   }
 
+
+  /**************** CHANNEL MEMBERSHIP ***************/
+  /*** join *********** add member *******************/
+  /*********** leave *************** remove member ***/
+
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => GQLChannelModel)
-  async joinChannel(@Args('data') data: MemberInput) : Promise<GQLChannelModel> {
+  async joinChannel(@Args('data') data: MemberInput) : Promise<any> {
     return this.channelService.joinChannel( data );
   }
 
@@ -70,6 +82,10 @@ export class ChatResolver {
     return this.channelService.removeMember(data);
   }
 
+
+  /************** CHANNEL ADMINISTRATION *************/
+  /********* add Admin ******* remove Admine *********/
+
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
   async addChannelAdmin(@Args('data') data: MemberInput) : Promise<Boolean> {
@@ -81,6 +97,11 @@ export class ChatResolver {
   async removeChannelAdmin(@Args('data') data: MemberInput) : Promise<Boolean> {
     return this.channelService.removeChannelAdmin( data );
   }
+
+
+  /************************* MEMBER ACTIONS *************************/
+  /*********** Ban Member ******************* Mute Member ***********/
+  /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)

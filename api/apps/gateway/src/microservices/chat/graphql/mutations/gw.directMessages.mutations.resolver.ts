@@ -6,9 +6,12 @@ import { DeletionInput, UpdateInput } from '../input/directMessage.input';
 import { GQLDirectMessageModel, GQLMessageModel } from 'apps/gateway/src/models/chat';
 
 @Resolver()
-export class ChatResolver {
+export class DirectMessageResolver {
   constructor(private readonly directMessageService: GwDirectMessageService) {}
-    
+
+  /************** DIRECT MESSAGE ACTIONS ************/
+  /******* create ******************** delete *******/
+
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => GQLDirectMessageModel)
   async createDirectMessage( @Args('userID') userID: number, @Args('targetID') targetID: number ) : Promise<GQLDirectMessageModel> {
@@ -20,6 +23,10 @@ export class ChatResolver {
   async deleteDirectMessage(@Args('data') data: DeletionInput) : Promise<Boolean> {
     return this.directMessageService.deleteDirectMessage( data );
   }
+
+
+  /***************** MESSAGES ACTIONS ****************/
+  /******* update ********************* delete *******/
 
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => GQLMessageModel)
@@ -33,17 +40,18 @@ export class ChatResolver {
     return this.directMessageService.deleteMessageInDM( data );
   }
 
-  @UseGuards(UserAccessAuthorizationGuard)
-  @Mutation(() => Boolean)
-  async blockUser( @Args('userID') userID: number, @Args('targetID') targetID: number ) : Promise<Boolean>{
-    return this.directMessageService.blockUser( userID, targetID );
-  }
 
-  @UseGuards(UserAccessAuthorizationGuard)
-  @Mutation(() => Boolean)
-  async unblockUser( @Args('userID') userID: number, @Args('targetID') targetID: number ) : Promise<Boolean>{
-    return this.directMessageService.unblockUser( userID, targetID );
-  }
+  // @UseGuards(UserAccessAuthorizationGuard)
+  // @Mutation(() => Boolean)
+  // async blockUser( @Args('userID') userID: number, @Args('targetID') targetID: number ) : Promise<Boolean>{
+  //   return this.directMessageService.blockUser( userID, targetID );
+  // }
+
+  // @UseGuards(UserAccessAuthorizationGuard)
+  // @Mutation(() => Boolean)
+  // async unblockUser( @Args('userID') userID: number, @Args('targetID') targetID: number ) : Promise<Boolean>{
+  //   return this.directMessageService.unblockUser( userID, targetID );
+  // }
 
   /******* DOES THIS NEED TO BE IN THE GAME SERVICE ??? *****************/
   // @UseGuards(UserAccessAuthorizationGuard)

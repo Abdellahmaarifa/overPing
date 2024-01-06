@@ -13,7 +13,4 @@ export class GQLDirectMessageModel {
   user2_id: number;
 
   messages: GQLMessageModel[];
-
-  @Field()
-  created_at: Date;
 }
