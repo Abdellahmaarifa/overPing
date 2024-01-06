@@ -49,6 +49,7 @@ export class SettingContextValue implements SettingsCtxType {
     this.SETTINGS_LINKS = SETTINGS_LINKS;
   }
   resetSettings = () => {
+    console.log("hemmmm!!");
     this.settingsNav[1](this.SETTINGS_LINKS.HOME);
     this.settingsModel[1](false);
   };

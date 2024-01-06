@@ -23,6 +23,8 @@ import {
   UnfriendUserDocument,
   SendFriendRequestDocument,
   AcceptFriendRequestDocument,
+  FindAllUsersDocument,
+  GetOnlineFriendsDocument,
 } from "gql/index";
 import { Suspense, useEffect, useState } from "react";
 import { useUserContext } from "context/user.context";
@@ -49,15 +51,21 @@ const Friends = () => {
   const getQuery = () => {
     switch (filter) {
       case FILTERS.ONLINE:
-        return GetBlockedUsersDocument;
+        return {
+          query: GetOnlineFriendsDocument,
+          variables: {
+            pageNumber: 1,
+            limit: 40,
+          },
+        };
       case FILTERS.REQUEST:
-        return GetFriendsRequestsDocument;
+        return { query: GetFriendsRequestsDocument };
       case FILTERS.SUGGESTION:
-        return GetBlockedUsersDocument;
+        return { query: FindAllUsersDocument };
       case FILTERS.BLOCKED:
-        return GetBlockedUsersDocument;
+        return { query: GetBlockedUsersDocument };
       default:
-        return GetBlockedUsersDocument;
+        return { query: FindAllUsersDocument };
     }
   };
 
@@ -71,7 +79,7 @@ const Friends = () => {
     const controller = new AbortController();
     client
       .query({
-        query: getQuery(),
+        ...getQuery(),
         context: {
           fetchOptions: {
             signal: controller.signal,
@@ -303,7 +311,7 @@ const Friends = () => {
             primaryAction={getPrimaryAction(friend)}
             secondaryAction={getSecondaryAction(friend)}
             name={friend.username}
-            image={friend.profileImgUrl}
+            image={encodeURI(friend.profileImgUrl)}
           />
         ))}
       </FriendList>

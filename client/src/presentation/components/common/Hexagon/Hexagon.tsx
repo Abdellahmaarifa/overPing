@@ -15,6 +15,8 @@ const Hexagon = ({
   width,
   height,
   stroke,
+  active,
+  type,
 }: {
   percentage: number;
   Image?: string;
@@ -23,6 +25,8 @@ const Hexagon = ({
   width?: number;
   height?: number;
   stroke?: string;
+  active?: boolean;
+  type?: "achivement" | "avatar";
 }) => {
   return (
     <HexagonConatiner
@@ -36,7 +40,15 @@ const Hexagon = ({
       }
     >
       {outline && <HexagonMask />}
-      <HexagonShape>
+      <HexagonShape
+        style={
+          type === "achivement"
+            ? {
+                opacity: !active ? ".2" : undefined,
+              }
+            : undefined
+        }
+      >
         <HexagonBackground
           style={{
             background: outline

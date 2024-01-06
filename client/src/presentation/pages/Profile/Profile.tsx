@@ -136,6 +136,7 @@ const Profile = () => {
     );
   };
 
+  console.log("relation", friendsStatus);
   if (isLoading) return <h1>loading..</h1>;
   return (
     <ProfileConatiner>

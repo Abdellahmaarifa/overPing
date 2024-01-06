@@ -25,11 +25,15 @@ const Settings = () => {
   const {
     mobileMenuState: [openMobileMenu, setOpenMobileMenu],
   } = useLayoutContext();
-  const { restoreUser } = useUserContext();
+  const { restoreUser, user, updateUser } = useUserContext();
   return settingsModel ? (
     <SettingConatiner
       onClick={() => {
-        !openMobileMenu && resetSettings();
+        if (!openMobileMenu) {
+          resetSettings();
+          if (user && !user.showUpdateWin)
+            updateUser({ ...user, showUpdateWin: true });
+        }
       }}
     >
       {settingsNav === SETTINGS_LINKS.HOME && <SettingsModel />}
