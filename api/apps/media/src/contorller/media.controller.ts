@@ -30,6 +30,11 @@ export class MediaController {
     return this.mediaService.getBgProfileImg(file);
   }
 
+  @MessagePattern({ role: 'file', cmd: 'get-achievement-img'})
+  async getAchievementImg(file: string){
+    return this.mediaService.getAchievementImg(file);
+  }
+
   // @EventPattern({ role: 'file', cmd: 'upload-profile-img'})
   // uploadchatImg(file: FileUpload){
   //   this.mediaService.uploadchatImg(file);

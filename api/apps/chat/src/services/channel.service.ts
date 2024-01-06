@@ -14,7 +14,7 @@ export class ChannelService {
     private readonly checkers: CheckersService
     ) {}
 
-  async findById(channelID: number) : Promise<IChannel> {
+  async findById(channelID: number) : Promise<any> {
     return await this.prisma.channel.findUnique({
       where: { id: channelID },
       include: {
@@ -54,7 +54,7 @@ export class ChannelService {
     }
   }
 
-  async create(data: CreateChanneldto) : Promise<IChannel> {
+  async create(data: CreateChanneldto) : Promise<any> {
     // if (data.visibility != 'public'
     //  && data.visibility != 'private'
     //  && data.visibility != 'protected') {
@@ -86,7 +86,7 @@ export class ChannelService {
     });
   }
 
-  async update(data: UpdateChanneldto) : Promise<IChannel> {
+  async update(data: UpdateChanneldto) : Promise<any> {
     const channel = await this.prisma.channel.findUnique({
       where: {
         id: data.channelId,
@@ -131,7 +131,7 @@ export class ChannelService {
     return true;
   }
 
-  async addMessage(data: AddMessageInChanneldto) : Promise<IMessage> {
+  async addMessage(data: AddMessageInChanneldto) : Promise<any> {
     return await this.prisma.messages.create({
       data: {
         sender_id: data.userId,
@@ -141,7 +141,7 @@ export class ChannelService {
     });
   }
 
-  async updateMessage(data: UpdateMessageInChanneldto) : Promise<IMessage> {
+  async updateMessage(data: UpdateMessageInChanneldto) : Promise<any> {
     const message = await this.prisma.messages.findUnique({
       where: {
         id: data.messageId,

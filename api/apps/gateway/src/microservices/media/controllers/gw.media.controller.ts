@@ -33,6 +33,14 @@ export class MeidaController {
         res.send(Buffer.from(imageBuffer))
 
     }
-    
 
+    @Get('achievement/:imageName')
+    async getAchievementImg(@Res() res: Response, @Param('imageName') imageName: string, ){
+        const imageBuffer = await this.mediaService.getAchievementImg(imageName);
+        const mimeType = 'image/png';
+
+        res.setHeader('Content-Type', mimeType);
+        res.send(Buffer.from(imageBuffer))
+
+    }
 }

@@ -19,7 +19,7 @@ export class DirectMessageService {
     private readonly checkers: CheckersService
   ) {}
 
-  async findById(directMessageID: number) : Promise<IDirectMessage> {
+  async findById(directMessageID: number) : Promise<any> {
     return await this.prisma.directMessage.findUnique({
       where: { id: directMessageID },
       include: {
@@ -46,7 +46,7 @@ export class DirectMessageService {
     }
   }
 
-  async create(userID: number, targetID: number) : Promise<IDirectMessage> {
+  async create(userID: number, targetID: number) : Promise<any> {
     if (this.checkers.isBlocked(userID, targetID)) {
       return null;
     }
@@ -65,7 +65,7 @@ export class DirectMessageService {
     return false;
   }
 
-  async addMessage(data: AddMessageInDMdto) : Promise<IMessage> {
+  async addMessage(data: AddMessageInDMdto) : Promise<any> {
     return await this.prisma.messages.create({
       data: {
         sender_id: data.userId,
@@ -75,7 +75,7 @@ export class DirectMessageService {
     });
   }
 
-  async updateMessage(data: UpdateMessageInDMdto) : Promise<IMessage> {
+  async updateMessage(data: UpdateMessageInDMdto) : Promise<any> {
     const message = await this.prisma.messages.findUnique({
       where: {
         id: data.messageId,

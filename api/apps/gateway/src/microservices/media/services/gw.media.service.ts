@@ -93,6 +93,17 @@ export class GWMediaService {
     )
   }
 
+  async getAchievementImg(fileName: string) : Promise<Buffer>{
+    return this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+        role: 'file',
+        cmd: 'get-achievement-img'
+      },
+      fileName
+    )
+  }
+
 
 
 

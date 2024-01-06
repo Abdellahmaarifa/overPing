@@ -87,6 +87,8 @@ export class ProfileService {
     }
   }
 
+  
+  
   async getUserAchievements(userId: number): Promise<Achievement[]> {
     try {
       const achievementIds = await this.prisma.userProfileToAchievement.findMany({
@@ -118,8 +120,9 @@ export class ProfileService {
       this.handlePrismaError(error);
     }
   }
-
-
+  
+  
+  
   async update(userId: number, input: UpdateProfileDto): Promise<boolean> {
     try {
       // Save the changes to the database
@@ -132,9 +135,6 @@ export class ProfileService {
       this.handlePrismaError(error);
     }
   }
-
-
-
 
   async remove(userId: number): Promise<boolean> {
     try {

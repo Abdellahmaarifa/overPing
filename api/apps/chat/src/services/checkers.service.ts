@@ -1,5 +1,5 @@
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { FriendshipDTO } from '@app/common/friend/dto/friendshipDto';
+// import { FriendshipDTO } from '@app/common/friend/dto/friendshipDto';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable } from '@nestjs/common';
@@ -75,20 +75,20 @@ export class CheckersService {
     // });
     // return !!blockedMember;
 
-    const friendShip: FriendshipDTO = await this.clientService.sendMessageWithPayload(
-      this.client,
-      {
-          role: 'friend',
-          cmd: 'getFriendship'
-      },
-      {
-        userId,
-        friendId: targetId,
-      }
-    )
-    if (!friendShip || friendShip.status === "BLOCKED") {
-      return true;
-    }
+    // const friendShip: FriendshipDTO = await this.clientService.sendMessageWithPayload(
+    //   this.client,
+    //   {
+    //       role: 'friend',
+    //       cmd: 'getFriendship'
+    //   },
+    //   {
+    //     userId,
+    //     friendId: targetId,
+    //   }
+    // )
+    // if (!friendShip || friendShip.status === "BLOCKED") {
+    //   return true;
+    // }
     return false;
   }
 

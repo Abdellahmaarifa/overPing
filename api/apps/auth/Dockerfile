@@ -21,7 +21,7 @@ RUN yarn install --verbose
 RUN yarn run generate:auth:prisma
 
 # Build the application
-RUN yarn build
+RUN yarn build 
 
 
 # Create a new image for production

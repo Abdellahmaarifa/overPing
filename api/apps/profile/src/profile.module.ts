@@ -13,6 +13,7 @@ import { TitleService, XpService } from './services/xp.service';
 import { AchievementService } from './services/achievement.service';
 import { RankingService } from './services/rankingSystem.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
