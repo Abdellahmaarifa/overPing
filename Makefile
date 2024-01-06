@@ -11,7 +11,7 @@ COMPOSE := docker-compose -f $(COMPOSE_FILE) --env-file=./api/.env
 
 # Start services (development profile)
 start:
-	$(COMPOSE)  --profile development up -d 
+	$(COMPOSE)  --profile development up -d
 # build services (development profile)	
 build:
 	$(COMPOSE) --profile development build

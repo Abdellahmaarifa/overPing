@@ -57,27 +57,6 @@ services:
       - production
       - development
 
-  #   DATABASE SERVICE FOR MEDIA DEV AND PROD #
-
-  # postgres_media_db:
-  #   image: postgres
-
-  #   environment:
-  #     - POSTGRES_DB=${MEDIA_DB_NAME}
-  #     - POSTGRES_USER=${MEDIA_DB_USER}
-  #     - POSTGRES_PASSWORD=${MEDIA_DB_PASSWORD}
-  #   ports:
-  #     - "${MEDIA_DB_PORT}:5432"
-  #   volumes:
-  #     - ./database/data/media:/var/lib/postgresql/data/
-  #   restart: always
-  #   networks:
-  #     - webapp
-  #   container_name: postgres_media_db
-  #   profiles:
-  #     - production
-  #     - development
-
   #   DATABASE SERVICE FOR PROFILE DEV AND PROD #
 
   postgress_profile_db:
@@ -99,9 +78,6 @@ services:
       - production
       - development
 
-
-
-
   # DATABASE SERVICE FOR CHAT DEV AND PROD #
   postgres_chat_db:
     image: postgres
@@ -113,7 +89,7 @@ services:
       - POSTGRES_USER=${CHAT_DB_USER}
       - POSTGRES_PASSWORD=${CHAT_DB_PASSWORD}
     ports:
-      -  "${CHAT_DB_PORT}:5432"
+      - "${CHAT_DB_PORT}:5432"
     networks:
       - webapp
     volumes:
@@ -122,7 +98,6 @@ services:
     profiles:
       - production
       - development
-
 
   # GATEWAY SERVICE FOR PRODUCTION #
   # gateway:
@@ -154,7 +129,18 @@ services:
       - ./api/apps/gateway:/usr/src/app/apps/gateway
       - ./api/libs:/usr/src/app/libs
     depends_on:
-      - rabbitmq
+      chat:
+        condition: service_started
+      media:
+        condition: service_started
+      matchmaking:
+        condition: service_started
+      auth:
+        condition: service_started
+      profile:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     restart: always
     container_name: gateway
     profiles:
@@ -180,9 +166,10 @@ services:
       - ./api/apps/auth:/usr/src/app/apps/auth
       - ./api/libs:/usr/src/app/libs
     depends_on:
-      - rabbitmq
-      - postgres_auth_db
-      - gateway
+      postgres_auth_db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     restart: always
     container_name: auth
     profiles:
@@ -203,14 +190,14 @@ services:
     ports:
       - ${PROFILE_PORT}:3003
       - ${PRISMA_STUDIO_PROFILE_PORT}:5555
-
     volumes:
       - ./api/apps/profile:/usr/src/app/apps/profile
       - ./api/libs:/usr/src/app/libs
     depends_on:
-      - rabbitmq
-      - postgress_profile_db
-      - gateway
+      postgress_profile_db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     restart: always
     container_name: profile
     profiles:
@@ -233,8 +220,8 @@ services:
       - ./api/apps/matchmaking:/usr/src/app/apps/matchmaking
       - ./api/libs:/usr/src/app/libs
     depends_on:
-      - rabbitmq
-      - gateway
+      rabbitmq:
+        condition: service_healthy
     restart: always
     profiles:
       - development
@@ -260,13 +247,12 @@ services:
       - ./api/libs:/usr/src/app/libs
       - ./api/apps/media/uploads:/usr/src/app/apps/media/uploads
     depends_on:
-      - rabbitmq
-      - gateway
+      rabbitmq:
+        condition: service_healthy
     restart: always
     profiles:
       - development
       - production
-
 
   # CHAT SERVICE FOR DEVELOPMENT #
   chat:
@@ -282,13 +268,15 @@ services:
     ports:
       - ${CHAT_PORT}:3005
       - ${PRISMA_STUDIO_CHAT_PORT}:5555
-      
+
     volumes:
       - ./api:/usr/src/app
     depends_on:
-      - rabbitmq
-      - postgres_chat_db
-      - gateway
+      postgres_chat_db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+
     restart: always
     container_name: chat
     profiles:
@@ -314,6 +302,11 @@ services:
     profiles:
       - development
       - production
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 10
 
 networks:
   webapp:

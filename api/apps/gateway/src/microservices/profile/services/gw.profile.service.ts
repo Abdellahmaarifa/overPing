@@ -5,12 +5,9 @@ import { RabbitMqService } from '@app/rabbit-mq';
 import { CreateProfileInput } from '../graphql/input/createUserProfileInput';
 import { IUserProfile } from '@app/common/profile/IUserProfile';
 import { UpdateProfileInput } from '../graphql/input/updateUserProfileInput';
-<<<<<<< HEAD
 import { GwFriendshipService } from '../../auth/services/gw.friendship.service';
 import { FriendshipStatus } from '@app/common/friend/dto/friendshipStatus';
-=======
 import { IAchievement } from '@app/common/profile/IAchievement';
->>>>>>> 0eded71fae91fa50e7600d8c0d7ca7e2eb319fb9
 
 @Injectable()
 export class GwProfileService {
