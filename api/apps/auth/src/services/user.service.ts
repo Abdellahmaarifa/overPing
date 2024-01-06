@@ -134,7 +134,32 @@ export class UserService {
     }
   }
 
-  async findAllUsers(
+  async findAllUsers( userId: number ): Promise<IUser[]> {
+    const users = await this.prisma.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+        blocks: {
+          none: {
+            id: userId,
+          },
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        password: false,
+        lastSeen: true,
+        profileImgUrl: true,
+      },
+    });
+    return users;
+  }
+
+
+  async findPagesOfUsers(
     pageNumber: number = 1,
     pageSize: number = 10,
     userId: number
@@ -162,9 +187,9 @@ export class UserService {
       skip,
       take: pageSize,
     });
-    console.log("users: ", users);
     return users;
   }
+
 
   async remove(id: number, password: string): Promise<boolean> {
     try {

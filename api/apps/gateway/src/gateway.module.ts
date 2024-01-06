@@ -44,6 +44,7 @@ import { UserStatusService } from './microservices/auth/services/gw.userStatus.s
     RabbitMqModule,
     GraphQLModule.forRoot({
       driver:ApolloDriver,
+      
       autoSchemaFile: join(process.cwd(), './graphql/schema.gql'),
       uploads: false,
       context: ({ req, res }) => ({ req, res }),

@@ -104,12 +104,26 @@ export class UserService {
         return (response);//for now
     }
 
-    async findAllUsers(userId: number, pageNumber: number, pageSize: number) :Promise <IUser[]>{
+    async findAllUsers(userId: number) :Promise <IUser[]>{
         const users = await this.clientService.sendMessageWithPayload(
             this.client,
             {
                 role: 'user',
                 cmd: 'findAllUsers'
+            },
+            {
+                userId,
+            }
+        )
+        return users
+    }
+
+    async findPagesOfUsers(userId: number, pageNumber: number, pageSize: number) :Promise <IUser[]>{
+        const users = await this.clientService.sendMessageWithPayload(
+            this.client,
+            {
+                role: 'user',
+                cmd: 'findPagesOfUsers'
             },
             {
                 userId,

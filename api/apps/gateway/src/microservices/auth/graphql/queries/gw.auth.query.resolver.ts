@@ -36,9 +36,17 @@ export class AuthQueryResolver {
 
     @UseGuards(GqlJwtAuthGuard)
     @Query(() => [GQLIUserModel])
-    async findAllUsers(@Context() ctx, @Args('pageNumber') pageNumber: number, @Args('pageSize') pageSize: number): Promise<GQLIUserModel[]> {
+    async findPagesOfUsers(@Context() ctx, @Args('pageNumber') pageNumber: number, @Args('pageSize') pageSize: number): Promise<GQLIUserModel[]> {
         const userId = ctx.req.user.id;
-        const users = await this.userService.findAllUsers(userId, pageNumber, pageSize);
+        const users = await this.userService.findPagesOfUsers(userId, pageNumber, pageSize);
+        return users;
+    }
+
+    @UseGuards(GqlJwtAuthGuard)
+    @Query(() => [GQLIUserModel])
+    async findAllUsers(@Context() ctx): Promise<GQLIUserModel[]> {
+        const userId = ctx.req.user.id;
+        const users = await this.userService.findAllUsers(userId);
         return users;
     }
 

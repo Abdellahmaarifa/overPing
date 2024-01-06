@@ -4,6 +4,7 @@ import { MediaService } from './services/media.service';
 import { RabbitMqModule, RabbitMqService } from '@app/rabbit-mq';
 import { ConfigModule } from '@nestjs/config';
 import  configuration  from './config/configuration';
+
 @Module({
   imports: [
     ConfigModule.forRoot({

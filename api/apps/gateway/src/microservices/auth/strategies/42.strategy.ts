@@ -27,7 +27,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42'){
                 email: '',
                 emails: profile.emails,
             }
-            console.log("user:=>",user);
             const account = await this.userService.findOrCreateUser(user);
             return (account);
     }

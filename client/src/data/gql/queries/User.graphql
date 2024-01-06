@@ -1,6 +1,6 @@
 # GET THE User
 query User($id: Float!) {
-  findUserById(userId: $id) {
+  findUserById(id: $id) {
     id
     email
     username
@@ -15,7 +15,7 @@ mutation deleteAccount($id: Float!, $password: String!) {
 }
 
 query Account($userId: Float!) {
-  findUserById(userId: $userId) {
+  findUserById(id: $userId) {
     id
     email
     username

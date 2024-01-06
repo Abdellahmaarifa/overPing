@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common'
 import { RabbitMqService } from '@app/rabbit-mq';
 import { RABBIT_SERVICES, } from '@app/rabbit-mq/constent/rabbit-constent'
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+import { HttpExceptionFilter } from './global-filter/global-filter';
 
 
 async function bootstrap() {
@@ -20,7 +21,7 @@ async function bootstrap() {
   const rmqService = app.get<RabbitMqService>(RabbitMqService);
 
   
-  // app.useGlobalFilters(new GraphqlExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.connectMicroservice(rmqService.getOptions(RABBIT_SERVICES[IRmqSeverName.GATEWAY].queue))
   await app.startAllMicroservices();
   // app.useGlobalPipes(

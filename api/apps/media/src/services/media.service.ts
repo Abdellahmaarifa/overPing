@@ -4,12 +4,13 @@ import * as fs from 'fs';
 import {dirname, join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import mime from 'mime';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class MediaService {
-  private readonly logger = new Logger(MediaService.name);
-
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+  ) {}
 
   async updateAavatarImg(file: {
     filename: string,
@@ -54,7 +55,7 @@ export class MediaService {
       const fileBuffer = await fs.promises.readFile(filePath);
       return  fileBuffer;
     } catch (error) {
-      this.logger.error(`File not found: ${error.message}`);
+      this.throwBadRequest("image not found");
     }
   }
 
@@ -67,7 +68,7 @@ export class MediaService {
       const fileBuffer = await fs.promises.readFile(filePath);
       return fileBuffer;
     } catch (error) {
-      this.logger.error(`File not found: ${error.message}`);
+      this.throwBadRequest("image not found");
     }
   }
 
@@ -80,7 +81,7 @@ export class MediaService {
       const fileBuffer = await fs.promises.readFile(filePath);
       return fileBuffer;
     } catch (error) {
-      this.logger.error(`File not found: ${error.message}`);
+      this.throwBadRequest("image not found");
     }
   }
 
@@ -90,7 +91,7 @@ export class MediaService {
       const bufferData = Buffer.from(buffer);
       await fs.promises.writeFile(filePath, bufferData);
     } catch (error) {
-      this.logger.error(`Failed to upload file: ${error.message}`);
+      this.throwBadRequest("Failed to upload image");
     }
   }
 
@@ -100,4 +101,12 @@ export class MediaService {
     const imgName = `${fileId}_${filename}`
     return imgName;
   }
+
+
+  throwBadRequest(customErrorMessage?: string): RpcException {
+    throw new RpcException({
+        statusCode: 400,
+        errorStatus: customErrorMessage || 'Bad Request',
+    });
+}
 }
