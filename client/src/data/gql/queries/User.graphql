@@ -19,7 +19,6 @@ query Account($userId: Float!) {
     id
     email
     username
-    twoStepVerificationEnabled
     profileImgUrl
   }
 

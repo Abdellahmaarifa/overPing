@@ -28,7 +28,10 @@ import {
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useSettingsContext } from "context/settings.context";
 import { useUserContext } from "context/user.context";
-import { useAddFriendMutation, useFindProfileByUserIdQuery } from "gql/index";
+import {
+  useFindProfileByUserIdQuery,
+  useSendFriendRequestMutation,
+} from "gql/index";
 import { ProfileType } from "domain/model/Profile.type";
 import { FriendshipStatusType } from "domain/model/helpers.type";
 import toast, { Toaster } from "react-hot-toast";
@@ -50,32 +53,32 @@ const ProfileBanner = ({
   id: Number;
 }) => {
   const navigate = useNavigate();
-  // const [addFriend] = useAddFriendMutation();
+  const [addFriend] = useSendFriendRequestMutation();
+
   const {
     settingsModel: [settingModel, setSettingModel],
   } = useSettingsContext();
   const { user } = useUserContext();
   const sendRequest = async () => {
-    // await toast.promise(
-    //   addFriend({
-    //     variables: {
-    //       userId: Number(user?.id),
-    //       friendId: Number(id),
-    //     },
-    //   }),
-    //   {
-    //     loading: "please wait..",
-    //     success: (data) => {
-    //       console.log(data);
-    //       setFriendStatus("PENDING");
-    //       return "your request is done successfuly";
-    //     },
-    //     error: (err) => {
-    //       console.log(err);
-    //       return "something went wrong.";
-    //     },
-    //   }
-    // );
+    await toast.promise(
+      addFriend({
+        variables: {
+          receiverId: Number(id),
+        },
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          console.log(data);
+          setFriendStatus("REQUEST_SENT");
+          return "your request is done successfuly";
+        },
+        error: (err) => {
+          console.log(err);
+          return "something went wrong.";
+        },
+      }
+    );
   };
   // console.log("stsus: ", friendsStatus);
   return (
@@ -116,9 +119,10 @@ const ProfileBanner = ({
               <ChatIcon onClick={() => navigate(`/chat/dm/${profile?.id}`)} />
             </BannerMenuButton>
             <BannerMenuButton>
-              {friendsStatus === "PENDING" ? (
+              {friendsStatus === "REQUEST_RECEIVED" ||
+              friendsStatus === "REQUEST_SENT" ? (
                 <PendingIcon />
-              ) : friendsStatus === null ? (
+              ) : friendsStatus === "NOT_FRIENDS" ? (
                 <UserAddIcon onClick={() => sendRequest()} />
               ) : null}
             </BannerMenuButton>

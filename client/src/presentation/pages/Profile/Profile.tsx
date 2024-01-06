@@ -11,11 +11,11 @@ import { ProfileConatiner } from "./Profile.style";
 import tw from "twin.macro";
 import {
   BlockUserDocument,
-  GetFriendshipDocument,
+  GetFriendshipStatusDocument,
   AccountDocument,
-  RemoveFriendDocument,
   useAccountQuery,
   useFindProfileByUserIdQuery,
+  UnfriendUserDocument,
 } from "gql/index";
 import { useUserContext } from "context/user.context";
 import { ProfileType } from "domain/model/Profile.type";
@@ -52,26 +52,27 @@ const Profile = () => {
         })
         .then((data) => {
           console.log("gettign the data: ", data);
-          // client
-          //   .query({
-          //     query: GetFriendshipDocument,
-          //     variables: {
-          //       userId: Number(user?.id),
-          //       friendId: Number(id),
-          //     },
-          //     fetchPolicy: "no-cache",
-          //   })
-          //   .then((data) => {
-          //     console.log("relation: ", data);
-          //     //if (data?.data?.getFriendship?.status === "BLOCKED") navigate("/error");
-          //     if (!data?.data?.getFriendship) setFriendStatus(null);
-          //     else setFriendStatus(data?.data?.getFriendship?.status);
-          //     setIsLoading(false);
-          //     // if the relation is blocked it should redirect to error page
-          //   })
-          //   .catch((err) => {
-          //     console.log(err);
-          //   });
+
+          client
+            .query({
+              query: GetFriendshipStatusDocument,
+              variables: {
+                userId: Number(user?.id),
+                friendId: Number(id),
+              },
+              fetchPolicy: "no-cache",
+            })
+            .then((data) => {
+              console.log("relation: ", data);
+              //if (data?.data?.getFriendship?.status === "BLOCKED") navigate("/error");
+              if (!data?.data?.getFriendshipStatus) setFriendStatus(null);
+              else setFriendStatus(data?.data?.getFriendshipStatus?.status);
+              setIsLoading(false);
+              // if the relation is blocked it should redirect to error page
+            })
+            .catch((err) => {
+              console.log(err);
+            });
           setUserProfile(GetUserProfile(data?.data));
         })
         .catch((err) => {
@@ -86,55 +87,53 @@ const Profile = () => {
   console.log("this is the final profile: ", userProfile);
 
   const blockUser = async () => {
-    // await toast.promise(
-    //   client.mutate({
-    //     mutation: BlockUserDocument,
-    //     variables: {
-    //       userId: Number(user?.id),
-    //       friendId: Number(id),
-    //     },
-    //   }),
-    //   {
-    //     loading: "please wait..",
-    //     success: (data) => {
-    //       console.log(data);
-    //       setShowExtraMenu(false);
-    //       navigate("/friends?filter=blocked");
-    //       return "user blocked successfuly!";
-    //     },
-    //     error: (err) => {
-    //       console.log(err);
-    //       setShowExtraMenu(false);
-    //       return "something went wrong.";
-    //     },
-    //   }
-    // );
+    await toast.promise(
+      client.mutate({
+        mutation: BlockUserDocument,
+        variables: {
+          blockedUserId: Number(id),
+        },
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          console.log(data);
+          setShowExtraMenu(false);
+          navigate("/friends?filter=blocked");
+          return "user blocked successfuly!";
+        },
+        error: (err) => {
+          console.log(err);
+          setShowExtraMenu(false);
+          return "something went wrong.";
+        },
+      }
+    );
     //window.location.replace("/friends?filter=blocked");
   };
 
   const removeFriend = async () => {
-    // await toast.promise(
-    //   client.mutate({
-    //     mutation: RemoveFriendDocument,
-    //     variables: {
-    //       userId: Number(user?.id),
-    //       friendId: Number(id),
-    //     },
-    //   }),
-    //   {
-    //     loading: "please wait..",
-    //     success: (data) => {
-    //       console.log(data);
-    //       setShowExtraMenu(false);
-    //       return "your request is done successfuly";
-    //     },
-    //     error: (err) => {
-    //       console.log(err);
-    //       setShowExtraMenu(false);
-    //       return "something went wrong.";
-    //     },
-    //   }
-    // );
+    await toast.promise(
+      client.mutate({
+        mutation: UnfriendUserDocument,
+        variables: {
+          friendId: Number(id),
+        },
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          console.log(data);
+          setShowExtraMenu(false);
+          return "your request is done successfuly";
+        },
+        error: (err) => {
+          console.log(err);
+          setShowExtraMenu(false);
+          return "something went wrong.";
+        },
+      }
+    );
   };
 
   if (isLoading) return <h1>loading..</h1>;
@@ -153,14 +152,12 @@ const Profile = () => {
 
         {showExtraMenu && (
           <ExtraMenu>
-            {friendsStatus !== "BLOCKED" && (
+            {friendsStatus !== "BLOCKED" && friendsStatus !== "BLOCKED_BY" && (
               <ExtraLink onClick={() => blockUser()}>Block user</ExtraLink>
             )}
-            {(friendsStatus === "FRIEND" || friendsStatus === "PENDING") && (
+            {friendsStatus === "FRIENDS" && (
               <ExtraLink onClick={() => removeFriend()}>
-                {friendsStatus === "FRIEND"
-                  ? "remove friend"
-                  : "cancel request"}
+                remove friend
               </ExtraLink>
             )}
           </ExtraMenu>
