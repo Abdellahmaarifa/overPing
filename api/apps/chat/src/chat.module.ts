@@ -13,6 +13,7 @@ import { NotificationsGateway } from './gateways/notifications.gateway';
 import { ChannelGateway } from './gateways/channel.gateway';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClientAccessAuthorizationGuard } from './guards/client.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ClientAccessAuthorizationGuard } from './guards/client.guard';
     ChannelController,
   ],
   providers: [
+    JwtService,
     PrismaService,
     RpcExceptionService,
     DirectMessageService,

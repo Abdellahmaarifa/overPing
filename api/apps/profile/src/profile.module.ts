@@ -19,8 +19,6 @@ import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
     ScheduleModule.forRoot(),
     CommonModule,
     RabbitMqModule,
-    RabbitMqModule.forClientProxy(IRmqSeverName.MEDIA),
-
   ],
   controllers: [
     ProfileController,

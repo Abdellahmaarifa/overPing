@@ -9,8 +9,6 @@ export class IChannel {
   admins:        IAdmins[]
   members:       IMembers[]
   messages:      IMessage[]
-  created_at:    Date
-  updated_at:    Date
 }
 
 export class IAdmins {
