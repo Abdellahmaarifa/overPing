@@ -125,6 +125,27 @@ export class FriendshipService {
           },
         },
       });
+
+      ////sdfsdfdsfdsfsdf
+
+
+    await this.prisma.user.update({
+      where: { id: friendId },
+      data: {
+        friends: {
+          disconnect: [{ id: userId }],
+        },
+      },
+    });
+
+     await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          friendOf: {
+            disconnect: [{ id: friendId }],
+          },
+        },
+      });
   }
 
 
