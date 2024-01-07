@@ -104,6 +104,7 @@ export type Mutation = {
   acceptFriendRequest: Scalars['Boolean']['output'];
   authenticate_2fa: GqlUserModel;
   blockUser: Scalars['Boolean']['output'];
+  cancelFriendRequest: Scalars['Boolean']['output'];
   createProfile: GqlUserProfileModel;
   deleteAccount: Scalars['Boolean']['output'];
   enableTwoFactorAuth: Scalars['String']['output'];
@@ -145,6 +146,11 @@ export type MutationAuthenticate_2faArgs = {
 
 export type MutationBlockUserArgs = {
   blockedUserId: Scalars['Float']['input'];
+};
+
+
+export type MutationCancelFriendRequestArgs = {
+  requester: Scalars['Float']['input'];
 };
 
 
@@ -263,7 +269,6 @@ export type Query = {
   __typename?: 'Query';
   findAllUsers: Array<GqliUserModel>;
   findPagesOfUsers: Array<GqliUserModel>;
-  findProfileById?: Maybe<GqlUserProfileModel>;
   findProfileByUserId?: Maybe<GqlUserProfileModel>;
   findUserById: GqlUserModel;
   getAllAchievements?: Maybe<Array<GqlAchievement>>;
@@ -284,11 +289,6 @@ export type Query = {
 export type QueryFindPagesOfUsersArgs = {
   pageNumber: Scalars['Float']['input'];
   pageSize: Scalars['Float']['input'];
-};
-
-
-export type QueryFindProfileByIdArgs = {
-  id: Scalars['Float']['input'];
 };
 
 
@@ -470,6 +470,13 @@ export type UnfriendUserMutationVariables = Exact<{
 
 
 export type UnfriendUserMutation = { __typename?: 'Mutation', unfriendUser: boolean };
+
+export type CancelFriendRequestMutationVariables = Exact<{
+  requester: Scalars['Float']['input'];
+}>;
+
+
+export type CancelFriendRequestMutation = { __typename?: 'Mutation', cancelFriendRequest: boolean };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1221,6 +1228,37 @@ export function useUnfriendUserMutation(baseOptions?: Apollo.MutationHookOptions
 export type UnfriendUserMutationHookResult = ReturnType<typeof useUnfriendUserMutation>;
 export type UnfriendUserMutationResult = Apollo.MutationResult<UnfriendUserMutation>;
 export type UnfriendUserMutationOptions = Apollo.BaseMutationOptions<UnfriendUserMutation, UnfriendUserMutationVariables>;
+export const CancelFriendRequestDocument = gql`
+    mutation cancelFriendRequest($requester: Float!) {
+  cancelFriendRequest(requester: $requester)
+}
+    `;
+export type CancelFriendRequestMutationFn = Apollo.MutationFunction<CancelFriendRequestMutation, CancelFriendRequestMutationVariables>;
+
+/**
+ * __useCancelFriendRequestMutation__
+ *
+ * To run a mutation, you first call `useCancelFriendRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelFriendRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelFriendRequestMutation, { data, loading, error }] = useCancelFriendRequestMutation({
+ *   variables: {
+ *      requester: // value for 'requester'
+ *   },
+ * });
+ */
+export function useCancelFriendRequestMutation(baseOptions?: Apollo.MutationHookOptions<CancelFriendRequestMutation, CancelFriendRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CancelFriendRequestMutation, CancelFriendRequestMutationVariables>(CancelFriendRequestDocument, options);
+      }
+export type CancelFriendRequestMutationHookResult = ReturnType<typeof useCancelFriendRequestMutation>;
+export type CancelFriendRequestMutationResult = Apollo.MutationResult<CancelFriendRequestMutation>;
+export type CancelFriendRequestMutationOptions = Apollo.BaseMutationOptions<CancelFriendRequestMutation, CancelFriendRequestMutationVariables>;
 export const HelloDocument = gql`
     query hello {
   helloT

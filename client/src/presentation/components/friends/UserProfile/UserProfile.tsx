@@ -13,19 +13,23 @@ const UserProfile = ({
   name,
   image,
   key,
+  onClick,
 }: {
   primaryAction?: any;
   secondaryAction?: any;
   name: string;
   image: string;
   key: number;
+  onClick: any;
 }) => {
   return (
     <FriendProfile>
       <FriendImageConatiner>
         <FriendImage
+          onClick={onClick}
           style={{
             background: `url(${image}) center/cover`,
+            cursor: "pointer",
           }}
         />
         <FriendName>{name}</FriendName>

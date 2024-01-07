@@ -11,7 +11,7 @@ const RegisterDocument = `
 
 const graphqlEndpoint = "http://localhost:5500/graphql";
 
-for (let id = 0; id < 10; id++) {
+for (let id = 10; id < 110; id++) {
   const img = faker.image.urlPicsumPhotos();
   fetch(`${img}`)
     .then((res) => res.blob())
@@ -49,7 +49,7 @@ for (let id = 0; id < 10; id++) {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(`[${data}, pass: 123456789] created.`);
+          console.log(`[${JSON.stringify(data)}, pass: 123456789] created.`);
         })
         .catch((error) => console.error(error));
     })
