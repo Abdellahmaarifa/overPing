@@ -77,6 +77,7 @@ export class MediaService {
     const filePath = join(uploadDir, `${fileId}`);
     // const mimeType = mime.getType(filePath) || 'application/octet-stream';
     // console.log("mimeType", mimeType);
+    // console.log(`filePath:`, filePath);
     try {
       const fileBuffer = await fs.promises.readFile(filePath);
       return fileBuffer;
