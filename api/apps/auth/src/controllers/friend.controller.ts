@@ -17,6 +17,11 @@ export class FriendshipController {
     return await this.friendService.sendFriendRequest(input.senderId, input.receiverId);
   }
 
+  @MessagePattern({ role: 'user', cmd: 'cancel-request-friendship' })
+  async cancelFriendRequest(input : {userId: number, requester: number}): Promise<boolean> {
+    return await this.friendService.cancelFriendRequest(input.userId, input.requester);
+  }
+
   @MessagePattern({ role: 'user', cmd: 'unfriend-user' })
   async unfriendUser(input: { userId: number, friendId: number}): Promise<boolean>{
      await this.friendService.unfriendUser(input.userId, input.friendId);

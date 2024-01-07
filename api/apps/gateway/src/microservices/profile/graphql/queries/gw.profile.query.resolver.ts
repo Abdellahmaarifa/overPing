@@ -13,10 +13,10 @@ export class ProfileQueryResolver {
         private readonly profileService: GwProfileService,
     ) {}
 
-    @Query(() => GQLUserProfileModel ,{ nullable: true })
-    async findProfileById(@Args('id') id: number) : Promise<IUserProfile>{
-      return await this.profileService.findProfileById(id);
-    }
+    // @Query(() => GQLUserProfileModel ,{ nullable: true })
+    // async findProfileById(@Args('id') id: number) : Promise<IUserProfile>{
+    //   return await this.profileService.findProfileById(id);
+    // }
 
     @UseGuards(GqlJwtAuthGuard)
     @Query(() => GQLUserProfileModel ,{ nullable: true })

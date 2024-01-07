@@ -29,6 +29,21 @@ export class GwFriendshipService {
    }
 
 
+   async cancelFriendRequest(userId: number, requester: number): Promise<boolean> {
+    return this.clientService.sendMessageWithPayload(
+        this.client,
+        {
+            role: 'user',
+            cmd: 'cancel-request-friendship'
+        },
+        {
+            userId,
+            requester
+        }
+    )
+}
+
+
    async acceptFriendRequest(userId: number, friendId: number): Promise<boolean> {
     return this.clientService.sendMessageWithPayload(
         this.client,

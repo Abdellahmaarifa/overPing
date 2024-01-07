@@ -24,6 +24,13 @@ export class GwFriendMutationsResolver {
 
   @UseGuards(GqlJwtAuthGuard)
   @Mutation((returns) => Boolean )
+  async cancelFriendRequest(@Context() cxt ,@Args('requester') requester: number): Promise<boolean>{
+    const userId = cxt.req.user.id; 
+    return this.gwFriendshipService.cancelFriendRequest(userId, requester);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation((returns) => Boolean )
   async acceptFriendRequest(@Context() cxt ,@Args('friendId') friendId: number): Promise<boolean>{
     const userId = cxt.req.user.id; 
     return this.gwFriendshipService.acceptFriendRequest(userId, friendId);
