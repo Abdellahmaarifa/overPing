@@ -42,6 +42,41 @@ export class FriendshipService {
   }
 
 
+  // cancel friends
+  async cancelFriendRequest(userId: number, requester: number): Promise<boolean> {
+    const areFriends = await this.areUsersFriends(userId, requester);
+    if (areFriends) {
+      throw this.rpcExceptionService.throwBadRequest('Users are already friends.');
+    }
+
+    const existingRequest = await this.prisma.user
+    .findUnique({ where: { id: userId } })
+    .friendRequests({
+      where: { id: requester },
+    });
+
+    if ((existingRequest.length === 0)) {
+      throw this.rpcExceptionService.throwBadRequest("No friend request found.");
+    }
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        friendRequests: {
+          disconnect: [{ id: requester }],
+        },
+        pendingFriends: {
+            disconnect: [{ id: requester }],
+        },
+      },
+    });
+    
+    return true;
+  }
+
+  ///=====================end ==========
+
+
   async acceptFriendRequest(userId: number, friendId: number): Promise<void> {
     const existingRequest = await this.prisma.user
     .findUnique({ where: { id: userId } })
@@ -125,6 +160,7 @@ export class FriendshipService {
   }
 
   async unblockUser(userId: number, unblockedUserId: number): Promise<void> {
+    console.log("=================================> unblockUer", userId, " .  ", unblockedUserId);
     const areBlocked = await this.areUsersBlocked(userId, unblockedUserId);
     if (!areBlocked) {
       throw this.rpcExceptionService.throwBadRequest('Users are not blocked.');

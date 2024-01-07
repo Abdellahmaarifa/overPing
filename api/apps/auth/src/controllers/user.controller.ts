@@ -41,12 +41,13 @@ export class UserController {
 
   @MessagePattern({ role: 'user', cmd: 'findAllUsers' })
   async findAllUsers({userId}): Promise<IAuthUser[]> {
+    console.log("find all users controller")
     const users = await this.userService.findAllUsers(userId);
     this.handleUsersNotFound(users, 'Failed to query users');
     return users;
   }
 
-  @MessagePattern({ role: 'user', cmd: 'findAllUsers' })
+  @MessagePattern({ role: 'user', cmd: 'findPagesOfUsers' })
   async findPagesOfUsers({pageNumber, pageSize, userId}): Promise<IAuthUser[]> {
     const users = await this.userService.findPagesOfUsers(pageNumber,pageSize, userId);
     this.handleUsersNotFound(users, 'Failed to query users');

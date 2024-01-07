@@ -25,6 +25,7 @@ import {
   AcceptFriendRequestDocument,
   FindAllUsersDocument,
   GetOnlineFriendsDocument,
+  CancelFriendRequestDocument,
 } from "gql/index";
 import { Suspense, useEffect, useState } from "react";
 import { useUserContext } from "context/user.context";
@@ -91,6 +92,8 @@ const Friends = () => {
           setFriends(data.data.getFriendsRequests);
         } else if (filter === FILTERS.BLOCKED)
           setFriends(data.data.getBlockedUsers);
+        else if (filter === FILTERS.SUGGESTION)
+          setFriends(data.data.findAllUsers);
         else {
           setFriends([]);
         }
@@ -129,28 +132,27 @@ const Friends = () => {
   };
 
   const cancelFriendReq = (friend) => async () => {
-    // await toast.promise(
-    //   client.mutate({
-    //     mutation: RemoveFriendDocument,
-    //     variables: {
-    //       userId: Number(user?.id),
-    //       friendId: Number(friend.id),
-    //     },
-    //   }),
-    //   {
-    //     loading: "please wait..",
-    //     success: (data) => {
-    //       console.log("well done!", data);
-    //       // delete the user from the current list
-    //       clearFriend(friend);
-    //       return "Friend request canceled";
-    //     },
-    //     error: (err) => {
-    //       console.log(err);
-    //       return "something went wrong.";
-    //     },
-    //   }
-    // );
+    await toast.promise(
+      client.mutate({
+        mutation: CancelFriendRequestDocument,
+        variables: {
+          requester: Number(friend.id),
+        },
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          console.log("well done!", data);
+          // delete the user from the current list
+          clearFriend(friend);
+          return "Friend request canceled";
+        },
+        error: (err) => {
+          console.log(err);
+          return "something went wrong.";
+        },
+      }
+    );
   };
 
   const sendFriendReq = (friend) => async () => {
@@ -183,6 +185,29 @@ const Friends = () => {
   };
 
   const unclockFriend = (friend: User) => async () => {
+    await toast.promise(
+      client.mutate({
+        mutation: UnblockUserDocument,
+        variables: {
+          unblockedUserId: Number(friend.id),
+        },
+      }),
+      {
+        loading: "please wait..",
+        success: (data) => {
+          clearFriend(friend);
+          console.log("well done!", data);
+          return "user unblocked successfully";
+        },
+        error: (err) => {
+          console.log(err);
+          return "something went wrong.";
+        },
+      }
+    );
+  };
+
+  const unfriendUser = (friend: User) => async () => {
     await toast.promise(
       client.mutate({
         mutation: UnfriendUserDocument,
@@ -243,9 +268,7 @@ const Friends = () => {
       case FILTERS.SUGGESTION:
         return {
           name: "Remove",
-          func: () => {
-            clearFriend(friend);
-          },
+          func: () => clearFriend(friend),
         };
       case FILTERS.BLOCKED:
         return { name: "", func: () => {} };
@@ -307,6 +330,7 @@ const Friends = () => {
       <FriendList>
         {friendsData.map((friend, id) => (
           <UserProfile
+            onClick={() => navigate(`/profile/${friend.id}`)}
             key={id}
             primaryAction={getPrimaryAction(friend)}
             secondaryAction={getSecondaryAction(friend)}

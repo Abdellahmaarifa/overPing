@@ -96,3 +96,7 @@ mutation unblockUser($unblockedUserId: Float!) {
 mutation unfriendUser($friendId: Float!) {
   unfriendUser(friendId: $friendId)
 }
+
+mutation cancelFriendRequest($requester: Float!) {
+  cancelFriendRequest(requester: $requester)
+}
