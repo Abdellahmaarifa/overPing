@@ -76,12 +76,6 @@ model MutedMembers {
   expiry         DateTime
 }
 
-model BlockedUsers {
-  id             Int @id @default(autoincrement())
-  user_id        Int
-  blockedUser_id Int
-}
-
 model GameRequest {
   id         Int      @id @default(autoincrement())
   sender_id  Int

@@ -1,5 +1,4 @@
 import { RpcExceptionService } from '@app/common/exception-handling';
-// import { FriendshipDTO } from '@app/common/friend/dto/friendshipDto';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable } from '@nestjs/common';
@@ -11,14 +10,15 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class CheckersService {
+export class CheckerService {
   constructor(
-    @Inject(IRmqSeverName.FRIEND)
-    private readonly client: ClientProxy,
-    private readonly clientService: RabbitMqService,
-    private prisma: PrismaService,
+    // @Inject(IRmqSeverName.FRIEND)
+    // private readonly client: ClientProxy,
+    // private readonly clientService: RabbitMqService,
+    private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly rpcExceptionService: RpcExceptionService,
   ) {}
 
   async isOwner(userId: number, channelId: number): Promise<boolean> {
@@ -75,7 +75,7 @@ export class CheckersService {
     // });
     // return !!blockedMember;
 
-    // const friendShip: FriendshipDTO = await this.clientService.sendMessageWithPayload(
+    // const friendShip = await this.clientService.sendMessageWithPayload(
     //   this.client,
     //   {
     //       role: 'friend',
@@ -132,35 +132,7 @@ export class CheckersService {
     return channel?.visibility || null;
   }
 
-  async hashPassword(password: string) : Promise<string> {
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-    return hashedPassword;
-  }
-
-  async isPasswordMatched(hashedPassword: string, providedPassword: string ) {
-    const isMatch = await bcrypt.compare(providedPassword, hashedPassword);
-    return isMatch;
-  }
-
-
-  async getUserId(client: Socket) : Promise<number | null> {
-    try {
-      const session = client.handshake.headers.cookie;
-      const token = session?.split('=')[1];
-      if (token) {
-        const user = await this.jwtService.verifyAsync(token, {
-          secret: this.configService.get('JWT_ACCESS_SECRET'),
-        });
-        return user.sub;
-      }
-    } catch (error) {
-      // if (error.expiredAt) {
-      //   this.rpcExceptionService.throwUnauthorised(
-      //     'Token has expired, please sign in',
-      //   );
-      // }
-      return null;
-    }
+  async isEmpty(str: string): Promise<Boolean> {
+    return str === '' || str === null || str === undefined;
   }
 }

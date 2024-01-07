@@ -26,12 +26,6 @@ export class GQLChannelModel {
 
   @Field()
   messages: GQLMessageModel[];
-
-  @Field()
-  created_at: Date;
-  
-  @Field()
-  updated_at: Date;
 }
 
 @ObjectType()
@@ -44,4 +38,17 @@ export class GQLAdminsModel {
 export class GQLMembersModel {
   @Field()
   userId: number;
+}
+
+
+@ObjectType()
+export class GQLChannelSearchModel {
+  @Field(() => ID)
+  id: number;
+
+  @Field()
+  name: string;
+
+  @Field()
+  visibility: string;
 }

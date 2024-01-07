@@ -1,4 +1,4 @@
-import { IChannel, IMembers, IMessage } from '@app/common/chat';
+import { IChannel, IChannelSearch, IMembers, IMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
@@ -8,24 +8,44 @@ import { CreateChanneldto,
   UpdateChanneldto,
   UpdateMessageInChanneldto } from '../dto';
 import { ChannelService } from '../services/channel.service';
-import { CheckersService } from '../services/checkers.service';
+import { CheckerService } from '../utils/checker.service';
 
 @Controller()
 export class ChannelController {
   constructor(
     private readonly channelService : ChannelService,
-    private readonly checkers: CheckersService,
+    private readonly checker: CheckerService,
+    private readonly rpcExceptionService: RpcExceptionService
   ) {}
 
+  /******** Find Channel by user and group ID ********/
+
   @MessagePattern({role: 'channel', cmd: 'find-channel-by-id'})
-  async findDirectMessageById(payload: number) : Promise<IChannel> {
-    return await this.channelService.findById(payload);
+  async findChannelById(payload: any) : Promise<IChannel> {
+    const {id, user_id} = payload;
+    const res = await this.channelService.findById(id, user_id);
+    return res;
   }
 
-  @MessagePattern({role: 'channel', cmd: 'find-members-by-id'})
-  async findChannelMembersById(payload: number) : Promise<IMembers[]> {
-    return await this.channelService.findMembersById(payload);
+  /*********** Search For channel by Name ***********/
+
+  @MessagePattern({role: 'channel', cmd: 'search'})
+  async searchForChannel(channelName: string) : Promise<IChannelSearch[]> {
+    const res = await this.channelService.search(channelName);
+    return res;
   }
+
+  /************* Get Channels of a User *************/
+
+  @MessagePattern({role: 'channel', cmd: 'get-all'})
+  async getUserChannels(channelName: string) : Promise<IChannelSearch[]> {
+    const res = await this.channelService.search(channelName);
+    return res;
+  }
+
+
+  /***************** CHANNEL ACTIONS ****************/
+  /******* create ******* update ***** delete *******/
 
   @MessagePattern({role: 'channel', cmd: 'create'})
   async createChannel(payload: CreateChanneldto) : Promise<IChannel> {
@@ -43,6 +63,9 @@ export class ChannelController {
     return await this.channelService.delete(userID, channelID);
   }
 
+  /***************** MESSAGES ACTIONS ****************/
+  /******* update ********************* delete *******/
+
   @MessagePattern({role: 'channel', cmd: 'update-message'})
   async updateMessageInChannel(payload: UpdateMessageInChanneldto) : Promise<IMessage> {
     return await this.channelService.updateMessage(payload);
@@ -53,23 +76,32 @@ export class ChannelController {
     return await this.channelService.deleteMessage(payload);
   }
   
+  /**************** CHANNEL MEMBERSHIP ***************/
+  /*** join *********** add member *******************/
+  /*********** leave *************** remove member ***/
+
   @MessagePattern({role: 'channel', cmd: 'join'})
   async joinChannel(payload: MemberOfChanneldto) : Promise<IChannel> {
     const {userId, channelId, password} = payload;
-    const visibility = await this.checkers.channelVisibility(channelId);
+    
+    if (!(await this.channelService.checkForChannel(channelId))) {
+      this.rpcExceptionService.throwNotFound(`Failed to find channel ${channelId}`)
+    }
+    
+    const visibility = await this.checker.channelVisibility(channelId);
     switch (visibility) {
       case 'protected': {
         if (password) {
           return await this.channelService.joinProtectedChannel(userId, channelId, password);
         } else {
-          return null;
+          this.rpcExceptionService.throwInternalError('Failed to join Protected Channel: password required')
         }
       }
       case 'public': {
         return await this.channelService.joinPublicChannel(userId, channelId);
       }
       default: {
-        return null;
+        this.rpcExceptionService.throwUnauthorised(`You're not allowed to join the channel !!! PRIVATE !!!`);
       }
     }
   }
@@ -85,6 +117,9 @@ export class ChannelController {
     return await this.channelService.addMember(payload);
   }
 
+  /************** CHANNEL ADMINISTRATION *************/
+  /********* add Admin ******* remove Admine *********/
+
   @MessagePattern({role: 'channel', cmd: 'add-admin'})
   async addChannelAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.addAdmin(payload);
@@ -94,6 +129,11 @@ export class ChannelController {
   async removeChannelAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.removeAdmin(payload);
   }
+
+
+  /************************* MEMBER ACTIONS *************************/
+  /*********** Ban Member ******************* Mute Member ***********/
+  /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
   @MessagePattern({role: 'channel', cmd: 'kickMember'})
   async kickMember(payload: MemberOfChanneldto) : Promise<Boolean> {

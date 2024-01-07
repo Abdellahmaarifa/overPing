@@ -4,6 +4,6 @@ export class IMessage {
   sender_id:     number
   text:          string
   updated:       boolean
-  created_at:    string
-  updated_at:    string
+  created_at:    Date
+  updated_at:    Date
 }

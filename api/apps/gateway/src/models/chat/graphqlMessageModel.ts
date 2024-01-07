@@ -18,10 +18,10 @@ export class GQLMessageModel {
   @Field()
   updated: boolean;
 
-  @Field()
-  created_at: Date;
+  // @Field()
+  // created_at: Date;
 
-  @Field()
-  updated_at: Date;
+  // @Field()
+  // updated_at: Date;
 }
 

@@ -6,61 +6,30 @@ import { DeletionInput, UpdateInput } from '../input/directMessage.input';
 import { GQLDirectMessageModel, GQLMessageModel } from 'apps/gateway/src/models/chat';
 
 @Resolver()
-export class ChatResolver {
+export class directMessageResolver {
   constructor(private readonly directMessageService: GwDirectMessageService) {}
     
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => GQLDirectMessageModel)
   async createDirectMessage( @Args('userID') userID: number, @Args('targetID') targetID: number ) {
-    // return this.directMessageService.createDirectMessage( userID, targetID );
+    return this.directMessageService.createDirectMessage( userID, targetID );
   }
 
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
   async deleteDirectMessage(@Args('data') data: DeletionInput) {
-    // return this.directMessageService.deleteDirectMessage( data );
+    return this.directMessageService.deleteDirectMessage( data );
   }
 
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => GQLMessageModel)
   async updateMessageInDM( @Args('data') data: UpdateInput ) {
-    // return this.directMessageService.updateMessageInDM( data );
+    return this.directMessageService.updateMessageInDM( data );
   }
 
   @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
   async deleteMessageInDM(@Args('data') data: DeletionInput) {
-    // return this.directMessageService.deleteMessageInDM( data );
+    return this.directMessageService.deleteMessageInDM( data );
   }
-
-  @UseGuards(UserAccessAuthorizationGuard)
-  @Mutation(() => Boolean)
-  async blockUser( @Args('userID') userID: number, @Args('targetID') targetID: number ){
-    // return this.directMessageService.blockUser( userID, targetID );
-  }
-
-  @UseGuards(UserAccessAuthorizationGuard)
-  @Mutation(() => Boolean)
-  async unblockUser( @Args('userID') userID: number, @Args('targetID') targetID: number ){
-    // return this.directMessageService.unblockUser( userID, targetID );
-  }
-
-  /******* DOES THIS NEED TO BE IN THE GAME SERVICE ??? *****************/
-  // @UseGuards(UserAccessAuthorizationGuard)
-  // @Mutation(() => Boolean)
-  // async inviteToGame(@Args('data') data: GameInvitationInput) {
-  //   return this.directMessageService.inviteToGame( data );
-  // }
-
-  // @UseGuards(UserAccessAuthorizationGuard)
-  // @Mutation(() => Boolean)
-  // async acceptGameInvitation(@Args('data') data: AcceptGameInvitationInput) {
-  //   return this.directMessageService.acceptGameInvitation( data );
-  // }
-
-  // @UseGuards(UserAccessAuthorizationGuard)
-  // @Mutation(() => Boolean)
-  // async rejectGameInvitation(@Args('data') data: RejectGameInvitationInput) {
-  //   return this.directMessageService.rejectGameInvitation( data );
-  // }
 }

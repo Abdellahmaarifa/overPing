@@ -5,8 +5,9 @@ import { WebSocketGateway, WebSocketServer,
   OnGatewayDisconnect, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AddMessageInChanneldto } from '../dto';
-import { CheckersService } from '../services/checkers.service';
+import { CheckerService } from '../utils/checker.service';
 import { ChannelService } from '../services/channel.service';
+import { HelperService } from '../utils/helper.service';
 
 @WebSocketGateway({
   cors: {
@@ -18,7 +19,8 @@ import { ChannelService } from '../services/channel.service';
 export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly channelService: ChannelService,
-    private readonly checkers: CheckersService,
+    private readonly checker: CheckerService,
+    private readonly helper: HelperService
   ) {}
   @WebSocketServer() server: Server;
 
@@ -32,7 +34,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   @UseGuards(ClientAccessAuthorizationGuard)
   async handleConnection(client: Socket, ...args: any[]) {
     const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
-    const userId = await this.checkers.getUserId(client);
+    const userId = await this.helper.getUserId(client);
     if (user || userId) {
       this.logger.log(`User connected: ${client.id}`);
       this.connectedUsers.set(((user)? user.id : userId), client.id);
@@ -49,7 +51,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   }
 
   async handleDisconnect(client: Socket) {
-    const userId = await this.checkers.getUserId(client);
+    const userId = await this.helper.getUserId(client);
     if (userId) {
       this.logger.log(`User disconnected: ${client.id}`);
       this.connectedUsers.delete(userId);
@@ -64,24 +66,32 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   @UseGuards(ClientAccessAuthorizationGuard)
   @SubscribeMessage('sendMessageToUser')
   async sendMessageToUser(client: Socket, data: AddMessageInChanneldto) {
-    const userId = await this.checkers.getUserId(client);
+    const userId = await this.helper.getUserId(client);
     if (!userId || userId !== data.userId) {
       return;
     }
     
     const existingChannel = await this.channelService.checkForChannel(data.channelId);
-    if (!existingChannel || !this.checkers.isMember(userId, data.channelId)) {
+    if (!existingChannel || !this.checker.isMember(userId, data.channelId)) {
       return;
     }
     
-    if (this.checkers.isMuted(data.userId, data.channelId)) {
+    if (this.checker.isMuted(data.userId, data.channelId)) {
       return;
     }
 
     const message = this.channelService.addMessage(data);
     if (message) {
-      const channel = await this.channelService.findById(data.channelId);
+      const channel = await this.channelService.findById(data.channelId, userId);
       client.to(channel.id.toString()).emit('recMessageFromChannel', message);
     }
-  }
+  }  
 }
+
+
+
+// - Create Event to find CHANNEL MEMBERS by group IDs
+
+// - Create Event to get MESSAGES by user, group IDs -- PAGINATION -- 
+
+// - Emit Events to update stats of Owner, Admins, Members and Channel Information

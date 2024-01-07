@@ -7,20 +7,20 @@ import { DirectMessageController } from './controllers/directMessage.controller'
 import { ChannelController } from './controllers/channel.controller';
 import { DirectMessageService } from './services/directMessage.service';
 import { ChannelService } from './services/channel.service';
-import { CheckersService } from './services/checkers.service';
-import { DirectMessageGateway } from './gateways/directMessage.gateway';
-import { NotificationsGateway } from './gateways/notifications.gateway';
-import { ChannelGateway } from './gateways/channel.gateway';
+import { CheckerService } from './utils/checker.service';
+import { DirectMessageGateway } from './chat.gateway/directMessage.gateway';
+import { NotificationsGateway } from './chat.gateway/notifications.gateway';
+import { ChannelGateway } from './chat.gateway/channel.gateway';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClientAccessAuthorizationGuard } from './guards/client.guard';
 import { JwtService } from '@nestjs/jwt';
+import { HelperService } from './utils/helper.service';
 
 @Module({
   imports: [
     CommonModule,
     RabbitMqModule,
     RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
-    RabbitMqModule.forClientProxy(IRmqSeverName.MEDIA),
     RabbitMqModule.forClientProxy(IRmqSeverName.FRIEND),
   ],
   controllers: [
@@ -33,7 +33,8 @@ import { JwtService } from '@nestjs/jwt';
     RpcExceptionService,
     DirectMessageService,
     ChannelService,
-    CheckersService,
+    CheckerService,
+    HelperService,
     DirectMessageGateway,
     ChannelGateway,
     NotificationsGateway,

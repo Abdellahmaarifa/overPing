@@ -18,3 +18,10 @@ export class IAdmins {
 export class IMembers {
   userId:  number
 }
+
+
+export class IChannelSearch {
+  id:         number
+  name:       string
+  visibility: string
+}

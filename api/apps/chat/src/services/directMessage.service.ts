@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AddMessageInDMdto, DeleteDirectMessagedto,
          DeleteMessageInDMdto, UpdateMessageInDMdto } from '../dto';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
-import { CheckersService } from './checkers.service';
+import { CheckerService } from '../utils/checker.service';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { ClientProxy } from '@nestjs/microservices';
 import { RabbitMqService } from '@app/rabbit-mq';
@@ -16,10 +16,10 @@ export class DirectMessageService {
     private readonly client: ClientProxy,
     private readonly clientService: RabbitMqService,
     private readonly prisma: PrismaService,
-    private readonly checkers: CheckersService
+    private readonly checker: CheckerService
   ) {}
 
-  async findById(directMessageID: number) : Promise<any> {
+  async findById(directMessageID: number) : Promise<IDirectMessage> {
     return await this.prisma.directMessage.findUnique({
       where: { id: directMessageID },
       include: {
@@ -47,7 +47,7 @@ export class DirectMessageService {
   }
 
   async create(userID: number, targetID: number) : Promise<any> {
-    if (this.checkers.isBlocked(userID, targetID)) {
+    if (this.checker.isBlocked(userID, targetID)) {
       return null;
     }
     return await this.prisma.directMessage.create({
@@ -82,7 +82,7 @@ export class DirectMessageService {
         sender_id: data.userId
       },
     });
-    if (!message && this.checkers.isBlocked(data.userId, data.groupChatId)) {
+    if (!message && this.checker.isBlocked(data.userId, data.groupChatId)) {
       return null;
     }
     return await this.prisma.messages.update({
@@ -112,26 +112,6 @@ export class DirectMessageService {
         id: data.messageId,
         sender_id: data.userId
       }
-    });
-    return true;
-  }
-
-  async blockUser(userID: number, targetID: number) : Promise<Boolean> {
-    await this.prisma.blockedUsers.create({
-      data: {
-        user_id: userID,
-        blockedUser_id: targetID,
-      }
-    });
-    return true;
-  }
-
-  async unblockUser(userID: number, targetID: number) : Promise<Boolean> {
-    await this.prisma.blockedUsers.deleteMany({
-      where: {
-        user_id: userID,
-        blockedUser_id: targetID,
-      },
     });
     return true;
   }

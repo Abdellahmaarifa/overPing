@@ -1,10 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ClientProxy, Payload } from '@nestjs/microservices';
+import { ClientProxy } from '@nestjs/microservices';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IMessage } from '@app/common/chat/message.interface';
 import { CreateChannelInput, DeleteMessageInput, MemberInput, UpdateChannelInput, UpdateMessageInput } from '../graphql/input/channel.input';
-import { IChannel, IMembers } from '@app/common/chat';
+import { IChannel, IChannelSearch } from '@app/common/chat';
 
 @Injectable()
 export class GwChannelService {
@@ -14,27 +14,52 @@ export class GwChannelService {
     private readonly clientService: RabbitMqService,
   ) { }
 
-  async findChannelById(channelID: number) : Promise<IChannel>{
+  /************** Get Channels of a User **************/
+
+  async getUserChannels(userID: number) : Promise<IChannel[]> {
+    return await this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+          role: 'channel',
+          cmd: 'get-all',
+      },
+      userID
+    );
+  }
+
+  /******** Find Channel by user and group ID ********/
+
+  async findChannelById(userID: number, channelID: number) : Promise<IChannel>{
+    const payload = {
+      id: channelID,
+      user_id: userID,
+    };
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
             role: 'channel',
             cmd: 'find-channel-by-id',
         },
-        channelID
+        payload
     );
   }
 
-  async findChannelMembersById(channelID: number) : Promise<IMembers[]>{
+  /*********** Search For channel by Name ***********/
+
+  async searchForChannel(channelName: string) : Promise<IChannelSearch[]> {
     return await this.clientService.sendMessageWithPayload(
-        this.client,
-        {
-            role: 'channel',
-            cmd: 'find-members-by-id',
-        },
-        channelID
+      this.client,
+      {
+          role: 'channel',
+          cmd: 'search',
+      },
+      channelName
     );
   }
+
+
+  /***************** CHANNEL ACTIONS ****************/
+  /******* create ******* update ***** delete *******/
 
   async createChannel(payload: CreateChannelInput) : Promise<IChannel> {
     return await this.clientService.sendMessageWithPayload(
@@ -73,6 +98,10 @@ export class GwChannelService {
     );
   }
 
+
+  /***************** MESSAGES ACTIONS ****************/
+  /******* update ********************* delete *******/
+
   async updateMessageInChannel(payload: UpdateMessageInput) : Promise<IMessage> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
@@ -94,6 +123,11 @@ export class GwChannelService {
         payload
     );
   }
+
+
+  /**************** CHANNEL MEMBERSHIP ***************/
+  /*** join *********** add member *******************/
+  /*********** leave *************** remove member ***/
 
   async joinChannel(payload: MemberInput) : Promise<IChannel> {
     return await this.clientService.sendMessageWithPayload(
@@ -139,6 +173,10 @@ export class GwChannelService {
     );
   }
 
+
+  /************** CHANNEL ADMINISTRATION *************/
+  /********* add Admin ******* remove Admine *********/
+
   async addChannelAdmin(payload: MemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
@@ -160,6 +198,11 @@ export class GwChannelService {
         payload
     );
   }
+
+
+  /************************* MEMBER ACTIONS *************************/
+  /*********** Ban Member ******************* Mute Member ***********/
+  /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
   async kickMember(payload: MemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
@@ -215,37 +258,4 @@ export class GwChannelService {
         payload
     );
   }
-
-  // async inviteToGame(payload: GameInvitationInput) : Promise<Boolean>{
-  //   return await this.clientService.sendMessageWithPayload(
-  //       this.client,
-  //       {
-  //           role: 'channel',
-  //           cmd: 'game-invitation',
-  //       },
-  //       payload
-  //   );
-  // }
-
-  // async acceptGameInvitation(payload: AcceptGameInvitationInput) : Promise<Boolean>{
-  //   return await this.clientService.sendMessageWithPayload(
-  //       this.client,
-  //       {
-  //           role: 'channel',
-  //           cmd: 'accept-game-invitation',
-  //       },
-  //       payload
-  //   );
-  // }
-
-  // async rejectGameInvitation(payload: RejectGameInvitationInput) : Promise<Boolean>{
-  //   return await this.clientService.sendMessageWithPayload(
-  //       this.client,
-  //       {
-  //           role: 'channel',
-  //           cmd: 'reject-game-invitation',
-  //       },
-  //       payload
-  //   );
-  // }
 }

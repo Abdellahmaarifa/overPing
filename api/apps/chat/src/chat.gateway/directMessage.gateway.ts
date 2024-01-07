@@ -6,8 +6,9 @@ import { WebSocketGateway, WebSocketServer,
 import { Server, Socket } from 'socket.io';
 import { AddMessageInDMdto } from '../dto';
 import { DirectMessageService } from '../services/directMessage.service';
-import { CheckersService } from '../services/checkers.service';
+import { CheckerService } from '../utils/checker.service';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
+import { HelperService } from '../utils/helper.service';
 
 @WebSocketGateway({
   cors: {
@@ -20,7 +21,8 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   constructor( 
     private readonly directMessageService: DirectMessageService,
     private readonly prisma: PrismaService,
-    private readonly checkers: CheckersService,
+    private readonly checker: CheckerService,
+    private readonly helper: HelperService
   ) {}
   @WebSocketServer() server: Server;
 
@@ -34,7 +36,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   @UseGuards(ClientAccessAuthorizationGuard)
   async handleConnection(client: Socket, ...args: any[]) {
     const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
-    const userId = await this.checkers.getUserId(client);
+    const userId = await this.helper.getUserId(client);
     if (user || userId) {
       this.logger.log(`User connected: ${client.id}`);
       this.connectedUsers.set(((user)? user.id : userId), client.id);
@@ -46,7 +48,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   }
 
   async handleDisconnect(client: Socket) {
-    const userId = await this.checkers.getUserId(client);
+    const userId = await this.helper.getUserId(client);
     if (userId) {
       this.logger.log(`User disconnected: ${client.id}`);
       this.connectedUsers.delete(userId);
@@ -56,7 +58,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   @UseGuards(ClientAccessAuthorizationGuard)
   @SubscribeMessage('sendMessageToUser')
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {  
-    const userId = await this.checkers.getUserId(client);
+    const userId = await this.helper.getUserId(client);
     if (!userId || userId !== data.userId) {
       return;
     }
@@ -66,7 +68,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
       return;
     }
     
-    const isBlocked = await this.checkers.isBlocked(data.userId, data.recipientId);
+    const isBlocked = await this.checker.isBlocked(data.userId, data.recipientId);
     if (isBlocked) {
       return
     }
@@ -90,3 +92,6 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     }
   }
 }
+
+
+// - Create Event to get MESSAGES by user, group IDs -- PAGINATION -- 

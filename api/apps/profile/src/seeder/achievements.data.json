@@ -3,61 +3,61 @@
     "title": "Wand Wielder",
     "requirement": "Score 100 goals using only magical ricochets",
     "description": "Youve harnessed the power of the enchanted paddle, guiding the ball with the finesse of a sorcerer",
-    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Wand_Wielder"
+    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Wand_Wielder.jpeg"
   },
   {
     "title": "Bouncing Broomstick",
     "requirement": "Score 5 points in a single match without letting the ball touch the boarders",
     "description": "You've taken flight on a virtual broomstick keeping the ball afloat with your wizardry skills",
-    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Bouncing_Broomstick"
+    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Bouncing_Broomstick.jpeg"
   },
   {
     "title": "Borderline Maestro",
     "requirement": "Score 50 strict shot goals without letting the ball touch the boarders",
     "description": "Your precision is unparalleled as you navigate the game without a single touch to the edges. a true maestro of the ping pong realm",
-    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Borderline_Maestro"
+    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Borderline_Maestro.jpeg"
   },
   {
     "title": "Rebound Ruler",
     "requirement": "Achieve 25 rebounded goals, mastering the art of utilizing boarders to your advantage",
     "description": "You've harnessed the unpredictable power of rebounds, turning them into calculated goals that leave opponents puzzled",
-    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Rebound_Ruler"
+    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Rebound_Ruler.jpeg"
   },
   {
     "title": "Tournament Triumph",
     "requirement": "Win 3 tournaments in a row",
     "description": "You stand as the undisputed champion, conquering tournament after tournament with unmatched skill and determination",
-    "imageURL": "http://localhost:5500/image/achievement/defaultAchievement"
+    "imageURL": "http://localhost:5500/image/achievement/defaultAchievement.jpeg"
   },
   {
     "title": "Sorcerer's Apprentice",
     "requirement": "Play 10 matches without losing a single one",
     "description": "The magical forces are strong with you, and your opponents are left wondering if you've made a pact with a game genie",
-    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Sorcerers_Apprentice"
+    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Sorcerers_Apprentice.jpeg"
   },
   {
     "title": "Starstruck",
     "requirement": "Collect 100 stars in total across all games played",
     "description": "You've become the true celestial champion, gathering stars with every swing of your magical paddle",
-    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Starstruck"
+    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Starstruck.jpeg"
   },
   {
     "title": "Clean Sheet Connoisseur",
     "requirement": "Achieve 20 clean sheets in total",
     "description": "Your defensive skills are legendary, keeping opponents at bay and maintaining a spotless record in multiple matches",
-    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Clean_Sheet_Connoisseur"
+    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Clean_Sheet_Connoisseur.jpeg"
   },
   {
     "title": "Successive Shutouts",
     "requirement": "Achieve 5 successive clean sheets in a row",
     "description": "You've created an impenetrable wall, shutting out opponents in three consecutive matches with flawless defensive play",
-    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Successive_Shutouts"
+    "imageURL": "http://localhost:5500/image/achievement/6589847a-f661-41a7-ba91-a7a91f729086_Successive_Shutouts.jpeg"
   },
   {
     "title": "Tournament Trailblazer",
     "requirement": "Win a tournament without conceding a single point",
     "description": "You've left a trail of defeated opponentsin your wake, dominating every match in a tournament without conceding a single point",
-    "imageURL": "http://localhost:5500/image/achievement/defaultAchievement"
+    "imageURL": "http://localhost:5500/image/achievement/defaultAchievement.jpeg"
   }
 ]
 
