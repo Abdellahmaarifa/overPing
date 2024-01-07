@@ -13,16 +13,39 @@ export class GwDirectMessageService {
     private readonly clientService: RabbitMqService,
   ) { }
 
-  async findDirectMessageById(directMessageID: number) : Promise<IDirectMessage> {
+  /*********** Get DIRECT-MESSAGES of User ***********/
+
+  async getUserDirectMessages(userID: number) : Promise<IDirectMessage[]> {
+    return await this.clientService.sendMessageWithPayload(
+      this.client,
+      {
+          role: 'direct-message',
+          cmd: 'get-all',
+      },
+      userID
+    );
+  }
+
+  /**** Find DIRECT-MESSAGE by user and group ID *****/
+
+  async findDirectMessageById(userID: number, groupID: number) : Promise<IDirectMessage> {
+    const payload = {
+      id: groupID,
+      user_id: userID,
+    };    
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
             role: 'direct-message',
             cmd: 'find-by-id',
         },
-        directMessageID
+        payload
     );
   }
+
+
+  /************** DIRECT MESSAGE ACTIONS ************/
+  /******* create ******************** delete *******/
 
   async createDirectMessage(userID: number, targetID: number) : Promise<IDirectMessage>{
     const payload = {
@@ -50,6 +73,10 @@ export class GwDirectMessageService {
     );
   }
 
+
+  /***************** MESSAGES ACTIONS ****************/
+  /******* update ********************* delete *******/
+
   async updateMessageInDM(payload: UpdateInput) : Promise<IMessage>{
     return await this.clientService.sendMessageWithPayload(
         this.client,
@@ -71,67 +98,4 @@ export class GwDirectMessageService {
         payload
     );
   }
-
-  async blockUser(userID: number, targetID: number) : Promise<Boolean>{
-    const payload = {
-      user_id: userID,
-      target_id: targetID
-    };
-    return await this.clientService.sendMessageWithPayload(
-        this.client,
-        {
-            role: 'direct-message',
-            cmd: 'block-user',
-        },
-        payload
-    );
-  }
-
-  async unblockUser(userID: number, targetID: number) : Promise<Boolean>{
-    const payload = {
-      user_id: userID,
-      target_id: targetID
-    };
-    return await this.clientService.sendMessageWithPayload(
-        this.client,
-        {
-            role: 'direct-message',
-            cmd: 'unblock-user',
-        },
-        payload
-    );
-  }
-
-  // async inviteToGame(payload: GameInvitationInput) : Promise<Boolean>{
-  //   return await this.clientService.sendMessageWithPayload(
-  //       this.client,
-  //       {
-  //           role: 'direct-message',
-  //           cmd: 'game-invitation',
-  //       },
-  //       payload
-  //   );
-  // }
-
-  // async acceptGameInvitation(payload: AcceptGameInvitationInput) : Promise<Boolean>{
-  //   return await this.clientService.sendMessageWithPayload(
-  //       this.client,
-  //       {
-  //           role: 'direct-message',
-  //           cmd: 'accept-game-invitation',
-  //       },
-  //       payload
-  //   );
-  // }
-
-  // async rejectGameInvitation(payload: RejectGameInvitationInput) : Promise<Boolean>{
-  //   return await this.clientService.sendMessageWithPayload(
-  //       this.client,
-  //       {
-  //           role: 'direct-message',
-  //           cmd: 'reject-game-invitation',
-  //       },
-  //       payload
-  //   );
-  // }
 }

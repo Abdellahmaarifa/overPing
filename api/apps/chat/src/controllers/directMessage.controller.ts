@@ -7,6 +7,8 @@ import { DeleteDirectMessagedto,
   UpdateMessageInDMdto } from '../dto';
 import { DirectMessageService } from '../services/directMessage.service';
 
+// DON'T FORGET TO FIX THE ACHIEVEMENTS 
+
 @Controller()
 export class DirectMessageController {
   constructor(
@@ -37,17 +39,5 @@ export class DirectMessageController {
   @MessagePattern({role: 'direct-message', cmd: 'delete-message'})
   async deleteMessageInDM(payload: DeleteMessageInDMdto) : Promise<Boolean> {
     return await this.directMessageService.deleteMessage(payload);
-  }
-
-  @MessagePattern({role: 'direct-message', cmd: 'block-user'})
-  async blockUser(payload: any) : Promise<Boolean> {
-    const {userID, targetID} = payload;
-    return await this.directMessageService.blockUser(userID, targetID);
-  }
-
-  @MessagePattern({role: 'direct-message', cmd: 'unblock-user'})
-  async unblockUser(payload: any) : Promise<Boolean> {
-    const {userID, targetID} = payload;
-    return await this.directMessageService.unblockUser(userID, targetID);
   }
 }
