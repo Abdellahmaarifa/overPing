@@ -27,7 +27,7 @@ export class PoolService {
     return players.some(existingPlayer => existingPlayer.id === player.id);
   }
 
-  removePlayer(playerId: string, type: PoolType): void {
+  removePlayer(playerId: number, type: PoolType): void {
     const players = this.playersByPool[type];
     const index = players.findIndex((player) => player.id === playerId);
     if (index !== -1) {
@@ -40,12 +40,12 @@ export class PoolService {
 
 
   matchPlayers(type: PoolType): [Player, Player] | null {
-    console.log("******************************************************")
-    console.log(`Matching players for pool: ${type}`);
+    // console.log("******************************************************")
+    // console.log(`Matching players for pool: ${type}`);
     const players = this.playersByPool[type];
 
     if (players.length < 2) {
-      console.log(`Insufficient players in pool: ${type}`);
+      // console.log(`Insufficient players in pool: ${type}`);
       return null;
     }
 
@@ -93,7 +93,7 @@ export class PoolService {
         this.removePlayer(current.player.id , current.player.type);
         return [current.player, bestMatch.player];
       }
-      if (bestMatch != undefined && minDiff < gapThreshold) {
+      if (bestMatch != undefined && minDiff <= gapThreshold) {
         console.log(`Match found based on skill proximity: ${current.player.id} vs ${bestMatch.player.id}`);
         this.removePlayer(current.player.id , current.player.type);
         this.removePlayer(bestMatch.player.id, bestMatch.player.type );

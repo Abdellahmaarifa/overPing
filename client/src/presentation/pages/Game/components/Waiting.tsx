@@ -43,47 +43,53 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
         },
     });
 
+
+
+    // useEffect(() => {
+    //     console.log( "This is changed: ", subscriptionData);
+    // }, [subscriptionData])
+
     
-    // switch (playerOne.modePlaying) {
-    //     case 1:
-    //         playerMode = 'classic';
-    //         break;
-    //     case 2:
-    //         playerMode = "sandStorm";
-    //         break;
-    //     case 3:
-    //         playerMode = 'lastPong';
-    // }
+    switch (playerOne.modePlaying) {
+        case 1:
+            playerMode = 'classic';
+            break;
+        case 2:
+            playerMode = "sandstorm";
+            break;
+        case 3:
+            playerMode = 'lastPong';
+    }
 
-    // useEffect(() => 
-    // {
-    //     const fetchData = async () => 
-    //     {
-    //         try 
-    //         {
-    //             joinGame = await joinMatch(
-    //             {
-    //                 variables: {
-    //                     transferFundsInput: {
-    //                         userId: playerOne.userId,
-    //                         betAmount: playerOne.matchWager,
-    //                     },
-    //                     JoinMatchmakingInput: {
-    //                         userId: playerOne.userId,
-    //                         matchType: playerMode,
-    //                     },
-    //                 },
-    //             });
-    //             console.log('player send mutation to join the game:', joinGame);
-    //         }
-    //         catch (error) 
-    //         {
-    //             console.error('Error during joinMatch:', error);
-    //         }
-    //     };
+    useEffect(() => 
+    {
+        const fetchData = async () => 
+        {
+            try 
+            {
+                joinGame = await joinMatch(
+                {
+                    variables: {
+                        transferFundsInput: {
+                            userId: playerOne.userId,
+                            betAmount: playerOne.matchWager,
+                        },
+                        JoinMatchmakingInput: {
+                            userId: playerOne.userId,
+                            matchType: playerMode,
+                        },
+                    },
+                });
+                console.log('player send mutation to join the game:', joinGame);
+            }
+            catch (error) 
+            {
+                console.error('Error during joinMatch:', error);
+            }
+        };
 
-    //     fetchData();
-    // }, []);
+        fetchData();
+    }, []);
  
 
 
@@ -151,26 +157,28 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
     // let hideRobotOpetiondiv = () => {
     //     if (PlayWithRobot)
     //         PlayWithRobot.style.display = 'none';
+
     // }
+    console.log("Player one : ", playerOne.userId);
+    useEffect(() => 
+    {
+        //console.warn('Subscription structure :', subscriptionData);
+        if (subscriptionData && subscriptionData.matchWaitingList) 
+        {
+            const { matchWaitingList } = subscriptionData;
+            console.log('Subscription data:', matchWaitingList);
+        }
+        else
+            console.warn('Subscription data is null:', subscriptionData);
+
+        },[subscriptionData])
 
     if (loading) 
-        return <p>Loading...</p>;
+        return <p >Loading...</p>;
     else if (error) 
         return <p>Error occurred</p>;
     else
     {
-        useEffect(() => 
-        {
-            if (subscriptionData && subscriptionData.matchWaitingList) 
-            {
-                const { matchWaitingList } = subscriptionData;
-                console.log('Subscription data:', matchWaitingList);
-            }
-            else
-            {
-                console.warn('Subscription data is null:', subscriptionData);
-            }
-        },[subscriptionData])
         return (
             <div className='WaitingContainer'>
                 <div className='WaitingState'>

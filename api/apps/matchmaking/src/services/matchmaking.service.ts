@@ -26,7 +26,7 @@ export class MatchmakingService {
       this.profileClient,
       {
         role: 'profile',
-        cmd: 'find-Profile-by-userId',
+        cmd: 'find-profile-by-userId',
       },
       joinMatchData.userId
     )
@@ -68,6 +68,7 @@ export class MatchmakingService {
         user2Id: player2.id,
         matchKey: this.generateMatchKey(20),
      }
+     console.log('match is found ', matched)
       this.clientService.sendMessageWithPayload(
         this.gatewayClient,
         {
