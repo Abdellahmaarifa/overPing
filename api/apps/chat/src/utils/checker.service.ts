@@ -48,7 +48,10 @@ export class CheckerService {
         userId: userId,
       },
     });
-    return !!member;
+    if (!member) {
+      return false;
+    }
+    return await this.isAdmin(userId, channelId);
   }
 
   async authorized(userId: number, targetId: number, channelId: number): Promise<boolean> {
@@ -95,15 +98,15 @@ export class CheckerService {
   async isMuted(userId: number, channelId: number): Promise<boolean> {
     const mutedMember = await this.prisma.mutedMembers.findFirst({
       where: {
-        channel_id: channelId,
-        mutedMember_id: userId,
+        channelId: channelId,
+        user_id: userId,
       },
     });
     if (mutedMember && mutedMember.expiry <= new Date()) {
       await this.prisma.mutedMembers.deleteMany({
         where: {
-          channel_id: channelId,
-          mutedMember_id: userId,
+          channelId: channelId,
+          user_id: userId,
         }
       });
       return false;
@@ -119,6 +122,13 @@ export class CheckerService {
       },
     });
     return !!bannedMember;
+  }
+
+  async checkForChannel(id: number) : Promise<Boolean> {
+    const existedChannel = await this.prisma.channel.findUnique({
+      where: { id }
+    });
+    return !!!existedChannel;
   }
 
   async channelVisibility(channelID: number) : Promise<string> {

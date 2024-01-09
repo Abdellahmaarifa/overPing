@@ -253,16 +253,23 @@ export type MutationVerifyTwoFactorAuthArgs = {
   id: Scalars['Float']['input'];
 };
 
-export type PingPongPayload = {
-  __typename?: 'PingPongPayload';
-  matchKey: Scalars['String']['output'];
-  user1Id: Scalars['Float']['output'];
-  user2Id: Scalars['Float']['output'];
-};
-
 export type PlaceBetInput = {
   betAmount: Scalars['Float']['input'];
   userId: Scalars['Float']['input'];
+};
+
+export type Player = {
+  __typename?: 'Player';
+  bet: Scalars['Float']['output'];
+  id: Scalars['ID']['output'];
+  matchType: Scalars['String']['output'];
+};
+
+export type PlayersMatching = {
+  __typename?: 'PlayersMatching';
+  matchKey: Scalars['String']['output'];
+  user1: Player;
+  user2: Player;
 };
 
 export type Query = {
@@ -335,7 +342,7 @@ export type ResolveBetInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  matchWaitingList: PingPongPayload;
+  matchWaitingList: PlayersMatching;
 };
 
 
@@ -511,7 +518,7 @@ export type MatchWaitingListSubscriptionVariables = Exact<{
 }>;
 
 
-export type MatchWaitingListSubscription = { __typename?: 'Subscription', matchWaitingList: { __typename?: 'PingPongPayload', user1Id: number, user2Id: number, matchKey: string } };
+export type MatchWaitingListSubscription = { __typename?: 'Subscription', matchWaitingList: { __typename?: 'PlayersMatching', matchKey: string, user1: { __typename?: 'Player', id: string, bet: number, matchType: string }, user2: { __typename?: 'Player', id: string, bet: number, matchType: string } } };
 
 export type FindProfileByUserIdQueryVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -1400,9 +1407,17 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const MatchWaitingListDocument = gql`
     subscription MatchWaitingList($userId: Float!) {
   matchWaitingList(userId: $userId) {
-    user1Id
-    user2Id
     matchKey
+    user1 {
+      id
+      bet
+      matchType
+    }
+    user2 {
+      id
+      bet
+      matchType
+    }
   }
 }
     `;

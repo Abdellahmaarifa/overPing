@@ -12,3 +12,9 @@ docker exec profile sh -c 'cd /usr/src/app/apps/profile/prisma &&  yes | prisma 
 docker exec profile sh -c 'npx prisma generate --schema=/usr/src/app/apps/profile/prisma/schema.prisma'
 docker restart profile
 
+
+docker exec chat rm -rf /usr/app/apps/chat/prisma/migrations && echo "the migrations dir is deleted"
+docker exec chat sh -c 'cd /usr/src/app/apps/chat/prisma &&  yes | prisma migrate dev'
+docker exec chat sh -c 'npx prisma generate --schema=/usr/src/app/apps/chat/prisma/schema.prisma'
+docker restart chat
+

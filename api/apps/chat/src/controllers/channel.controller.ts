@@ -1,4 +1,4 @@
-import { IChannel, IChannelSearch, IMembers, IMessage } from '@app/common/chat';
+import { IChannel, IChannelSearch, IMembers, IMessage, IVisibility } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
@@ -84,20 +84,20 @@ export class ChannelController {
   async joinChannel(payload: MemberOfChanneldto) : Promise<IChannel> {
     const {userId, channelId, password} = payload;
     
-    if (!(await this.channelService.checkForChannel(channelId))) {
+    if (!(await this.checker.checkForChannel(channelId))) {
       this.rpcExceptionService.throwNotFound(`Failed to find channel ${channelId}`)
     }
     
     const visibility = await this.checker.channelVisibility(channelId);
     switch (visibility) {
-      case 'protected': {
+      case IVisibility.PROTECTED: {
         if (password) {
           return await this.channelService.joinProtectedChannel(userId, channelId, password);
         } else {
           this.rpcExceptionService.throwInternalError('Failed to join Protected Channel: password required')
         }
       }
-      case 'public': {
+      case IVisibility.PUBLIC: {
         return await this.channelService.joinPublicChannel(userId, channelId);
       }
       default: {

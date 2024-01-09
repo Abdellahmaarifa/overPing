@@ -3,7 +3,7 @@ export class AddMessageInDMdto {
   userId:      number;
   recipientId: number;
   groupChatId: number;
-  text:       string;
+  text:        string;
 }
 
 // UPDATE MESSAGE IN DM

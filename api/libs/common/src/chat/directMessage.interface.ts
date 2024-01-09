@@ -4,5 +4,6 @@ export class IDirectMessage {
   id:           number
   user1_id:     number
   user2_id:     number
-  messages:     IMessage[]
+  messages?:    IMessage[]
+  created_at:   any
 }

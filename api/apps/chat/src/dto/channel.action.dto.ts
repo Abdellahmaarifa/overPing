@@ -1,19 +1,20 @@
 
 // CREATE CHANNEL DTO
 export class CreateChanneldto {
-  userId: number;
-  channelName: string;
+  userId:       number;
+  channelName:  string;
   description?: string;
-  visibility: string;
-  password?: string;
+  visibility:   string;
+  password?:    string;
 }
 
 // UPDATE CHANNEL DTO
 export class UpdateChanneldto {
-  userId: number;
-  channelId: number;
+  userId:       number;
+  channelId:    number;
   channelName?: string;
   description?: string;
-  visibility?: string;
-  password?: string;
+  visibility:   string;
+  oldPassword?: string;
+  newPassword?: string;
 }

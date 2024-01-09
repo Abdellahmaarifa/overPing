@@ -42,7 +42,7 @@ export class MatchmakingService {
       case "lastPong":
         playerPoolType = PoolType.Classic;
     }
-    
+
     const player: Player = {
       id: joinMatchData.userId,
       rank: profile.rank,
@@ -52,23 +52,44 @@ export class MatchmakingService {
       matched: false,
       timePlayerJoin: new Date()
     }
-     
-   this.PoolService.addPlayer(player);
-   this.findAndStartMatch(PoolType.Classic);
+
+    this.PoolService.addPlayer(player);
+    this.findAndStartMatch(PoolType.Classic);
   }
 
 
-  async findAndStartMatch(matchType: PoolType) {
-     const  matchResult= this.PoolService.matchPlayers(matchType);
-   
-     if (matchResult) {
+  async findAndStartMatch(matchType: PoolType) { 
+    const matchResult = this.PoolService.matchPlayers(matchType);
+
+    if (matchResult) {
       const [player1, player2] = matchResult;
-      const matched = {
-        user1Id: player1.id,
-        user2Id: player2.id,
-        matchKey: this.generateMatchKey(20),
-     }
-     console.log('match is found ', matched)
+      let matched;
+      if (player1 && !player2) {
+        matched = {
+          user1:{
+            id: player1.id,
+            bet: player1.bet,
+            matchType: player1.type,
+          },
+          user2: {},
+          matchKey: "null",
+        }
+      } else {
+        matched = {
+          user1:{
+            id: player1.id,
+            bet: player1.bet,
+            matchType: player1.type,
+          },
+          user2:{
+            id: player2.id,
+            bet: player2.bet,
+            matchType: player2.type,
+          },
+          matchKey: this.generateMatchKey(20),
+        }
+      }
+      console.log('match is found ', matched)
       this.clientService.sendMessageWithPayload(
         this.gatewayClient,
         {
@@ -83,12 +104,12 @@ export class MatchmakingService {
   private generateMatchKey(length: number): string {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let key = '';
-  
+
     for (let i = 0; i < length; i++) {
       const randomIndex = Math.floor(Math.random() * characters.length);
       key += characters.charAt(randomIndex);
     }
-  
+
     return key;
   }
 

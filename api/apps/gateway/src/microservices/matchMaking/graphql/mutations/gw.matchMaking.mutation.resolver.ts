@@ -10,16 +10,8 @@ import { Inject } from '@nestjs/common';
 import { PubSubEngine } from 'graphql-subscriptions';
 import { GwMatchMakingService } from '../../services/gw.matchMaking.service';
 import { JoinMatchmakingInput } from '../inputs/joinMatchmakingInput';
+import { PlayersMatching } from '../../models/playerMathing';
 
-@ObjectType()
-export class PingPongPayload {
-  @Field()
-  user1Id: number
-    @Field()
-    user2Id: number
-    @Field()
-    matchKey: string
-}
 
 @Resolver()
 export class MatchMakingMutationsResolver {
@@ -28,8 +20,8 @@ export class MatchMakingMutationsResolver {
         private readonly gwMatchMakingService: GwMatchMakingService,
     ) { }
 
-    @Subscription((returns) => PingPongPayload, {
-        resolve: (payload: PingPongPayload) => payload,
+    @Subscription((returns) => PlayersMatching, {
+        resolve: (payload: PlayersMatching) => payload,
       })
       matchWaitingList(@Args('userId') userId: number) {
         return this.pubSub.asyncIterator(`waitingList${userId}`);

@@ -18,6 +18,7 @@ model Channel {
   admins        Admins[]
   members       Members[]
   bannedMembers BannedMembers[]
+  mutedMembers  MutedMembers[]
   messages      Messages[]
   created_at    DateTime        @default(now())
   updated_at    DateTime        @updatedAt
@@ -49,17 +50,19 @@ model Messages {
 }
 
 model Members {
-  id        Int     @id @default(autoincrement())
-  userId    Int
-  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  channelId Int
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId  Int
+  created_at DateTime @default(now())
 }
 
 model Admins {
-  id        Int     @id @default(autoincrement())
-  userId    Int
-  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  channelId Int
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId  Int
+  created_at DateTime @default(now())
 }
 
 model BannedMembers {
@@ -71,8 +74,9 @@ model BannedMembers {
 
 model MutedMembers {
   id             Int      @id @default(autoincrement())
-  channel_id     Int
-  mutedMember_id Int
+  user_id        Int
+  channel        Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId      Int
   expiry         DateTime
 }
 

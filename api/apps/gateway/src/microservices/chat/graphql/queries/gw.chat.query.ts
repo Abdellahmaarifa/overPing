@@ -2,7 +2,7 @@ import { UserAccessAuthorizationGuard } from '../../../auth/guards/user-auth.gua
 import { UseGuards } from '@nestjs/common';
 import { Resolver,Query, Args} from '@nestjs/graphql';
 import { GwChannelService, GwDirectMessageService } from '../../services';
-import { GQLChannelModel, GQLChannelSearchModel, GQLDirectMessageModel, GQLMembersModel } from 'apps/gateway/src/models/chat';
+import { GQLChannelModel, GQLChannelSearchModel, GQLDirectMessageModel } from '../models';
 
 @Resolver()
 export class ChatQueriesResolver {
@@ -13,7 +13,7 @@ export class ChatQueriesResolver {
 
   /******* Queries to get DIRECT-MESSAGES / CHANNELS of a User *******/
 
-  @UseGuards(UserAccessAuthorizationGuard)
+  // @UseGuards(UserAccessAuthorizationGuard)
   @Query(() => [GQLDirectMessageModel], { nullable: true })
   async getUserDirectMessages(@Args('id') id: number): Promise<GQLDirectMessageModel[]> {
     return await this.directMessageService.getUserDirectMessages(id);
@@ -28,7 +28,7 @@ export class ChatQueriesResolver {
 
   /****** Queries to find DIRECT-MESSAGES / CHANNELS by user and group ID ******/
 
-  @UseGuards(UserAccessAuthorizationGuard)
+  // @UseGuards(UserAccessAuthorizationGuard)
   @Query(() => GQLDirectMessageModel, { nullable: true })
   async findDirectMessageById(
     @Args('userId') userId: number,
@@ -37,7 +37,7 @@ export class ChatQueriesResolver {
     return await this.directMessageService.findDirectMessageById(userId, groupId);
   }
 
-  @UseGuards(UserAccessAuthorizationGuard)
+  // @UseGuards(UserAccessAuthorizationGuard)
   @Query(() => GQLChannelModel, { nullable: true })
   async findChannelById(
     @Args('userId') userId: number,
@@ -48,7 +48,7 @@ export class ChatQueriesResolver {
 
   /*********** Search For channel by Name ***********/
 
-  @UseGuards(UserAccessAuthorizationGuard)
+  // @UseGuards(UserAccessAuthorizationGuard)
   @Query(() => [GQLChannelSearchModel], { nullable: true })
   async searchForChannel(
     @Args('channelName') channelName: string

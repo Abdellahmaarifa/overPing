@@ -103,32 +103,37 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
   }
 
   @SubscribeMessage('matchingRequest')
-  handleMatchingRequest(client : Socket, obj : UserInfo)
+  handleMatchingRequest(client : Socket, id : number)
   {
-    let findPlayer : PlayersList | undefined = undefined
-    let matchId : string = "";
     
-    if (waitingPlayers.length)
-      findPlayer =  (findMatchigPlayer(waitingPlayers, obj))
-    if (findPlayer !== undefined)
-    {
-      matchId = (Math.floor(Math.random() * 10000) + 1).toString() + Date.now().toString();
-      findPlayer.playersInfo.matchId = matchId;
-      obj.matchId = matchId;
-      findPlayer.playersInfo.socket = null;
-      if (client)
-        client.emit('machingResponse', findPlayer.playersInfo);
-      obj.socket = null;
-      if (findPlayer.playersSocket)
-        findPlayer.playersSocket.emit('machingResponse', obj);
-      waitingPlayers = removePlayerFromWaitingList(waitingPlayers, findPlayer.playersSocket);
-      waitingPlayers = removePlayerFromWaitingList(waitingPlayers, client);
-      client.disconnect();
-      findPlayer.playersSocket.disconnect();
-    }
-    else if (client)
-      client.emit('machingResponse', findPlayer);
   }
+  // @SubscribeMessage('matchingRequest')
+  // handleMatchingRequest(client : Socket, obj : UserInfo)
+  // {
+  //   let findPlayer : PlayersList | undefined = undefined
+  //   let matchId : string = "";
+    
+  //   if (waitingPlayers.length)
+  //     findPlayer =  (findMatchigPlayer(waitingPlayers, obj))
+  //   if (findPlayer !== undefined)
+  //   {
+  //     matchId = (Math.floor(Math.random() * 10000) + 1).toString() + Date.now().toString();
+  //     findPlayer.playersInfo.matchId = matchId;
+  //     obj.matchId = matchId;
+  //     findPlayer.playersInfo.socket = null;
+  //     if (client)
+  //       client.emit('machingResponse', findPlayer.playersInfo);
+  //     obj.socket = null;
+  //     if (findPlayer.playersSocket)
+  //       findPlayer.playersSocket.emit('machingResponse', obj);
+  //     waitingPlayers = removePlayerFromWaitingList(waitingPlayers, findPlayer.playersSocket);
+  //     waitingPlayers = removePlayerFromWaitingList(waitingPlayers, client);
+  //     client.disconnect();
+  //     findPlayer.playersSocket.disconnect();
+  //   }
+  //   else if (client)
+  //     client.emit('machingResponse', findPlayer);
+  // }
 
 //_______________________________________ End of events  come from waiting component _________
 

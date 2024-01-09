@@ -8,7 +8,9 @@ export class IChannel {
   visibility:    string
   admins:        IAdmins[]
   members:       IMembers[]
-  messages:      IMessage[]
+  messages?:     IMessage[]
+  created_at:    any
+  updated_at:    any
 }
 
 export class IAdmins {
@@ -24,4 +26,10 @@ export class IChannelSearch {
   id:         number
   name:       string
   visibility: string
+}
+
+export enum IVisibility {
+  PUBLIC = 'public',
+  PRIVATE = 'private',
+  PROTECTED = 'protected',
 }

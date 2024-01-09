@@ -2,10 +2,10 @@ import './Waiting.css'
 import UserInfo from './UserInfo';
 // import { io, Socket } from 'socket.io-client';
 import { tabId as waitingTabsId } from './App'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Howl, Howler } from 'howler';
 import { useJoinMatchGameMutation } from 'gql/index';
-import { useMatchWaitingListSubscription} from "gql/index";
+import { useAccountQuery, useMatchWaitingListSubscription} from "gql/index";
 
 Howler.volume(1.0);
 
@@ -29,12 +29,18 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
     let plyOneImg: HTMLElement | null = null;
     let plyTwoImg: HTMLElement | null = null;
     let PlayWithRobot: HTMLElement | null = null;
-    let TheSwitch: boolean = false;
+   // let TheSwitch: boolean = false;
     let playersImages: string[] = ["/images/broko.jpg", "/images/flamingo.jpg", "/images/franky.jpg", "/images/Mihawk.jpg", "/images/paji.jpg", "/images/sabo.jpg", "/images/usopp.jpg", "/images/zoro.jpg", "/images/ice.jpg", "/images/bigMama.jpg", "/images/illumi.jpg", "/images/miluki.jpg", "/images/pakunda.jpg", "/images/shalnark.jpg", "/images/shizuku.jpg", "images/corollo.jpg", "/images/kurapika.jpeg", "/images/sanji.jpg", "/images/chopper.jpg", "/images/nami.jpg", "/images/luffy.jpg", "/images/perona.jpg", "/images/robin.jpg"];
     let index: number = 0;
     let playerMode : string;
     let joinGame;
 
+    plyOneImg = document.getElementById("WaitingAvatarR1");
+    plyTwoImg = document.getElementById("WaitingAvatarR2");
+    PlayWithRobot = document.getElementById("robotReq");
+    
+    
+    let [TheSwitch, setSwitchValue] = useState(false);
     const [joinMatch] = useJoinMatchGameMutation();
     //Use the subscription hook
     const { data: subscriptionData, loading, error } = useMatchWaitingListSubscription({
@@ -42,12 +48,6 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
             userId: playerOne.userId,
         },
     });
-
-
-
-    // useEffect(() => {
-    //     console.log( "This is changed: ", subscriptionData);
-    // }, [subscriptionData])
 
     
     switch (playerOne.modePlaying) {
@@ -92,73 +92,85 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
     }, []);
  
 
+    //setTimeout(() => 
+    //{
 
+    //    TheSwitch = true;
+    //         setTimeout( () =>
+    //         {
+    //             if (player === null)
+    //             {
+    //                 plyTwoImg?.setAttribute('src', "/images/question-mark.jpeg");
+    //                 setTimeout(() => 
+    //                 {
+    //                     console.log('match id ', playerOne.matchId)
+    //                     if (PlayWithRobot)
+    //                         PlayWithRobot.style.display = 'inline-block';
+    //                 }, 100);
+    //             }
+    //             else if (player)
+    //             {
+    //                 if (player)
+    //                 updatePlayerTwo(player?.playWithRobot, player?.tabId, player?.matchId, 
+    //                 player?.matchWager, player?.modePlaying, player?.userName, player?.userAvatar,
+    //                 player?.userLogo , player?.matchWon, player?.bestWinStreak, player?.matchPlyed,
+    //                 player?.level, player?.tournentPlayed, player?.tournentWon, player?.playWithMouse, player?.userId);
+    //                 if (playerTwo)
+    //                 {
+    //                     plyTwoImg?.setAttribute('src', playerTwo.userAvatar);
+    //                     console.log('The hidden match id is ', playerOne.matchId , playerTwo.matchId);
+    //                     updateMatchId(playerTwo.matchId)
+    //                 }
+    //             }
+
+    //         }, 500)
+    //}, 65000);// 3s for switching images 
  
    
-    // let slideSound: any = new Howl({
-    //     src: ['/Sounds/slideImageSoundEffect.mp3'],
-    //     onload: () => {
-    //         console.log('Audio loaded successfully');
-    //         // You can play the sound or perform other actions here
-    //     },
-    //     onloaderror: (error: any) => {
-    //         console.error('Error loading audio:', error);
-    //     },
-    // });
+    let slideSound: any = new Howl({
+        src: ['/Sounds/slideImageSoundEffect.mp3'],
+        onload: () => {
+            console.log('Audio loaded successfully');
+            // You can play the sound or perform other actions here
+        },
+        onloaderror: (error: any) => {
+            console.error('Error loading audio:', error);
+        },
+    });
 
-    // plyOneImg = document.getElementById("WaitingAvatarR1");
-    // plyTwoImg = document.getElementById("WaitingAvatarR2");
-    // PlayWithRobot = document.getElementById("robotReq");
+  
 
-    // useEffect(() => {
-    //     const checkDocLoaded = () => {
-    //         if (plyOneImg === null) {
-    //             setTimeout(() => {
-    //                 plyOneImg = document.getElementById("WaitingAvatarR1");
-    //                 plyTwoImg = document.getElementById("WaitingAvatarR2");
-    //                 PlayWithRobot = document.getElementById("robotReq");
-    //                 plyOneImg?.setAttribute('src', playerOne.userAvatar);
-    //             }, 500);
-    //         }
-    //     }
-    //     checkDocLoaded();
+    useEffect(() => {
+        const checkDocLoaded = () => {
+            if (plyOneImg === null) {
+                setTimeout(() => {
+                    plyOneImg = document.getElementById("WaitingAvatarR1");
+                    plyTwoImg = document.getElementById("WaitingAvatarR2");
+                    PlayWithRobot = document.getElementById("robotReq");
+                    plyOneImg?.setAttribute('src', playerOne.userAvatar);
+                }, 500);
+            }
+        }
+        checkDocLoaded();
 
-    // }, [plyOneImg])
+    }, [plyOneImg])
 
-    // useEffect(() => {
-    //     const changeAvatar = () => {
 
-    //         if (TheSwitch !== true) {
-    //             setTimeout(() => {
-    //                 plyTwoImg?.setAttribute('src', playersImages[index]);
-    //                 slideSound.play();
-    //                 index++;
-    //                 if (index === playersImages.length)
-    //                     index = 0;
-    //             }, 100)
-    //         }
-    //         else {
-    //             clearInterval(intervalId);
-    //         }
-    //     }
-    //     const intervalId = setInterval(changeAvatar, 100);
 
-    // }, [TheSwitch])
+    document.addEventListener('DOMContentLoaded', function () {
+        plyOneImg?.setAttribute('src', playerOne.userAvatar);
+        plyTwoImg?.setAttribute('src', "/images/question-mark.jpeg");
+    });
 
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     plyOneImg?.setAttribute('src', playerOne.userAvatar);
-    //     plyTwoImg?.setAttribute('src', "/images/question-mark.jpeg");
-    // });
+    let setRobotOpetion = (val: boolean) => {
+        updateRobotOpetion(val);
+    }
 
-    // let setRobotOpetion = (val: boolean) => {
-    //     updateRobotOpetion(val);
-    // }
+    let hideRobotOpetiondiv = () => {
+        if (PlayWithRobot)
+            PlayWithRobot.style.display = 'none';
 
-    // let hideRobotOpetiondiv = () => {
-    //     if (PlayWithRobot)
-    //         PlayWithRobot.style.display = 'none';
-
-    // }
+    }
     console.log("Player one : ", playerOne.userId);
     useEffect(() => 
     {
@@ -167,15 +179,115 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
         {
             const { matchWaitingList } = subscriptionData;
             console.log('Subscription data:', matchWaitingList);
+            setSwitchValue(true);
+            console.log("The switch : ", TheSwitch);
         }
         else
             console.warn('Subscription data is null:', subscriptionData);
 
         },[subscriptionData])
 
-    if (loading) 
-        return <p >Loading...</p>;
-    else if (error) 
+
+    useEffect(() => {
+        const changeAvatar = () => {
+
+            console.log("change The switch : ", TheSwitch, subscriptionData);
+            if (TheSwitch === false && subscriptionData === undefined) {
+                setTimeout(() => {
+                    plyTwoImg?.setAttribute('src', playersImages[index]);
+                    slideSound.play();
+                    index++;
+                    if (index === playersImages.length)
+                        index = 0;
+                }, 200)
+            }
+            else {
+                clearInterval(intervalId);
+            }
+        }
+        const intervalId = setInterval(changeAvatar, 100);
+        return () => clearInterval(intervalId);
+        
+    }, [TheSwitch, subscriptionData])
+    
+    if (TheSwitch === true)
+    {
+        console.log("====================> : ", subscriptionData)
+        if (subscriptionData && subscriptionData.matchWaitingList.matchKey === "null")
+        {
+            setTimeout(() => {
+            console.log("its null========>");
+            plyTwoImg?.setAttribute('src', "/images/question-mark.jpeg");
+            console.log("attri : ", plyTwoImg?.getAttribute('src'));
+            setTimeout(() => 
+            {
+                console.log('match id ', playerOne.matchId)
+                if (PlayWithRobot)
+                    PlayWithRobot.style.display = 'inline-block';
+                }, 100);
+            }, 1000);
+
+        }
+        else if (subscriptionData)
+        {
+            const { data, loading, error } = useAccountQuery({
+                variables: {
+                  userId: Number(subscriptionData.matchWaitingList.user2.id),
+                },
+              });
+            if (loading)
+                return (<p>Loding ...</p>);
+            if (error)
+              return (<p>Error?</p>)
+            let ply2MatchId : string = subscriptionData.matchWaitingList.matchKey;
+            let ply2MatchWager : number = subscriptionData.matchWaitingList.user2.bet;
+            let ply2Username : string = data?.findUserById.username as string;
+            let ply2UserAvatar : string = data?.findUserById.profileImgUrl as string;
+            let ply2MatchWon : number = data?.findProfileByUserId?.gameStatus.matchesWon as number;
+            let ply2BestWinSteak : number = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
+            let ply2MatchPlyed : number = data?.findProfileByUserId?.gameStatus.totalMatches as number;
+            let ply2Level : number = data?.findProfileByUserId?.xp as number;
+            let ply2TournentPlayed : number = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
+            let ply2TournenetWon : number = data?.findProfileByUserId?.gameStatus.win_streak as number;
+            let ply2UserId : number  =  parseInt(subscriptionData.matchWaitingList.user2.id);
+            let ply2ModePlaying : number = 0;
+            if (subscriptionData.matchWaitingList.user2.matchType == "classic")
+                ply2ModePlaying = 1;
+            if (subscriptionData.matchWaitingList.user2.matchType == "standstorm")
+                ply2ModePlaying = 2;
+            if (subscriptionData.matchWaitingList.user2.matchType == "lastPong")
+                ply2ModePlaying = 3;
+            let ply2UserLogo : string = "";
+            if (data?.findProfileByUserId?.rank  as number < 100)
+                ply2UserLogo = "/public/images/badge-1.png"
+            if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
+                ply2UserLogo = "/public/images/badge-2.png";
+            if (data?.findProfileByUserId?.rank  as number >= 200)
+                ply2UserLogo = "/public/images/badge-3.png";
+            updatePlayerTwo(false, "", ply2MatchId, ply2MatchWager, ply2ModePlaying, ply2Username, ply2UserAvatar,
+            ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2MatchPlyed, ply2BestWinSteak,
+            ply2TournentPlayed, ply2TournenetWon, ply2UserId);
+
+            //   //playerTwo.userName = ply2id as string;
+            //   updatePlayerTwo(false, player?.tabId, subscriptionData.matchWaitingList.matchKey, 
+            //     player?.matchWager, player?.modePlaying, player?.userName, player?.userAvatar,
+            //     player?.userLogo , player?.matchWon, player?.bestWinStreak, player?.matchPlyed,
+            //     player?.level, player?.tournentPlayed, player?.tournentWon, player?.playWithMouse, player?.userId);
+              
+            // playerTwo?.userAvatar = data?.findUserById.profileImgUrl as string;
+            // playerTwo.matchPlyed = data?.findProfileByUserId?.gameStatus.totalMatches as number;
+            // playerTwo.matchWon = data?.findProfileByUserId?.gameStatus.matchesWon as number;
+            // playerTwo.bestWinStreak = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
+            // playerTwo.level = data?.findProfileByUserId?.xp as number;
+            // playerTwo.tournentWon = data?.findProfileByUserId?.gameStatus.win_streak as number;
+            // playerTwo.tournentPlayed = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
+            // playerTwo.userId = Number(data?.findUserById?.id); 
+
+        }
+    }
+    // if (loading) 
+    //     return <p >Loading...</p>;
+    if (error) 
         return <p>Error occurred</p>;
     else
     {
@@ -204,8 +316,8 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
                 <div className='playWithRobot' id="robotReq" >
                     <p>No player found online <br />if you want to play with Robot click Yes <br />otherwize you will wait until a new player come online</p>
                     <div className='WaitingBtn'>
-                        {/* <button onClick={() => setRobotOpetion(true)}>Yes</button> */}
-                        {/* <button onClick={() => hideRobotOpetiondiv()}>No</button> */}
+                        <button onClick={() => setRobotOpetion(true)}>Yes</button>
+                        <button onClick={() => hideRobotOpetiondiv()}>No</button>
                     </div>
                 </div>
                 <div className='WaitingPlayer2'>

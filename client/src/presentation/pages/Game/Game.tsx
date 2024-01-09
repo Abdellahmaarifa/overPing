@@ -22,7 +22,7 @@ import ReadyRobot from './components/ReadyRobot';
 let gameCapsule: GameContainer = new GameContainer();
 
 let playerOne : UserInfo = new UserInfo(tabId, "", 0, 0, "hunter X111", "/images/kilua.jpg", "", 0, 0, 0, 0, 0, 0, 0);
-let playerTwo : UserInfo | undefined = new UserInfo(tabId, "", 0, 0, "machi +", "/images/machi.jpg", "", 0, 0, 0, 0, 0, 0, 0);
+let playerTwo : UserInfo | undefined = new UserInfo(tabId, "", 0, 0, "", "/images/machi.jpg", "", 0, 0, 0, 0, 0, 0, 0);
 let robot     : UserInfo = new UserInfo(tabId, "", playerOne.matchWager, playerOne.modePlaying, "Mr Robot <|o_o|>", "/images/robot.jpg", "/images/badge-3.png", 10, 10 ,10, 12, 10, 0, 0)
 
 
@@ -173,9 +173,10 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
     if (loading) 
         return <h1>loading...</h1>;
     else if (error)
-        return <h1>Error!</h1>
+        return <h1>Error!..</h1>
     else
     {
+       playerOne.tabId = user?.id as string;
        playerOne.userName = user?.username as string;
        playerOne.userAvatar = data?.findUserById.profileImgUrl as string;
        playerOne.matchPlyed = data?.findProfileByUserId?.gameStatus.totalMatches as number;

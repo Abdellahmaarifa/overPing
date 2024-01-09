@@ -61,7 +61,7 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updateUserInfoWagerAndMo
 
     setTimeout( () => {
         updateReadyState(false);
-    }, 5000);
+    }, 60000);
 
     // console.log("players : ", playerOne,"\n==============\n", playerTwo);
 

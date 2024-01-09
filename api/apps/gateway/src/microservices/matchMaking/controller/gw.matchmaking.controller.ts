@@ -9,16 +9,24 @@ import { matchDataInput } from '../graphql/inputs/matchDataInput';
 export class GwMatchmakingController {
   constructor(
     @Inject('PUB_SUB') private pubSub: PubSubEngine,
-  ) {}
+  ) { }
 
 
-  @MessagePattern({role: 'gateway', cmd: 'matchFound'})
+  @MessagePattern({ role: 'gateway', cmd: 'matchFound' })
   async matchnotify(matchData: matchDataInput) {
-    console.log("found match forun matchmaking coming form", matchData)
-        this.pubSub.publish(`waitingList${matchData.user1Id}`, matchData);
-        this.pubSub.publish(`waitingList${matchData.user2Id}`, matchData);
 
-        // this.pubSub.publish('pingPong', payload)
+    if (matchData == null) {
+      console.log('match not found');
+    }
+    console.log("found match forun matchmaking coming form", matchData)
+    if (matchData.user1){
+      this.pubSub.publish(`waitingList${matchData.user1.id}`, matchData);
+    }
+    if (Object.keys(matchData.user2).length !== 0){
+      console.log('match data sent...', matchData);
+      this.pubSub.publish(`waitingList${matchData.user2.id}`, matchData); 
+    }
+    // this.pubSub.publish('pingPong', payload)
   }
-  
+
 }

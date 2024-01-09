@@ -71,7 +71,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       return;
     }
     
-    const existingChannel = await this.channelService.checkForChannel(data.channelId);
+    const existingChannel = await this.checker.checkForChannel(data.channelId);
     if (!existingChannel || !this.checker.isMember(userId, data.channelId)) {
       return;
     }

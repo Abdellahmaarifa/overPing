@@ -44,7 +44,7 @@ export class PoolService {
     // console.log(`Matching players for pool: ${type}`);
     const players = this.playersByPool[type];
 
-    if (players.length < 2) {
+    if (players.length < 1) {
       // console.log(`Insufficient players in pool: ${type}`);
       return null;
     }
@@ -66,7 +66,7 @@ export class PoolService {
     // Calculate dynamic gapThreshold based on average skill
     const averageSkill = weightedSkills.reduce((sum, player) => sum + player.weightedSkill, 0) / weightedSkills.length;
     const gapThreshold = this.calculateDynamicThreshold(averageSkill);
-    const playerTimeOut = 30 * 1000; // 1 minute in milliseconds
+    const playerTimeOut = 10 * 1000; // 1 minute in milliseconds
 
     // console.log(`===================================\nPlayers in pool ${type}:`, weightedSkills.map(entry => entry.player));
 
@@ -85,6 +85,12 @@ export class PoolService {
           }
         }
       }
+      if (bestMatch != undefined && minDiff <= gapThreshold) {
+        console.log(`Match found based on skill proximity: ${current.player.id} vs ${bestMatch.player.id}`);
+        this.removePlayer(current.player.id , current.player.type);
+        this.removePlayer(bestMatch.player.id, bestMatch.player.type );
+        return [current.player, bestMatch.player];
+      }
       const currentTime = new Date().getTime();
       const playerTime = current.player.timePlayerJoin.getTime();
       if (bestMatch != undefined && currentTime - playerTime >= playerTimeOut) {
@@ -93,15 +99,14 @@ export class PoolService {
         this.removePlayer(current.player.id , current.player.type);
         return [current.player, bestMatch.player];
       }
-      if (bestMatch != undefined && minDiff <= gapThreshold) {
-        console.log(`Match found based on skill proximity: ${current.player.id} vs ${bestMatch.player.id}`);
+      if (bestMatch == undefined && currentTime - playerTime >= playerTimeOut){
         this.removePlayer(current.player.id , current.player.type);
-        this.removePlayer(bestMatch.player.id, bestMatch.player.type );
-        return [current.player, bestMatch.player];
+        return [current.player, null];
       }
     }
 
     console.log('No suitable match found.');
+    
     return null;
   }
 

@@ -1,7 +1,15 @@
 subscription MatchWaitingList($userId: Float!) {
     matchWaitingList(userId: $userId) {
-      user1Id
-      user2Id
-      matchKey
+       matchKey
+        user1 {
+            id
+            bet
+            matchType
+        }
+        user2 {
+            id
+            bet
+            matchType
+        }
     }
   }
