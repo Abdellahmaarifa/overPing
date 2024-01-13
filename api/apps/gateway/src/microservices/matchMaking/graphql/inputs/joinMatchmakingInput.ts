@@ -13,3 +13,17 @@ export class JoinMatchmakingInput {
   @IsNotEmpty()
   readonly matchType: string
 }
+
+@InputType()
+export class RequestToPlayInput {
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  readonly recipientId: number
+
+  
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  readonly matchType: string
+}

@@ -37,9 +37,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
   readonly logger = new Logger(HttpExceptionFilter.name);
 
   async catch(exception: HttpException, host: ArgumentsHost) {
+    console.log("exec::: ", exception);
     const ctx = GqlArgumentsHost.create(host);
     const res = ctx.getContext().res;
     const status = exception.getStatus();
+    // console.log
 
     // Add a return statement here
 

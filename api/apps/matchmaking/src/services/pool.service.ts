@@ -1,6 +1,7 @@
 
 import { Injectable, Inject } from '@nestjs/common';
-import { PoolType, Player } from '../dto/PlayerInterface';
+import { PoolType, Player, PlayerRequestDto } from '../dto/PlayerInterface';
+import { RespondToPlayDto } from '../dto/join-matchmaking.dto';
 
 @Injectable()
 export class PoolService {
@@ -9,7 +10,11 @@ export class PoolService {
     [PoolType.Sandstorm]: [],
     [PoolType.LastPong]: [],
   };
-
+  private playerRequesPool: Record<PoolType, PlayerRequestDto[]> ={
+    [PoolType.Classic]: [],
+    [PoolType.Sandstorm]: [],
+    [PoolType.LastPong]: [],
+  }
   constructor() { }
 
   addPlayer(player: Player): void {
@@ -22,7 +27,8 @@ export class PoolService {
     console.log("player add to the Pool : ", player.type, " ", player.id);
   }
 
-  private isPlayerInPool(player: Player): boolean {
+  private isPlayerInPool(player: Player | PlayerRequestDto): boolean {
+    console.log("player type in pool service ", player);
     const players = this.playersByPool[player.type];
     return players.some(existingPlayer => existingPlayer.id === player.id);
   }
@@ -121,5 +127,45 @@ export class PoolService {
     const xpWeight = 0.3;   // Adjust as needed
 
     return (rank * rankWeight) + (xp * xpWeight);
+  }
+// frined request========================
+  addRequestToQueue(player: PlayerRequestDto){
+    if (this.isPlayerInPool(player)) {
+      console.log(`Player ${player.id} is already in the pool: ${player.type}`);
+      return null;
+    }
+    player.matched = false;
+    console.log("player add to the Pool : ", player);
+    this.playerRequesPool[player.type].push(player);
+    console.log("player add to the Pool : ", player.type, " ", player.id);
+    const request: RespondToPlayDto = {
+      userId: player.id,
+      recipientId: player.recipientId,
+      matchType: player.type,
+    };
+    return request;
+  }
+
+  removePlayerRequest(playerId: number, type: PoolType): void {
+    const players = this.playerRequesPool[type];
+    const index = players.findIndex((player) => player.id === playerId);
+    if (index !== -1) {
+      players.splice(index, 1);
+      console.log(`Player ${playerId} removed from pool: ${type}`);
+    } else {
+      console.error(`Player with ID ${playerId} not found in pool: ${type}`);
+    }
+  }
+
+  async getPlayerRequest(playerId: number, type: PoolType): Promise<PlayerRequestDto>{
+    console.log("this is player id in get player request ", type, " ", playerId);
+    const index = this.playerRequesPool[type].findIndex((player) => player.id === playerId);
+    const players = this.playerRequesPool[type];
+    if (index !== -1) {
+      return players[index];
+    } else {
+      console.error(`Player with ID ${playerId} not found in pool: ${type}`);
+      return null;
+    }
   }
 }

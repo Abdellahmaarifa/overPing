@@ -5,8 +5,9 @@ import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PoolService } from './pool.service';
-import { Player, PoolType } from '../dto/PlayerInterface';
-import { addPath } from 'graphql/jsutils/Path';
+import { Player, PlayerRequestDto, PoolType, acceptMatchToPlayDto } from '../dto/PlayerInterface';
+import { RequestToPlayDto,  } from '../dto/join-matchmaking.dto';
+import { RespondToPlayDto } from '../dto/join-matchmaking.dto';
 
 @Injectable()
 export class MatchmakingService {
@@ -113,4 +114,58 @@ export class MatchmakingService {
     return key;
   }
 
+
+  async requestUserToPlay(userId: number, userRequest: RequestToPlayDto): Promise<RespondToPlayDto>{
+   
+    const request: PlayerRequestDto = {
+      id: userId,
+      recipientId: userRequest.recipientId,
+      matched: false,
+      type: this.stringToEnum(userRequest.matchType),
+      timePlayerJoin: new Date()
+    }
+    console.log("this is request to play ", request);
+    const requestToPush = this.PoolService.addRequestToQueue(request);
+    return requestToPush;
+  }
+
+  async acceptMatchToPlay(user: acceptMatchToPlayDto) : Promise<void>{
+    const player = await this.PoolService.getPlayerRequest(user.senderId, this.stringToEnum(user.matchType));
+    if (!player){
+      return null;
+    }
+    console.log("this is player in accept match to play ", player);
+    this.PoolService.removePlayerRequest(player.id, player.type);
+   const matched = {
+      user1:{
+        id: player.id,
+        bet: null,
+        matchType: player.type,
+      },
+      user2:{
+        id: player.recipientId,
+        bet: null,
+        matchType: player.type,
+      },
+      matchKey: this.generateMatchKey(20),
+    }
+    this.clientService.sendMessageWithPayload(
+      this.gatewayClient,
+      {
+        role: 'gateway',
+        cmd: 'matchFound',
+      },
+      matched,
+    );
+    
+  }
+  
+  private stringToEnum(value: string): PoolType | undefined {
+    for (const key in PoolType) {
+      if (PoolType[key as keyof typeof PoolType] === value) {
+        return PoolType[key as keyof typeof PoolType];
+      }
+    }
+    return undefined;
+  }
 }

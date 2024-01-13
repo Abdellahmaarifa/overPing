@@ -2,9 +2,9 @@ import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { JoinMatchmakingInput } from '../graphql/inputs/joinMatchmakingInput';
-
-
+import { JoinMatchmakingInput, RequestToPlayInput } from '../graphql/inputs/joinMatchmakingInput';
+import { RespondToPlay } from '../models/respondRequestToPlayDto';
+import { AcceptRequestInput } from '../graphql/inputs/acceptRequestInput';
 
 @Injectable()
 export class GwMatchMakingService{
@@ -35,6 +35,37 @@ export class GwMatchMakingService{
                 cmd: 'joinQueue',
             },
                 joinMatchData
+        );
+    }
+
+    async requestUserToPlay(userId: number, joinMatchData: RequestToPlayInput): Promise<any>{
+        const request =  await this.clientService.sendMessageWithPayload(
+            this.client,
+            {
+                role: 'matchMaking',
+                cmd: 'requestUserToPlay',
+            },
+            {
+                userId,
+                joinMatchData
+            }
+        );
+
+        return request;
+    }
+
+    async acceptMatchToPlay(userId: number, acceptData: AcceptRequestInput){
+        await this.clientService.emitMessageWithPayload(
+            this.client,
+            {
+                role: 'matchMaking',
+                cmd: 'acceptMatchToPlay',
+            },
+            {
+                senderId : acceptData.senderId,
+                recipientId: userId,
+                matchType: acceptData.matchType
+            }
         );
     }
 }
