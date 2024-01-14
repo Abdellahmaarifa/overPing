@@ -16,6 +16,7 @@ import {
   useAccountQuery,
   useFindProfileByUserIdQuery,
   UnfriendUserDocument,
+  useSendFriendRequestMutation,
 } from "gql/index";
 import { useUserContext } from "context/user.context";
 import { ProfileType } from "domain/model/Profile.type";

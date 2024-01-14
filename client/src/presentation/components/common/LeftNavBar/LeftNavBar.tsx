@@ -79,7 +79,7 @@ const Navbar = () => {
         {openMobileMenu && (
           <>
             <Seperator />
-            <NavLink onClick={() => navigate("profile/id")}>
+            <NavLink onClick={() => navigate(`profile/${user?.id}`)}>
               <EyeIcon fill={getNavLinkColor("/leader-board")} />
             </NavLink>
             <NavLink onClick={() => setSettingsModel(true)}>

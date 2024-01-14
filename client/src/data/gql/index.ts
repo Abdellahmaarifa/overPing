@@ -15,7 +15,13 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  DateTime: { input: any; output: any; }
   Upload: { input: any; output: any; }
+};
+
+export type AcceptRequestInput = {
+  matchType: Scalars['String']['input'];
+  senderId: Scalars['Float']['input'];
 };
 
 export type AuthCredentialsInput = {
@@ -28,6 +34,33 @@ export type CreateProfileInput = {
   username: Scalars['String']['input'];
 };
 
+export type CreateProtectedInput = {
+  channelName: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  password: Scalars['String']['input'];
+  userId: Scalars['Float']['input'];
+  visibility: Scalars['String']['input'];
+};
+
+export type CreatePublicPrivateInput = {
+  channelName: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['Float']['input'];
+  visibility: Scalars['String']['input'];
+};
+
+export type DeleteMessageInput = {
+  channelId: Scalars['Float']['input'];
+  messageId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
+export type DeletionInput = {
+  groupChatId: Scalars['Float']['input'];
+  messageId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
 export type GqlAchievement = {
   __typename?: 'GQLAchievement';
   description: Scalars['String']['output'];
@@ -35,6 +68,41 @@ export type GqlAchievement = {
   imageURL: Scalars['String']['output'];
   requirement: Scalars['String']['output'];
   title: Scalars['String']['output'];
+};
+
+export type GqlAdminsModel = {
+  __typename?: 'GQLAdminsModel';
+  userId: Scalars['Float']['output'];
+};
+
+export type GqlChannelModel = {
+  __typename?: 'GQLChannelModel';
+  admins: Array<GqlAdminsModel>;
+  created_at: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  members: Array<GqlMembersModel>;
+  messages?: Maybe<Array<GqlMessageModel>>;
+  name: Scalars['String']['output'];
+  owner_id: Scalars['Float']['output'];
+  updated_at: Scalars['String']['output'];
+  visibility: Scalars['String']['output'];
+};
+
+export type GqlChannelSearchModel = {
+  __typename?: 'GQLChannelSearchModel';
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  visibility: Scalars['String']['output'];
+};
+
+export type GqlDirectMessageModel = {
+  __typename?: 'GQLDirectMessageModel';
+  created_at: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  messages?: Maybe<Array<GqlMessageModel>>;
+  user1_id: Scalars['Float']['output'];
+  user2_id: Scalars['Float']['output'];
 };
 
 export type GqlFriendshipStatusModel = {
@@ -57,6 +125,22 @@ export type GqliUserModel = {
   id: Scalars['Float']['output'];
   profileImgUrl: Scalars['String']['output'];
   username: Scalars['String']['output'];
+};
+
+export type GqlMembersModel = {
+  __typename?: 'GQLMembersModel';
+  userId: Scalars['Float']['output'];
+};
+
+export type GqlMessageModel = {
+  __typename?: 'GQLMessageModel';
+  created_at: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  media_id: Scalars['Float']['output'];
+  sender_id: Scalars['Float']['output'];
+  text?: Maybe<Scalars['String']['output']>;
+  updated: Scalars['Boolean']['output'];
+  updated_at: Scalars['String']['output'];
 };
 
 export type GqlUserModel = {
@@ -98,29 +182,61 @@ export type JoinMatchmakingInput = {
   userId: Scalars['Float']['input'];
 };
 
+export type MemberInput = {
+  channelId: Scalars['Float']['input'];
+  muteTimeLimit: Scalars['DateTime']['input'];
+  password: Scalars['String']['input'];
+  targetId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   UpdateUserProfile: Scalars['Boolean']['output'];
   acceptFriendRequest: Scalars['Boolean']['output'];
+  acceptMatchToPlay?: Maybe<Scalars['Boolean']['output']>;
+  addChannelAdmin: Scalars['Boolean']['output'];
+  addMember: Scalars['Boolean']['output'];
   authenticate_2fa: GqlUserModel;
+  banMember: Scalars['Boolean']['output'];
   blockUser: Scalars['Boolean']['output'];
   cancelFriendRequest: Scalars['Boolean']['output'];
+  createDirectMessage: GqlDirectMessageModel;
   createProfile: GqlUserProfileModel;
+  createProtectedChannel: GqlChannelModel;
+  createPublicPrivateChannel: GqlChannelModel;
   deleteAccount: Scalars['Boolean']['output'];
+  deleteChannel: Scalars['Boolean']['output'];
+  deleteDirectMessage: Scalars['Boolean']['output'];
+  deleteMessageInChannel: Scalars['Boolean']['output'];
+  deleteMessageInDM: Scalars['Boolean']['output'];
   enableTwoFactorAuth: Scalars['String']['output'];
+  joinChannel: GqlChannelModel;
   joinMatchmakingQueue?: Maybe<Scalars['Boolean']['output']>;
+  kickMember: Scalars['Boolean']['output'];
+  leaveChannel: Scalars['Boolean']['output'];
   logOut: Scalars['Boolean']['output'];
+  muteMember: Scalars['Boolean']['output'];
   placeBet?: Maybe<Scalars['Boolean']['output']>;
   refresh: Scalars['String']['output'];
+  removeChannelAdmin: Scalars['Boolean']['output'];
+  removeMember: Scalars['Boolean']['output'];
   removeUserProfile: Scalars['Boolean']['output'];
   resolveBet?: Maybe<Scalars['Boolean']['output']>;
   sendFriendRequest: Scalars['Boolean']['output'];
+  sendRequestToPlay?: Maybe<Scalars['Boolean']['output']>;
   signIn: GqlUserModel;
   signUp: GqlUserModel;
   transferFunds?: Maybe<Scalars['Boolean']['output']>;
+  unbanMember: Scalars['Boolean']['output'];
   unblockUser: Scalars['Boolean']['output'];
   unfriendUser: Scalars['Boolean']['output'];
+  unmuteMember: Scalars['Boolean']['output'];
+  updateMessageInChannel: GqlMessageModel;
+  updateMessageInDM: GqlMessageModel;
   updateProfileBgImg: Scalars['String']['output'];
+  updateProtectedChannel: GqlChannelModel;
+  updatePublicPrivateChannel: GqlChannelModel;
   updateUser: Scalars['Boolean']['output'];
   updateUserAvatarImg: Scalars['String']['output'];
   updateUserStatus: Scalars['Boolean']['output'];
@@ -139,8 +255,28 @@ export type MutationAcceptFriendRequestArgs = {
 };
 
 
+export type MutationAcceptMatchToPlayArgs = {
+  AcceptRequestInput: AcceptRequestInput;
+};
+
+
+export type MutationAddChannelAdminArgs = {
+  data: MemberInput;
+};
+
+
+export type MutationAddMemberArgs = {
+  data: MemberInput;
+};
+
+
 export type MutationAuthenticate_2faArgs = {
   code: Scalars['String']['input'];
+};
+
+
+export type MutationBanMemberArgs = {
+  data: MemberInput;
 };
 
 
@@ -154,8 +290,24 @@ export type MutationCancelFriendRequestArgs = {
 };
 
 
+export type MutationCreateDirectMessageArgs = {
+  targetID: Scalars['Float']['input'];
+  userID: Scalars['Float']['input'];
+};
+
+
 export type MutationCreateProfileArgs = {
   profileCredentials: CreateProfileInput;
+};
+
+
+export type MutationCreateProtectedChannelArgs = {
+  data: CreateProtectedInput;
+};
+
+
+export type MutationCreatePublicPrivateChannelArgs = {
+  data: CreatePublicPrivateInput;
 };
 
 
@@ -165,8 +317,34 @@ export type MutationDeleteAccountArgs = {
 };
 
 
+export type MutationDeleteChannelArgs = {
+  channelID: Scalars['Float']['input'];
+  userID: Scalars['Float']['input'];
+};
+
+
+export type MutationDeleteDirectMessageArgs = {
+  data: DeletionInput;
+};
+
+
+export type MutationDeleteMessageInChannelArgs = {
+  data: DeleteMessageInput;
+};
+
+
+export type MutationDeleteMessageInDmArgs = {
+  data: DeletionInput;
+};
+
+
 export type MutationEnableTwoFactorAuthArgs = {
   id: Scalars['Float']['input'];
+};
+
+
+export type MutationJoinChannelArgs = {
+  data: MemberInput;
 };
 
 
@@ -175,13 +353,38 @@ export type MutationJoinMatchmakingQueueArgs = {
 };
 
 
+export type MutationKickMemberArgs = {
+  data: MemberInput;
+};
+
+
+export type MutationLeaveChannelArgs = {
+  data: MemberInput;
+};
+
+
 export type MutationLogOutArgs = {
   id: Scalars['Float']['input'];
 };
 
 
+export type MutationMuteMemberArgs = {
+  data: MemberInput;
+};
+
+
 export type MutationPlaceBetArgs = {
   transferFundsInput: PlaceBetInput;
+};
+
+
+export type MutationRemoveChannelAdminArgs = {
+  data: MemberInput;
+};
+
+
+export type MutationRemoveMemberArgs = {
+  data: MemberInput;
 };
 
 
@@ -197,6 +400,11 @@ export type MutationResolveBetArgs = {
 
 export type MutationSendFriendRequestArgs = {
   receiverId: Scalars['Float']['input'];
+};
+
+
+export type MutationSendRequestToPlayArgs = {
+  JoinMatchmakingInput: RequestToPlayInput;
 };
 
 
@@ -216,6 +424,11 @@ export type MutationTransferFundsArgs = {
 };
 
 
+export type MutationUnbanMemberArgs = {
+  data: MemberInput;
+};
+
+
 export type MutationUnblockUserArgs = {
   unblockedUserId: Scalars['Float']['input'];
 };
@@ -226,9 +439,34 @@ export type MutationUnfriendUserArgs = {
 };
 
 
+export type MutationUnmuteMemberArgs = {
+  data: MemberInput;
+};
+
+
+export type MutationUpdateMessageInChannelArgs = {
+  data: UpdateMessageInput;
+};
+
+
+export type MutationUpdateMessageInDmArgs = {
+  data: UpdateInput;
+};
+
+
 export type MutationUpdateProfileBgImgArgs = {
   image: Scalars['Upload']['input'];
   userId: Scalars['Float']['input'];
+};
+
+
+export type MutationUpdateProtectedChannelArgs = {
+  data: UpdateProtectedInput;
+};
+
+
+export type MutationUpdatePublicPrivateChannelArgs = {
+  data: UpdatePublicPrivateInput;
 };
 
 
@@ -260,21 +498,23 @@ export type PlaceBetInput = {
 
 export type Player = {
   __typename?: 'Player';
-  bet: Scalars['Float']['output'];
-  id: Scalars['ID']['output'];
-  matchType: Scalars['String']['output'];
+  bet?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['ID']['output']>;
+  matchType?: Maybe<Scalars['String']['output']>;
 };
 
 export type PlayersMatching = {
   __typename?: 'PlayersMatching';
   matchKey: Scalars['String']['output'];
-  user1: Player;
-  user2: Player;
+  user1?: Maybe<Player>;
+  user2?: Maybe<Player>;
 };
 
 export type Query = {
   __typename?: 'Query';
   findAllUsers: Array<GqliUserModel>;
+  findChannelById?: Maybe<GqlChannelModel>;
+  findDirectMessageById?: Maybe<GqlDirectMessageModel>;
   findPagesOfUsers: Array<GqliUserModel>;
   findProfileByUserId?: Maybe<GqlUserProfileModel>;
   findUserById: GqlUserModel;
@@ -287,9 +527,24 @@ export type Query = {
   getSuggestedFriends: Array<GqliUserModel>;
   getUser: GqlUserModel;
   getUserAchievements?: Maybe<Array<GqlAchievement>>;
+  getUserChannels?: Maybe<Array<GqlChannelModel>>;
+  getUserDirectMessages?: Maybe<Array<GqlDirectMessageModel>>;
   getUserFriends: Array<GqliUserModel>;
   hello: Scalars['String']['output'];
   helloT: Scalars['String']['output'];
+  searchForChannel?: Maybe<Array<GqlChannelSearchModel>>;
+};
+
+
+export type QueryFindChannelByIdArgs = {
+  groupId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
+
+export type QueryFindDirectMessageByIdArgs = {
+  groupId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
 };
 
 
@@ -335,14 +590,41 @@ export type QueryGetUserAchievementsArgs = {
   userId: Scalars['Float']['input'];
 };
 
+
+export type QueryGetUserChannelsArgs = {
+  id: Scalars['Float']['input'];
+};
+
+
+export type QueryGetUserDirectMessagesArgs = {
+  id: Scalars['Float']['input'];
+};
+
+
+export type QuerySearchForChannelArgs = {
+  channelName: Scalars['String']['input'];
+};
+
+export type RequestToPlayInput = {
+  matchType: Scalars['String']['input'];
+  recipientId: Scalars['Float']['input'];
+};
+
 export type ResolveBetInput = {
   isWinner: Scalars['Boolean']['input'];
   userId: Scalars['Float']['input'];
 };
 
+export type RespondToPlay = {
+  __typename?: 'RespondToPlay';
+  matchType: Scalars['String']['output'];
+  playerId: Scalars['Float']['output'];
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
   matchWaitingList: PlayersMatching;
+  notification: RespondToPlay;
 };
 
 
@@ -350,10 +632,29 @@ export type SubscriptionMatchWaitingListArgs = {
   userId: Scalars['Float']['input'];
 };
 
+
+export type SubscriptionNotificationArgs = {
+  userId: Scalars['Float']['input'];
+};
+
 export type TransferFundsInput = {
   amount: Scalars['Float']['input'];
   recipientId: Scalars['Float']['input'];
   senderId: Scalars['Float']['input'];
+};
+
+export type UpdateInput = {
+  groupChatId: Scalars['Float']['input'];
+  messageId: Scalars['Float']['input'];
+  text: Scalars['String']['input'];
+  userId: Scalars['Float']['input'];
+};
+
+export type UpdateMessageInput = {
+  channelId: Scalars['Float']['input'];
+  messageId: Scalars['Float']['input'];
+  text: Scalars['String']['input'];
+  userId: Scalars['Float']['input'];
 };
 
 export type UpdateProfileInput = {
@@ -371,6 +672,24 @@ export type UserCreationInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
+};
+
+export type UpdateProtectedInput = {
+  channelId: Scalars['Float']['input'];
+  channelName?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  newPassword: Scalars['String']['input'];
+  oldPassword: Scalars['String']['input'];
+  userId: Scalars['Float']['input'];
+  visibility: Scalars['String']['input'];
+};
+
+export type UpdatePublicPrivateInput = {
+  channelId: Scalars['Float']['input'];
+  channelName?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['Float']['input'];
+  visibility: Scalars['String']['input'];
 };
 
 export type GetUserAchievementsQueryVariables = Exact<{
@@ -518,7 +837,28 @@ export type MatchWaitingListSubscriptionVariables = Exact<{
 }>;
 
 
-export type MatchWaitingListSubscription = { __typename?: 'Subscription', matchWaitingList: { __typename?: 'PlayersMatching', matchKey: string, user1: { __typename?: 'Player', id: string, bet: number, matchType: string }, user2: { __typename?: 'Player', id: string, bet: number, matchType: string } } };
+export type MatchWaitingListSubscription = { __typename?: 'Subscription', matchWaitingList: { __typename?: 'PlayersMatching', matchKey: string, user1?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null, user2?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null } };
+
+export type NotificationSubscriptionVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type NotificationSubscription = { __typename?: 'Subscription', notification: { __typename?: 'RespondToPlay', playerId: number, matchType: string } };
+
+export type SendRequestToPlayMutationVariables = Exact<{
+  JoinMatchmakingInput: RequestToPlayInput;
+}>;
+
+
+export type SendRequestToPlayMutation = { __typename?: 'Mutation', sendRequestToPlay?: boolean | null };
+
+export type AcceptMatchToPlayMutationVariables = Exact<{
+  AcceptRequestInput: AcceptRequestInput;
+}>;
+
+
+export type AcceptMatchToPlayMutation = { __typename?: 'Mutation', acceptMatchToPlay?: boolean | null };
 
 export type FindProfileByUserIdQueryVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -1444,6 +1784,99 @@ export function useMatchWaitingListSubscription(baseOptions: Apollo.Subscription
       }
 export type MatchWaitingListSubscriptionHookResult = ReturnType<typeof useMatchWaitingListSubscription>;
 export type MatchWaitingListSubscriptionResult = Apollo.SubscriptionResult<MatchWaitingListSubscription>;
+export const NotificationDocument = gql`
+    subscription notification($userId: Float!) {
+  notification(userId: $userId) {
+    playerId
+    matchType
+  }
+}
+    `;
+
+/**
+ * __useNotificationSubscription__
+ *
+ * To run a query within a React component, call `useNotificationSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNotificationSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotificationSubscription({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useNotificationSubscription(baseOptions: Apollo.SubscriptionHookOptions<NotificationSubscription, NotificationSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NotificationSubscription, NotificationSubscriptionVariables>(NotificationDocument, options);
+      }
+export type NotificationSubscriptionHookResult = ReturnType<typeof useNotificationSubscription>;
+export type NotificationSubscriptionResult = Apollo.SubscriptionResult<NotificationSubscription>;
+export const SendRequestToPlayDocument = gql`
+    mutation sendRequestToPlay($JoinMatchmakingInput: RequestToPlayInput!) {
+  sendRequestToPlay(JoinMatchmakingInput: $JoinMatchmakingInput)
+}
+    `;
+export type SendRequestToPlayMutationFn = Apollo.MutationFunction<SendRequestToPlayMutation, SendRequestToPlayMutationVariables>;
+
+/**
+ * __useSendRequestToPlayMutation__
+ *
+ * To run a mutation, you first call `useSendRequestToPlayMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendRequestToPlayMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendRequestToPlayMutation, { data, loading, error }] = useSendRequestToPlayMutation({
+ *   variables: {
+ *      JoinMatchmakingInput: // value for 'JoinMatchmakingInput'
+ *   },
+ * });
+ */
+export function useSendRequestToPlayMutation(baseOptions?: Apollo.MutationHookOptions<SendRequestToPlayMutation, SendRequestToPlayMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendRequestToPlayMutation, SendRequestToPlayMutationVariables>(SendRequestToPlayDocument, options);
+      }
+export type SendRequestToPlayMutationHookResult = ReturnType<typeof useSendRequestToPlayMutation>;
+export type SendRequestToPlayMutationResult = Apollo.MutationResult<SendRequestToPlayMutation>;
+export type SendRequestToPlayMutationOptions = Apollo.BaseMutationOptions<SendRequestToPlayMutation, SendRequestToPlayMutationVariables>;
+export const AcceptMatchToPlayDocument = gql`
+    mutation acceptMatchToPlay($AcceptRequestInput: AcceptRequestInput!) {
+  acceptMatchToPlay(AcceptRequestInput: $AcceptRequestInput)
+}
+    `;
+export type AcceptMatchToPlayMutationFn = Apollo.MutationFunction<AcceptMatchToPlayMutation, AcceptMatchToPlayMutationVariables>;
+
+/**
+ * __useAcceptMatchToPlayMutation__
+ *
+ * To run a mutation, you first call `useAcceptMatchToPlayMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptMatchToPlayMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptMatchToPlayMutation, { data, loading, error }] = useAcceptMatchToPlayMutation({
+ *   variables: {
+ *      AcceptRequestInput: // value for 'AcceptRequestInput'
+ *   },
+ * });
+ */
+export function useAcceptMatchToPlayMutation(baseOptions?: Apollo.MutationHookOptions<AcceptMatchToPlayMutation, AcceptMatchToPlayMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AcceptMatchToPlayMutation, AcceptMatchToPlayMutationVariables>(AcceptMatchToPlayDocument, options);
+      }
+export type AcceptMatchToPlayMutationHookResult = ReturnType<typeof useAcceptMatchToPlayMutation>;
+export type AcceptMatchToPlayMutationResult = Apollo.MutationResult<AcceptMatchToPlayMutation>;
+export type AcceptMatchToPlayMutationOptions = Apollo.BaseMutationOptions<AcceptMatchToPlayMutation, AcceptMatchToPlayMutationVariables>;
 export const FindProfileByUserIdDocument = gql`
     query findProfileByUserId($userId: Float!) {
   findProfileByUserId(userId: $userId) {

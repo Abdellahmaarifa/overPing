@@ -10,6 +10,8 @@ import { Store } from "domain/DomainLayer";
 import { ProfileType } from "domain/model/Profile.type";
 import { User } from "domain/model/User.type";
 import { GetUserProfile } from "helpers/index";
+import { SERVER_END_POINT, SERVER_REFRESH_END_POINT } from "constant/constants";
+import { GET_USER_QUERY, PROFILE_QUERY } from "gql/constantsQueries";
 
 type Props = {
   children: React.ReactNode;
@@ -38,53 +40,6 @@ const UserContext = createContext<Context>({
   store: null,
 });
 
-const HELLO = `
-  query getUser {
-    getUser {
-      id
-      username
-      email
-      twoStepVerificationEnabled
-      profileImgUrl   
-      showUpdateWin
-    }
-  }
-`;
-
-const PROFILE_QUERY = `
-  query Account($userId: Float!) {
-    findUserById(id: $userId) {
-      id
-      email
-      username
-      profileImgUrl
-    }
-
-    findProfileByUserId(userId: $userId) {
-      id
-      nickname
-      title
-      xp
-      rank
-      about
-      bgImageUrl
-      wallet {
-        id
-        balance
-        betAmount
-      }
-      gameStatus {
-        matchesLoss
-        matchesWon
-        totalMatches
-        win_streak
-        best_win_streak
-      }
-    }
-  }
-`;
-
-const graphqlEndpoint = "http://localhost:5500/graphql";
 const UserContextProvider = ({ children, store }: Props): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<ProfileType | null>(null);
@@ -110,27 +65,29 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
     // we should sen a request to /refresh_token and then update the user with the new token.
     try {
       // console.log("the usrl of refersh: " ,import.meta.env.OVER_PING_REFRECH_TOKEN)
-      const refresh_url: string = import.meta.env.OVER_PING_REFRECH_TOKEN;
-      console.log("user refresh ", refresh_url);
+      console.log("user refresh ", SERVER_REFRESH_END_POINT);
       //if (user) return;
-      const data = await fetch(refresh_url, {
+      const data = await fetch(SERVER_REFRESH_END_POINT, {
         credentials: "include",
         method: "GET",
       });
       const res = await data?.json();
       console.log("the res: ", res);
       store.setToken(res?.Access_token);
-
+      if (res?.Access_token) {
+        // update the status of the user every 2 seconds
+        window.dispatchEvent(new Event("alive"));
+      }
       // get the user :
 
-      const userData = await fetch(graphqlEndpoint, {
+      const userData = await fetch(SERVER_END_POINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "x-apollo-operation-name": "something",
           // Add any other headers if needed
         },
-        body: JSON.stringify({ query: HELLO }),
+        body: JSON.stringify({ query: GET_USER_QUERY }),
         credentials: "include",
       });
       const userRes = await userData.json();
@@ -140,7 +97,7 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
 
       // set the profile
       if (!profile && userRes?.data?.getUser?.id) {
-        const profileData = await fetch(graphqlEndpoint, {
+        const profileData = await fetch(SERVER_END_POINT, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
