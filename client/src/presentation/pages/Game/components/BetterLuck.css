@@ -301,6 +301,12 @@
     }
 }
 
+#betterAvatar1 , #betterAvatar2
+{
+    width: 100%;
+    height: 100%;
+}
+
 /* @media all and (orientation: portrait) {
     body {
         -webkit-transform: rotate(90deg); 

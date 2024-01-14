@@ -10,6 +10,9 @@ import UserInfo from './component/UserInfo';
 import { isAlreadyWaiting, addPlayerToWaitingList, findMatchigPlayer, updatePlayerObject, removePlayerFromWaitingList } from './component/waitingPlayers'
 import { getRoomByMatchId, clearRoom, getRoomByClientId, findAvailableRoom , addToRoom , checkIfGameNotOver, addInfoSocketToRoom, getRoomByClientInfoSocket} from './component/room'; 
 import WeaponTemplate, { moveAlert} from './component/Weapon';
+import { GameService } from './game.service';
+import { PrismaService } from 'prisma/prisma.service';
+import { IGameData } from './Interfaces/game.interface';
 
 interface PlayersList
 {
@@ -139,6 +142,14 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
 
 
 //--------------------------------------- start of events come from info component
+
+@SubscribeMessage('customResult') // Listen for the 'customEventDataRequest' event
+handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : string) 
+{
+  const gameService = new GameService(new PrismaService());
+  gameService.addResult(obj);
+  console.log("data his : ", obj)
+}
 
   @SubscribeMessage('customGoalsEvent') // Listen for the 'customEventDataRequest' event
   handleGoalsEvent(client: Socket, obj : infoObj )//matchId : string)//, tabsId : string) 

@@ -64,11 +64,11 @@ function App({ gameCapsule, playerOne, playerTwo , updateMatchState , updateServ
     , transports: ['websocket'], query: { ID , tabId} });
 
     socket.on('connect', () => {
-      console.log(`App Connected to WebSocket server in tab id ${tabId}`);
+      //console.log(`App Connected to WebSocket server in tab id ${tabId}`);
     });
 
     socket.on('disconnect', () => {
-      console.log(`App Disconnected from WebSocket server in tab ${tabId}`);
+      //console.log(`App Disconnected from WebSocket server in tab ${tabId}`);
       Howler.stop();
       Sounds.mode1Music.stop();
       Sounds.mode2Music.stop();

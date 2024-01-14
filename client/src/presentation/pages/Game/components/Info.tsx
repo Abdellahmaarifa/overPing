@@ -3,7 +3,8 @@ import { io, Socket } from 'socket.io-client';
 import './Info.css';
 import Goals from "./Goals";
 import UserInfo from "./UserInfo";
-
+import { Result } from "./Result";
+import { IGameData } from './game.interface';
 const serverUrl: string = 'ws://localhost:4055';
 let socket: Socket | null = null;
 
@@ -12,10 +13,11 @@ interface InfoProps
     playerOne : UserInfo;
     playerTwo : UserInfo;
     updateMatchState : (val : boolean ) => void;
+    updateGameResult : (val : Result) => void
 }
 
 
-function Info({playerOne, playerTwo, updateMatchState} : InfoProps) 
+function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoProps) 
 {
     const [leftGoal, setLeftGoal] = useState(0);
     const [rightGoal, setRightGoal] = useState(0);
@@ -23,8 +25,8 @@ function Info({playerOne, playerTwo, updateMatchState} : InfoProps)
     const [ID, setUsrId] = useState("A" + playerOne.matchId);
 
 
-    console.log("Logo ===> : ", playerOne.userLogo);
-    console.log("Logo ===> : ", playerTwo.userLogo);
+    //console.log("Logo ===> : ", playerOne.userLogo);
+   // console.log("Logo ===> : ", playerTwo.userLogo);
     
     //get room Match id before establish a connection
     useEffect(() => 
@@ -67,6 +69,7 @@ function Info({playerOne, playerTwo, updateMatchState} : InfoProps)
 
             socket.on('connect', () => {
                 console.log(`info Connected to WebSocket server`);
+                playerOne.socket = socket;
             });
 
             socket.on('disconnect', () => {
@@ -77,7 +80,33 @@ function Info({playerOne, playerTwo, updateMatchState} : InfoProps)
             {
                 console.log('event is come')
                 if (leftGoal !== 5 && rightGoal !== 5)
-                    updateMatchState(true)
+                {
+                    // let gameResult : Result = new Result();
+                    // gameResult.plyOneId = playerOne.userId;
+                    // gameResult.plyTwoId = playerTwo.userId;
+                    // gameResult.plyOneGoals = 0;
+                    // gameResult.plyTwoGoals = 5;
+                    const gameData : IGameData = 
+                    {
+                        playerOneId       : playerOne.userId,
+                        playerOneName     : playerOne.userName,
+                        playerOneImageURL : playerOne.userAvatar,
+                        playerOneScore    : 5,
+                        playerOneStatus   : 1,
+                        playerTwoId       : playerTwo.userId,
+                        playerTwoName     : playerTwo.userName,
+                        playerTwoImageURL : playerTwo.userAvatar,
+                        playerTwoScore    : 0,
+                        playerTwoStatus   : 0,
+                        points            : playerOne.matchWager * 2,
+                        level             : 60,
+                      };
+                    console.log("Data : ", gameData);
+                    playerOne.socket?.emit('customResult', gameData);
+                    setTimeout(() => {
+                        updateMatchState(true)
+                    }, 2000)
+                }
             })
 
             socket.on('goalsEvent', (goal : Goals) => 
@@ -88,6 +117,34 @@ function Info({playerOne, playerTwo, updateMatchState} : InfoProps)
                 if (goal.leftPlayerGoals === 5 || goal.rightPlayerGoals === 5)
                 {
                     setTimeout(() => {
+                        let p1status : number = 0;
+                        let p2status : number = 0;
+                        if (goal.leftPlayerGoals > goal.rightPlayerGoals)
+                        {
+                            p1status = 1;
+                            p2status = 0;
+                        }
+                        else
+                        {
+                            p1status = 0;
+                            p1status = 1;
+                        }
+                        const gameData : IGameData = 
+                        {
+                            playerOneId       : playerOne.userId,
+                            playerOneName     : playerOne.userName,
+                            playerOneImageURL : playerOne.userAvatar,
+                            playerOneScore    : goal.leftPlayerGoals,
+                            playerOneStatus   : p1status,
+                            playerTwoId       : playerTwo.userId,
+                            playerTwoName     : playerTwo.userName,
+                            playerTwoImageURL : playerTwo.userAvatar,
+                            playerTwoScore    : goal.rightPlayerGoals,
+                            playerTwoStatus   : p2status,
+                            points            : playerOne.matchWager * 2,
+                            level             : 60,
+                          };
+                        playerOne.socket?.emit('customResult', gameData);
                         if (goal.rightPlayerGoals === 5)
                             updateMatchState(false);
                         else
@@ -97,8 +154,6 @@ function Info({playerOne, playerTwo, updateMatchState} : InfoProps)
                 // console.log("player n : " , goal.playerNumber);
             });
         }
-        else
-            console.log()
     }
 
     useEffect(() => 

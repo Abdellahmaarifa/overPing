@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { AppModule } from './app.module';
+import { AppModule } from './game.module';
 import { join } from 'path';
 import { IoAdapter } from '@nestjs/platform-socket.io'; 
 import { MyWebSocketGateway } from './websocket.gateway';

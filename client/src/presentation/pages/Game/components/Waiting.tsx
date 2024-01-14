@@ -130,7 +130,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
     let slideSound: any = new Howl({
         src: ['/Sounds/slideImageSoundEffect.mp3'],
         onload: () => {
-            console.log('Audio loaded successfully');
+            //console.log('Audio loaded successfully');
             // You can play the sound or perform other actions here
         },
         onloaderror: (error: any) => {
@@ -171,19 +171,19 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
             PlayWithRobot.style.display = 'none';
 
     }
-    console.log("Player one : ", playerOne.userId);
+   
     useEffect(() => 
     {
         //console.warn('Subscription structure :', subscriptionData);
         if (subscriptionData && subscriptionData.matchWaitingList) 
         {
             const { matchWaitingList } = subscriptionData;
-            console.log('Subscription data:', matchWaitingList);
+            //console.log('Subscription data:', matchWaitingList);
             setSwitchValue(true);
             console.log("The switch : ", TheSwitch);
         }
-        else
-            console.warn('Subscription data is null:', subscriptionData);
+        //else
+            //console.warn('Subscription data is null:', subscriptionData);
 
         },[subscriptionData])
 
@@ -212,16 +212,13 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
     
     if (TheSwitch === true)
     {
-        console.log("====================> : ", subscriptionData)
+        //console.log("====================> : ", subscriptionData)
         if (subscriptionData && subscriptionData.matchWaitingList.matchKey === "null")
         {
             setTimeout(() => {
-            console.log("its null========>");
             plyTwoImg?.setAttribute('src', "/images/question-mark.jpeg");
-            console.log("attri : ", plyTwoImg?.getAttribute('src'));
             setTimeout(() => 
             {
-                console.log('match id ', playerOne.matchId)
                 if (PlayWithRobot)
                     PlayWithRobot.style.display = 'inline-block';
                 }, 100);
@@ -230,63 +227,60 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
         }
         else if (subscriptionData)
         {
-            const { data, loading, error } = useAccountQuery({
-                variables: {
-                  userId: Number(subscriptionData.matchWaitingList.user2.id),
-                },
-              });
-            if (loading)
-                return (<p>Loding ...</p>);
-            if (error)
-              return (<p>Error?</p>)
-            let ply2MatchId : string = subscriptionData.matchWaitingList.matchKey;
-            let ply2MatchWager : number = subscriptionData.matchWaitingList.user2.bet;
-            let ply2Username : string = data?.findUserById.username as string;
-            let ply2UserAvatar : string = data?.findUserById.profileImgUrl as string;
-            let ply2MatchWon : number = data?.findProfileByUserId?.gameStatus.matchesWon as number;
-            let ply2BestWinSteak : number = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
-            let ply2MatchPlyed : number = data?.findProfileByUserId?.gameStatus.totalMatches as number;
-            let ply2Level : number = data?.findProfileByUserId?.xp as number;
-            let ply2TournentPlayed : number = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
-            let ply2TournenetWon : number = data?.findProfileByUserId?.gameStatus.win_streak as number;
-            let ply2UserId : number  =  parseInt(subscriptionData.matchWaitingList.user2.id);
-            let ply2ModePlaying : number = 0;
-            if (subscriptionData.matchWaitingList.user2.matchType == "classic")
-                ply2ModePlaying = 1;
-            if (subscriptionData.matchWaitingList.user2.matchType == "standstorm")
-                ply2ModePlaying = 2;
-            if (subscriptionData.matchWaitingList.user2.matchType == "lastPong")
-                ply2ModePlaying = 3;
+            let ply2Username : string = "";
+            let ply2UserAvatar : string = "";;
+            let ply2MatchWon : number = 0;;
+            let ply2BestWinSteak : number = 0;
+            let ply2MatchPlyed : number = 0;
+            let ply2Level : number = 0;
+            let ply2TournentPlayed : number = 0;
+            let ply2TournenetWon : number = 0;
             let ply2UserLogo : string = "";
-            if (data?.findProfileByUserId?.rank  as number < 100)
-                ply2UserLogo = "/public/images/badge-1.png"
-            if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-                ply2UserLogo = "/public/images/badge-2.png";
-            if (data?.findProfileByUserId?.rank  as number >= 200)
-                ply2UserLogo = "/public/images/badge-3.png";
-            updatePlayerTwo(false, "", ply2MatchId, ply2MatchWager, ply2ModePlaying, ply2Username, ply2UserAvatar,
-            ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2MatchPlyed, ply2BestWinSteak,
+            let ply2MatchId : string = subscriptionData.matchWaitingList.matchKey;
+            let ply2MatchWager : number = 0;
+            let ply2UserId : number  =  0;
+            let ply2ModePlaying : number = 0;
+            if (playerOne.userId === parseInt(subscriptionData.matchWaitingList.user1.id))
+            {
+                ply2MatchWager = subscriptionData.matchWaitingList.user2.bet;
+                ply2UserId =  parseInt(subscriptionData.matchWaitingList.user2.id);
+                if (subscriptionData.matchWaitingList.user2.matchType == "classic")
+                    ply2ModePlaying = 1;
+                if (subscriptionData.matchWaitingList.user2.matchType == "standstorm")
+                    ply2ModePlaying = 2;
+                if (subscriptionData.matchWaitingList.user2.matchType == "lastPong")
+                    ply2ModePlaying = 3;
+            }
+            else
+            {
+                ply2MatchWager = subscriptionData.matchWaitingList.user1.bet;
+                ply2UserId =  parseInt(subscriptionData.matchWaitingList.user1.id);
+
+                if (subscriptionData.matchWaitingList.user1.matchType == "classic")
+                    ply2ModePlaying = 1;
+                if (subscriptionData.matchWaitingList.user1.matchType == "standstorm")
+                    ply2ModePlaying = 2;
+                if (subscriptionData.matchWaitingList.user1.matchType == "lastPong")
+                    ply2ModePlaying = 3;
+
+            }
+
+
+            //console.log("Ids---> : " , playerOne.userId ,playerTwo?.userId, subscriptionData.matchWaitingList.user1.id , subscriptionData.matchWaitingList.user2.id)
+            //console.log("Player 1 ===> ", playerOne);
+            //console.log("Player 2 ===> ", playerTwo);
+            if (playerTwo?.userId === 0)
+                updatePlayerTwo(false, "", ply2MatchId, ply2MatchWager, ply2ModePlaying, ply2Username, ply2UserAvatar,
+            ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2Level, ply2BestWinSteak,
             ply2TournentPlayed, ply2TournenetWon, ply2UserId);
-
-            //   //playerTwo.userName = ply2id as string;
-            //   updatePlayerTwo(false, player?.tabId, subscriptionData.matchWaitingList.matchKey, 
-            //     player?.matchWager, player?.modePlaying, player?.userName, player?.userAvatar,
-            //     player?.userLogo , player?.matchWon, player?.bestWinStreak, player?.matchPlyed,
-            //     player?.level, player?.tournentPlayed, player?.tournentWon, player?.playWithMouse, player?.userId);
-              
-            // playerTwo?.userAvatar = data?.findUserById.profileImgUrl as string;
-            // playerTwo.matchPlyed = data?.findProfileByUserId?.gameStatus.totalMatches as number;
-            // playerTwo.matchWon = data?.findProfileByUserId?.gameStatus.matchesWon as number;
-            // playerTwo.bestWinStreak = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
-            // playerTwo.level = data?.findProfileByUserId?.xp as number;
-            // playerTwo.tournentWon = data?.findProfileByUserId?.gameStatus.win_streak as number;
-            // playerTwo.tournentPlayed = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
-            // playerTwo.userId = Number(data?.findUserById?.id); 
-
+            setTimeout(() => {
+                plyTwoImg?.setAttribute('src', "/images/question-mark.jpeg");
+                updateMatchId(subscriptionData.matchWaitingList.matchKey);
+                //console.log("update : ", playerOne.matchId, "====> ", subscriptionData.matchWaitingList.matchKey , "------------X ", playerTwo?.userId, "----", subscriptionData.matchWaitingList.user2.id );
+                 //console.log("Player one : ", playerOne);
+            }, 1000);
         }
     }
-    // if (loading) 
-    //     return <p >Loading...</p>;
     if (error) 
         return <p>Error occurred</p>;
     else
