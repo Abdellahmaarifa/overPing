@@ -10,17 +10,20 @@ import useChatContextProvider, { useChatContext } from "context/chat.context";
 import useSettingsContextProvider from "context/settings.context";
 import { useUserContext } from "context/user.context";
 import {
+  FindProfileByUserIdDocument,
   useAcceptMatchToPlayMutation,
+  useFindProfileByUserIdQuery,
   useMatchWaitingListSubscription,
   useNotificationSubscription,
 } from "gql/index";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import tw from "twin.macro";
 import Button from "../Button/Button";
 import ConfirmModel from "../ConfirmModel/ConfirmModel";
 import Settings from "../Settings/Settings";
-
+import { useApolloClient } from "@apollo/client";
+import { Notification } from "domain/model/notification";
 const temp = tw.a``;
 
 const LayoutOutlet = () => {
@@ -71,6 +74,8 @@ const Layout = () => {
   const ChatContextProvider = useChatContextProvider();
   const { user, profile, updateUser } = useUserContext();
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState<Notification[] | []>([]);
+  const client = useApolloClient();
   const { data, loading, error } = useNotificationSubscription({
     variables: { userId: Number(user?.id) },
   });
@@ -109,12 +114,37 @@ const Layout = () => {
           />
         ),
         {
-          duration: Infinity,
+          duration: 3000,
           style: {
             width: "850px",
           },
         }
       );
+      client
+        .query({
+          query: FindProfileByUserIdDocument,
+          variables: {
+            userId: Number(data.notification.playerId),
+          },
+        })
+        .then((res) => {
+          const newNotifications = [...notifications];
+          const newNoti: Notification = {
+            name: res.data.findProfileByUserId.nickname,
+            userId: data.notification.playerId,
+            image: res.data.findProfileByUserId.bgImageUrl,
+            matchType: data.notification.matchType,
+          };
+          newNotifications.push(newNoti);
+          if (
+            notifications.find(
+              (e) => e.userId === data.notification.playerId
+            ) === undefined
+          )
+            setNotifications(newNotifications);
+        })
+        .catch((err) => {});
+
       //navigate("/game");
       console.log(data);
     }
@@ -134,7 +164,7 @@ const Layout = () => {
       <LayoutContextProvider>
         <SettingsContextProvider>
           <ChatContextProvider>
-            <TopNavBar />
+            <TopNavBar data={notifications} />
             <LeftNavBar />
             <LayoutOutlet />
             <Settings />

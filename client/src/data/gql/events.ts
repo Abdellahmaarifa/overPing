@@ -27,7 +27,7 @@ export const registerGlobalEvents = () => {
         }
         //console.log("i am live!", res.data.updateUserStatus);
         window.dispatchEvent(new Event("alive"));
-      }, 8000);
+      }, 30000);
     },
     false
   );

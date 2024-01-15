@@ -45,7 +45,7 @@ const Features = () => {
             FeatureIcon={PaddelIcon}
           />
           <Feature
-            onClick={() => navigate("game?type=tournament")}
+            onClick={() => navigate("/tournament")}
             bgGradient={yellowPinkGradient}
             title="Tournament"
             FeatureIcon={TrophyIcon}
