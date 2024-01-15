@@ -12,6 +12,7 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { onError } from "@apollo/client/link/error";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
+import { SERVER_END_POINT } from "constant/constants";
 
 // Log any GraphQL errors or network error that occurred
 const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -25,7 +26,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 export const httpLink = createUploadLink({
-  uri: import.meta.env.OVER_PING_GRAPHQL_API_URL,
+  uri: SERVER_END_POINT,
   credentials: "include",
 });
 

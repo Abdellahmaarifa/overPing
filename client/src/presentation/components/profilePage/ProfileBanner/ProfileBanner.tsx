@@ -2,14 +2,22 @@ import ChatIcon from "assets/common/chat.svg?react";
 import DotsIcon from "assets/common/dots.svg?react";
 import FriendsIcon from "assets/common/friends.svg?react";
 import GamepadIcon from "assets/common/game-pad.svg?react";
+import PendingIcon from "assets/common/pending.svg?react";
 import SettingsIcon from "assets/common/settings.svg?react";
 import UserAddIcon from "assets/common/user-add.svg?react";
-import PendingIcon from "assets/common/pending.svg?react";
 import Badge from "assets/profile/badge.png";
-import DemoCover from "assets/profile/cover.jpg";
-import Onep from "assets/profile/onep.jpg";
 import Hexagon from "components/common/Hexagon/Hexagon";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useSettingsContext } from "context/settings.context";
+import { useUserContext } from "context/user.context";
+import { ProfileType } from "domain/model/Profile.type";
+import { FriendshipStatusType } from "domain/model/helpers.type";
+import {
+  useSendFriendRequestMutation,
+  useSendRequestToPlayMutation,
+} from "gql/index";
+import { Dispatch, SetStateAction } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import {
   BannerBadge,
   BannerBadgeGrade,
@@ -18,23 +26,11 @@ import {
   BannerMenuButton,
   BannerMenuConatiner,
   BannerMenuMask,
-  ExtraLink,
-  ExtraMenu,
   ProfileConatiner,
   ProfileInfo,
   ProfileLevel,
   ProfileName,
 } from "./ProfileBanner.style";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useSettingsContext } from "context/settings.context";
-import { useUserContext } from "context/user.context";
-import {
-  useFindProfileByUserIdQuery,
-  useSendFriendRequestMutation,
-} from "gql/index";
-import { ProfileType } from "domain/model/Profile.type";
-import { FriendshipStatusType } from "domain/model/helpers.type";
-import toast, { Toaster } from "react-hot-toast";
 const ProfileBanner = ({
   showExtraMenu,
   setShowExtraMenu,
@@ -54,6 +50,7 @@ const ProfileBanner = ({
 }) => {
   const navigate = useNavigate();
   const [addFriend] = useSendFriendRequestMutation();
+  const [sendGameInvitaion] = useSendRequestToPlayMutation();
 
   const {
     settingsModel: [settingModel, setSettingModel],
@@ -81,6 +78,18 @@ const ProfileBanner = ({
     );
   };
   // console.log("stsus: ", friendsStatus);
+
+  const sendGameInvitaionHandler = () => {
+    const data = sendGameInvitaion({
+      variables: {
+        JoinMatchmakingInput: {
+          recipientId: Number(profile?.id),
+          matchType: "classic",
+        },
+      },
+    });
+    console.log(data);
+  };
   return (
     <BannerConatiner
       style={{
@@ -111,9 +120,7 @@ const ProfileBanner = ({
         ) : (
           <>
             <BannerMenuButton>
-              <GamepadIcon
-                onClick={() => navigate(`/game/type=friends?id=${profile?.id}`)}
-              />
+              <GamepadIcon onClick={() => sendGameInvitaionHandler()} />
             </BannerMenuButton>
             <BannerMenuButton>
               <ChatIcon onClick={() => navigate(`/chat/dm/${profile?.id}`)} />

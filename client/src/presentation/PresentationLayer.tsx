@@ -2,14 +2,13 @@ import { ApolloProvider } from "@apollo/client";
 import LoginContextProvider from "context/login.context";
 import UserContextProvider from "context/user.context";
 import { SkeletonTheme } from "react-loading-skeleton";
-import  GlobalStyles  from "./styles/GlobalStyles";
+import GlobalStyles from "./styles/GlobalStyles";
 import Router from "./routes/Router";
 import { observer } from "mobx-react-lite";
 import { Store } from "domain/DomainLayer";
-import { gql } from "apollo-server-express";
+import { Toaster } from "react-hot-toast";
 
 const App = observer(({ store }: { store: Store }) => {
-
   return (
     <ApolloProvider client={store.client}>
       <GlobalStyles />

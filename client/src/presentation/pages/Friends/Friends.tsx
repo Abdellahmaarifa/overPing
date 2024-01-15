@@ -26,32 +26,36 @@ import {
   FindAllUsersDocument,
   GetOnlineFriendsDocument,
   CancelFriendRequestDocument,
+  GetSuggestedFriendsDocument,
 } from "gql/index";
 import { Suspense, useEffect, useState } from "react";
 import { useUserContext } from "context/user.context";
 import { useApolloClient } from "@apollo/client";
 import { sleep } from "helpers/index";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { query } from "express";
 const FILTERS = {
-  ONLINE: "online friends",
-  REQUEST: "friens request",
-  SUGGESTION: "Suggestion",
-  BLOCKED: "Blocked friends",
+  ALL: { name: "All users", query: "all" },
+  ONLINE: { name: "online friends", query: "online" },
+  REQUEST: { name: "friens request", query: "requests" },
+  SUGGESTION: { name: "Suggestion", query: "suggestion" },
+  BLOCKED: { name: "Blocked friends", query: "blocked" },
 };
 const Friends = () => {
   const [seachValue, setSearchValue] = useState("");
   const [openFilterList, setOpenFilterList] = useState(false);
-  const [filter, setFilter] = useState(FILTERS.ONLINE);
+  const [filter, setFilter] = useState(FILTERS.ALL.name);
   const [friends, setFriends] = useState<User[]>([]);
   const client = useApolloClient();
   const { user } = useUserContext();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   // const {data} = useGetBlockedUsersSuspenseQuery();
 
   const getQuery = () => {
     switch (filter) {
-      case FILTERS.ONLINE:
+      case FILTERS.ONLINE.name:
         return {
           query: GetOnlineFriendsDocument,
           variables: {
@@ -59,12 +63,20 @@ const Friends = () => {
             limit: 40,
           },
         };
-      case FILTERS.REQUEST:
+      case FILTERS.REQUEST.name:
         return { query: GetFriendsRequestsDocument };
-      case FILTERS.SUGGESTION:
-        return { query: FindAllUsersDocument };
-      case FILTERS.BLOCKED:
+      case FILTERS.SUGGESTION.name:
+        return {
+          query: GetSuggestedFriendsDocument,
+          variables: {
+            pageNumber: 1,
+            limit: 40,
+          },
+        };
+      case FILTERS.BLOCKED.name:
         return { query: GetBlockedUsersDocument };
+      case FILTERS.ALL.name:
+        return { query: FindAllUsersDocument };
       default:
         return { query: FindAllUsersDocument };
     }
@@ -88,13 +100,17 @@ const Friends = () => {
         },
       })
       .then((data) => {
-        if (filter === FILTERS.REQUEST) {
+        if (filter === FILTERS.REQUEST.name) {
           setFriends(data.data.getFriendsRequests);
-        } else if (filter === FILTERS.BLOCKED)
+        } else if (filter === FILTERS.BLOCKED.name)
           setFriends(data.data.getBlockedUsers);
-        else if (filter === FILTERS.SUGGESTION)
+        else if (filter === FILTERS.SUGGESTION.name)
+          setFriends(data.data.getSuggestedFriends);
+        else if (filter === FILTERS.ONLINE.name) {
+          setFriends(data.data.getOnlineFriends);
+        } else if (filter === FILTERS.ALL.name) {
           setFriends(data.data.findAllUsers);
-        else {
+        } else {
           setFriends([]);
         }
         console.log("hola >> : ", data);
@@ -105,6 +121,14 @@ const Friends = () => {
     //setFriends(getFriends());
   }, [filter]);
 
+  useEffect(() => {
+    const urlQuery = searchParams.get("filter");
+    if (urlQuery == FILTERS.BLOCKED.query) setFilter(FILTERS.BLOCKED.name);
+    else if (urlQuery == FILTERS.SUGGESTION.query)
+      setFilter(FILTERS.SUGGESTION.name);
+    else if (urlQuery == FILTERS.ONLINE.query) setFilter(FILTERS.ONLINE.name);
+    else if (urlQuery == FILTERS.REQUEST.query) setFilter(FILTERS.REQUEST.name);
+  }, []);
   // if (loading) return <h1>loading</h1>;
   const acceptFriendReq = (friend) => async () => {
     // logic here
@@ -232,19 +256,26 @@ const Friends = () => {
 
   const getPrimaryAction = (friend: User) => {
     switch (filter) {
-      case FILTERS.ONLINE:
+      case FILTERS.ONLINE.name:
         return {
           name: "Match",
           func: () => {
             navigate(`/game?type=friends?id=${friend.id}`);
           },
         };
-      case FILTERS.REQUEST:
+      case FILTERS.REQUEST.name:
         return { name: "Accept Friend", func: acceptFriendReq(friend) };
-      case FILTERS.SUGGESTION:
+      case FILTERS.SUGGESTION.name:
         return { name: "Add friend", func: sendFriendReq(friend) };
-      case FILTERS.BLOCKED:
+      case FILTERS.BLOCKED.name:
         return { name: "Unblock", func: unclockFriend(friend) };
+      case FILTERS.ALL.name:
+        return {
+          name: "View Profile",
+          func: () => {
+            navigate(`/profile/${friend.id}`);
+          },
+        };
       default:
         return {
           name: "Match",
@@ -256,22 +287,29 @@ const Friends = () => {
   };
   const getSecondaryAction = (friend) => {
     switch (filter) {
-      case FILTERS.ONLINE:
+      case FILTERS.ONLINE.name:
         return {
           name: "Message",
           func: () => {
             navigate(`/chat/dm/${friend.id}`);
           },
         };
-      case FILTERS.REQUEST:
+      case FILTERS.REQUEST.name:
         return { name: "Cancel", func: cancelFriendReq(friend) };
-      case FILTERS.SUGGESTION:
+      case FILTERS.SUGGESTION.name:
         return {
           name: "Remove",
           func: () => clearFriend(friend),
         };
-      case FILTERS.BLOCKED:
+      case FILTERS.BLOCKED.name:
         return { name: "", func: () => {} };
+      case FILTERS.ALL.name:
+        return {
+          name: "Message",
+          func: () => {
+            navigate(`/chat/dm/${friend.id}`);
+          },
+        };
       default:
         return {
           name: "Message",
@@ -312,16 +350,19 @@ const Friends = () => {
           {openFilterList && (
             <FilterList>
               <FilterListItem onClick={handleFilter}>
-                {FILTERS.ONLINE}
+                {FILTERS.ALL.name}
               </FilterListItem>
               <FilterListItem onClick={handleFilter}>
-                {FILTERS.REQUEST}
+                {FILTERS.ONLINE.name}
               </FilterListItem>
               <FilterListItem onClick={handleFilter}>
-                {FILTERS.SUGGESTION}
+                {FILTERS.REQUEST.name}
               </FilterListItem>
               <FilterListItem onClick={handleFilter}>
-                {FILTERS.BLOCKED}
+                {FILTERS.SUGGESTION.name}
+              </FilterListItem>
+              <FilterListItem onClick={handleFilter}>
+                {FILTERS.BLOCKED.name}
               </FilterListItem>
             </FilterList>
           )}

@@ -19,7 +19,7 @@ let Deposite =  ( { playerOne , updateUserInfoWager} : ModesProps  ) =>
     let selectSound : any = new Howl({
         src: ['/Sounds/click-menu.mp3'],
         onload: () => {
-          console.log('Audio loaded successfully');
+          //console.log('Audio loaded successfully');
           // You can play the sound or perform other actions here
         },
         onloaderror: (error : any) => {

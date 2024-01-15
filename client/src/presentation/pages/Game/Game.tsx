@@ -19,28 +19,31 @@ import { UserProfile } from 'components/chatPage/CharRightSide/ChatRightSide.sty
 import { useAccountQuery, useFindProfileByUserIdQuery } from "gql/index";
 import {useSearchParams} from "react-router-dom"
 import ReadyRobot from './components/ReadyRobot';
+import { IGameData } from './components/game.interface';
+import { Result } from './components/Result';
 let gameCapsule: GameContainer = new GameContainer();
 
-let playerOne : UserInfo = new UserInfo(tabId, "", 0, 0, "hunter X111", "/images/kilua.jpg", "", 0, 0, 0, 0, 0, 0, 0);
-let playerTwo : UserInfo | undefined = new UserInfo(tabId, "", 0, 0, "", "/images/machi.jpg", "", 0, 0, 0, 0, 0, 0, 0);
+let playerOne : UserInfo = new UserInfo(tabId, "", 0, 0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
+let playerTwo : UserInfo | undefined = new UserInfo(tabId, "", 0, 0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
 let robot     : UserInfo = new UserInfo(tabId, "", playerOne.matchWager, playerOne.modePlaying, "Mr Robot <|o_o|>", "/images/robot.jpg", "/images/badge-3.png", 10, 10 ,10, 12, 10, 0, 0)
-
 
 
 function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlayerTwo} : { playerOne : UserInfo , playerTwo : UserInfo | undefined })
 {
     
-    const { user } =  useUserContext();
-    const { data, loading, error } = useAccountQuery({
-        variables: {
-          userId: Number(user?.id),
-        },
-      });
-    const [params] = useSearchParams()
+    // const { user } =  useUserContext();
+    // const { data, loading, error } = useAccountQuery({
+    //     variables: {
+    //       userId: Number(user?.id),
+    //     },
+    //   });
+    // const [params] = useSearchParams()
+    let gameResult : Result = new Result()
 
+    let [theGameResult, setGameResult] = useState(gameResult);
     
    // console.log("params: ", params.get("type"));
-    console.log("The data ----->: ", user, "--->\n", data);
+    //console.log("The data ----->: ", user, "--->\n", data);
 
 
 
@@ -48,7 +51,10 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
     {
     }, []);*/
 
-
+    let updateGameReuslt = (gameResult : Result) =>
+    {
+        setGameResult(gameResult);
+    };
 
     let [playerTwo, setPlayerTwoState] = useState(
         {
@@ -75,7 +81,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
     const updatePlayerTwo = (newPlayWithRobot : boolean, newTabId : string, newMatchId : string, newMatchWager: number,
         newModePlaying: number, newUserName : string, newUserAvatar: string, newUserLogo : string, newMatchWon : number,
         newBestWinStreak : number , newMatchPlayed : number, newLevel: number, newTournentPlayed : number,
-        newTournentWon : number, newPlayWithMouse : number ) => 
+        newTournentWon : number, newPlayWithMouse : number , newUserId : number) => 
     {
         setPlayerTwoState({...playerTwo, playWithRobot : newPlayWithRobot, 
             tabId : newTabId, matchId : newMatchId, matchWager: newMatchWager,
@@ -84,7 +90,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
              matchWon : newMatchWon, bestWinStreak : newBestWinStreak,
              matchPlyed : newMatchPlayed, level : newLevel, 
              tournentPlayed : newTournentPlayed, tournentWon : newTournentWon,
-             playWithMouse : newPlayWithMouse});
+             playWithMouse : newPlayWithMouse, userId : newUserId});
     };
 
 
@@ -109,6 +115,20 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         userId         : renamePlayerOne.userId
     })
 
+    const updatePlayerOne = (newPlayWithRobot : boolean, newTabId : string, newMatchId : string, newMatchWager: number,
+        newModePlaying: number, newUserName : string, newUserAvatar: string, newUserLogo : string, newMatchWon : number,
+        newBestWinStreak : number , newMatchPlayed : number, newLevel: number, newTournentPlayed : number,
+        newTournentWon : number, newPlayWithMouse : number , newUserId : number) => 
+    {
+        SetUserInfoData({...playerOne, playWithRobot : newPlayWithRobot, 
+            tabId : newTabId, matchId : newMatchId, matchWager: newMatchWager,
+             modePlaying : newModePlaying, userName : newUserName, 
+             userAvatar: newUserAvatar, userLogo : newUserLogo, 
+             matchWon : newMatchWon, bestWinStreak : newBestWinStreak,
+             matchPlyed : newMatchPlayed, level : newLevel, 
+             tournentPlayed : newTournentPlayed, tournentWon : newTournentWon,
+             playWithMouse : newPlayWithMouse, userId : newUserId});
+    };
     const [readyState, setReadyState] = useState(true);
     
     let [matchState, setMatchState] = useState<boolean | undefined>(undefined);
@@ -163,40 +183,40 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         setServerState(newState);
     }
 
-    if (params.get("type") === "computer")
-    {
-        playerOne.playWithRobot = true;   
-        robot.matchWager = playerOne.matchWager;
-        robot.modePlaying = playerOne.modePlaying;
-    }
+    // if (params.get("type") === "computer")
+    // {
+    //     playerOne.playWithRobot = true;   
+    //     robot.matchWager = playerOne.matchWager;
+    //     robot.modePlaying = playerOne.modePlaying;
+    // }
 
-    if (loading) 
-        return <h1>loading...</h1>;
-    else if (error)
-        return <h1>Error!..</h1>
-    else
-    {
-       playerOne.tabId = user?.id as string;
-       playerOne.userName = user?.username as string;
-       playerOne.userAvatar = data?.findUserById.profileImgUrl as string;
-       playerOne.matchPlyed = data?.findProfileByUserId?.gameStatus.totalMatches as number;
-       playerOne.matchWon = data?.findProfileByUserId?.gameStatus.matchesWon as number;
-       playerOne.bestWinStreak = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
-       playerOne.level = data?.findProfileByUserId?.xp as number;
-       playerOne.tournentWon = data?.findProfileByUserId?.gameStatus.win_streak as number;
-       playerOne.tournentPlayed = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
-       playerOne.userId = Number(data?.findUserById?.id);
+    // if (loading) 
+    //     return <h1>loading...</h1>;
+    // else if (error)
+    //     return <h1>Error!..</h1>
+    // else
+    // {
+    //    playerOne.tabId = user?.id as string;
+    //    playerOne.userName = user?.username as string;
+    //    playerOne.userAvatar = data?.findUserById.profileImgUrl as string;
+    //    playerOne.matchPlyed = data?.findProfileByUserId?.gameStatus.totalMatches as number;
+    //    playerOne.matchWon = data?.findProfileByUserId?.gameStatus.matchesWon as number;
+    //    playerOne.bestWinStreak = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
+    //    playerOne.level = data?.findProfileByUserId?.xp as number;
+    //    playerOne.tournentWon = data?.findProfileByUserId?.gameStatus.win_streak as number;
+    //    playerOne.tournentPlayed = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
+    //    playerOne.userId = Number(data?.findUserById?.id);
 
-    //    console.log("---------------> " , data);
-        if (data?.findProfileByUserId?.rank  as number < 100)
-            playerOne.userLogo = "/public/images/badge-1.png"
-        if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-            playerOne.userLogo = "/public/images/badge-2.png";
-        if (data?.findProfileByUserId?.rank  as number >= 200)
-            playerOne.userLogo = "/public/images/badge-3.png";
+    //    console.log("---------------> " , playerOne.tabId, playerOne.userId);
+    //     if (data?.findProfileByUserId?.rank  as number < 100)
+    //         playerOne.userLogo = "/public/images/badge-1.png"
+    //     if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
+    //         playerOne.userLogo = "/public/images/badge-2.png";
+    //     if (data?.findProfileByUserId?.rank  as number >= 200)
+    //         playerOne.userLogo = "/public/images/badge-3.png";
     
         if (playerOne.playWithMouse === 0)
-            return (< Util playerOne={playerOne} updateUserInfoUtil={UpdateUserInfoUtil}/>);
+            return (< Util playerOne={playerOne} updatePlayerOne={updatePlayerOne} updateUserInfoUtil={UpdateUserInfoUtil}/>);
         else if (playerOne.modePlaying === 0)
             return ( <Modes playerOne={playerOne} updateUserInfoMode={updateUserInfoMode}/>);
         else if (playerOne.matchWager === 0)
@@ -205,7 +225,8 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
             return (<Waiting playerOne={ playerOne } playerTwo={ playerTwo as UserInfo }
                  updateRobotOpetion={updateRobotOpetion} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo}  />) 
         if (playerOne.matchId.length > 0 && playerOne.playWithRobot === false && readyState)
-            return (< Ready playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateReadyState={updateReadyState} updateUserInfoWagerAndMode={updateUserInfoWagerAndMode} updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId}/>)
+            return (< Ready playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateReadyState={updateReadyState}
+                 updateUserInfoWagerAndMode={updateUserInfoWagerAndMode} updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo}/>)
         else if (playerOne.playWithRobot === true && readyState )
         {
             return (< ReadyRobot playerOne={playerOne} playerTwo={playerTwo as UserInfo} robot={robot} updateReadyState={updateReadyState} updateUserInfoWagerAndMode={updateUserInfoWagerAndMode}  updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo} />)
@@ -217,18 +238,18 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
             else
                 return (
                     <>
-                        <Info  playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateMatchState={updateMatchState} />
+                        <Info  playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateMatchState={updateMatchState} updateGameResult={updateGameReuslt}/>
                         <App  gameCapsule={gameCapsule} playerOne={playerOne} playerTwo={playerTwo as UserInfo}
                          updateMatchState={updateMatchState} updateServerState={updateServerState}/>
                     </>
                 )
         }
         else if (matchState === true)
-            return (< Congratulation playerOne={playerOne} playerTwo={playerTwo as UserInfo} />)
+            return (< Congratulation playerOne={playerOne} playerTwo={playerTwo as UserInfo} gameResult={gameResult}/>)
         else if (matchState === false)
             return (< BetterLuck playerOne={playerOne} playerTwo={playerTwo as UserInfo} />)
         return (null)
-    }
+   // }
 }
   
 export default ParentComponent;

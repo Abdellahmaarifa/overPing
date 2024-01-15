@@ -102,7 +102,7 @@ export const FilterList = tw.div`
     rounded-[4px]
     absolute
     left-[0]
-    -bottom-[140px]
+    -bottom-[170px]
 `;
 
 export const FilterListItem = tw.h3`

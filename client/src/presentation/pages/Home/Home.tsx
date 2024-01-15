@@ -6,12 +6,14 @@ import { useQuery, gql } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { useUserContext } from "context/user.context";
 import { useSettingsContext, SETTINGS_LINKS } from "context/settings.context";
-import { useUpdateUserMutation } from "gql/index";
+import { useNotificationSubscription, useUpdateUserMutation } from "gql/index";
+import toast from "react-hot-toast";
 
 const Home = () => {
   const { user, profile, updateUser } = useUserContext();
   const { settingsModel, settingsNav } = useSettingsContext();
   const [updateUserMutation] = useUpdateUserMutation();
+
   useEffect(() => {
     if (user) {
       console.log("this is the user :", user);
@@ -27,10 +29,10 @@ const Home = () => {
             },
           },
         });
-        // updateUser({ ...user, showUpdateWin: true });
       }
     }
   }, []);
+
   return (
     <HomeConatiner>
       <HomeBody>

@@ -1,7 +1,7 @@
 import './BetterLuck.css'
 import UserInfo from './UserInfo';
 import { Howl, Howler } from 'howler';
-
+import { Result } from './Result';
 interface BetterProps
 {
     playerOne : UserInfo;
@@ -10,10 +10,13 @@ interface BetterProps
 
 let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
 {
+    let plyOneImg : HTMLElement | null = null;
+    let plyTwoImg : HTMLElement | null = null;
+
     let loseSound : any = new Howl({
         src: ['/Sounds/lose.wav'],
         onload: () => {
-          console.log('Audio loaded successfully');
+          //console.log('Audio loaded successfully');
           // You can play the sound or perform other actions here
         },
         onloaderror: (error : any ) => {
@@ -21,11 +24,23 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
         },
       });
 
+    console.log("butter 1: ", playerOne)
+    console.log("butter 2: ", playerTwo)
     Howler.stop();
     setTimeout(() => {
           loseSound.play();
     }, 1000)
 
+    setTimeout( () => {
+        plyOneImg  = document.getElementById("betterAvatar2");
+        plyTwoImg  = document.getElementById("betterAvatar1");
+        plyOneImg?.setAttribute('src', playerOne.userAvatar);
+        plyTwoImg?.setAttribute('src', playerTwo.userAvatar);
+        // else
+
+    }, 200)
+
+    let wager : number = playerTwo.matchWager * 2;
     return (
         <div className='betterContainer'>
             <div className='betterState'>
@@ -41,13 +56,13 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
                 <div className='betterPlyInside1'>
                     <p className="betterWinLose">Winner</p>
                     <div className="betterAvatarR1Cover">
-                        <div className="betterAvatarR1"></div>
+                        <div className="betterAvatarR1"><img id="betterAvatar1" src="question-mark.jpeg" alt="avatar"/></div>
                     </div>
                     <div className='betterPlayerName1'>
-                        <p>hunte 111</p>
+                        <p>{playerTwo.userName}</p>
                     </div>
                     <div className='betterDiposit1'>
-                        <p className='nbr1'>1000 &#128176;</p>
+                        <p className='nbr1'>{wager} &#128176;</p>
                     </div>
                 </div>
             </div>
@@ -56,10 +71,10 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
                     <p className="betterWinLose"> </p>
 
                     <div className="betterAvatarR2Cover">
-                        <div className="betterAvatarR2"></div>
+                        <div className="betterAvatarR2"><img id="betterAvatar2" src="question-mark.jpeg" alt="avatar"/></div>
                     </div>
                     <div className='betterPlayerName2'>
-                        <p>Machi</p>
+                        <p>{playerOne.userName}</p>
                     </div>
                     <div className='betterDiposit2'>
                         <p className='nbr2'>0 &#128176;</p>

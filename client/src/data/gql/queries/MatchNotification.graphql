@@ -1,15 +1,30 @@
 subscription MatchWaitingList($userId: Float!) {
-    matchWaitingList(userId: $userId) {
-       matchKey
-        user1 {
-            id
-            bet
-            matchType
-        }
-        user2 {
-            id
-            bet
-            matchType
-        }
+  matchWaitingList(userId: $userId) {
+    matchKey
+    user1 {
+      id
+      bet
+      matchType
+    }
+    user2 {
+      id
+      bet
+      matchType
     }
   }
+}
+
+subscription notification($userId: Float!) {
+  notification(userId: $userId) {
+    playerId
+    matchType
+  }
+}
+
+mutation sendRequestToPlay($JoinMatchmakingInput: RequestToPlayInput!) {
+  sendRequestToPlay(JoinMatchmakingInput: $JoinMatchmakingInput)
+}
+
+mutation acceptMatchToPlay($AcceptRequestInput: AcceptRequestInput!) {
+  acceptMatchToPlay(AcceptRequestInput: $AcceptRequestInput)
+}
