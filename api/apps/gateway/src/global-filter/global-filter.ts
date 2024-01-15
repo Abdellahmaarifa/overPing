@@ -33,7 +33,7 @@ export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
       timestamp: new Date().toISOString(),
       error:
         status !== HttpStatus.INTERNAL_SERVER_ERROR
-          ? exception.message.error || exception.message || null
+          ?   exception.message || null
           : "Internal server error",
     };
 
