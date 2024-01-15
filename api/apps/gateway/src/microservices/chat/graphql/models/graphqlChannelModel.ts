@@ -3,48 +3,79 @@ import { GQLMessageModel } from "./graphqlMessageModel";
 import { IsOptional } from "class-validator";
 
 @ObjectType()
+export class GQLAdminsModel {
+  @Field()
+  id: number;
+  
+  @Field()
+  username?: string;
+  
+  @Field()
+  email?: string;
+  
+  @Field()
+  lastSeen?: Date;
+  
+  @Field()
+  profileImgUrl?: string;
+}
+
+@ObjectType()
+export class GQLMembersModel {
+  @Field()
+  id: number;
+  
+  @Field()
+  username?: string;
+  
+  @Field()
+  email?: string;
+  
+  @Field()
+  lastSeen?: Date;
+  
+  @Field()
+  profileImgUrl?: string;
+}
+
+@ObjectType()
 export class GQLChannelModel {
   @Field(() => ID)
   id: number;
 
   @Field()
+  @IsOptional()
   owner_id: number;
 
   @Field()
   name: string;
 
   @Field()
-  description: string;
+  @IsOptional()
+  description?: string;
 
   @Field()
   visibility: string;
 
   @Field(() => [GQLAdminsModel])
-  admins: GQLAdminsModel[];
+  @IsOptional()
+  admins?: GQLAdminsModel[];
 
   @Field(() => [GQLMembersModel])
-  members: GQLMembersModel[];
+  @IsOptional()
+  members?: GQLMembersModel[];
 
-  @Field(() => [GQLMessageModel], { nullable: true })
+  @Field(() => [GQLMessageModel])
+  @IsOptional()
   messages?: GQLMessageModel[];
 
   @Field()
-  created_at: string;
+  @IsOptional()
+  created_at?: string;
 
   @Field()
-  updated_at: string;
-}
-
-@ObjectType()
-export class GQLAdminsModel {
-  @Field()
-  userId: number;
-}
-
-@ObjectType()
-export class GQLMembersModel {
-  @Field()
-  userId: number;
+  @IsOptional()
+  updated_at?: string;
 }
 
 

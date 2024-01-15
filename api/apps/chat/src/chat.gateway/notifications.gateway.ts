@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
+import { DirectMessageService } from '../services/directMessage.service';
 
 @WebSocketGateway({
   cors: true,
@@ -10,6 +11,7 @@ import { PrismaService } from 'apps/chat/prisma/prisma.service';
 export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor( 
     private readonly prisma: PrismaService,
+    private readonly directMessageService: DirectMessageService,
   ) {}
   @WebSocketServer() server: Server;
 
@@ -31,32 +33,36 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     this.connectedUsers.delete(parseInt(client.id));
   }
 
-  async sendPendingMessages(userId: number) {
+  async sendPendingMessages(user_id: number) {
     const pendingMessages = await this.prisma.notifications.findMany({
       where: {
-        user_id: userId,
+        user_id: user_id,
       },
       orderBy: {
         created_at: 'asc',
       },
     });
 
-    const socket = this.connectedUsers.get(userId);
+    const socket = this.connectedUsers.get(user_id);
     for (const pendingMessage of pendingMessages) {
       if (socket) {
         const message = {
-          sender_id: pendingMessage.sender_id,
-          recipient_id: pendingMessage.user_id,
+          userId: pendingMessage.sender_id,
+          recipientId: pendingMessage.user_id,
+          groupChatId: pendingMessage.group_id,
           text: pendingMessage.text,
           created_at: pendingMessage.created_at
         }
-        socket.emit('message', message);
+        const addedMessage = this.directMessageService.addMessage(message);
+        if (addedMessage) {
+          socket.emit('recMessageFromUser', addedMessage);
+        }
       }
     }
 
     await this.prisma.notifications.deleteMany({
       where: {
-        user_id: userId,
+        user_id,
       },
     });
   }

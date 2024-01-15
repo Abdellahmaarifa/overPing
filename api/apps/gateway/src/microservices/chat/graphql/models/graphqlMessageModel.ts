@@ -13,9 +13,6 @@ export class GQLMessageModel {
   text?: string;
 
   @Field()
-  media_id?: number;
-
-  @Field()
   updated: boolean;
 
   @Field()

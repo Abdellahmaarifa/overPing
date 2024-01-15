@@ -18,7 +18,7 @@ RUN yarn install --verbose
 RUN yarn run generate:chat:prisma
 
 # Build the application
-RUN yarn build
+RUN yarn build chat
 
 
 # Create a new image for production

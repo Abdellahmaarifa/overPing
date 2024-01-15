@@ -1,7 +1,7 @@
 import { IVisibility } from "@app/common/chat";
 import { Optional } from "@nestjs/common";
 import { InputType, Field } from "@nestjs/graphql";
-import { IsDate, IsIn, IsNumber, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsAlphanumeric, IsDate, IsIn, IsNumber, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 @InputType()
 class CreationChannelInput {
@@ -16,7 +16,7 @@ class CreationChannelInput {
   channelName: string;
 
   @Field({nullable: true})
-  description: string;
+  description?: string;
 }
 
 @InputType()
@@ -40,7 +40,8 @@ export class CreateProtectedInput extends CreationChannelInput {
   @IsString()
   @MinLength(4, {message: 'Sets the minimum length of the password to 4 characters.'})
   @MaxLength(30, {message: 'Sets the maximum length of the password to 30 characters.'})
-  @Matches(/[0-9a-zA-Z]*\d[0-9a-zA-Z]*/, { message: 'Password must contain at least one digit' })
+  @IsAlphanumeric()
+  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)/, {message: 'Password must contain both letters and at least one digit'})
   password: string;
 }
 
@@ -74,6 +75,10 @@ export class updatePublicPrivateInput extends UpdateChannelInput {
   @IsString()
   @IsIn([IVisibility.PUBLIC, IVisibility.PRIVATE])
   visibility: string;
+
+  @Field({nullable: true})
+  @IsOptional()
+  password?: string
 }
 
 @InputType()
@@ -92,7 +97,8 @@ export class updateProtectedInput extends UpdateChannelInput {
   @IsString()
   @MinLength(4, {message: 'Sets the minimum length of the password to 4 characters.'})
   @MaxLength(30, {message: 'Sets the maximum length of the password to 30 characters.'})
-  @Matches(/[0-9a-zA-Z]*\d[0-9a-zA-Z]*/, { message: 'Password must contain at least one digit' })
+  @IsAlphanumeric()
+  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)/, {message: 'Password must contain both letters and at least one digit'})
   newPassword: string;
 }
 
@@ -144,12 +150,11 @@ export class MemberInput {
   @IsNumber()
   channelId: number;
 
-  @Field()
+  @Field({nullable: true})
   @IsString()
   password?: string;
 
-  @Field()
+  @Field({nullable: true})
   @IsDate()
-  @IsOptional()
-  muteTimeLimit: Date;
+  muteTimeLimit?: Date;
 }

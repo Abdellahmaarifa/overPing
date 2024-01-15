@@ -21,7 +21,6 @@ import { HelperService } from './utils/helper.service';
     CommonModule,
     RabbitMqModule,
     RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
-    RabbitMqModule.forClientProxy(IRmqSeverName.FRIEND),
   ],
   controllers: [
     DirectMessageController,
@@ -37,8 +36,8 @@ import { HelperService } from './utils/helper.service';
     ChannelService,
     DirectMessageGateway,
     ChannelGateway,
-    NotificationsGateway,
-    ClientAccessAuthorizationGuard
+    // NotificationsGateway,
+    ClientAccessAuthorizationGuard,
   ],
 })
 export class ChatModule {}

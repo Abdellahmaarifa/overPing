@@ -4,21 +4,29 @@ export class IChannel {
   id:            number
   owner_id:      number
   name:          string
-  description:   string
+  description?:  string
   visibility:    string
-  admins:        IAdmins[]
-  members:       IMembers[]
+  admins?:       IAdmins[]
+  members?:      IMembers[]
   messages?:     IMessage[]
-  created_at:    any
-  updated_at:    any
+  created_at?:   any
+  updated_at?:   any
 }
 
 export class IAdmins {
-  userId:  number
+  id:             number;
+  username?:      string;
+  email?:         string;
+  lastSeen?:      Date;
+  profileImgUrl?: string;
 }
 
 export class IMembers {
-  userId:  number
+  id:             number;
+  username?:      string;
+  email?:         string;
+  lastSeen?:      Date;
+  profileImgUrl?: string;
 }
 
 
@@ -26,10 +34,18 @@ export class IChannelSearch {
   id:         number
   name:       string
   visibility: string
+  joined:     boolean = false
 }
 
 export enum IVisibility {
   PUBLIC = 'public',
   PRIVATE = 'private',
   PROTECTED = 'protected',
+}
+
+export class IChannelInfo {
+  name?:          string
+  owner_id?:      number
+  description?:   string
+  visibility?:    string
 }

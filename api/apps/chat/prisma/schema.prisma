@@ -80,18 +80,10 @@ model MutedMembers {
   expiry         DateTime
 }
 
-model GameRequest {
-  id         Int      @id @default(autoincrement())
-  sender_id  Int
-  target_id  Int
-  gameType   String
-  status     String // pending, accepted, declined
-  created_at DateTime @default(now())
-}
-
 model Notifications {
   id         Int      @id @default(autoincrement())
   user_id    Int
+  group_id   Int
   sender_id  Int
   text       String
   created_at DateTime @default(now())

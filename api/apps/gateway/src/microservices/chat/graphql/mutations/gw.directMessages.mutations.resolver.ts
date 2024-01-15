@@ -11,25 +11,25 @@ export class directMessageResolver {
     
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => GQLDirectMessageModel)
-  async createDirectMessage( @Args('userID') userID: number, @Args('targetID') targetID: number ) {
+  async createDirectMessage( @Args('userID') userID: number, @Args('targetID') targetID: number ) : Promise<GQLDirectMessageModel> {
     return this.directMessageService.createDirectMessage( userID, targetID );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async deleteDirectMessage(@Args('data') data: DeletionInput) {
+  async deleteDirectMessage(@Args('data') data: DeletionInput) : Promise<Boolean> {
     return this.directMessageService.deleteDirectMessage( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => GQLMessageModel)
-  async updateMessageInDM( @Args('data') data: UpdateInput ) {
+  async updateMessageInDM( @Args('data') data: UpdateInput ) : Promise<GQLMessageModel> {
     return this.directMessageService.updateMessageInDM( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async deleteMessageInDM(@Args('data') data: DeletionInput) {
+  async deleteMessageInDM(@Args('data') data: DeletionInput) : Promise<Boolean> {
     return this.directMessageService.deleteMessageInDM( data );
   }
 }
