@@ -40,14 +40,13 @@ import { UserStatusService } from './microservices/auth/services/gw.userStatus.s
 import { ChannelResolver } from "./microservices/chat/graphql/mutations/gw.channels.mutations.resolver";
 import { directMessageResolver } from "./microservices/chat/graphql/mutations/gw.directMessages.mutations.resolver";
 import { ChatQueriesResolver } from "./microservices/chat/graphql/queries/gw.chat.query";
-
+import { formatError } from "./global-filter/gqlFilter";
 @Module({
   imports: [
     PassportModule,
     RabbitMqModule,
     GraphQLModule.forRoot({
       driver:ApolloDriver,
-      
       autoSchemaFile: join(process.cwd(), './graphql/schema.gql'),
       uploads: false,
       context: ({ req, res }) => ({ req, res }),
@@ -62,7 +61,7 @@ import { ChatQueriesResolver } from "./microservices/chat/graphql/queries/gw.cha
       path: '/graphql',
     },
   },
-    
+      formatError: formatError,
     }),
   RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
   RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),
