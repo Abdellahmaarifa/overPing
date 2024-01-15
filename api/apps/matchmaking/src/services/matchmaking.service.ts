@@ -130,7 +130,7 @@ export class MatchmakingService {
   }
 
   async acceptMatchToPlay(user: acceptMatchToPlayDto) : Promise<void>{
-    const player = await this.PoolService.getPlayerRequest(user.senderId, this.stringToEnum(user.matchType));
+    const player = await this.PoolService.getPlayerRequest(user.senderId,user.recipientId, this.stringToEnum(user.matchType));
     if (!player){
       return null;
     }
