@@ -3,6 +3,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { GwChannelService } from '../../services';
 import {
+  ActionToMemberInput,
   CreateProtectedInput,
   CreatePublicPrivateInput,
   DeleteMessageInput,
@@ -77,55 +78,55 @@ export class ChannelResolver {
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async addMember(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async addMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.addMember( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async removeMember(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async removeMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.removeMember(data);
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async addChannelAdmin(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async addChannelAdmin(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.addChannelAdmin( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async removeChannelAdmin(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async removeChannelAdmin(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.removeChannelAdmin( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async kickMember(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async kickMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.kickMember( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async banMember(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async banMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.banMember( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async unbanMember(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async unbanMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.unbanMember( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async muteMember(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async muteMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.muteMember( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async unmuteMember(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async unmuteMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.unmuteMember( data );
   }
 }

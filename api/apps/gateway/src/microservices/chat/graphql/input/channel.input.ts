@@ -89,9 +89,9 @@ export class updateProtectedInput extends UpdateChannelInput {
   @IsIn([IVisibility.PROTECTED])
   visibility: string;
 
-  @Field()
+  @Field({nullable: true})
   @IsString()
-  oldPassword: string
+  oldPassword?: string
   
   @Field()
   @IsString()
@@ -144,17 +144,20 @@ export class MemberInput {
   
   @Field()
   @IsNumber()
-  targetId?: number;
-  
-  @Field()
-  @IsNumber()
   channelId: number;
-
+  
   @Field({nullable: true})
   @IsString()
   password?: string;
-
+  
   @Field({nullable: true})
   @IsDate()
   muteTimeLimit?: Date;
+}
+
+@InputType()
+export class ActionToMemberInput extends MemberInput {
+  @Field()
+  @IsNumber()
+  targetId: number;  
 }

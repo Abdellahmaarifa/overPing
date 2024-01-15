@@ -21,7 +21,7 @@ export class ChannelController {
   /******** Find Channel by user and group ID ********/
 
   @MessagePattern({role: 'channel', cmd: 'find-channel-by-id'})
-  async findChannelById(payload: any) : Promise<{channel: IChannel, members: IMembersWithInfo}> {
+  async findChannelById(payload: any) : Promise<IChannel> { // {channel: IChannel, members: IMembersWithInfo}
     const {id, user_id} = payload;
     const res = await this.channelService.findById(id, user_id);
     return res;
@@ -96,7 +96,7 @@ export class ChannelController {
         if (password) {
           return await this.channelService.joinProtectedChannel(userId, channelId, password);
         } else {
-          this.rpcExceptionService.throwInternalError('Failed to join Protected Channel: password required')
+          this.rpcExceptionService.throwBadRequest('Failed to join Protected Channel: password required')
         }
       }
       case IVisibility.PUBLIC: {

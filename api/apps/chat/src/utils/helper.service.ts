@@ -14,6 +14,7 @@ import { FriendshipStatus, IUser } from '@app/common';
 import { GroupType } from '../interface/group.interface';
 import { ChannelGateway } from '../chat.gateway/channel.gateway';
 import { hash, verify } from 'argon2';
+import { ChannelService } from '../services/channel.service';
 
 // const argon2 = require('argon2');
 
@@ -26,6 +27,8 @@ export class HelperService {
     private readonly prisma: PrismaService,
     @Inject(forwardRef(() => CheckerService))
     private readonly checker: CheckerService,
+    @Inject(forwardRef(() => ChannelService))
+    private readonly channelService: ChannelService,
     private readonly channelGateway: ChannelGateway,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -123,8 +126,13 @@ export class HelperService {
       this.rpcExceptionService.throwNotFound(`Failed to find channel: ${id}`)
     }
     
-    // return await this.filterChannelMessages(channel, user_id);
-    return channel;
+    const members = await this.channelService.getMembers(id, user_id);
+    // return await this.helper.filterChannelMessages(channel, user_id);
+    return {
+      ...channel,
+      admins: members.admins,
+      members: members.members
+    };
   }
   
   // async filterChannelMessages(channel: IChannel, user_id: number) {
@@ -158,7 +166,7 @@ export class HelperService {
             where: { id: channelId }
           });
         } else {
-          await this.setOwner(channelId, members[0].userId);
+          await this.setOwner(channelId, members[0].id);
         }
     } else {
       await this.setOwner(channelId, admins[0].id);

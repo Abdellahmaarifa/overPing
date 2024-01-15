@@ -20,12 +20,12 @@ async function bootstrap() {
   });
   const rmqService = app.get<RabbitMqService>(RabbitMqService);
 
-  // app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.connectMicroservice(rmqService.getOptions(RABBIT_SERVICES[IRmqSeverName.GATEWAY].queue))
   await app.startAllMicroservices();
-  // app.useGlobalPipes(
-  //   new ValidationPipe({skipMissingProperties: true,})
-  // );
+  app.useGlobalPipes(
+    new ValidationPipe({skipMissingProperties: true,})
+  );
   await app.listen(5500);
 }
 bootstrap();

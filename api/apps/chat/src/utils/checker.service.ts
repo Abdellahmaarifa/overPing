@@ -175,8 +175,8 @@ export class CheckerService {
       && data.visibility === IVisibility.PROTECTED)
     {
       // PASSWORD REQUIRED TO SET IT IN CHANNEL
-      if (data.password) {
-        return await this.helper.hashPassword(data.password);
+      if (data.newPassword) {
+        return await this.helper.hashPassword(data.newPassword);
       } else {
         this.rpcExceptionService.throwBadRequest(`The update authorization requires a PASSWORD!`);
       }

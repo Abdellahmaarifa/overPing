@@ -17,7 +17,7 @@ export class IAdmins {
   id:             number;
   username?:      string;
   email?:         string;
-  lastSeen?:      Date;
+  lastSeen?:      any;
   profileImgUrl?: string;
 }
 
@@ -25,7 +25,7 @@ export class IMembers {
   id:             number;
   username?:      string;
   email?:         string;
-  lastSeen?:      Date;
+  lastSeen?:      any;
   profileImgUrl?: string;
 }
 

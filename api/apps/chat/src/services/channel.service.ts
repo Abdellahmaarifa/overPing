@@ -32,7 +32,7 @@ export class ChannelService {
 
   /******** Find Channel by user and group ID ********/
 
-  async findById(id: number, user_id: number) : Promise<{channel: IChannel, members: IMembersWithInfo}> {
+  async findById(id: number, user_id: number) : Promise<IChannel> {
     await this.helper.findUser(user_id, true);
 
     if (await this.checker.isMember(user_id, id) === false) {
@@ -66,8 +66,9 @@ export class ChannelService {
     const members = await this.getMembers(id, user_id);
     // return await this.helper.filterChannelMessages(channel, user_id);
     return {
-      channel,
-      members
+      ...channel,
+      admins: members.admins,
+      members: members.members
     };
   }
 

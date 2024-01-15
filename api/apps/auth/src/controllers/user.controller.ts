@@ -86,6 +86,11 @@ export class UserController {
       return this.userService.getOnlineFriends(userId, pageNumber, limit);
   }
 
+  @MessagePattern({role: 'user', cmd: 'getUsersInfo'})
+  async getUsersInfo(users: number[]) : Promise<IUser[]> {
+    return this.userService.getUsersInfo(users);
+  }
+
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {
     if (!user) {
       this.rpcExceptionService.throwCatchedException({

@@ -353,9 +353,27 @@ export class FriendshipService {
   }
 
 
-
-
-
+  async getUserBlocksList(userId: number, status: FriendshipStatus): Promise<number[] | null> {
+    switch (status) {
+      case FriendshipStatus.BlockedBy: {
+        const users = await this.prisma.user.findMany({
+            where: { id: userId },
+            include: { blockedBy: true },
+        });
+        return users.map((user) => user.id);
+      }
+      case FriendshipStatus.Blocked: {
+        const users = await this.prisma.user.findMany({
+            where: { id: userId },
+            include: { blocks: true },
+        });
+        return users.map((user) => user.id);
+      }
+      default: {
+        return null;
+      }
+    }
+  }
 }
 
 

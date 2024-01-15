@@ -44,7 +44,9 @@ export class ChatQueriesResolver {
     @Args('userId') userId: number,
     @Args('groupId') groupId: number
   ): Promise<{channel: IChannel, members: IMembersWithInfo}> {
-    return await this.channelService.findChannelById(userId, groupId);
+    const ch = await this.channelService.findChannelById(userId, groupId);
+    console.log(">>>> channel:", ch);
+    return ch;
   }
 
   /*********** Search For channel by Name ***********/

@@ -14,7 +14,7 @@ export class GQLAdminsModel {
   email?: string;
   
   @Field()
-  lastSeen?: Date;
+  lastSeen?: string;
   
   @Field()
   profileImgUrl?: string;
@@ -32,7 +32,7 @@ export class GQLMembersModel {
   email?: string;
   
   @Field()
-  lastSeen?: Date;
+  lastSeen?: string;
   
   @Field()
   profileImgUrl?: string;
