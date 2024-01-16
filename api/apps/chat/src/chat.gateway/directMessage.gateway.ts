@@ -12,6 +12,8 @@ import { HelperService } from '../utils/helper.service';
 import { FriendshipStatus } from '@app/common';
 import { GroupType } from '../interface/group.interface';
 
+let connectedUsers: Map<number, any> = new Map();
+
 @WebSocketGateway({
   cors: {
     origin: `${process.env.FRONT_URL}`,
@@ -28,40 +30,39 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   ) {}
   @WebSocketServer() server: Server;
 
-  private connectedUsers: Map<number, any> = new Map();
   private logger: Logger = new Logger('DirectMessageGateway');
 
   afterInit(server: Server) {
     this.logger.log('WebSocket initialized');
   }
 
-  @UseGuards(ClientAccessAuthorizationGuard)
+  // @UseGuards(ClientAccessAuthorizationGuard)
   async handleConnection(client: Socket, ...args: any[]) {
-    const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
-    const userId = await this.helper.getUserId(client);
+    // const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
+    // const userId = await this.helper.getUserId(client);
 
-    if (user || userId) {
+    // if (user || userId) {
       this.logger.log(`User connected: ${client.id}`);
-      this.connectedUsers.set(((user)? user.id : userId), client.id);
-    }
-    else {
-      this.logger.log(`User authentication failed: ${client.id}`);
-      client.disconnect();
-    }
+    //   connectedUsers.set(((user)? user.id : userId), client.id);
+    // }
+    // else {
+    //   this.logger.log(`User authentication failed: ${client.id}`);
+    //   client.disconnect();
+    // }
   }
 
   async handleDisconnect(client: Socket) {
-    const userId = await this.helper.getUserId(client);
-    if (userId) {
+    // const userId = await this.helper.getUserId(client);
+    // if (userId) {
       this.logger.log(`User disconnected: ${client.id}`);
-      this.connectedUsers.delete(userId);
-    }
+    //   connectedUsers.delete(userId);
+    // }
   }
 
   @SubscribeMessage('sendMessageToUser')
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
     const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
+    if (!data.text || !userId || userId !== data.userId) {
       return;
     }
     
@@ -74,7 +75,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.Blocked, GroupType.DM);
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.BlockedBy, GroupType.DM);
 
-    const socket = this.connectedUsers.get(data.recipientId);
+    const socket = connectedUsers.get(data.recipientId);
     if (socket) {
       const message = this.directMessageService.addMessage(data);
       if (message) {
@@ -96,11 +97,11 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   @SubscribeMessage('getDMMessages')
   async getMessages(client: Socket, data: DMMessagesdto) {
-    const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
-      return;
-    }
-    await this.helper.findUser(data.userId, true);
+    // const userId = await this.helper.getUserId(client);
+    // if (!userId || userId !== data.userId) {
+    //   return;
+    // }
+    // await this.helper.findUser(data.userId, true);
 
     return await this.prisma.directMessage.findUnique({
       where: {

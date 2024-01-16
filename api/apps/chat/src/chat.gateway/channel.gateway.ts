@@ -78,7 +78,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     }
     if (await this.checker.checkForUser(data.userId) === false
      || await this.checker.checkForChannel(data.channelId) === false) {
-      this.rpcExceptionService.throwBadRequest(`Invalid user/channel id.`);
+      this.rpcExceptionService.throwBadRequest(`Invalid user/channel id`);
     }
     const channelName = `channel_` + data.channelId;
     client.join(channelName);
@@ -87,8 +87,8 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   @SubscribeMessage('sendMessageToUser')
   async sendMessageToUser(client: Socket, data: AddMessageInChanneldto) {
     const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
-      this.rpcExceptionService.throwBadRequest(`Failed to find the user id ${userId}`);
+    if (!data.text || !userId || userId !== data.userId) {
+      return;
     }
     
     const existingChannel = await this.checker.checkForChannel(data.channelId);
@@ -164,7 +164,15 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     }
     await this.helper.findUser(data.userId, true);
 
-    return await this.channelService.getMembers(data.channelId, data.userId);
+    if (await this.checker.isMember(userId, data.channelId) === false) {
+      this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
+    }
+
+    if (await this.checker.isMember(userId, data.channelId) === false) {
+      this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
+    }
+
+    return await this.channelService.getMembers(data.channelId);
   }
 
 

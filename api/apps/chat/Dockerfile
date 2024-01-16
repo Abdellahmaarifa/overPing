@@ -20,6 +20,7 @@ RUN yarn run generate:chat:prisma
 # Build the application
 RUN yarn build chat
 
+RUN prisma generate
 
 # Create a new image for production
 FROM node:21.1.0-alpine as production

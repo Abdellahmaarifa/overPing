@@ -48,7 +48,10 @@ export class HelperService {
     }
     catch (error) {
       console.log(`****************************\n${error}\n************** password: ${password} **************`)
-      this.rpcExceptionService.throwInternalError(`Internal failure`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 500,
+        message: `Internal failure0`,
+      });
     }
   }
   
@@ -67,7 +70,10 @@ export class HelperService {
         this.rpcExceptionService.throwUnauthorised('Invalid password');
       }
       console.log(`****************************\n${error}\n************** password: ${providedPassword} **************`)
-      this.rpcExceptionService.throwInternalError(`Internal failure`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 500,
+        message: `Internal failure1`,
+      });
     }
   }
 
@@ -81,7 +87,10 @@ export class HelperService {
       }
       return true
     } catch {
-      this.rpcExceptionService.throwInternalError('Internal failure');
+      this.rpcExceptionService.throwCatchedException({
+        code: 500,
+        message: `Internal failure2`,
+      });
     }
   }
 
@@ -126,7 +135,7 @@ export class HelperService {
       this.rpcExceptionService.throwNotFound(`Failed to find channel: ${id}`)
     }
     
-    const members = await this.channelService.getMembers(id, user_id);
+    const members = await this.channelService.getMembers(id);
     // return await this.helper.filterChannelMessages(channel, user_id);
     return {
       ...channel,
@@ -158,34 +167,48 @@ export class HelperService {
   // }
     
     async ownerLeavedChannel(channelId: number) : Promise<void> {
-      const admins = await this.findAdminsById(channelId);
-      if (!admins) {
-        const members = await this.findMembersById(channelId);
-        if (!members) {
-          await this.prisma.channel.delete({
-            where: { id: channelId }
-          });
-        } else {
-          await this.setOwner(channelId, members[0].id);
-        }
+    const admins = await this.findAdminsById(channelId);
+    if (!admins?.length) {
+      const members = await this.findMembersById(channelId);
+      if (!members?.length) {
+        await this.prisma.channel.delete({
+          where: { id: channelId }
+        });
+      } else {
+        await this.setOwner(channelId, members[0].id, "isMember");
+      }
     } else {
-      await this.setOwner(channelId, admins[0].id);
+      await this.setOwner(channelId, admins[0].id, "isAdmin");
     }
   }
   
-  async setOwner(channelId: number, newOwner: number) : Promise<void> {
+  async setOwner(channelId: number, newOwner: number, oldStatus: string) : Promise<void> {
     await this.prisma.channel.update({
       where: { id: channelId },
       data: {
-        owner_id: newOwner[0].userId
+        owner_id: newOwner
       }
     });
+    if (oldStatus === "isMember") {
+      await this.prisma.admins.create({
+        data: {
+          userId: newOwner,
+          channel: { connect: { id: channelId } },
+        }
+      });
+      await this.prisma.members.deleteMany({
+        where: {
+          userId: newOwner,
+          channelId: channelId,
+        },
+      });
+    }
 
-    await this.channelGateway.sendUpdatedChannelInfo(channelId, {
-      owner_id: newOwner[0].userId,
-    });
+    // await this.channelGateway.sendUpdatedChannelInfo(channelId, {
+    //   owner_id: newOwner,
+    // });
   }
-  
+
   
   /******* Check and Get User Information by ID *******/
 

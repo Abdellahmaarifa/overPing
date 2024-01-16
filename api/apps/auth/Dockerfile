@@ -21,8 +21,9 @@ RUN yarn install --verbose
 RUN yarn run generate:auth:prisma
 
 # Build the application
-RUN yarn build 
+RUN yarn build
 
+RUN prisma generate
 
 # Create a new image for production
 FROM node:21.1.0-alpine as production
