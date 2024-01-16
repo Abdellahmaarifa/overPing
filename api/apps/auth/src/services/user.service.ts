@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { IAuthUser, IUser } from '@app/common/auth/interface/auth.user.interface';
+import {
+  IAuthUser,
+  IUser,
+} from '@app/common/auth/interface/auth.user.interface';
 import { UserCreationDto } from '../dto';
 import { PrismaService } from 'apps/auth/prisma/prisma.service';
 import * as argon2 from 'argon2';
@@ -50,7 +53,9 @@ export class UserService {
     try {
       const exists = await this.isUserExist(username);
       if (exists) {
-        throw this.rpcExceptionService.throwBadRequest(`Resource already exists`);
+        throw this.rpcExceptionService.throwBadRequest(
+          `Resource already exists`,
+        );
       }
       console.log('the error: ', password, username);
       const hashedPassword = password ? await argon2.hash(password) : undefined;
@@ -75,8 +80,8 @@ export class UserService {
           lastSeen: true,
           twoStepVerificationEnabled: true,
           createdAt: true,
-        updatedAt: true,
-        showUpdateWin: true,
+          updatedAt: true,
+          showUpdateWin: true,
         },
       });
     } catch (error) {
@@ -107,17 +112,17 @@ export class UserService {
     }
   }
 
-  async findUserById(userId: number, id: number) : Promise<IUser> {
+  async findUserById(userId: number, id: number): Promise<IUser> {
     try {
       const user = await this.prisma.user.findUnique({
-        where: { 
+        where: {
           id,
           blocks: {
             none: {
               id: userId,
             },
           },
-         },
+        },
         select: {
           id: true,
           username: true,
@@ -134,7 +139,7 @@ export class UserService {
     }
   }
 
-  async findAllUsers( userId: number ): Promise<IUser[]> {
+  async findAllUsers(userId: number): Promise<IUser[]> {
     const users = await this.prisma.user.findMany({
       where: {
         id: {
@@ -158,11 +163,10 @@ export class UserService {
     return users;
   }
 
-
   async findPagesOfUsers(
     pageNumber: number = 1,
     pageSize: number = 10,
-    userId: number
+    userId: number,
   ): Promise<IUser[]> {
     const skip = (pageNumber - 1) * pageSize;
     const users = await this.prisma.user.findMany({
@@ -189,7 +193,6 @@ export class UserService {
     });
     return users;
   }
-
 
   async remove(id: number, password: string): Promise<boolean> {
     try {
@@ -276,7 +279,7 @@ export class UserService {
   }
 
   private async isUserExist(username: string): Promise<boolean> {
-    console.log("check if user")
+    console.log('check if user');
     const exists = !!(await this.prisma.user.findFirst({
       where: {
         username: username,
@@ -329,8 +332,7 @@ export class UserService {
     return friends;
   }
 
-
-  async getOnlineFriends( userId, pageNumber, limit ): Promise<IUser[]> {
+  async getOnlineFriends(userId, pageNumber, limit): Promise<IUser[]> {
     const exists = await this.isUserExistById(userId);
     if (!exists) {
       this.rpcExceptionService.throwBadRequest(
@@ -344,7 +346,7 @@ export class UserService {
           some: {
             id: userId,
             lastSeen: {
-              gte: new Date(new Date().getTime() - 5 * 60 * 1000), 
+              gte: new Date(new Date().getTime() - 5 * 60 * 1000),
             },
           },
         },
@@ -353,15 +355,14 @@ export class UserService {
       skip: (pageNumber - 1) * limit,
     });
 
-    return friends; 
+    return friends;
   }
 
-
-  async getOnlineUsers( pageNumber, limit ): Promise<IUser[]> {
+  async getOnlineUsers(pageNumber, limit): Promise<IUser[]> {
     const onlineUsers = await this.prisma.user.findMany({
       where: {
         lastSeen: {
-          gte: new Date(new Date().getTime() - 5 * 60 * 1000), //last 5 minutes 
+          gte: new Date(new Date().getTime() - 5 * 60 * 1000), //last 5 minutes
         },
       },
       take: limit,
@@ -371,19 +372,19 @@ export class UserService {
     return onlineUsers;
   }
 
-
-  async updateUserStatus(userId: number , time : number) : Promise<boolean>{
+  async updateUserStatus(userId: number, time: number): Promise<boolean> {
     const exists = await this.isUserExistById(userId);
     if (!exists) {
       this.rpcExceptionService.throwBadRequest(
         `User with ID ${userId} not found.`,
       );
     }
+
     const user = await this.prisma.user.update({
       where: { id: userId },
-      data:{
-        lastSeen: new Date(time)
-      }
+      data: {
+        lastSeen: new Date(time),
+      },
     });
 
     if (!user) {

@@ -63,7 +63,7 @@ const NotificationSimple = ({
     <div tw="p-[10px] flex justify-center items-start  bg-[#152A3D] rounded-[5px] w-full h-fit flex-col">
       <div tw="flex items-start justify-center gap-[10px]">
         <div
-          tw="h-[40px] w-[60px]  rounded-[2px]"
+          tw="h-[40px] w-[40px]  rounded-[2px]"
           style={{
             background: `center/cover url(${image})`,
           }}
@@ -88,7 +88,7 @@ const NotificationList = ({
 
   return (
     <div
-      tw="w-[310px]  flex-col gap-[10px] p-[10px] h-[600px] overflow-scroll opacity-[.9] bg-[#C3C4D9] top-[80px] right-[15px] absolute rounded-[5px]"
+      tw="w-[310px]  flex-col gap-[10px] p-[10px] h-[600px] overflow-scroll  bg-[rgb(195 196 217 / 0.9)] top-[80px] right-[15px] absolute rounded-[5px]"
       style={{ display: active ? "flex" : "none" }}
     >
       {data.map((e) => {
