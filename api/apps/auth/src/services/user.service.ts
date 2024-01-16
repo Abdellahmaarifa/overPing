@@ -15,7 +15,7 @@ export class UserService {
   constructor(
     private readonly rpcExceptionService: RpcExceptionService,
     private prisma: PrismaService,
-  ) {}
+  ) { }
 
   async validateUser(
     userCredentials: SignInCredentialsDto,
@@ -75,8 +75,8 @@ export class UserService {
           lastSeen: true,
           twoStepVerificationEnabled: true,
           createdAt: true,
-        updatedAt: true,
-        showUpdateWin: true,
+          updatedAt: true,
+          showUpdateWin: true,
         },
       });
     } catch (error) {
@@ -107,17 +107,17 @@ export class UserService {
     }
   }
 
-  async findUserById(userId: number, id: number) : Promise<IUser> {
+  async findUserById(userId: number, id: number): Promise<IUser> {
     try {
       const user = await this.prisma.user.findUnique({
-        where: { 
+        where: {
           id,
           blocks: {
             none: {
               id: userId,
             },
           },
-         },
+        },
         select: {
           id: true,
           username: true,
@@ -130,11 +130,12 @@ export class UserService {
 
       return user;
     } catch (error) {
+      console.log("throw error of findUserbyId", error);
       this.handlePrismaError(error);
     }
   }
 
-  async findAllUsers( userId: number ): Promise<IUser[]> {
+  async findAllUsers(userId: number): Promise<IUser[]> {
     const users = await this.prisma.user.findMany({
       where: {
         id: {
@@ -330,34 +331,39 @@ export class UserService {
   }
 
 
-  async getOnlineFriends( userId, pageNumber, limit ): Promise<IUser[]> {
+  async getOnlineFriends(userId, pageNumber, limit): Promise<IUser[]> {
     const exists = await this.isUserExistById(userId);
     if (!exists) {
       this.rpcExceptionService.throwBadRequest(
         `User with ID ${userId} not found.`,
       );
     }
-
-    const friends = await this.prisma.user.findMany({
-      where: {
+    const currentTime = new Date();
+    const fiveMinutesAgo = new Date(currentTime.getTime() - 5 * 60 * 1000);
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
         friends: {
-          some: {
-            id: userId,
-            lastSeen: {
-              gte: new Date(new Date().getTime() - 5 * 60 * 1000), 
-            },
+          where: {
+            lastSeen: { gte: fiveMinutesAgo },
+          },
+        },
+        friendOf: {
+          where: {
+            lastSeen: { gte: fiveMinutesAgo },
           },
         },
       },
-      take: limit,
-      skip: (pageNumber - 1) * limit,
     });
 
-    return friends; 
+    const onlineFriends = user.friends;
+
+    const onlineUsers = onlineFriends.concat(user.friendOf);
+    return onlineUsers;
   }
 
 
-  async getOnlineUsers( pageNumber, limit ): Promise<IUser[]> {
+  async getOnlineUsers(pageNumber, limit): Promise<IUser[]> {
     const onlineUsers = await this.prisma.user.findMany({
       where: {
         lastSeen: {
@@ -372,7 +378,7 @@ export class UserService {
   }
 
 
-  async updateUserStatus(userId: number , time : number) : Promise<boolean>{
+  async updateUserStatus(userId: number, time: string): Promise<boolean> {
     const exists = await this.isUserExistById(userId);
     if (!exists) {
       this.rpcExceptionService.throwBadRequest(
@@ -381,8 +387,8 @@ export class UserService {
     }
     const user = await this.prisma.user.update({
       where: { id: userId },
-      data:{
-        lastSeen: new Date(time)
+      data: {
+        lastSeen: new Date()
       }
     });
 
