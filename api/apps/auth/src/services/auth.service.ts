@@ -137,7 +137,6 @@ export class AuthService {
     );
 
     if (!refreshTokenMatches) throw 'Access Denied';
-    console.log('refreshTokenMatches');
     return user;
   }
 

@@ -41,7 +41,6 @@ export class UserController {
 
   @MessagePattern({ role: 'user', cmd: 'findAllUsers' })
   async findAllUsers({userId}): Promise<IAuthUser[]> {
-    console.log("find all users controller")
     const users = await this.userService.findAllUsers(userId);
     this.handleUsersNotFound(users, 'Failed to query users');
     return users;
@@ -89,7 +88,7 @@ export class UserController {
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {
     if (!user) {
       this.rpcExceptionService.throwCatchedException({
-        code: 500,
+        code: 404,
         message: errorMessage,
       });
     }
@@ -98,7 +97,7 @@ export class UserController {
   private handleUsersNotFound(users: IAuthUser[], errorMessage: string): void {
     if (!users) {
       this.rpcExceptionService.throwCatchedException({
-        code: 500,
+        code: 404,
         message: errorMessage,
       });
     }
