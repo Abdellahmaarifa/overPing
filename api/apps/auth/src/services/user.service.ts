@@ -127,10 +127,8 @@ export class UserService {
           profileImgUrl: true,
         },
       });
-
       return user;
     } catch (error) {
-      console.log("throw error of findUserbyId", error);
       this.handlePrismaError(error);
     }
   }
@@ -331,7 +329,7 @@ export class UserService {
   }
 
 
-  async getOnlineFriends(userId, pageNumber, limit): Promise<IUser[]> {
+  async getOnlineFriends(userId: number, pageNumber: number, limit: number): Promise<IUser[]> {
     const exists = await this.isUserExistById(userId);
     if (!exists) {
       this.rpcExceptionService.throwBadRequest(
@@ -340,6 +338,7 @@ export class UserService {
     }
     const currentTime = new Date();
     const fiveMinutesAgo = new Date(currentTime.getTime() - 5 * 60 * 1000);
+    const offset = (pageNumber - 1) * limit;
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -347,11 +346,15 @@ export class UserService {
           where: {
             lastSeen: { gte: fiveMinutesAgo },
           },
+          take: limit,
+          skip: offset
         },
         friendOf: {
           where: {
             lastSeen: { gte: fiveMinutesAgo },
           },
+          take: limit,
+          skip: offset,
         },
       },
     });
@@ -364,6 +367,7 @@ export class UserService {
 
 
   async getOnlineUsers(pageNumber, limit): Promise<IUser[]> {
+    const offset = (pageNumber - 1) * limit;
     const onlineUsers = await this.prisma.user.findMany({
       where: {
         lastSeen: {
@@ -371,7 +375,7 @@ export class UserService {
         },
       },
       take: limit,
-      skip: (pageNumber - 1) * limit,
+      skip: offset,
     });
 
     return onlineUsers;
