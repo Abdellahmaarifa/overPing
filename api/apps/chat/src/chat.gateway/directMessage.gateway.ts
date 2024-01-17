@@ -43,7 +43,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
     // if (user || userId) {
       this.logger.log(`User connected: ${client.id}`);
-    //   connectedUsers.set(((user)? user.id : userId), client.id);
+      // connectedUsers.set(((user)? user.id : userId), client.id);
     // }
     // else {
     //   this.logger.log(`User authentication failed: ${client.id}`);

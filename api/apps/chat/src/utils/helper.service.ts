@@ -41,7 +41,6 @@ export class HelperService {
       // const hashedPassword = await bcrypt.hash(password, salt);
 
       const hashedPassword = await hash(password);
-      console.log(`***** hashedPassword: ${hashedPassword}`);
 
       return hashedPassword;
     }
@@ -67,7 +66,6 @@ export class HelperService {
       if (error === 'Invalid password') {
         this.rpcExceptionService.throwUnauthorised('Invalid password');
       }
-      console.log(`****************************\n${error}\n************** password: ${providedPassword} **************`)
       this.rpcExceptionService.throwCatchedException({
         code: 500,
         message: `Internal failure1`,

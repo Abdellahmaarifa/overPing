@@ -12,7 +12,7 @@ import { PrismaService } from 'apps/chat/prisma/prisma.service';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { GroupType } from '../interface/group.interface';
 import { FriendshipStatus } from '@app/common';
-import { IChannelInfo, IMembersWithInfo } from '@app/common/chat';
+import { IChannelInfo, IMembersWithInfo, IMessage } from '@app/common/chat';
 
 let connectedChannelUsers: Map<number, any> = new Map();
 
@@ -42,18 +42,18 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     this.logger.log('WebSocket initialized');
   }
 
-  @UseGuards(ClientAccessAuthorizationGuard)
+  // @UseGuards(ClientAccessAuthorizationGuard)
   async handleConnection(client: Socket, ...args: any[]) {
-    const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
-    const userId = await this.helper.getUserId(client);
-    if (user || userId) {
+    // const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
+    // const userId = await this.helper.getUserId(client);
+    // if (user || userId) {
       this.logger.log(`User connected: ${client.id}`);
-      connectedChannelUsers.set(((user)? user.id : userId), client.id);
-    }
-    else {
-      this.logger.log(`User authentication failed: ${client.id}`);
-      client.disconnect();
-    }
+      // connectedChannelUsers.set(((user)? user.id : userId), client.id);
+    // }
+    // else {
+    //   this.logger.log(`User authentication failed: ${client.id}`);
+    //   client.disconnect();
+    // }
   }
 
   async handleDisconnect(client: Socket) {
@@ -69,7 +69,6 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     }
   }
 
-
   @SubscribeMessage('joinChannel')
   async joinChannel(client: Socket, data: MemberOfChanneldto) {
     const userId = await this.helper.getUserId(client);
@@ -84,7 +83,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     client.join(channelName);
   }
 
-  @SubscribeMessage('sendMessageToUser')
+  @SubscribeMessage('sendMessageToChannel')
   async sendMessageToUser(client: Socket, data: AddMessageInChanneldto) {
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
@@ -123,12 +122,12 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   }
 
   @SubscribeMessage('getChannelMessages')
-  async getMessages(client: Socket, data: ChannelMessagesdto) {
-    const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
-      return;
-    }
-    await this.helper.findUser(data.userId, true);
+  async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[]> {
+    // const userId = await this.helper.getUserId(client);
+    // if (!userId || userId !== data.userId) {
+    //   return;
+    // }
+    // await this.helper.findUser(data.userId, true);
 
     const blockedUsers = (await this.checker.blockStatus(
       data.userId, 
@@ -137,10 +136,13 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       GroupType.CHANNEL
     )) as number[];
 
-    return await this.prisma.channel.findUnique({
+    const channel = await this.prisma.channel.findUnique({
       where: {
         id: data.channelId,
-        members: { some: { userId: data.userId } },
+        OR: [
+          {admins: { some: { userId: data.userId } }},
+          {members: { some: { userId: data.userId } }},
+        ]
       },
       select: {
         messages: {
@@ -153,24 +155,25 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
         },
       }
     });
+    console.log('channel', channel);
+    if (!channel) {
+      this.rpcExceptionService.throwNotFound(`Failed to find channel: ${data.channelId}`)
+    }
+    return channel.messages || [];
   }
 
 
   @SubscribeMessage('getChannelMembers')
   async getMembers(client: Socket, data: MemberOfChanneldto) : Promise<IMembersWithInfo> {
-    const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
-      return;
-    }
-    await this.helper.findUser(data.userId, true);
+    // const userId = await this.helper.getUserId(client);
+    // if (!userId || userId !== data.userId) {
+    //   return;
+    // }
+    // await this.helper.findUser(data.userId, true);
 
-    if (await this.checker.isMember(userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
-    }
-
-    if (await this.checker.isMember(userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
-    }
+    // if (await this.checker.isMember(userId, data.channelId) === false) {
+    //   this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
+    // }
 
     return await this.channelService.getMembers(data.channelId);
   }
