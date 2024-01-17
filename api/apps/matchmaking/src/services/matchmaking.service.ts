@@ -160,6 +160,27 @@ export class MatchmakingService {
     
   }
   
+  async cancelRequestToPlay(user: acceptMatchToPlayDto):  Promise<boolean>{
+    const player = await this.PoolService.getPlayerRequest(user.senderId,user.recipientId, this.stringToEnum(user.matchType));
+    if (!player){
+      return null;
+    }
+    console.log("this is player in cancel match to play ", player);
+    this.PoolService.removePlayerRequest(player.id, player.type);
+    /*
+
+     this.clientService.sendMessageWithPayload(
+      this.gatewayClient,
+      {
+        role: 'gateway',
+        cmd: 'matchFound',
+      },
+       ????,
+    );
+    */
+    return true;
+  }
+
   private stringToEnum(value: string): PoolType | undefined {
     for (const key in PoolType) {
       if (PoolType[key as keyof typeof PoolType] === value) {

@@ -11,7 +11,7 @@ import {
   TabHeading,
 } from "./HomeOverview.style";
 const OverViewContainer = tw.div`
-w-full h-fit min-h-[300px] flex justify-start items-center flex-col gap-[10px] min-w-[fit-content]
+  w-full h-fit min-h-[300px] flex justify-start items-center flex-col gap-[10px] min-w-[fit-content]
 `;
 const HomeOverview = () => {
   const {
@@ -61,9 +61,9 @@ const HomeOverview = () => {
           </TabHeading>
         </Tab>
       </TabContainer>
-      <MatchHistories active={matchTabState} />
+      <MatchHistories active={true} />
       <RightSideConatiner>
-        <FriendsMatches active={friendMatchTab} />
+        <FriendsMatches active={true} />
         <Suggestions />
       </RightSideConatiner>
     </OverViewContainer>

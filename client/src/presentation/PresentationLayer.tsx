@@ -6,7 +6,6 @@ import GlobalStyles from "./styles/GlobalStyles";
 import Router from "./routes/Router";
 import { observer } from "mobx-react-lite";
 import { Store } from "domain/DomainLayer";
-import { Toaster } from "react-hot-toast";
 
 const App = observer(({ store }: { store: Store }) => {
   return (

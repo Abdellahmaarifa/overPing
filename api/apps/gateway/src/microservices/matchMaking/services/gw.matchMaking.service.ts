@@ -4,7 +4,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { JoinMatchmakingInput, RequestToPlayInput } from '../graphql/inputs/joinMatchmakingInput';
 import { RespondToPlay } from '../models/respondRequestToPlayDto';
-import { AcceptRequestInput } from '../graphql/inputs/acceptRequestInput';
+import { AcceptRequestInput, CancelRequestInput } from '../graphql/inputs/acceptRequestInput';
 
 @Injectable()
 export class GwMatchMakingService{
@@ -60,6 +60,22 @@ export class GwMatchMakingService{
             {
                 role: 'matchMaking',
                 cmd: 'acceptMatchToPlay',
+            },
+            {
+                senderId : acceptData.senderId,
+                recipientId: userId,
+                matchType: acceptData.matchType
+            }
+        );
+    }
+
+
+    async cancelRequestToPlay(userId: number, acceptData: CancelRequestInput){
+       return await this.clientService.emitMessageWithPayload(
+            this.client,
+            {
+                role: 'matchMaking',
+                cmd: 'CancelRequestToPlay',
             },
             {
                 senderId : acceptData.senderId,

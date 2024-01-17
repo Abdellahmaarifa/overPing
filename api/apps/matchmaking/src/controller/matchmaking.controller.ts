@@ -24,5 +24,10 @@ export class MatchmakingController {
   acceptMatchToPlay(joinMatchData: acceptMatchToPlayDto){
      this.matchmakingService.acceptMatchToPlay(joinMatchData);
   }
+
+  @MessagePattern({role: 'matchMaking', cmd: 'CancelRequestToPlay'})
+  cancelRequestToPlay(joinMatchData: acceptMatchToPlayDto){
+     return this.matchmakingService.cancelRequestToPlay(joinMatchData);
+  }
   
 }

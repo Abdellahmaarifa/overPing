@@ -31,6 +31,7 @@ import {
   ProfileLevel,
   ProfileName,
 } from "./ProfileBanner.style";
+import { playWithUser } from "helpers/index";
 const ProfileBanner = ({
   showExtraMenu,
   setShowExtraMenu,
@@ -79,17 +80,14 @@ const ProfileBanner = ({
   };
   // console.log("stsus: ", friendsStatus);
 
-  const sendGameInvitaionHandler = () => {
-    const data = sendGameInvitaion({
-      variables: {
-        JoinMatchmakingInput: {
-          recipientId: Number(profile?.id),
-          matchType: "classic",
-        },
-      },
+  const sendGameInvitaionHandler = async () => {
+    toast.promise(playWithUser(Number(profile?.id), sendGameInvitaion), {
+      loading: "please wait ..",
+      success: (data: string) => data,
+      error: (err: string) => err,
     });
-    console.log(data);
   };
+
   return (
     <BannerConatiner
       style={{

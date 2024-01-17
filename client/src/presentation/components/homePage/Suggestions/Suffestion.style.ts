@@ -9,8 +9,7 @@ export const UserCard = tw.div`
 `;
 
 export const UserAvatar = tw.img`
-  w-[48px] h-[48px] rounded-[16px] 
-`;
+  w-[48px] h-[48px] rounded-[16px] cursor-pointer`;
 
 export const UserDetails = tw.div`
   flex flex-col justify-evenly items-start

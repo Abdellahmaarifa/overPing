@@ -27,11 +27,12 @@ import {
   GetOnlineFriendsDocument,
   CancelFriendRequestDocument,
   GetSuggestedFriendsDocument,
+  useSendRequestToPlayMutation,
 } from "gql/index";
 import { Suspense, useEffect, useState } from "react";
 import { useUserContext } from "context/user.context";
 import { useApolloClient } from "@apollo/client";
-import { sleep } from "helpers/index";
+import { playWithUser, sleep } from "helpers/index";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { query } from "express";
@@ -253,15 +254,21 @@ const Friends = () => {
       }
     );
   };
+  const [sendGameInvitaion] = useSendRequestToPlayMutation();
 
+  const sendGameInvitaionHandler = async (id) => {
+    toast.promise(playWithUser(Number(id), sendGameInvitaion), {
+      loading: "please wait ..",
+      success: (data: string) => data,
+      error: (err: string) => err,
+    });
+  };
   const getPrimaryAction = (friend: User) => {
     switch (filter) {
       case FILTERS.ONLINE.name:
         return {
           name: "Match",
-          func: () => {
-            navigate(`/game?type=friends?id=${friend.id}`);
-          },
+          func: () => sendGameInvitaionHandler(friend.id),
         };
       case FILTERS.REQUEST.name:
         return { name: "Accept Friend", func: acceptFriendReq(friend) };
@@ -279,9 +286,7 @@ const Friends = () => {
       default:
         return {
           name: "Match",
-          func: () => {
-            navigate(`/game?type=friends?id=${friend.id}`);
-          },
+          func: () => sendGameInvitaionHandler(friend.id),
         };
     }
   };

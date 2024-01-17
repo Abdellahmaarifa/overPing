@@ -9,3 +9,12 @@ export class AcceptRequestInput {
     @Field()
     readonly matchType: string;
 }
+
+@InputType()
+export class CancelRequestInput {
+    @Field()
+    readonly senderId: number;
+    
+    @Field()
+    readonly matchType: string;
+}
