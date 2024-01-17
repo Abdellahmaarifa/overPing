@@ -15,6 +15,8 @@ import {
   useFindProfileByUserIdQuery,
   useMatchWaitingListSubscription,
   useNotificationSubscription,
+  UserDocument,
+  AccountDocument,
 } from "gql/index";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -120,19 +122,21 @@ const Layout = () => {
           },
         }
       );
+
       client
         .query({
-          query: FindProfileByUserIdDocument,
+          query: AccountDocument,
           variables: {
             userId: Number(data.notification.playerId),
           },
         })
         .then((res) => {
+          console.log("**for user id :", data.notification.playerId, res.data);
           const newNotifications = [...notifications];
           const newNoti: Notification = {
-            name: res.data.findProfileByUserId.nickname,
+            name: res.data.findUserById.username,
             userId: data.notification.playerId,
-            image: res.data.findProfileByUserId.bgImageUrl,
+            image: res.data.findUserById.profileImgUrl,
             matchType: data.notification.matchType,
           };
           newNotifications.push(newNoti);
@@ -143,7 +147,9 @@ const Layout = () => {
           )
             setNotifications(newNotifications);
         })
-        .catch((err) => {});
+        .catch((error) => {
+          console.log({ error });
+        });
 
       //navigate("/game");
       console.log(data);

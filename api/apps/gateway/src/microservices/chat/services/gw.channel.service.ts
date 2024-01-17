@@ -3,8 +3,8 @@ import { ClientProxy } from '@nestjs/microservices';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IMessage } from '@app/common/chat/message.interface';
-import { CreateProtectedInput, CreatePublicPrivateInput, DeleteMessageInput, MemberInput, UpdateChannelInput, UpdateMessageInput } from '../graphql/input/channel.input';
-import { IChannel, IChannelSearch } from '@app/common/chat';
+import { ActionToMemberInput, CreateProtectedInput, CreatePublicPrivateInput, DeleteMessageInput, MemberInput, UpdateChannelInput, UpdateMessageInput } from '../graphql/input/channel.input';
+import { IChannel, IChannelSearch, IMembersWithInfo } from '@app/common/chat';
 
 @Injectable()
 export class GwChannelService {
@@ -29,7 +29,7 @@ export class GwChannelService {
 
   /******** Find Channel by user and group ID ********/
 
-  async findChannelById(userID: number, channelID: number) : Promise<IChannel>{
+  async findChannelById(userID: number, channelID: number) : Promise<{channel: IChannel, members: IMembersWithInfo}>{
     const payload = {
       id: channelID,
       user_id: userID,
@@ -46,14 +46,17 @@ export class GwChannelService {
 
   /*********** Search For channel by Name ***********/
 
-  async searchForChannel(channelName: string) : Promise<IChannelSearch[]> {
+  async searchForChannel(channelName: string, user_id: number) : Promise<IChannelSearch[]> {
     return await this.clientService.sendMessageWithPayload(
       this.client,
       {
           role: 'channel',
           cmd: 'search',
       },
-      channelName
+      {
+        channelName,
+        user_id
+      }
     );
   }
 
@@ -83,11 +86,7 @@ export class GwChannelService {
     );
   }
 
-  async deleteChannel(userID: number, channelID: number) : Promise<Boolean> {
-    const payload = {
-      user_id: userID,
-      channel_id: channelID
-    };
+  async deleteChannel(payload: UpdateChannelInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -151,7 +150,7 @@ export class GwChannelService {
     );
   }
 
-  async addMember(payload: MemberInput) : Promise<Boolean> {
+  async addMember(payload: ActionToMemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -162,7 +161,7 @@ export class GwChannelService {
     );
   }
 
-  async removeMember(payload: MemberInput) : Promise<Boolean> {
+  async removeMember(payload: ActionToMemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -177,7 +176,7 @@ export class GwChannelService {
   /************** CHANNEL ADMINISTRATION *************/
   /********* add Admin ******* remove Admine *********/
 
-  async addChannelAdmin(payload: MemberInput) : Promise<Boolean> {
+  async addChannelAdmin(payload: ActionToMemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -188,7 +187,7 @@ export class GwChannelService {
     );
   }
 
-  async removeChannelAdmin(payload: MemberInput) : Promise<Boolean> {
+  async removeChannelAdmin(payload: ActionToMemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -204,7 +203,7 @@ export class GwChannelService {
   /*********** Ban Member ******************* Mute Member ***********/
   /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
-  async kickMember(payload: MemberInput) : Promise<Boolean> {
+  async kickMember(payload: ActionToMemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -215,7 +214,7 @@ export class GwChannelService {
     );
   }
 
-  async banMember(payload: MemberInput) : Promise<Boolean> {
+  async banMember(payload: ActionToMemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -226,7 +225,7 @@ export class GwChannelService {
     );
   }
 
-  async unbanMember(payload: MemberInput) : Promise<Boolean> {
+  async unbanMember(payload: ActionToMemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -237,7 +236,7 @@ export class GwChannelService {
     );
   }
 
-  async muteMember(payload: MemberInput) : Promise<Boolean> {
+  async muteMember(payload: ActionToMemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -248,7 +247,7 @@ export class GwChannelService {
     );
   }
 
-  async unmuteMember(payload: MemberInput) : Promise<Boolean> {
+  async unmuteMember(payload: ActionToMemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {

@@ -68,29 +68,18 @@ CREATE TABLE "BannedMembers" (
 -- CreateTable
 CREATE TABLE "MutedMembers" (
     "id" SERIAL NOT NULL,
-    "channel_id" INTEGER NOT NULL,
-    "mutedMember_id" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "channelId" INTEGER NOT NULL,
     "expiry" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "MutedMembers_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "GameRequest" (
-    "id" SERIAL NOT NULL,
-    "sender_id" INTEGER NOT NULL,
-    "target_id" INTEGER NOT NULL,
-    "gameType" TEXT NOT NULL,
-    "status" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "GameRequest_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Notifications" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
+    "group_id" INTEGER NOT NULL,
     "sender_id" INTEGER NOT NULL,
     "text" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -118,3 +107,6 @@ ALTER TABLE "Admins" ADD CONSTRAINT "Admins_channelId_fkey" FOREIGN KEY ("channe
 
 -- AddForeignKey
 ALTER TABLE "BannedMembers" ADD CONSTRAINT "BannedMembers_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MutedMembers" ADD CONSTRAINT "MutedMembers_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel"("id") ON DELETE CASCADE ON UPDATE CASCADE;

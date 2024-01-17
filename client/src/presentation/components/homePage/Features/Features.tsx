@@ -39,7 +39,7 @@ const Features = () => {
             FeatureIcon={ComputerIcon}
           />
           <Feature
-            onClick={() => navigate("/game?type=friends")}
+            onClick={() => navigate("/friends?filter=online")}
             bgGradient={redBlueGradient}
             title="Friends"
             FeatureIcon={PaddelIcon}
