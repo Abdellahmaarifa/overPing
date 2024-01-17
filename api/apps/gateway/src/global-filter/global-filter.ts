@@ -10,6 +10,15 @@ import { Request, Response } from "express";
 import { GqlArgumentsHost, GqlExceptionFilter } from "@nestjs/graphql";
 import { GraphQLResolveInfo } from "graphql";
 
+export interface errorFormat{
+  statusCode: number,
+  timestamp: string,
+  error: string,
+  path: string,
+  method?: string,
+  type?: any
+}
+
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
@@ -27,13 +36,19 @@ export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
     if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
       console.error(exception);
     }
+    const mess = (() : string | null => {
+        if (typeof exception.getResponse() === "string")
+          return null;
+        const obj : any = exception.getResponse();
+        return obj.message.toString();
+    })();
 
     const errorResponse = {
       statusCode: status,
       timestamp: new Date().toISOString(),
       error:
         status !== HttpStatus.INTERNAL_SERVER_ERROR
-          ?   exception.message || null
+          ?  mess ||  exception.message || null
           : "Internal server error",
     };
 
@@ -54,7 +69,7 @@ export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
       response.status(status).json(errorResponse);
     } else {
       // This is for gql error log
-      const error = {
+      const error  = {
         ...errorResponse,
         type: info.parentType,
         path: info.fieldName,

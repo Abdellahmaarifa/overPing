@@ -11,7 +11,8 @@ export const formatError = (err) => {
         ||  extensions.originalError?.statusCode 
         || HttpStatus.INTERNAL_SERVER_ERROR,
       timestamp: new Date().toISOString(),
-      error: message,
+      error: extensions.originalError?.error,
+      message: message,
       path: err.path,
     };
     
