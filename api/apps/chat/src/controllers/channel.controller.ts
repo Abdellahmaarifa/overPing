@@ -1,4 +1,4 @@
-import { IChannel, IChannelSearch, IMembers, IMessage, IVisibility } from '@app/common/chat';
+import { IChannel, IChannelSearch, IMessage, IVisibility, IMembersWithInfo } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
@@ -21,7 +21,7 @@ export class ChannelController {
   /******** Find Channel by user and group ID ********/
 
   @MessagePattern({role: 'channel', cmd: 'find-channel-by-id'})
-  async findChannelById(payload: any) : Promise<IChannel> {
+  async findChannelById(payload: any) : Promise<IChannel> { // {channel: IChannel, members: IMembersWithInfo}
     const {id, user_id} = payload;
     const res = await this.channelService.findById(id, user_id);
     return res;
@@ -30,17 +30,17 @@ export class ChannelController {
   /*********** Search For channel by Name ***********/
 
   @MessagePattern({role: 'channel', cmd: 'search'})
-  async searchForChannel(channelName: string) : Promise<IChannelSearch[]> {
-    const res = await this.channelService.search(channelName);
+  async searchForChannel(payload: any) : Promise<IChannelSearch[]> {
+    const {channelName, user_id} = payload;
+    const res = await this.channelService.search(channelName, user_id);
     return res;
   }
 
   /************* Get Channels of a User *************/
 
   @MessagePattern({role: 'channel', cmd: 'get-all'})
-  async getUserChannels(channelName: string) : Promise<IChannelSearch[]> {
-    const res = await this.channelService.search(channelName);
-    return res;
+  async getUserChannels(user_id: any) : Promise<IChannel[]> {
+    return await this.channelService.getUserChannels(user_id);
   }
 
 
@@ -49,7 +49,8 @@ export class ChannelController {
 
   @MessagePattern({role: 'channel', cmd: 'create'})
   async createChannel(payload: CreateChanneldto) : Promise<IChannel> {
-    return await this.channelService.create(payload);
+    const channel = await this.channelService.create(payload);
+    return channel;
   }
 
   @MessagePattern({role: 'channel', cmd: 'update'})
@@ -58,9 +59,8 @@ export class ChannelController {
   }
 
   @MessagePattern({role: 'channel', cmd: 'delete'})
-  async deleteChannel(payload: any) : Promise<Boolean> {
-    const {userID, channelID} = payload;
-    return await this.channelService.delete(userID, channelID);
+  async deleteChannel(payload: UpdateChanneldto) : Promise<Boolean> {
+    return await this.channelService.delete(payload);
   }
 
   /***************** MESSAGES ACTIONS ****************/
@@ -84,17 +84,18 @@ export class ChannelController {
   async joinChannel(payload: MemberOfChanneldto) : Promise<IChannel> {
     const {userId, channelId, password} = payload;
     
-    if (!(await this.checker.checkForChannel(channelId))) {
+    const visibility = await this.checker.channelVisibility(channelId);
+    
+    if (!visibility) {
       this.rpcExceptionService.throwNotFound(`Failed to find channel ${channelId}`)
     }
-    
-    const visibility = await this.checker.channelVisibility(channelId);
+
     switch (visibility) {
       case IVisibility.PROTECTED: {
         if (password) {
           return await this.channelService.joinProtectedChannel(userId, channelId, password);
         } else {
-          this.rpcExceptionService.throwInternalError('Failed to join Protected Channel: password required')
+          this.rpcExceptionService.throwBadRequest('Failed to join Protected Channel: password required')
         }
       }
       case IVisibility.PUBLIC: {
@@ -121,12 +122,12 @@ export class ChannelController {
   /********* add Admin ******* remove Admine *********/
 
   @MessagePattern({role: 'channel', cmd: 'add-admin'})
-  async addChannelAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
+  async addAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.addAdmin(payload);
   }
   
   @MessagePattern({role: 'channel', cmd: 'remove-admin'})
-  async removeChannelAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
+  async removeAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.removeAdmin(payload);
   }
 
@@ -135,27 +136,27 @@ export class ChannelController {
   /*********** Ban Member ******************* Mute Member ***********/
   /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
-  @MessagePattern({role: 'channel', cmd: 'kickMember'})
+  @MessagePattern({role: 'channel', cmd: 'kick-member'})
   async kickMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.kickMember(payload);
   }
 
-  @MessagePattern({role: 'channel', cmd: 'banMember'})
+  @MessagePattern({role: 'channel', cmd: 'ban-member'})
   async banMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.banMember(payload);
   }
 
-  @MessagePattern({role: 'channel', cmd: 'unbanMember'})
+  @MessagePattern({role: 'channel', cmd: 'unban-member'})
   async unbanMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.unbanMember(payload);
   }
 
-  @MessagePattern({role: 'channel', cmd: 'muteMember'})
+  @MessagePattern({role: 'channel', cmd: 'mute-member'})
   async muteMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.muteMember(payload);
   }
 
-  @MessagePattern({role: 'channel', cmd: 'unmuteMember'})
+  @MessagePattern({role: 'channel', cmd: 'unmute-member'})
   async unmuteMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.unmuteMember(payload);
   }

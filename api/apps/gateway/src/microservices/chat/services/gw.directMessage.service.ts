@@ -49,8 +49,8 @@ export class GwDirectMessageService {
 
   async createDirectMessage(userID: number, targetID: number) : Promise<IDirectMessage>{
     const payload = {
-      user_id: userID,
-      target_id: targetID
+      userID,
+      targetID
     };
     return await this.clientService.sendMessageWithPayload(
         this.client,
