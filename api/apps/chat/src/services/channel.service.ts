@@ -50,10 +50,10 @@ export class ChannelService {
       where: { id },
       include: {
         messages: {
+          orderBy: { created_at: 'desc' },
           where: {
             NOT: { sender_id: { in: blockedUsers } }
           },
-          orderBy: { created_at: 'desc' },
           take: 30,
         },
       },
@@ -75,14 +75,19 @@ export class ChannelService {
   /************** Get Channels of a User **************/
 
   async getUserChannels(userId: number) : Promise<IChannel[]> {
-    await this.helper.findUser(userId, true);
+    // await this.helper.findUser(userId, true);
 
-    const linkedChannels = await this.prisma.members.findMany({
-      where: { userId },
-      select: { channelId: true }
+    const linkedChannels = await this.prisma.channel.findMany({
+      where: {
+        OR: [
+          { members: { some: { userId } } },
+          { admins: { some: { userId } } },
+        ]
+      },
+      select: { id: true }  
     });
 
-    const channelIds = linkedChannels.map((member) => member.channelId);
+    const channelIds = linkedChannels.map((member) => member.id);
 
     const userChannels = await this.prisma.channel.findMany({
       where: {
@@ -174,7 +179,7 @@ export class ChannelService {
   /******* create ******* update ***** delete *******/
 
   async create(data: CreateChanneldto) : Promise<IChannel> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     await this.helper.channelNameValidation(data.channelName);
     
@@ -213,7 +218,7 @@ export class ChannelService {
   }
 
   async update(data: UpdateChanneldto) : Promise<IChannel> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
     
     const channel = await this.prisma.channel.findUnique({
       where: {
@@ -241,10 +246,6 @@ export class ChannelService {
       include: {
         admins: { select: { userId: true } },
         members: { select: { userId: true } },
-        messages: {
-          orderBy: { created_at: 'desc' },
-          take: 30,
-        },
       }
     });
 
@@ -263,7 +264,7 @@ export class ChannelService {
   }
 
   async delete(data: UpdateChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.isOwner(data.userId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -280,6 +281,9 @@ export class ChannelService {
     }
     else if (channel.visibility === IVisibility.PROTECTED && !data.password) {
       this.rpcExceptionService.throwUnauthorised(`This action requires a PASSWORD!`)
+    }
+    else if (channel.visibility === IVisibility.PROTECTED && data.password) {
+      await this.helper.isPasswordMatched(channel.password, data.password);
     }
 
     await this.prisma.channel.delete({
@@ -303,7 +307,7 @@ export class ChannelService {
   }
 
   async updateMessage(data: UpdateMessageInChanneldto) : Promise<IMessage> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     const message = await this.prisma.messages.findUnique({
       where: {
@@ -327,7 +331,7 @@ export class ChannelService {
   }
 
   async deleteMessage(data: DeleteMessageInChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     const message = await this.prisma.messages.findUnique({
       where: {
@@ -407,7 +411,7 @@ export class ChannelService {
   }
 
   async addMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
     await this.helper.findUser(data.targetId, true);
     await this.checker.isBanned(data.targetId, data.channelId);
 
@@ -516,7 +520,7 @@ export class ChannelService {
   /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
   async kickMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -528,13 +532,13 @@ export class ChannelService {
       },
     });
 
-    await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
+    // await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
 
     return true;
   }
 
   async banMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -558,7 +562,7 @@ export class ChannelService {
   }
 
   async unbanMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.isAdmin(data.userId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -573,7 +577,7 @@ export class ChannelService {
   }
 
   async muteMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -590,7 +594,7 @@ export class ChannelService {
   }
 
   async unmuteMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (!this.checker.isAdmin(data.userId, data.channelId)) {
       return false;

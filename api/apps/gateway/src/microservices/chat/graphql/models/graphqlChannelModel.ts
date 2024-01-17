@@ -50,30 +50,30 @@ export class GQLChannelModel {
   @Field()
   name: string;
 
-  @Field()
+  @Field({nullable: true})
   @IsOptional()
   description?: string;
 
   @Field()
   visibility: string;
 
-  @Field(() => [GQLAdminsModel])
+  @Field(() => [GQLAdminsModel], {nullable: true})
   @IsOptional()
   admins?: GQLAdminsModel[];
 
-  @Field(() => [GQLMembersModel])
+  @Field(() => [GQLMembersModel], {nullable: true})
   @IsOptional()
   members?: GQLMembersModel[];
 
-  @Field(() => [GQLMessageModel])
+  @Field(() => [GQLMessageModel], {nullable: true})
   @IsOptional()
   messages?: GQLMessageModel[];
 
-  @Field()
+  @Field({nullable: true})
   @IsOptional()
   created_at?: string;
 
-  @Field()
+  @Field({nullable: true})
   @IsOptional()
   updated_at?: string;
 }

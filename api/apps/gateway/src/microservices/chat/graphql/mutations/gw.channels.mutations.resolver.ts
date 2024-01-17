@@ -47,7 +47,7 @@ export class ChannelResolver {
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async deleteChannel(@Args('data') data: updateProtectedInput) : Promise<Boolean> {
+  async deleteChannel(@Args('data') data: MemberInput) : Promise<Boolean> {
     return this.channelService.deleteChannel( data );
   }
   
@@ -90,13 +90,13 @@ export class ChannelResolver {
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async addChannelAdmin(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async addAdmin(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.addChannelAdmin( data );
   }
 
   // @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
-  async removeChannelAdmin(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async removeAdmin(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.removeChannelAdmin( data );
   }
 

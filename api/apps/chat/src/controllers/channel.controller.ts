@@ -50,7 +50,6 @@ export class ChannelController {
   @MessagePattern({role: 'channel', cmd: 'create'})
   async createChannel(payload: CreateChanneldto) : Promise<IChannel> {
     const channel = await this.channelService.create(payload);
-    console.log('***********\n', channel, '\n***********');
     return channel;
   }
 
@@ -123,12 +122,12 @@ export class ChannelController {
   /********* add Admin ******* remove Admine *********/
 
   @MessagePattern({role: 'channel', cmd: 'add-admin'})
-  async addChannelAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
+  async addAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.addAdmin(payload);
   }
   
   @MessagePattern({role: 'channel', cmd: 'remove-admin'})
-  async removeChannelAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
+  async removeAdmin(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.removeAdmin(payload);
   }
 
@@ -137,27 +136,27 @@ export class ChannelController {
   /*********** Ban Member ******************* Mute Member ***********/
   /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
-  @MessagePattern({role: 'channel', cmd: 'kickMember'})
+  @MessagePattern({role: 'channel', cmd: 'kick-member'})
   async kickMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.kickMember(payload);
   }
 
-  @MessagePattern({role: 'channel', cmd: 'banMember'})
+  @MessagePattern({role: 'channel', cmd: 'ban-member'})
   async banMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.banMember(payload);
   }
 
-  @MessagePattern({role: 'channel', cmd: 'unbanMember'})
+  @MessagePattern({role: 'channel', cmd: 'unban-member'})
   async unbanMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.unbanMember(payload);
   }
 
-  @MessagePattern({role: 'channel', cmd: 'muteMember'})
+  @MessagePattern({role: 'channel', cmd: 'mute-member'})
   async muteMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.muteMember(payload);
   }
 
-  @MessagePattern({role: 'channel', cmd: 'unmuteMember'})
+  @MessagePattern({role: 'channel', cmd: 'unmute-member'})
   async unmuteMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.unmuteMember(payload);
   }

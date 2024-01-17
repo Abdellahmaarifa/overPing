@@ -20,7 +20,7 @@ export class ChatQueriesResolver {
     return await this.directMessageService.getUserDirectMessages(id);
   }
 
-  @UseGuards(UserAccessAuthorizationGuard)
+  // @UseGuards(UserAccessAuthorizationGuard)
   @Query(() => [GQLChannelModel], { nullable: true })
   async getUserChannels(@Args('id') id: number): Promise<GQLChannelModel[]> {
     return await this.channelService.getUserChannels(id);
@@ -44,9 +44,7 @@ export class ChatQueriesResolver {
     @Args('userId') userId: number,
     @Args('groupId') groupId: number
   ): Promise<{channel: IChannel, members: IMembersWithInfo}> {
-    const ch = await this.channelService.findChannelById(userId, groupId);
-    console.log(">>>> channel:", ch);
-    return ch;
+    return await this.channelService.findChannelById(userId, groupId);
   }
 
   /*********** Search For channel by Name ***********/

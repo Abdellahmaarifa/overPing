@@ -40,14 +40,12 @@ export class HelperService {
       // const salt = await bcrypt.genSalt();
       // const hashedPassword = await bcrypt.hash(password, salt);
 
-      console.log(`********** password: ${password} **********`);
       const hashedPassword = await hash(password);
       console.log(`***** hashedPassword: ${hashedPassword}`);
 
       return hashedPassword;
     }
     catch (error) {
-      console.log(`****************************\n${error}\n************** password: ${password} **************`)
       this.rpcExceptionService.throwCatchedException({
         code: 500,
         message: `Internal failure0`,
