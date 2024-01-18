@@ -36,19 +36,19 @@ export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
     if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
       console.error(exception);
     }
-    const mess = (() : string | null => {
-        if (typeof exception.getResponse() === "string")
-          return null;
-        const obj : any = exception.getResponse();
-        return obj.message.toString();
-    })();
-
+    // const mess = (() : string | null => {
+    //     if (typeof exception.getResponse() === "string")
+    //       return null;
+    //     const obj : any = exception.getResponse();
+    //     return obj.message.toString();
+    // })();
+    const mess = exception.getResponse() as any
     const errorResponse = {
       statusCode: status,
       timestamp: new Date().toISOString(),
       error:
         status !== HttpStatus.INTERNAL_SERVER_ERROR
-          ?  mess ||  exception.message || null
+          ?  exception.message || null
           : "Internal server error",
     };
 

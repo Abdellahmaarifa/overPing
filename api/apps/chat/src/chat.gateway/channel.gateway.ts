@@ -13,6 +13,7 @@ import { RpcExceptionService } from '@app/common/exception-handling';
 import { GroupType } from '../interface/group.interface';
 import { FriendshipStatus } from '@app/common';
 import { IChannelInfo, IMembersWithInfo, IMessage } from '@app/common/chat';
+import { CHANNEL } from '../interface';
 
 let connectedChannelUsers: Map<number, any> = new Map();
 
@@ -21,7 +22,7 @@ let connectedChannelUsers: Map<number, any> = new Map();
     origin: `${process.env.FRONT_URL}`,
     credentials: true
   },
-  namespace: 'chat-channels',
+  namespace: CHANNEL.namespace,
 })
 export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(
@@ -69,7 +70,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     }
   }
 
-  @SubscribeMessage('joinChannel')
+  @SubscribeMessage(CHANNEL.join_channel)
   async joinChannel(client: Socket, data: MemberOfChanneldto) {
     const userId = await this.helper.getUserId(client);
     if (!userId || userId !== data.userId) {
@@ -83,7 +84,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     client.join(channelName);
   }
 
-  @SubscribeMessage('sendMessageToChannel')
+  @SubscribeMessage(CHANNEL.sendMessageInchannel)
   async sendMessageToUser(client: Socket, data: AddMessageInChanneldto) {
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
@@ -112,7 +113,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
       blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
 
-      client.to(channelName).emit('recMessageFromChannel', {
+      client.to(channelName).emit(CHANNEL.recMessageFromChannel, {
         channelId: data.channelId,
         message
       });
@@ -121,7 +122,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     }
   }
 
-  @SubscribeMessage('getChannelMessages')
+  @SubscribeMessage(CHANNEL.getChannelMessages)
   async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[]> {
     // const userId = await this.helper.getUserId(client);
     // if (!userId || userId !== data.userId) {
@@ -155,7 +156,6 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
         },
       }
     });
-    console.log('channel', channel);
     if (!channel) {
       this.rpcExceptionService.throwNotFound(`Failed to find channel: ${data.channelId}`)
     }
@@ -163,7 +163,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   }
 
 
-  @SubscribeMessage('getChannelMembers')
+  @SubscribeMessage(CHANNEL.getChannelMembers)
   async getMembers(client: Socket, data: MemberOfChanneldto) : Promise<IMembersWithInfo> {
     const userId = await this.helper.getUserId(client);
     if (!userId || userId !== data.userId) {
@@ -182,7 +182,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async sendUpdatedChannelInfo(channelId: number, updatedInfo: IChannelInfo) {
     const channelName = `channel_` + channelId;
   
-    this.server.to(channelName).emit('recUpdatedChannelInfo', {
+    this.server.to(channelName).emit(CHANNEL.recUpdatedChannelInfo, {
       channelId,
       updatedInfo
     });
@@ -191,7 +191,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async sendUpdatedListOfMembers(channelId: number, updatedList: IMembersWithInfo) {
     const channelName = `channel_` + channelId;
 
-    this.server.to(channelName).emit('recUpdatedListOfMembers', {
+    this.server.to(channelName).emit(CHANNEL.recUpdatedListOfMembers, {
       channelId,
       updatedList
     });
@@ -200,18 +200,3 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   }
 
 }
-
-//-- THE EXPECTED LISTENERS IN THE FRONT-END --\\ 
-//
-//----------- CHANNELS SOCKETS ----------//
-//
-// - "recMessageFromChannel"
-// - "recUpdatedChannelInfo"
-// - "recUpdatedListOfMembers"
-// - "recUpdatedChannelsList"
-//
-//
-//------- DIRECT MESSAGES SOCKETS -------//
-//
-// - "recMessageFromUser"
-// - "recUpdatedDMsList"

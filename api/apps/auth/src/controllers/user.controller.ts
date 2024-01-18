@@ -39,6 +39,11 @@ export class UserController {
     return user;
   }
 
+  @MessagePattern({role: 'user', cmd: 'getUsersInfo'})
+  async getUsersInfo(users: number[]) : Promise<IUser[]> {
+    return this.userService.getUsersInfo(users);
+  }
+
   @MessagePattern({ role: 'user', cmd: 'findAllUsers' })
   async findAllUsers({userId}): Promise<IAuthUser[]> {
     const users = await this.userService.findAllUsers(userId);

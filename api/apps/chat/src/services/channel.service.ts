@@ -13,6 +13,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { GroupType } from '../interface/group.interface';
 import { ChannelGateway } from '../chat.gateway/channel.gateway';
+import { DESCRIPTION } from '../interface';
 
 @Injectable()
 export class ChannelService {
@@ -180,11 +181,10 @@ export class ChannelService {
   /******* create ******* update ***** delete *******/
 
   async create(data: CreateChanneldto) : Promise<IChannel> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     await this.helper.channelNameValidation(data.channelName);
-    
-    const description = "Our community is built on the fundamental principle of shared learning. As you explore the world of web and mobile development, we want to provide you with a platform to discover new things, learn new tricks, and unlock your full potential.";
+  
     let hashedPassword: string = null;
     if (data.visibility === IVisibility.PROTECTED) {
       if (!data.password) {
@@ -197,7 +197,7 @@ export class ChannelService {
       data: {
         owner_id: data.userId,
         name: data.channelName,
-        description: data.description ?? description,
+        description: data.description ?? DESCRIPTION,
         visibility: data.visibility,
         password: hashedPassword,
         admins: { create: [{userId: data.userId}] },
@@ -219,7 +219,7 @@ export class ChannelService {
   }
 
   async update(data: UpdateChanneldto) : Promise<IChannel> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
     
     const channel = await this.prisma.channel.findUnique({
       where: {
@@ -265,7 +265,7 @@ export class ChannelService {
   }
 
   async delete(data: UpdateChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.isOwner(data.userId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -313,7 +313,7 @@ export class ChannelService {
   }
 
   async updateMessage(data: UpdateMessageInChanneldto) : Promise<IMessage> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     const message = await this.prisma.messages.findUnique({
       where: {
@@ -337,7 +337,7 @@ export class ChannelService {
   }
 
   async deleteMessage(data: DeleteMessageInChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     const message = await this.prisma.messages.findUnique({
       where: {
@@ -417,7 +417,7 @@ export class ChannelService {
   }
 
   async addMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
     await this.helper.findUser(data.targetId, true);
     await this.checker.isBanned(data.targetId, data.channelId);
 
@@ -526,7 +526,7 @@ export class ChannelService {
   /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
   async kickMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -544,7 +544,7 @@ export class ChannelService {
   }
 
   async banMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -568,7 +568,7 @@ export class ChannelService {
   }
 
   async unbanMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.isAdmin(data.userId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -583,7 +583,7 @@ export class ChannelService {
   }
 
   async muteMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -600,7 +600,7 @@ export class ChannelService {
   }
 
   async unmuteMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId, true);
 
     if (!this.checker.isAdmin(data.userId, data.channelId)) {
       return false;

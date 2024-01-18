@@ -72,4 +72,9 @@ export class FriendshipController {
   async getFriendshipStatus({userId, friendId}): Promise<FriendshipStatus>{
     return await this.friendService.getFriendshipStatus(userId, friendId);
   }
+
+  @MessagePattern({ role: "user", cmd: "getUserBlocksList" })
+  async getUserBlocksList(input: {userId: number, status: FriendshipStatus}): Promise<number[] | null> {
+    return await this.friendService.getUserBlocksList(input.userId, input.status);
+  }
 }

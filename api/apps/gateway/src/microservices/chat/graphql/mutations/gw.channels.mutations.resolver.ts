@@ -14,9 +14,10 @@ import {
   updatePublicPrivateInput
 } from '../input/channel.input';
 import { GQLChannelModel, GQLMessageModel } from '../models';
+import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
 
 @Resolver()
-@UseGuards(UserAccessAuthorizationGuard)
+@UseGuards(GqlJwtAuthGuard)
 export class ChannelResolver {
   constructor(private readonly channelService: GwChannelService) {}
 

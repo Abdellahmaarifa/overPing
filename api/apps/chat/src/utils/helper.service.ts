@@ -74,20 +74,13 @@ export class HelperService {
   }
 
   async channelNameValidation(channelName: string): Promise<boolean> {
-    try {
-      const existingChannel = await this.prisma.channel.findFirst({
-        where: { name: channelName }
-      });
-      if (existingChannel) {
-        this.rpcExceptionService.throwBadRequest(`Channel name already exist: ${channelName}`);
-      }
-      return true
-    } catch {
-      this.rpcExceptionService.throwCatchedException({
-        code: 500,
-        message: `Internal failure2`,
-      });
+    const existingChannel = await this.prisma.channel.findFirst({
+      where: { name: channelName }
+    });
+    if (existingChannel) {
+      this.rpcExceptionService.throwBadRequest(`Channel name already exist: ${channelName}`);
     }
+    return true
   }
 
   async getUserId(client: Socket) : Promise<number | null> {

@@ -11,6 +11,7 @@ import { PrismaService } from 'apps/chat/prisma/prisma.service';
 import { HelperService } from '../utils/helper.service';
 import { FriendshipStatus } from '@app/common';
 import { GroupType } from '../interface/group.interface';
+import { DIRECTMESSAGE } from '../interface';
 
 let connectedUsers: Map<number, any> = new Map();
 
@@ -19,7 +20,7 @@ let connectedUsers: Map<number, any> = new Map();
     origin: `${process.env.FRONT_URL}`,
     credentials: true
   },
-  namespace: 'chat-directMessages',
+  namespace: DIRECTMESSAGE.namespace,
 })
 export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor( 
@@ -59,7 +60,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     }
   }
 
-  @SubscribeMessage('sendMessageToUser')
+  @SubscribeMessage(DIRECTMESSAGE.sendMessageToUser)
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
@@ -79,7 +80,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     if (socket) {
       const message = this.directMessageService.addMessage(data);
       if (message) {
-        socket.emit('recMessageFromUser', message);
+        socket.emit(DIRECTMESSAGE.sendMessageToUser, message);
       }
     }
     // else {
@@ -95,7 +96,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     // }
   }
 
-  @SubscribeMessage('getDMMessages')
+  @SubscribeMessage(DIRECTMESSAGE.getDMMessages)
   async getMessages(client: Socket, data: DMMessagesdto) {
     const userId = await this.helper.getUserId(client);
     if (!userId || userId !== data.userId) {

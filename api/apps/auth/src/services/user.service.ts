@@ -406,4 +406,21 @@ export class UserService {
     }
     return true;
   }
+
+  async getUsersInfo(users: number[]): Promise<IUser[]> {
+    const usersInfo = await this.prisma.user.findMany({
+      where: {
+        id: { in: users },
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        password: false,
+        lastSeen: true,
+        profileImgUrl: true,
+      },
+    });
+    return usersInfo;
+  }
 }
