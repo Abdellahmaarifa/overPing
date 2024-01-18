@@ -60,7 +60,7 @@ import { formatError } from "./global-filter/gqlFilter";
       path: '/graphql',
     },
   },
-      formatError: formatError,
+      // formatError: formatError,
     }),
   RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
   RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),

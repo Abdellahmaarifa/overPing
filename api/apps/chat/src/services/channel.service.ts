@@ -65,7 +65,7 @@ export class ChannelService {
     }
 
     const members = await this.getMembers(id);
-    // return await this.helper.filterChannelMessages(channel, user_id);
+
     return {
       ...channel,
       admins: members.admins,
@@ -181,7 +181,7 @@ export class ChannelService {
   /******* create ******* update ***** delete *******/
 
   async create(data: CreateChanneldto) : Promise<IChannel> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
 
     await this.helper.channelNameValidation(data.channelName);
   
@@ -219,7 +219,7 @@ export class ChannelService {
   }
 
   async update(data: UpdateChanneldto) : Promise<IChannel> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
     
     const channel = await this.prisma.channel.findUnique({
       where: {
@@ -265,7 +265,7 @@ export class ChannelService {
   }
 
   async delete(data: UpdateChanneldto) : Promise<Boolean> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
 
     if (await this.checker.isOwner(data.userId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -313,7 +313,7 @@ export class ChannelService {
   }
 
   async updateMessage(data: UpdateMessageInChanneldto) : Promise<IMessage> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
 
     const message = await this.prisma.messages.findUnique({
       where: {
@@ -337,7 +337,7 @@ export class ChannelService {
   }
 
   async deleteMessage(data: DeleteMessageInChanneldto) : Promise<Boolean> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
 
     const message = await this.prisma.messages.findUnique({
       where: {
@@ -417,7 +417,7 @@ export class ChannelService {
   }
 
   async addMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
     await this.helper.findUser(data.targetId, true);
     await this.checker.isBanned(data.targetId, data.channelId);
 
@@ -526,7 +526,7 @@ export class ChannelService {
   /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
   async kickMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -544,7 +544,7 @@ export class ChannelService {
   }
 
   async banMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -568,7 +568,7 @@ export class ChannelService {
   }
 
   async unbanMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
 
     if (await this.checker.isAdmin(data.userId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -583,7 +583,7 @@ export class ChannelService {
   }
 
   async muteMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
@@ -600,7 +600,7 @@ export class ChannelService {
   }
 
   async unmuteMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    // await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId, true);
 
     if (!this.checker.isAdmin(data.userId, data.channelId)) {
       return false;

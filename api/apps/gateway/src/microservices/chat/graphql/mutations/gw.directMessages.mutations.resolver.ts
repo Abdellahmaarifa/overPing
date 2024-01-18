@@ -1,12 +1,12 @@
-import { UserAccessAuthorizationGuard } from '../../../auth/guards/user-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { GwDirectMessageService } from '../../services';
 import { DeletionInput, UpdateInput } from '../input/directMessage.input';
 import { GQLDirectMessageModel, GQLMessageModel } from '../models';
+import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
 
 @Resolver()
-@UseGuards(UserAccessAuthorizationGuard)
+@UseGuards(GqlJwtAuthGuard)
 export class directMessageResolver {
   constructor(private readonly directMessageService: GwDirectMessageService) {}
     

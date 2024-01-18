@@ -125,37 +125,14 @@ export class HelperService {
     }
     
     const members = await this.channelService.getMembers(id);
-    // return await this.helper.filterChannelMessages(channel, user_id);
     return {
       ...channel,
       admins: members.admins,
       members: members.members
     };
   }
-  
-  // async filterChannelMessages(channel: IChannel, user_id: number) {
     
-  //   let unblockedMemberIds = await Promise.all(
-  //     channel.members.map(async (member) => {
-  //       const memberId = member.userId;
-  //       if (user_id === memberId) {
-  //         return null;
-  //       }
-  //       const blockStatus = await this.checker.blockStatus(user_id, memberId, FriendshipStatus.Blocked, GroupType.ELSE);
-  //       return blockStatus ? null : memberId;
-  //     })
-  //   );
-  
-  //   unblockedMemberIds = unblockedMemberIds.filter((id) => id !== null);
-    
-  //   channel.messages = channel.messages.filter(
-  //     (message) => unblockedMemberIds.includes(message.sender_id)
-  //   );
-      
-  //   return channel;
-  // }
-    
-    async ownerLeavedChannel(channelId: number) : Promise<void> {
+  async ownerLeavedChannel(channelId: number) : Promise<void> {
     const admins = await this.findAdminsById(channelId);
     if (!admins?.length) {
       const members = await this.findMembersById(channelId);

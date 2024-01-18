@@ -1,4 +1,3 @@
-import { UserAccessAuthorizationGuard } from '../../../auth/guards/user-auth.guard';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { GwChannelService } from '../../services';
@@ -72,11 +71,6 @@ export class ChannelResolver {
   @Mutation(() => Boolean)
   async addMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
     return this.channelService.addMember( data );
-  }
-
-  @Mutation(() => Boolean)
-  async removeMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
-    return this.channelService.removeMember(data);
   }
 
   @Mutation(() => Boolean)

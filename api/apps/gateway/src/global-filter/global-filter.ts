@@ -42,13 +42,14 @@ export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
     //     const obj : any = exception.getResponse();
     //     return obj.message.toString();
     // })();
-    const mess = exception.getResponse() as any
+    const message = (exception.getResponse() as any)?.message as string || null;
+    // const gqlMessage = (exception.getResponse() as any).extensions?.originalError?.message as string || null;
     const errorResponse = {
       statusCode: status,
       timestamp: new Date().toISOString(),
       error:
         status !== HttpStatus.INTERNAL_SERVER_ERROR
-          ?  exception.message || null
+          ? message || exception.message || null
           : "Internal server error",
     };
 

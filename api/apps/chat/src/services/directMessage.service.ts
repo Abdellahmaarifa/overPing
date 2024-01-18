@@ -118,9 +118,9 @@ export class DirectMessageService {
     const user2: IUser[] = await this.clientService.sendMessageWithPayload(
       this.client, { role: 'user', cmd: 'getUsersInfo' }, directMessages.map((dm) => {
         if (user1.id === dm.user1_id) {
-          return { userId: dm.user2_id };
+          return dm.user2_id ;
         } else {
-          return { userId: dm.user1_id };
+          return dm.user1_id;
         }
       })
     );

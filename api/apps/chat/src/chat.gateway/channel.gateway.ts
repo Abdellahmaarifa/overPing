@@ -45,16 +45,16 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @UseGuards(ClientAccessAuthorizationGuard)
   async handleConnection(client: Socket, ...args: any[]) {
-    const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
-    const userId = await this.helper.getUserId(client);
-    if (user || userId) {
+    // const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
+    // const userId = await this.helper.getUserId(client);
+    // if (user || userId) {
       this.logger.log(`User connected: ${client.id}`);
-      connectedChannelUsers.set(((user)? user.id : userId), client.id);
-    }
-    else {
-      this.logger.log(`User authentication failed: ${client.id}`);
-      client.disconnect();
-    }
+    //   connectedChannelUsers.set(((user)? user.id : userId), client.id);
+    // }
+    // else {
+    //   this.logger.log(`User authentication failed: ${client.id}`);
+    //   client.disconnect();
+    // }
   }
 
   async handleDisconnect(client: Socket) {
@@ -124,11 +124,11 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage(CHANNEL.getChannelMessages)
   async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[]> {
-    // const userId = await this.helper.getUserId(client);
-    // if (!userId || userId !== data.userId) {
-    //   return;
-    // }
-    // await this.helper.findUser(data.userId, true);
+    const userId = await this.helper.getUserId(client);
+    if (!userId || userId !== data.userId) {
+      return;
+    }
+    await this.helper.findUser(data.userId, true);
 
     const blockedUsers = (await this.checker.blockStatus(
       data.userId, 
@@ -165,15 +165,15 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage(CHANNEL.getChannelMembers)
   async getMembers(client: Socket, data: MemberOfChanneldto) : Promise<IMembersWithInfo> {
-    const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
-      return;
-    }
-    await this.helper.findUser(data.userId, true);
+    // const userId = await this.helper.getUserId(client);
+    // if (!userId || userId !== data.userId) {
+    //   return;
+    // }
+    // await this.helper.findUser(data.userId, true);
 
-    if (await this.checker.isMember(userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
-    }
+    // if (await this.checker.isMember(userId, data.channelId) === false) {
+    //   this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
+    // }
 
     return await this.channelService.getMembers(data.channelId);
   }
