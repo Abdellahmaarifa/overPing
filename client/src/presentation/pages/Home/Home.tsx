@@ -16,7 +16,7 @@ const Home = () => {
 
   useEffect(() => {
     if (user) {
-      console.log("this is the user :", user);
+      //console.log("this is the user :", user);
       if (!user.showUpdateWin) {
         settingsModel[1](true);
         settingsNav[1](SETTINGS_LINKS.USER_INFORMATION);

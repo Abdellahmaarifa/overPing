@@ -18,7 +18,7 @@ interface waitingProps
     updatePlayerTwo: (newPlayWithRobot: boolean, newTabId: string, newMatchId: string, newMatchWager: number,
         newModePlaying: number, newUserName: string, newUserAvatar: string, newUserLogo: string, newMatchWon: number,
         newBestWinStreak: number, newMatchPlayed: number, newLevel: number, newTournentPlayed: number,
-        newTournentWon: number, newPlayWithMouse: number, usrid : number) => void;
+        newTournentWon: number, newPlayWithMouse: number, usrid : number, friend : boolean) => void;
 }
 
 
@@ -178,12 +178,12 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
         if (subscriptionData && subscriptionData.matchWaitingList) 
         {
             const { matchWaitingList } = subscriptionData;
-            //console.log('Subscription data:', matchWaitingList);
+            console.log('Subscription data:', matchWaitingList);
             setSwitchValue(true);
             console.log("The switch : ", TheSwitch);
         }
-        //else
-            //console.warn('Subscription data is null:', subscriptionData);
+        else
+            console.warn('Subscription data is null:', subscriptionData);
 
         },[subscriptionData])
 
@@ -212,7 +212,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
     
     if (TheSwitch === true)
     {
-        //console.log("====================> : ", subscriptionData)
+        console.log("====================> : ", subscriptionData)
         if (subscriptionData && subscriptionData.matchWaitingList.matchKey === "null")
         {
             setTimeout(() => {
@@ -225,7 +225,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
             }, 1000);
 
         }
-        else if (subscriptionData)
+        else if (subscriptionData && subscriptionData.matchWaitingList.requestType === "random")
         {
             let ply2Username : string = "";
             let ply2UserAvatar : string = "";;
@@ -240,27 +240,32 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
             let ply2MatchWager : number = 0;
             let ply2UserId : number  =  0;
             let ply2ModePlaying : number = 0;
-            if (playerOne.userId === parseInt(subscriptionData.matchWaitingList.user1.id))
+            let ply2Friend : boolean = false;
+            console.log("The sub data : ", subscriptionData)
+            if (subscriptionData.matchWaitingList.user1 && subscriptionData.matchWaitingList.user1.id && playerOne.userId === parseInt(subscriptionData.matchWaitingList.user1.id))
             {
-                ply2MatchWager = subscriptionData.matchWaitingList.user2.bet;
-                ply2UserId =  parseInt(subscriptionData.matchWaitingList.user2.id);
-                if (subscriptionData.matchWaitingList.user2.matchType == "classic")
+                ply2MatchWager = subscriptionData.matchWaitingList.user2?.bet as number;
+                if(subscriptionData.matchWaitingList.user2 && subscriptionData.matchWaitingList.user2.id)
+                    ply2UserId =  parseInt(subscriptionData.matchWaitingList.user2?.id);
+                if (subscriptionData.matchWaitingList.user2?.matchType == "classic")
                     ply2ModePlaying = 1;
-                if (subscriptionData.matchWaitingList.user2.matchType == "standstorm")
+                if (subscriptionData.matchWaitingList.user2?.matchType == "standstorm")
                     ply2ModePlaying = 2;
-                if (subscriptionData.matchWaitingList.user2.matchType == "lastPong")
+                if (subscriptionData.matchWaitingList.user2?.matchType == "lastPong")
                     ply2ModePlaying = 3;
             }
             else
             {
-                ply2MatchWager = subscriptionData.matchWaitingList.user1.bet;
-                ply2UserId =  parseInt(subscriptionData.matchWaitingList.user1.id);
+                ply2MatchWager = subscriptionData.matchWaitingList.user1?.bet as number;
+                //ply2UserId =  parseInt(subscriptionData.matchWaitingList.user1?.id?);
+                if (subscriptionData.matchWaitingList.user1?.id)
+                    ply2UserId =  Number(subscriptionData.matchWaitingList.user1?.id);
 
-                if (subscriptionData.matchWaitingList.user1.matchType == "classic")
+                if (subscriptionData.matchWaitingList.user1?.matchType == "classic")
                     ply2ModePlaying = 1;
-                if (subscriptionData.matchWaitingList.user1.matchType == "standstorm")
+                if (subscriptionData.matchWaitingList.user1?.matchType == "standstorm")
                     ply2ModePlaying = 2;
-                if (subscriptionData.matchWaitingList.user1.matchType == "lastPong")
+                if (subscriptionData.matchWaitingList.user1?.matchType == "lastPong")
                     ply2ModePlaying = 3;
 
             }
@@ -269,10 +274,11 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
             //console.log("Ids---> : " , playerOne.userId ,playerTwo?.userId, subscriptionData.matchWaitingList.user1.id , subscriptionData.matchWaitingList.user2.id)
             //console.log("Player 1 ===> ", playerOne);
             //console.log("Player 2 ===> ", playerTwo);
+            console.log("is it ready : ", ply2Username, ply2UserAvatar, ply2UserLogo, ply2UserId, playerTwo?.userId);
             if (playerTwo?.userId === 0)
                 updatePlayerTwo(false, "", ply2MatchId, ply2MatchWager, ply2ModePlaying, ply2Username, ply2UserAvatar,
             ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2Level, ply2BestWinSteak,
-            ply2TournentPlayed, ply2TournenetWon, ply2UserId);
+            ply2TournentPlayed, ply2TournenetWon, ply2UserId, ply2Friend);
             setTimeout(() => {
                 plyTwoImg?.setAttribute('src', "/images/question-mark.jpeg");
                 updateMatchId(subscriptionData.matchWaitingList.matchKey);

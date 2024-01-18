@@ -34,7 +34,7 @@ const SetPasswordModel = () => {
     settingsModel: [settingsModel, _],
     settingsNav: [settingsNav, setSettingsNav],
   } = useSettingsContext();
-  console.log("this is the user: ", user);
+  //console.log("this is the user: ", user);
   useEffect(() => {
     setEnable(user?.twoStepVerificationEnabled!);
   }, []);

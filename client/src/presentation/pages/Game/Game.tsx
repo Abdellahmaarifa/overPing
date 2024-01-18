@@ -74,14 +74,15 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
             tournentPlayed : renamePlayerTwo?.tournentPlayed,
             tournentWon    : renamePlayerTwo?.tournentWon,
             playWithMouse  : renamePlayerTwo?.playWithMouse,
-            userId         : renamePlayerTwo?.userId
+            userId         : renamePlayerTwo?.userId,
+            friend         : renamePlayerTwo?.friend,
         }
     );
 
     const updatePlayerTwo = (newPlayWithRobot : boolean, newTabId : string, newMatchId : string, newMatchWager: number,
         newModePlaying: number, newUserName : string, newUserAvatar: string, newUserLogo : string, newMatchWon : number,
         newBestWinStreak : number , newMatchPlayed : number, newLevel: number, newTournentPlayed : number,
-        newTournentWon : number, newPlayWithMouse : number , newUserId : number) => 
+        newTournentWon : number, newPlayWithMouse : number , newUserId : number, isFriend : boolean) => 
     {
         setPlayerTwoState({...playerTwo, playWithRobot : newPlayWithRobot, 
             tabId : newTabId, matchId : newMatchId, matchWager: newMatchWager,
@@ -90,7 +91,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
              matchWon : newMatchWon, bestWinStreak : newBestWinStreak,
              matchPlyed : newMatchPlayed, level : newLevel, 
              tournentPlayed : newTournentPlayed, tournentWon : newTournentWon,
-             playWithMouse : newPlayWithMouse, userId : newUserId});
+             playWithMouse : newPlayWithMouse, userId : newUserId, friend : isFriend});
     };
 
 
@@ -112,13 +113,14 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         tournentPlayed : renamePlayerOne.tournentPlayed,
         tournentWon    : renamePlayerOne.tournentWon,
         playWithMouse  : renamePlayerOne.playWithMouse,
-        userId         : renamePlayerOne.userId
+        userId         : renamePlayerOne.userId,
+        friend         : renamePlayerOne.friend,
     })
 
     const updatePlayerOne = (newPlayWithRobot : boolean, newTabId : string, newMatchId : string, newMatchWager: number,
         newModePlaying: number, newUserName : string, newUserAvatar: string, newUserLogo : string, newMatchWon : number,
         newBestWinStreak : number , newMatchPlayed : number, newLevel: number, newTournentPlayed : number,
-        newTournentWon : number, newPlayWithMouse : number , newUserId : number) => 
+        newTournentWon : number, newPlayWithMouse : number , newUserId : number, isFriend : boolean) => 
     {
         SetUserInfoData({...playerOne, playWithRobot : newPlayWithRobot, 
             tabId : newTabId, matchId : newMatchId, matchWager: newMatchWager,
@@ -127,7 +129,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
              matchWon : newMatchWon, bestWinStreak : newBestWinStreak,
              matchPlyed : newMatchPlayed, level : newLevel, 
              tournentPlayed : newTournentPlayed, tournentWon : newTournentWon,
-             playWithMouse : newPlayWithMouse, userId : newUserId});
+             playWithMouse : newPlayWithMouse, userId : newUserId, friend : isFriend});
     };
     const [readyState, setReadyState] = useState(true);
     
@@ -216,7 +218,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
     //         playerOne.userLogo = "/public/images/badge-3.png";
     
         if (playerOne.playWithMouse === 0)
-            return (< Util playerOne={playerOne} updatePlayerOne={updatePlayerOne} updateUserInfoUtil={UpdateUserInfoUtil}/>);
+            return (< Util playerOne={playerOne} playerTwo={playerTwo as UserInfo} updatePlayerOne={updatePlayerOne} updatePlayerTwo={updatePlayerTwo} updateUserInfoUtil={UpdateUserInfoUtil}/>);
         else if (playerOne.modePlaying === 0)
             return ( <Modes playerOne={playerOne} updateUserInfoMode={updateUserInfoMode}/>);
         else if (playerOne.matchWager === 0)

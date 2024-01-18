@@ -39,6 +39,7 @@ class UserInfo
     tournentWon : number = 0;
     playWithMouse : number = 0;
     userId : number = 0;
+    friend : boolean = false;
 };
 
 export default UserInfo;

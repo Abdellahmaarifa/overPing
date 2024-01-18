@@ -14,7 +14,7 @@ interface readyProps
     updatePlayerTwo: (newPlayWithRobot: boolean, newTabId: string, newMatchId: string, newMatchWager: number,
         newModePlaying: number, newUserName: string, newUserAvatar: string, newUserLogo: string, newMatchWon: number,
         newBestWinStreak: number, newMatchPlayed: number, newLevel: number, newTournentPlayed: number,
-        newTournentWon: number, newPlayWithMouse: number, usrid : number) => void;
+        newTournentWon: number, newPlayWithMouse: number, usrid : number, friend : boolean) => void;
 }
 
 
@@ -69,8 +69,8 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updateUserInfoWagerAndMo
 
     }, 200)
 
-   //console.log("+++++++++++++++ players 1 2 id: ",playerOne.userId, " - ", playerTwo.userId)
-   //console.log("+++++++++++++++ players 1 2 id: ",playerOne, " - ", playerTwo)
+   console.log("+++++++++++++++ players 1 2 id: ",playerOne.userId, " - ", playerTwo.userId)
+   console.log("+++++++++++++++ players 1 2 id: ",playerOne, " - ", playerTwo)
   
 
     if (loading)
@@ -82,43 +82,53 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updateUserInfoWagerAndMo
     }
     else
     {
-        let ply2Username : string = data?.findUserById.username as string;
-        let ply2UserAvatar : string = data?.findUserById.profileImgUrl as string;
-        let ply2MatchWon : number = data?.findProfileByUserId?.gameStatus.matchesWon as number;
-        let ply2BestWinSteak : number = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
-        let ply2MatchPlyed : number = data?.findProfileByUserId?.gameStatus.totalMatches as number;
-        let ply2Level : number = data?.findProfileByUserId?.xp as number;
-        let ply2TournentPlayed : number = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
-        let ply2TournenetWon : number = data?.findProfileByUserId?.gameStatus.win_streak as number;
-        let ply2UserLogo : string = "";
-        let ply2TabId : string = playerTwo.userId.toString();
-        if (data?.findProfileByUserId?.rank  as number < 100)
-            ply2UserLogo = "/public/images/badge-1.png"
-        if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-            ply2UserLogo = "/public/images/badge-2.png";
-        if (data?.findProfileByUserId?.rank  as number >= 200)
-            ply2UserLogo = "/public/images/badge-3.png";
-        
-        let ply2MatchId : string = playerTwo.matchId;
-        let ply2MatchWager : number = playerTwo.matchWager;
-        let ply2UserId : number  =  playerTwo.userId;
-        let ply2ModePlaying : number = playerTwo.modePlaying;
-        if (data?.findProfileByUserId?.rank  as number < 100)
-            ply2UserLogo = "/public/images/badge-1.png"
-        if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-            ply2UserLogo = "/public/images/badge-2.png";
-        if (data?.findProfileByUserId?.rank  as number >= 200)
-            ply2UserLogo = "/public/images/badge-3.png";
-    
-        if (playerTwo.userLogo.length === 0)
+        if (playerOne.friend === false)
         {
-            updatePlayerTwo(false, ply2TabId, ply2MatchId, ply2MatchWager, ply2ModePlaying, ply2Username, ply2UserAvatar,
-            ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2MatchPlyed, ply2BestWinSteak,
-            ply2TournentPlayed, ply2TournenetWon, ply2UserId);
+
+            let ply2Username : string = data?.findUserById.username as string;
+            let ply2UserAvatar : string = data?.findUserById.profileImgUrl as string;
+            let ply2MatchWon : number = data?.findProfileByUserId?.gameStatus.matchesWon as number;
+            let ply2BestWinSteak : number = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
+            let ply2MatchPlyed : number = data?.findProfileByUserId?.gameStatus.totalMatches as number;
+            let ply2Level : number = data?.findProfileByUserId?.xp as number;
+            let ply2TournentPlayed : number = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
+            let ply2TournenetWon : number = data?.findProfileByUserId?.gameStatus.win_streak as number;
+            let ply2UserLogo : string = "";
+            let ply2TabId : string = playerTwo.userId.toString();
+            if (data?.findProfileByUserId?.rank  as number < 100)
+                ply2UserLogo = "/public/images/badge-1.png"
+            if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
+                ply2UserLogo = "/public/images/badge-2.png";
+            if (data?.findProfileByUserId?.rank  as number >= 200)
+                ply2UserLogo = "/public/images/badge-3.png";
+            
+            let ply2MatchId : string = playerTwo.matchId;
+            let ply2MatchWager : number = playerTwo.matchWager;
+            let ply2UserId : number  =  playerTwo.userId;
+            let ply2ModePlaying : number = playerTwo.modePlaying;
+            if (data?.findProfileByUserId?.rank  as number < 100)
+                ply2UserLogo = "/public/images/badge-1.png"
+            if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
+                ply2UserLogo = "/public/images/badge-2.png";
+            if (data?.findProfileByUserId?.rank  as number >= 200)
+                ply2UserLogo = "/public/images/badge-3.png";
+        
+            if (playerTwo.userLogo.length === 0)
+            {
+                updatePlayerTwo(false, ply2TabId, ply2MatchId, ply2MatchWager, ply2ModePlaying, ply2Username, ply2UserAvatar,
+                ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2MatchPlyed, ply2BestWinSteak,
+                ply2TournentPlayed, ply2TournenetWon, ply2UserId, false);
+            }
+            setTimeout( () => {
+                updateReadyState(false);
+            }, 10000);
         }
-        setTimeout( () => {
-            updateReadyState(false);
-        }, 10000);
+        else
+        {
+            setTimeout( () => {
+                updateReadyState(false);
+            }, 10000); 
+        }
         
         return (
             <div className='ReadyContainer'>

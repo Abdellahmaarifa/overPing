@@ -12,6 +12,7 @@ export class Player {
 
   @Field({nullable: true})
   matchType: string;
+  
 }
 
 @ObjectType()
@@ -24,5 +25,10 @@ export class PlayersMatching {
 
   @Field()
   matchKey: string;
+
+
+  @Field()
+  requestType: string;
+
 }
 

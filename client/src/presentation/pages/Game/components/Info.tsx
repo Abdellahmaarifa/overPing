@@ -50,7 +50,7 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
     {
         if (socket && ID)
         {
-            // console.log("the id ", ID)
+             console.log("the id ===> ", tabId)
             socket.emit('customGoalsEvent', {ID , tabId});
         }
     };
@@ -78,7 +78,7 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
 
             socket.on('playerLeaveTheGame', () =>
             {
-                console.log('event is come')
+                console.log('event is come------------->')
                 if (leftGoal !== 5 && rightGoal !== 5)
                 {
                     // let gameResult : Result = new Result();
@@ -234,7 +234,10 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
                     <div className="playersContainer">
                         <div  className="infoPlayers">
                             <div className="infoPlayer01">
-                                <div className="hoverExpand1" onClick={() => setHovered1(true)}>
+                                <div className="hoverExpand1" onClick={() => {
+                                    if (playerOne.playWithRobot === false)
+                                        setHovered1(true)}
+                                    }>
                                     <div className="infoAvatar01" ><img id="infoAvatar01" src="question-mark.jpeg" alt="imga"></img></div>
                                 </div>
                             </div>

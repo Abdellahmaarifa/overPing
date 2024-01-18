@@ -6,7 +6,7 @@ WORKDIR /game
 
 COPY . /game
 
-RUN npm install 
+#RUN npm install 
 
 RUN npm install @nestjs/cli
 

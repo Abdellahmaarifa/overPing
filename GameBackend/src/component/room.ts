@@ -26,6 +26,8 @@ class Rooms
   getBothRacketData : boolean = false;
   clientTwoWidth : number = 0; 
   matchID : string = "";
+  startTime : number = 0;
+  late : boolean = false;
   
 };
 
@@ -101,6 +103,7 @@ function addToRoom(rooms : Rooms[],  client: Socket, matchID : string, tabsId : 
     room.clientOneTabId = tabsId;
     room.clientOneSocket = client;
     room.numberOfClients = 1;
+    room.startTime = Date.now();
   } 
   else if (room.numberOfClients === 1) 
   {

@@ -157,9 +157,9 @@ export class PoolService {
     }
   }
 
-  async getPlayerRequest(playerId: number, type: PoolType): Promise<PlayerRequestDto>{
+  async getPlayerRequest(playerId: number,recipientId:number, type: PoolType): Promise<PlayerRequestDto>{
     console.log("this is player id in get player request ", type, " ", playerId);
-    const index = this.playerRequesPool[type].findIndex((player) => player.id === playerId);
+    const index = this.playerRequesPool[type].findIndex((player) => player.id === playerId && player.recipientId === recipientId);
     const players = this.playerRequesPool[type];
     if (index !== -1) {
       return players[index];
