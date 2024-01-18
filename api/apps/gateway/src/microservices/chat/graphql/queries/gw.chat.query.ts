@@ -3,6 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { Resolver,Query, Args} from '@nestjs/graphql';
 import { GwChannelService, GwDirectMessageService } from '../../services';
 import { GQLChannelModel, GQLChannelSearchModel, GQLDirectMessageModel } from '../models';
+import { IChannel, IMembersWithInfo } from '@app/common/chat';
 
 @Resolver()
 export class ChatQueriesResolver {
@@ -19,7 +20,7 @@ export class ChatQueriesResolver {
     return await this.directMessageService.getUserDirectMessages(id);
   }
 
-  @UseGuards(UserAccessAuthorizationGuard)
+  // @UseGuards(UserAccessAuthorizationGuard)
   @Query(() => [GQLChannelModel], { nullable: true })
   async getUserChannels(@Args('id') id: number): Promise<GQLChannelModel[]> {
     return await this.channelService.getUserChannels(id);
@@ -42,7 +43,7 @@ export class ChatQueriesResolver {
   async findChannelById(
     @Args('userId') userId: number,
     @Args('groupId') groupId: number
-  ): Promise<GQLChannelModel> {
+  ): Promise<{channel: IChannel, members: IMembersWithInfo}> {
     return await this.channelService.findChannelById(userId, groupId);
   }
 
@@ -51,9 +52,10 @@ export class ChatQueriesResolver {
   // @UseGuards(UserAccessAuthorizationGuard)
   @Query(() => [GQLChannelSearchModel], { nullable: true })
   async searchForChannel(
-    @Args('channelName') channelName: string
-  ): Promise<GQLChannelSearchModel[]> {
-    return await this.channelService.searchForChannel(channelName);
+    @Args('channelName') channelName: string,
+    @Args('userId') userId: number
+    ): Promise<GQLChannelSearchModel[]> {
+    return await this.channelService.searchForChannel(channelName, userId);
   }
 
 }

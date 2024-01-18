@@ -41,3 +41,23 @@ export const GetUserProfile = (data: AccountQuery): ProfileType => {
     },
   };
 };
+
+export const playWithUser = (
+  id: number,
+  sendGameInvitaion: any
+): Promise<string> => {
+  return new Promise(async (res, rej) => {
+    const data = await sendGameInvitaion({
+      variables: {
+        JoinMatchmakingInput: {
+          recipientId: Number(id),
+          matchType: "classic",
+        },
+      },
+    });
+    if (data && data?.data?.sendRequestToPlay) {
+      console.log(data);
+      res("invitation sent successfuly");
+    } else rej("failed to send invitaion! try again later");
+  });
+};

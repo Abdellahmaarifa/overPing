@@ -12,41 +12,92 @@ import {
   UserHandle,
   UserName,
 } from "./Suffestion.style";
+import {
+  GetSuggestedFriendsDocument,
+  useSendRequestToPlayMutation,
+} from "gql/index";
+import { useApolloClient } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import { playWithUser } from "helpers/index";
 const Suggestions = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const client = useApolloClient();
+  const navigate = useNavigate();
+  const [sendGameInvitaion] = useSendRequestToPlayMutation();
 
   useEffect(() => {
-    setUsers(getSuggestUsers());
-  }, []);
+    //setUsers(getSuggestUsers());
+    client
+      .query({
+        query: GetSuggestedFriendsDocument,
+        variables: { limit: 3 },
+      })
+      .then((data) => {
+        setUsers(data.data.getSuggestedFriends);
+      })
+      .catch((err) => {
+        console.log("Error! from suggested friends! ", err);
+      });
+  }, [users]);
+
+  const sendGameInvite = async (user: User) => {
+    toast.promise(playWithUser(Number(user?.id), sendGameInvitaion), {
+      loading: "please wait ..",
+      success: (data: string) => data,
+      error: (err: string) => err,
+    });
+  };
+
   return (
-    <SuggestionBox>
+    <SuggestionBox
+      style={
+        users.length == 0
+          ? {
+              display: "none",
+            }
+          : undefined
+      }
+    >
       <SuggestionTitle>Suggestions to play with</SuggestionTitle>
       <SuggestionConatiner>
         {users.map((user, id) => (
           <UserCard key={id}>
             <UserCardInfo>
-              <UserAvatar src={user.avatar} />
+              <UserAvatar
+                src={user.profileImgUrl}
+                onClick={() => navigate(`/profile/${user.id}`)}
+              />
               <UserDetails>
-                <UserName>{user.userName}</UserName>
-                <UserHandle>@{user.userName}</UserHandle>
+                <UserName>{user.username}</UserName>
+                <UserHandle>@{user.username}</UserHandle>
               </UserDetails>
             </UserCardInfo>
-            <Button $size="sm" $text="Invite" />
+            <Button
+              $size="sm"
+              $text="Invite"
+              onClick={() => sendGameInvite(user)}
+            />
           </UserCard>
         ))}
       </SuggestionConatiner>
+      <Toaster position="top-center" />
     </SuggestionBox>
   );
 };
 
 interface User {
-  userName: string;
-  avatar: string;
+  id: number;
+  username: string;
+  profileImgUrl: string;
+  email?: string;
 }
+
 const createRandomUsers = (): User => {
   return {
-    userName: faker.person.firstName(),
-    avatar: faker.image.avatar(),
+    id: 1,
+    username: faker.person.firstName(),
+    profileImgUrl: faker.image.avatar(),
   };
 };
 

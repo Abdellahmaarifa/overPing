@@ -1,54 +1,93 @@
-/*
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
-import { Request, Response } from 'express';
+import {
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  ArgumentsHost,
+  Logger,
+  HttpStatus,
+} from "@nestjs/common";
+import { Request, Response } from "express";
+import { GqlArgumentsHost, GqlExceptionFilter } from "@nestjs/graphql";
+import { GraphQLResolveInfo } from "graphql";
+
+export interface errorFormat{
+  statusCode: number,
+  timestamp: string,
+  error: string,
+  path: string,
+  method?: string,
+  type?: any
+}
 
 @Catch(HttpException)
-export class HttpExceptionFilter implements ExceptionFilter {
+export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status = exception.getStatus();
 
-    response
-      .status(status)
-      .json({
-        statusCode: status,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-      });
-  }
-}
-*/
+    const gqlHost = GqlArgumentsHost.create(host);
+    const info = gqlHost.getInfo<GraphQLResolveInfo>();
 
-import {
-  Catch,
-  ArgumentsHost,
-  ExceptionFilter,
-  HttpException,
-} from '@nestjs/common';
-import { GqlExecutionContext, GqlArgumentsHost } from '@nestjs/graphql';
-import { Logger } from '@nestjs/common';
+    const status = exception.getStatus
+      ? exception.getStatus()
+      : HttpStatus.INTERNAL_SERVER_ERROR;
 
-@Catch(HttpException)
-export class HttpExceptionFilter implements ExceptionFilter {
-  private;
-
-  readonly logger = new Logger(HttpExceptionFilter.name);
-
-  async catch(exception: HttpException, host: ArgumentsHost) {
-    console.log("exec::: ", exception);
-    const ctx = GqlArgumentsHost.create(host);
-    const res = ctx.getContext().res;
-    const status = exception.getStatus();
-    // console.log
-
-    // Add a return statement here
-
-    return res.status(status).json({
+    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+      console.error(exception);
+    }
+    // const mess = (() : string | null => {
+    //     if (typeof exception.getResponse() === "string")
+    //       return null;
+    //     const obj : any = exception.getResponse();
+    //     return obj.message.toString();
+    // })();
+    const mess = exception.getResponse() as any
+    const errorResponse = {
       statusCode: status,
       timestamp: new Date().toISOString(),
-      path: 'hoe',
-    });
+      error:
+        status !== HttpStatus.INTERNAL_SERVER_ERROR
+          ?  exception.message || null
+          : "Internal server error",
+    };
+
+    // This is for rest  error log
+    if (request) {
+      const error = {
+        ...errorResponse,
+        path: request.url,
+        method: request.method,
+      };
+
+      Logger.error(
+        `${request.method} ${request.url}`,
+        JSON.stringify(error),
+        "ExceptionFilter",
+      );
+
+      response.status(status).json(errorResponse);
+    } else {
+      // This is for gql error log
+      const error  = {
+        ...errorResponse,
+        type: info.parentType,
+        path: info.fieldName,
+      };
+
+      Logger.error(
+        `${info.parentType} ${info.fieldName}`,
+        JSON.stringify(error),
+        "ExceptionFilter",
+      );
+      throw new GraphqlException(error.error, error.statusCode);
+
+    }
+  }
+}
+
+export class GraphqlException extends HttpException {
+  constructor(message: string, statusCode: HttpStatus) {
+    super({ message, statusCode }, statusCode);
   }
 }

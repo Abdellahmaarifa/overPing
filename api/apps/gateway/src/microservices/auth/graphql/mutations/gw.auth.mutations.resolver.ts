@@ -43,6 +43,7 @@ export class AuthMutationsResolver {
     @Context() context,
     @Args('authCredentials') authCredentialsInput: AuthCredentialsInput,): Promise<GQLUserModel> {
     const response= await this.authService.signIn(authCredentialsInput);
+    this.userStatusService.updateUserStatus(response.user.id, Date().toString());
     const { res } = context;
 
     if (response.twoFactorAuth){

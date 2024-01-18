@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useCookies } from "react-cookie";
 import tw from "twin.macro";
 import BellIcon from "assets/common/bell.svg?react";
@@ -32,14 +32,81 @@ import { useLayoutContext } from "context/layout.context";
 import Skeleton from "react-loading-skeleton";
 import { useSettingsContext } from "context/settings.context";
 import { useChatContext } from "context/chat.context";
-
+import Button from "../Button/Button";
+import { Notification } from "domain/model/notification";
+import { useAcceptMatchToPlayMutation } from "gql/index";
 const NavLink = tw.div`flex justify-center items-center h-[24px] md:w-[48px] md:h-[48px]`;
-const TopNavBar = () => {
+
+const NotificationSimple = ({
+  image,
+  name,
+  id,
+}: {
+  id: number;
+  image: string;
+  name: string;
+}) => {
+  const [acceptMatchRequest] = useAcceptMatchToPlayMutation();
+
+  const acceptHandler = async () => {
+    const res = await acceptMatchRequest({
+      variables: {
+        AcceptRequestInput: {
+          matchType: "classic",
+          senderId: Number(id),
+        },
+      },
+    });
+  };
+
+  return (
+    <div tw="p-[10px] flex justify-center items-start  bg-[#152A3D] rounded-[5px] w-full h-fit flex-col">
+      <div tw="flex items-start justify-center gap-[10px]">
+        <div
+          tw="h-[40px] w-[40px]  rounded-[2px]"
+          style={{
+            background: `center/cover url(${image})`,
+          }}
+        ></div>
+        <h1>{name} Invites you to a game</h1>
+      </div>
+      <div tw="flex justify-end items-center  w-full gap-[10px]">
+        <Button $text="accept" onClick={() => acceptHandler()} />
+        <Button $text="cancel" />
+      </div>
+    </div>
+  );
+};
+const NotificationList = ({
+  active,
+  data,
+}: {
+  active: boolean;
+  data: Notification[];
+}) => {
+  console.log("from notification ", data);
+
+  return (
+    <div
+      tw="w-[310px]  flex-col gap-[10px] p-[10px] h-[600px] overflow-scroll  bg-[rgb(195 196 217 / 0.9)] top-[80px] right-[15px] absolute rounded-[5px]"
+      style={{ display: active ? "flex" : "none" }}
+    >
+      {data.map((e) => {
+        return (
+          <NotificationSimple image={e.image} name={e.name} id={e.userId} />
+        );
+      })}
+    </div>
+  );
+};
+
+const TopNavBar = ({ data }: { data: Notification[] }) => {
   const { userMenuState, mobileMenuState } = useLayoutContext();
   const [openMobileMenu, setOpenMobileMenu] = mobileMenuState;
   const [openSettings, setOpenSettings] = userMenuState;
   const [_cookie, setCookie, removeCookie] = useCookies();
   const viewModel = new ViewModel();
+  const [showNotification, setShowNotification] = useState(false);
   //const { data, loading, error } = viewModel.userQuery;
   //console.log("this data: ",data?.findUserById);
   //const user = data?.findUserById;
@@ -73,8 +140,17 @@ const TopNavBar = () => {
       </LogoContainer>
       {/* USER STATUS CONATINER*/}
       <UserBoxConatiner>
-        <NavLink>
-          <BellIcon />
+        <NavLink style={{ position: "relative" }}>
+          <BellIcon
+            onClick={() => setShowNotification(!showNotification)}
+            tw="cursor-pointer"
+          />
+
+          {data.length != 0 && (
+            <div tw="w-[15px] h-[15px] bg-red-500 absolute  top-[8px] left-[8px] rounded-[10px] flex justify-center items-center">
+              <span tw="font-inter font-bold text-[10px]">{data.length}</span>
+            </div>
+          )}
         </NavLink>
         {/* MOBILE MENU  */}
         <MobileMenuIcon
@@ -145,6 +221,7 @@ const TopNavBar = () => {
           </UserBoxMenu>
         </UserBox>
       </UserBoxConatiner>
+      <NotificationList active={showNotification} data={data} />
     </TopNavBarContainer>
   );
 };

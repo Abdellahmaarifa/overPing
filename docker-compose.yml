@@ -270,7 +270,8 @@ services:
       - ${PRISMA_STUDIO_CHAT_PORT}:5555
 
     volumes:
-      - ./api:/usr/src/app
+      - ./api/apps/chat:/usr/src/app/apps/chat
+      - ./api/libs:/usr/src/app/libs
     depends_on:
       postgres_chat_db:
         condition: service_started

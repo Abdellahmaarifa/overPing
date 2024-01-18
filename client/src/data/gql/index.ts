@@ -29,6 +29,11 @@ export type AuthCredentialsInput = {
   username: Scalars['String']['input'];
 };
 
+export type CancelRequestInput = {
+  matchType: Scalars['String']['input'];
+  senderId: Scalars['Float']['input'];
+};
+
 export type CreateProfileInput = {
   userId: Scalars['Float']['input'];
   username: Scalars['String']['input'];
@@ -201,6 +206,7 @@ export type Mutation = {
   banMember: Scalars['Boolean']['output'];
   blockUser: Scalars['Boolean']['output'];
   cancelFriendRequest: Scalars['Boolean']['output'];
+  cancelRequestToPlay?: Maybe<Scalars['Boolean']['output']>;
   createDirectMessage: GqlDirectMessageModel;
   createProfile: GqlUserProfileModel;
   createProtectedChannel: GqlChannelModel;
@@ -287,6 +293,11 @@ export type MutationBlockUserArgs = {
 
 export type MutationCancelFriendRequestArgs = {
   requester: Scalars['Float']['input'];
+};
+
+
+export type MutationCancelRequestToPlayArgs = {
+  CancelRequestInput: CancelRequestInput;
 };
 
 
@@ -711,6 +722,13 @@ export type GetAllAchievementsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllAchievementsQuery = { __typename?: 'Query', getAllAchievements?: Array<{ __typename?: 'GQLAchievement', title: string, requirement: string, description: string, imageURL: string }> | null };
 
+export type GetUserChatDataQueryVariables = Exact<{
+  id: Scalars['Float']['input'];
+}>;
+
+
+export type GetUserChatDataQuery = { __typename?: 'Query', getUserDirectMessages?: Array<{ __typename?: 'GQLDirectMessageModel', id: string, user1_id: number, user2_id: number }> | null, getUserChannels?: Array<{ __typename?: 'GQLChannelModel', id: string, name: string }> | null };
+
 export type GetBlockedUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1059,6 +1077,52 @@ export type GetAllAchievementsQueryHookResult = ReturnType<typeof useGetAllAchie
 export type GetAllAchievementsLazyQueryHookResult = ReturnType<typeof useGetAllAchievementsLazyQuery>;
 export type GetAllAchievementsSuspenseQueryHookResult = ReturnType<typeof useGetAllAchievementsSuspenseQuery>;
 export type GetAllAchievementsQueryResult = Apollo.QueryResult<GetAllAchievementsQuery, GetAllAchievementsQueryVariables>;
+export const GetUserChatDataDocument = gql`
+    query getUserChatData($id: Float!) {
+  getUserDirectMessages(id: $id) {
+    id
+    user1_id
+    user2_id
+  }
+  getUserChannels(id: $id) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetUserChatDataQuery__
+ *
+ * To run a query within a React component, call `useGetUserChatDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserChatDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserChatDataQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetUserChatDataQuery(baseOptions: Apollo.QueryHookOptions<GetUserChatDataQuery, GetUserChatDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserChatDataQuery, GetUserChatDataQueryVariables>(GetUserChatDataDocument, options);
+      }
+export function useGetUserChatDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserChatDataQuery, GetUserChatDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserChatDataQuery, GetUserChatDataQueryVariables>(GetUserChatDataDocument, options);
+        }
+export function useGetUserChatDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserChatDataQuery, GetUserChatDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserChatDataQuery, GetUserChatDataQueryVariables>(GetUserChatDataDocument, options);
+        }
+export type GetUserChatDataQueryHookResult = ReturnType<typeof useGetUserChatDataQuery>;
+export type GetUserChatDataLazyQueryHookResult = ReturnType<typeof useGetUserChatDataLazyQuery>;
+export type GetUserChatDataSuspenseQueryHookResult = ReturnType<typeof useGetUserChatDataSuspenseQuery>;
+export type GetUserChatDataQueryResult = Apollo.QueryResult<GetUserChatDataQuery, GetUserChatDataQueryVariables>;
 export const GetBlockedUsersDocument = gql`
     query getBlockedUsers {
   getBlockedUsers {

@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Channel" ADD COLUMN     "latestMessage_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "DirectMessage" ADD COLUMN     "latestMessage_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

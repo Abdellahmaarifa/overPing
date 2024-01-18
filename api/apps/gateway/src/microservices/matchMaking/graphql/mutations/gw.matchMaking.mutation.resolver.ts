@@ -13,7 +13,7 @@ import { JoinMatchmakingInput, RequestToPlayInput } from '../inputs/joinMatchmak
 import { PlayersMatching } from '../../models/playerMathing';
 import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
 import { RespondToPlay } from '../../models/respondRequestToPlayDto';
-import { AcceptRequestInput } from '../inputs/acceptRequestInput';
+import { AcceptRequestInput, CancelRequestInput } from '../inputs/acceptRequestInput';
 
 @Resolver()
 export class MatchMakingMutationsResolver {
@@ -64,6 +64,13 @@ export class MatchMakingMutationsResolver {
         const userId = cxt.req.user.id;
          this.gwMatchMakingService.acceptMatchToPlay(userId, acceptMatchData);
         return true;
+      }
+
+      @UseGuards(GqlJwtAuthGuard)
+      @Mutation((returns) =>  Boolean, { nullable: true })
+      async cancelRequestToPlay(@Context() cxt, @Args('CancelRequestInput') acceptMatchData: CancelRequestInput) {
+        const userId = cxt.req.user.id;
+        return this.gwMatchMakingService.cancelRequestToPlay(userId, acceptMatchData);
       }
       
       @Subscription((returns) => RespondToPlay, {

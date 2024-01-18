@@ -14,6 +14,7 @@ const Chat = () => {
     showChannelModel: [showChannelModel, setShowChannelModel],
     showEditChannelModel: [showEditChannelModel, setShowEditChannelModel],
   } = useChatContext();
+
   return (
     <ChatConatiner>
       <ChatLeftSide />
