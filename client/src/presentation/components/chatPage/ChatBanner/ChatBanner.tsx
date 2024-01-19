@@ -1,7 +1,7 @@
 import { useChatContext } from "context/chat.context";
 import { useLayoutContext } from "context/layout.context";
 import { MouseEvent, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import ChatMobIcon from "assets/common/chat-mob.svg?react";
 import DotsIcon from "assets/common/dots.svg?react";
@@ -16,6 +16,10 @@ import {
   ExtraMenuLink,
   ExtraMenuLinkDanger,
 } from "./ChatBanner.style";
+import { useApolloClient } from "@apollo/client";
+import { useUserContext } from "context/user.context";
+import { FindChanneMemebersDocument } from "gql";
+import { ChatSearchInput } from "../ChatSearch/ChatSearch.style";
 const ChatBanner = () => {
   const [isChannel, setIsChannel] = useState(false);
   const { mobileMenuState } = useLayoutContext();
@@ -30,11 +34,34 @@ const ChatBanner = () => {
     showFriends: [showFriends, setShowFriends],
     showSearchModel: [showSearchModel, setShowSearchModel],
     showEditChannelModel: [showEditChannelModel, setShowEditChannelModel],
+    showChannelModel: [showChannelModel, setShowChannelModel],
+    includeChannelInSearch: [includeChannelInSearch, setIncludeChannelInSearch],
+    userHandlerCallBack: [userHandlerCallBack, setUserHandlerCallBack],
+    channelHandlerCallBack: [channelHandlerCallBack, setChannelHandlerCallBack],
   } = useChatContext();
+
+  const client = useApolloClient();
+  const { user } = useUserContext();
+  const { id } = useParams();
+  const [role, setRole] = useState<"owner" | "admin" | "member">("member");
+  const setUserRole = async () => {
+    const res = await client.query({
+      query: FindChanneMemebersDocument,
+      variables: {
+        userId: Number(user?.id),
+        groupId: Number(id),
+      },
+    });
+    const result = res.data.findChannelById;
+    console.log("res mem : ", result);
+    if (result.admins.find((e) => e.id == user?.id)) setRole("admin");
+    if (result.owner_id == user?.id) setRole("owner");
+  };
   useEffect(() => {
     if (location.pathname.includes("channel")) setIsChannel(true);
+    setUserRole();
   }, []);
-
+  console.log("my role is : ", role);
   return (
     <ChatBannerContainer>
       <ChatBannerLeft>
@@ -87,13 +114,19 @@ const ChatBanner = () => {
                 display: showChannelMenu ? "flex" : "none",
               }}
             >
-              <ExtraMenuLink
-                onClick={() => {
-                  setShowSearchModel(true);
-                }}
-              >
-                Add Admin
-              </ExtraMenuLink>
+              {(role == "owner" || role == "admin") && (
+                <ExtraMenuLink
+                  onClick={() => {
+                    setIncludeChannelInSearch(false);
+                    setShowSearchModel(true);
+                    setUserHandlerCallBack(
+                      () => () => console.log("admin here hello!")
+                    );
+                  }}
+                >
+                  Add Admin
+                </ExtraMenuLink>
+              )}
               <ExtraMenuLink
                 onClick={() => {
                   setShowSearchModel(true);
@@ -101,14 +134,18 @@ const ChatBanner = () => {
               >
                 Add Member
               </ExtraMenuLink>
-              <ExtraMenuLink
-                onClick={() => {
-                  setShowEditChannelModel(true);
-                }}
-              >
-                Edit Channel
-              </ExtraMenuLink>
-              <ExtraMenuLinkDanger>Delete Channel</ExtraMenuLinkDanger>
+              {(role == "owner" || role == "admin") && (
+                <ExtraMenuLink
+                  onClick={() => {
+                    setShowEditChannelModel(true);
+                  }}
+                >
+                  Edit Channel
+                </ExtraMenuLink>
+              )}
+              {role === "owner" && (
+                <ExtraMenuLinkDanger>Delete Channel</ExtraMenuLinkDanger>
+              )}
               <ExtraMenuLinkDanger>Leave Channel</ExtraMenuLinkDanger>
             </ExtraMenu>
           </ChatBannerIcon>

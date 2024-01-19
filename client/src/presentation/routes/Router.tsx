@@ -51,9 +51,9 @@ const Router = () => {
       <Routes>
         <Route element={user && <Layout />}>
           {user && <Route path={ROUTE_ENDPOINTS.HOME} element={<Home />} />}
-          {AuthRoute(ROUTE_ENDPOINTS.CHAT, <Chat />)}
-          {AuthRoute(ROUTE_ENDPOINTS.CHAT_DM, <Chat />)}
-          {AuthRoute(ROUTE_ENDPOINTS.CHAT_CHANNEL, <Chat />)}
+          {AuthRoute(ROUTE_ENDPOINTS.CHAT, <Chat type="none" />)}
+          {AuthRoute(ROUTE_ENDPOINTS.CHAT_DM, <Chat type="dm" />)}
+          {AuthRoute(ROUTE_ENDPOINTS.CHAT_CHANNEL, <Chat type="channel" />)}
           {AuthRoute(ROUTE_ENDPOINTS.FRIENDS, <Friends />)}
           {AuthRoute(ROUTE_ENDPOINTS.LEADER_BOARD, <LeaderBoard />)}
           {AuthRoute(ROUTE_ENDPOINTS.TOURNAMENT, <Tournament />)}

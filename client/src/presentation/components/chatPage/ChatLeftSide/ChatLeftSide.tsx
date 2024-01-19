@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker";
+import { da, faker } from "@faker-js/faker";
 import Button from "components/common/Button/Button";
 
 import CloseIcon from "assets/common/close.svg?react";
@@ -24,14 +24,65 @@ import {
   MessagesSearch,
 } from "./ChatLeftSide.style";
 import { useChatContext } from "context/chat.context";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useApolloClient } from "@apollo/client";
+import {
+  DeleteDirectMessageDocument,
+  GetUserChannelsDocument,
+  GetUserDirectMessagesDocument,
+  useCreateDirectMessageMutation,
+} from "gql/index";
+import { useUserContext } from "context/user.context";
+import { Navigate, useNavigate } from "react-router-dom";
+import { ChannelType, DMType } from "domain/model/chat.type";
 
-const ChatLeftSide = () => {
+const ChatLeftSide = ({
+  channels,
+  setChannels,
+  dm,
+  setDm,
+}: {
+  channels: ChannelType[] | [];
+  setChannels: Dispatch<SetStateAction<[] | ChannelType[]>>;
+  dm: DMType[] | [];
+  setDm: Dispatch<SetStateAction<[] | DMType[]>>;
+}) => {
   const {
     showChatMenu: [showChatMenu, setShowChatMenu],
     showSearchModel: [showSearchModel, setShowSearchModel],
     showChannelModel: [showChannelModel, setShowChannelModel],
+    includeChannelInSearch: [includeChannelInSearch, setIncludeChannelInSearch],
+    userHandlerCallBack: [userHandlerCallBack, setUserHandlerCallBack],
+    channelHandlerCallBack: [channelHandlerCallBack, setChannelHandlerCallBack],
   } = useChatContext();
 
+  const { user } = useUserContext();
+  const client = useApolloClient();
+  const navigate = useNavigate();
+
+  const deleteDm = async (id: number) => {
+    try {
+      const data = await client.mutate({
+        mutation: DeleteDirectMessageDocument,
+        variables: {
+          data: {
+            userId: Number(user?.id),
+            groupChatId: id,
+            messageId: 1,
+          },
+        },
+      });
+      console.log("deleted!! ", data);
+    } catch (err) {
+      console.log("in dele dm: ", err);
+    }
+  };
   return (
     <ChatLeftSideContainer
       style={
@@ -47,7 +98,16 @@ const ChatLeftSide = () => {
           $text="Search"
           $size="auto"
           $Icon={SearchIcon}
-          onClick={() => setShowSearchModel(true)}
+          onClick={() => {
+            setIncludeChannelInSearch(true);
+            setChannelHandlerCallBack(
+              () => (id: string) => navigate(`/chat/channel/${id}`)
+            );
+            setUserHandlerCallBack(
+              () => (id: string) => navigate(`/chat/dm/${id}`)
+            );
+            setShowSearchModel(true);
+          }}
         />
       </MessagesSearch>
       <MessagesBox>
@@ -62,18 +122,19 @@ const ChatLeftSide = () => {
           </MessagesHeaderIcon>
         </MessagesHeaderContainer>
         <MessagesContent>
-          <ChannelConatiner>
-            <ChannelIcon>
-              <HashTagIcon />
-            </ChannelIcon>
-            <ChannelName>channel name</ChannelName>
-          </ChannelConatiner>
-          <ChannelConatiner>
-            <ChannelIcon>
-              <HashTagIcon />
-            </ChannelIcon>
-            <ChannelName>channel name</ChannelName>
-          </ChannelConatiner>
+          {channels.map((e: ChannelType) => {
+            return (
+              <ChannelConatiner
+                key={e.id}
+                onClick={() => navigate(`/chat/channel/${e.id}`)}
+              >
+                <ChannelIcon>
+                  <HashTagIcon />
+                </ChannelIcon>
+                <ChannelName>{e.name}</ChannelName>
+              </ChannelConatiner>
+            );
+          })}
         </MessagesContent>
       </MessagesBox>
       <MessagesBox>
@@ -81,6 +142,10 @@ const ChatLeftSide = () => {
           <MessagesHeader>direct messages</MessagesHeader>
           <MessagesHeaderIcon
             onClick={() => {
+              setIncludeChannelInSearch(false);
+              setUserHandlerCallBack(
+                () => (id: string) => navigate(`/chat/dm/${id}`)
+              );
               setShowSearchModel(true);
             }}
           >
@@ -88,16 +153,28 @@ const ChatLeftSide = () => {
           </MessagesHeaderIcon>
         </MessagesHeaderContainer>
         <MessagesContent>
-          <DMContainer>
-            <DMProfile src={faker.image.avatar()} />
-            <DMNameContainer>
-              <DMName>Salam</DMName>
-              <DMUserName>@Salam</DMUserName>
-            </DMNameContainer>
-            <DMCloseIcon>
-              <CloseIcon />
-            </DMCloseIcon>
-          </DMContainer>
+          {dm.map((e: DMType) => {
+            return (
+              <DMContainer
+                key={e.id}
+                onClick={() => navigate(`/chat/dm/${e.user2.id}`)}
+              >
+                <DMProfile src={e.user2.profileImgUrl} />
+                <DMNameContainer>
+                  <DMName>{e.user2.username}</DMName>
+                  <DMUserName>@{e.user2.username}</DMUserName>
+                </DMNameContainer>
+                <DMCloseIcon>
+                  <CloseIcon
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      deleteDm(Number(e.id));
+                    }}
+                  />
+                </DMCloseIcon>
+              </DMContainer>
+            );
+          })}
         </MessagesContent>
       </MessagesBox>
     </ChatLeftSideContainer>

@@ -117,6 +117,7 @@ export const ChannelConatiner = tw.div`
     rounded-[8px]
     p-[12px]
     w-full
+    cursor-pointer
 
 `;
 export const ChannelName = tw.h4`

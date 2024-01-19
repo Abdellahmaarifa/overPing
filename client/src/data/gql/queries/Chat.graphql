@@ -1,0 +1,96 @@
+query GetUserChannels($userId: Float!) {
+  getUserChannels(id: $userId) {
+    id
+    name
+    visibility
+  }
+}
+
+query GetUserDirectMessages($userId: Float!) {
+  getUserDirectMessages(id: $userId) {
+    id
+    user2 {
+      username
+      profileImgUrl
+      id
+    }
+    user1 {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+
+mutation CreatePublicPrivateChannel($data: CreatePublicPrivateInput!) {
+  createPublicPrivateChannel(data: $data) {
+    id
+    name
+  }
+}
+
+mutation CreateProtectedChannel($data: CreateProtectedInput!) {
+  createProtectedChannel(data: $data) {
+    id
+    name
+  }
+}
+
+query SearchForChannel($channelName: String!, $userId: Float!) {
+  searchForChannel(channelName: $channelName, userId: $userId) {
+    id
+    name
+    visibility
+  }
+}
+
+mutation CreateDirectMessage($userId: Float!, $targetId: Float!) {
+  createDirectMessage(userID: $userId, targetID: $targetId) {
+    id
+    user1 {
+      id
+      username
+      profileImgUrl
+    }
+    user2 {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+
+query getChannelVisibility($userId: Float!, $groupId: Float!) {
+  findChannelById(userId: $userId, groupId: $groupId) {
+    name
+    id
+    visibility
+  }
+}
+
+mutation JoinChannel($data: MemberInput!) {
+  joinChannel(data: $data) {
+    id
+  }
+}
+
+mutation DeleteDirectMessage($data: DeletionInput!) {
+  deleteDirectMessage(data: $data)
+}
+
+query FindChanneMemebers($userId: Float!, $groupId: Float!) {
+  findChannelById(userId: $userId, groupId: $groupId) {
+    id
+    owner_id
+    members {
+      id
+      username
+      profileImgUrl
+    }
+    admins {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}

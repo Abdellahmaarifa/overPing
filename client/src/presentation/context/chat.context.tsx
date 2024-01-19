@@ -10,6 +10,9 @@ type ChatCtxType = {
   showChannelModel: UseStateType<Boolean>;
   showChannelMenu: UseStateType<Boolean>;
   showEditChannelModel: UseStateType<Boolean>;
+  includeChannelInSearch: UseStateType<Boolean>;
+  userHandlerCallBack: UseStateType<(id: string) => void>;
+  channelHandlerCallBack: UseStateType<(id: string) => void>;
 };
 
 export class ChatContextValue implements ChatCtxType {
@@ -20,6 +23,9 @@ export class ChatContextValue implements ChatCtxType {
   showChannelModel: UseStateType<Boolean>;
   showChannelMenu: UseStateType<Boolean>;
   showEditChannelModel: UseStateType<Boolean>;
+  includeChannelInSearch: UseStateType<Boolean>;
+  userHandlerCallBack: UseStateType<(id: string) => void>;
+  channelHandlerCallBack: UseStateType<(id: string) => void>;
   constructor() {
     this.showChatMenu = useState<Boolean>(false);
     this.showChatAbout = useState<Boolean>(false);
@@ -28,6 +34,13 @@ export class ChatContextValue implements ChatCtxType {
     this.showChannelModel = useState<Boolean>(false);
     this.showChannelMenu = useState<Boolean>(false);
     this.showEditChannelModel = useState<Boolean>(false);
+    this.includeChannelInSearch = useState<Boolean>(false);
+    this.userHandlerCallBack = useState<(id: string) => void>(
+      (id: string) => {}
+    );
+    this.channelHandlerCallBack = useState<(id: string) => void>(
+      (id: string) => {}
+    );
   }
 }
 
@@ -39,6 +52,9 @@ const ChatContext = createContext<ChatCtxType>({
   showChannelModel: [false, () => {}],
   showChannelMenu: [false, () => {}],
   showEditChannelModel: [false, () => {}],
+  includeChannelInSearch: [false, () => {}],
+  userHandlerCallBack: [(id: string) => {}, () => () => {}],
+  channelHandlerCallBack: [(id: string) => {}, () => () => {}],
 });
 
 type Props = {
