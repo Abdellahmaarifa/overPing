@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("HISTORYDATABASE_URL")
+}
+
+model Game {
+  id Int @id @default(autoincrement())
+
+  playerOneId       Int
+  playerOneName     String
+  playerOneImageURL String
+  playerOneScore    Int
+  playerOneStatus   Int
+  playerTwoId       Int
+  playerTwoName     String
+  playerTwoImageURL String
+  playerTwoScore    Int
+  playerTwoStatus   Int
+  points            Int
+  level             Int
+
+  createdAt DateTime @default(now())
+}

@@ -18,3 +18,9 @@ docker exec chat sh -c 'cd /usr/src/app/apps/chat/prisma &&  yes | prisma migrat
 docker exec chat sh -c 'npx prisma generate --schema=/usr/src/app/apps/chat/prisma/schema.prisma'
 docker restart chat
 
+
+docker exec theGame rm -rf /usr/app/apps/theGame/prisma/migrations && echo "the migrations dir is deleted"
+docker exec theGame sh -c 'cd /usr/src/app/apps/theGame/prisma &&  yes | prisma migrate dev'
+docker exec theGame sh -c 'npx prisma generate --schema=/usr/src/app/apps/theGame/prisma/schema.prisma'
+docker restart theGame
+

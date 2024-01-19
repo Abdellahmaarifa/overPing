@@ -318,7 +318,7 @@ services:
       - POSTGRES_DB=${POSTGRES_H_DB}
       - POSTGRES_HOST=${POSTGRES_H_HOST}
     volumes:
-      - ./GameBackend/data/history:/var/lib/postgresql/data
+      - ./database/data/game:/var/lib/postgresql/data/
     networks:
       - webapp
     ports:
@@ -327,16 +327,26 @@ services:
 
   game:
     container_name: theGame
-    build: ./GameBackend/.
+    build:
+      context: ./api
+      dockerfile: ./apps/game/Dockerfile
+      target: development
+    command: yarn start:dev game
     env_file:
       - ./api/.env
     ports:
       - "4055:4055"
-      - ${PRISMA_STUDIO_HISTORY_PORT}:5555
+      - ${PRISMA_STUDIO_HISTORY_PORT}:5555 
+    volumes:
+      - ./api/apps/game:/usr/src/app/apps/game
+      - ./api/libs:/usr/src/app/libs
     depends_on:
-      - gama_hidtory_db
+      - game_history_db
     networks:
       - webapp
+    profiles:
+      - development
+      - production
     restart: always
 
   pgadmin:
@@ -344,8 +354,6 @@ services:
     container_name: pgAdminConsole
     env_file:
       - ./api/.env
-    networks:
-      - history-net
     ports:
       - "5050:80"
     networks:

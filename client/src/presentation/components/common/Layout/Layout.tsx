@@ -25,7 +25,7 @@ import tw from "twin.macro";
 import Button from "../Button/Button";
 import ConfirmModel from "../ConfirmModel/ConfirmModel";
 import Settings from "../Settings/Settings";
-import './layout.css'
+import './Layout.css'
 
 import { useApolloClient } from "@apollo/client";
 import { Notification } from "domain/model/notification";

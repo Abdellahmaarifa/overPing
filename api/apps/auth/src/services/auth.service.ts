@@ -130,13 +130,21 @@ export class AuthService {
     refreshTokenOject: GetRefreshUserDto,
   ): Promise<IAuthUser> {
     const user = await this.userService.findById(refreshTokenOject.id);
-    if (!user || !user.refreshToken) throw 'Access Denied';
+    if (!user || !user.refreshToken){
+      this.rpcExceptionService.throwUnauthorised(
+        'unauthorized',
+      );
+    }
     const refreshTokenMatches = await argon2.verify(
       user.refreshToken,
       refreshTokenOject.refreshToken,
     );
 
-    if (!refreshTokenMatches) throw 'Access Denied';
+    if (!refreshTokenMatches){
+      this.rpcExceptionService.throwUnauthorised(
+        'unauthorized',
+      );
+    }
     return user;
   }
 

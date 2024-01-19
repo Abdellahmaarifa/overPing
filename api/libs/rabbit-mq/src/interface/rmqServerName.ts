@@ -6,4 +6,5 @@ export enum IRmqSeverName{
     CHAT = "CHAT_SERVICE",
     MEDIA = "MEDIA_SERVICE",
     FRIEND = "FRIEND_SERVICE",
+    GAME = "GAME_SERVICE",
 }
