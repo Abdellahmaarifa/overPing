@@ -1,3 +1,4 @@
+import { ChannelSample } from "domain/model/chat.type";
 import { createContext, useContext, useState } from "react";
 
 type UseStateType<T> = [T, React.Dispatch<React.SetStateAction<T>>];
@@ -13,6 +14,7 @@ type ChatCtxType = {
   includeChannelInSearch: UseStateType<Boolean>;
   userHandlerCallBack: UseStateType<(id: string) => void>;
   channelHandlerCallBack: UseStateType<(id: string) => void>;
+  currentChannel: UseStateType<ChannelSample | null>;
 };
 
 export class ChatContextValue implements ChatCtxType {
@@ -26,6 +28,7 @@ export class ChatContextValue implements ChatCtxType {
   includeChannelInSearch: UseStateType<Boolean>;
   userHandlerCallBack: UseStateType<(id: string) => void>;
   channelHandlerCallBack: UseStateType<(id: string) => void>;
+  currentChannel: UseStateType<ChannelSample | null>;
   constructor() {
     this.showChatMenu = useState<Boolean>(false);
     this.showChatAbout = useState<Boolean>(false);
@@ -41,6 +44,7 @@ export class ChatContextValue implements ChatCtxType {
     this.channelHandlerCallBack = useState<(id: string) => void>(
       (id: string) => {}
     );
+    this.currentChannel = useState<ChannelSample | null>(null);
   }
 }
 
@@ -55,6 +59,7 @@ const ChatContext = createContext<ChatCtxType>({
   includeChannelInSearch: [false, () => {}],
   userHandlerCallBack: [(id: string) => {}, () => () => {}],
   channelHandlerCallBack: [(id: string) => {}, () => () => {}],
+  currentChannel: [null, () => {}],
 });
 
 type Props = {

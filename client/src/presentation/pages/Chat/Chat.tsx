@@ -9,6 +9,7 @@ import useChatContextProvider, { useChatContext } from "context/chat.context";
 import EditChannelModel from "components/chatPage/EditChannelModel /EditChannelModel";
 import {
   DeleteDirectMessageDocument,
+  FindChannelByIdDocument,
   GetUserChannelsDocument,
   GetUserDirectMessagesDocument,
   useCreateDirectMessageMutation,
@@ -29,6 +30,7 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
     showSearchModel: [showSearchModel, setShowSearchModel],
     showChannelModel: [showChannelModel, setShowChannelModel],
     showEditChannelModel: [showEditChannelModel, setShowEditChannelModel],
+    currentChannel: [currentChannel, setCurrentChannel],
   } = useChatContext();
   const [dm, setDm] = useState<DMType[] | []>([]);
   const [channels, setChannels] = useState<ChannelType[] | []>([]);
@@ -108,18 +110,36 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
       }
 
       if (type == "channel") {
+        // get the data about the current channel
+        const res = await client.query({
+          query: FindChannelByIdDocument,
+          variables: {
+            userId: Number(user?.id),
+            groupId: Number(id),
+          },
+        });
+        if (res?.data?.findChannelById) {
+          setCurrentChannel(res?.data?.findChannelById);
+        }
+        console.log("***this is the data about this sepc channel: ", res);
         if (currentChannel) return;
         // amechnisme for getting password on the protected channels is needed!!
-
+        let password: string | null = null;
+        if (res?.data?.findChannelById.visibility === "protected") {
+          password = prompt("give me the password in order to join!");
+        }
         const joinChannelRes = await client.mutate({
           mutation: JoinChannelDocument,
           variables: {
             data: {
               userId: Number(user?.id),
               channelId: Number(id),
+              password: password,
             },
           },
         });
+
+        console.log("after joining ...", joinChannelRes);
       }
     } catch (err) {
       console.log("**err: ", err);

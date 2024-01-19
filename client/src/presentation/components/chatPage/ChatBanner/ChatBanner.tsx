@@ -18,8 +18,9 @@ import {
 } from "./ChatBanner.style";
 import { useApolloClient } from "@apollo/client";
 import { useUserContext } from "context/user.context";
-import { FindChanneMemebersDocument } from "gql";
+import { FindChanneMemebersDocument } from "gql/index";
 import { ChatSearchInput } from "../ChatSearch/ChatSearch.style";
+import { Toaster } from "react-hot-toast";
 const ChatBanner = () => {
   const [isChannel, setIsChannel] = useState(false);
   const { mobileMenuState } = useLayoutContext();
@@ -44,6 +45,9 @@ const ChatBanner = () => {
   const { user } = useUserContext();
   const { id } = useParams();
   const [role, setRole] = useState<"owner" | "admin" | "member">("member");
+  const [visibility, setVisibility] = useState<
+    "private" | "public" | "protected"
+  >();
   const setUserRole = async () => {
     const res = await client.query({
       query: FindChanneMemebersDocument,
@@ -53,17 +57,29 @@ const ChatBanner = () => {
       },
     });
     const result = res.data.findChannelById;
+    if (result) setVisibility(result.visibility);
     console.log("res mem : ", result);
-    if (result.admins.find((e) => e.id == user?.id)) setRole("admin");
-    if (result.owner_id == user?.id) setRole("owner");
+    if (result && result.admins.find((e) => e.id == user?.id)) setRole("admin");
+    if (result && result.owner_id == user?.id) setRole("owner");
   };
   useEffect(() => {
     if (location.pathname.includes("channel")) setIsChannel(true);
     setUserRole();
   }, []);
   console.log("my role is : ", role);
-  const addAdmin = () => () => console.log("admin here hello!");
+
+  const addAdmin = () => () => {
+    let password: string | null = null;
+    if (visibility === "protected") {
+      password = prompt("please give me the passowrd");
+    }
+    // client.query({
+
+    // })
+  };
   const addMember = () => () => console.log("admin here hello!");
+  const leaveChannel = () => {};
+  const deleteChannel = () => {};
 
   return (
     <ChatBannerContainer>
@@ -148,13 +164,18 @@ const ChatBanner = () => {
                 </ExtraMenuLink>
               )}
               {role === "owner" && (
-                <ExtraMenuLinkDanger>Delete Channel</ExtraMenuLinkDanger>
+                <ExtraMenuLinkDanger onClick={() => deleteChannel()}>
+                  Delete Channel
+                </ExtraMenuLinkDanger>
               )}
-              <ExtraMenuLinkDanger>Leave Channel</ExtraMenuLinkDanger>
+              <ExtraMenuLinkDanger onClick={() => leaveChannel()}>
+                Leave Channel
+              </ExtraMenuLinkDanger>
             </ExtraMenu>
           </ChatBannerIcon>
         )}
       </ChatBannerRight>
+      <Toaster position="top-center" />
     </ChatBannerContainer>
   );
 };

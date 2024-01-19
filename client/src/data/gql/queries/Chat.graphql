@@ -92,5 +92,87 @@ query FindChanneMemebers($userId: Float!, $groupId: Float!) {
       username
       profileImgUrl
     }
+    visibility
+  }
+}
+
+mutation AddAdmin($data: ActionToMemberInput!) {
+  addAdmin(data: $data)
+}
+
+mutation AddMember($data: ActionToMemberInput!) {
+  addMember(data: $data)
+}
+
+mutation DeleteChannel($data: MemberInput!) {
+  deleteChannel(data: $data)
+}
+
+mutation LeaveChannel($data: MemberInput!) {
+  leaveChannel(data: $data)
+}
+
+mutation UpdateProtectedChannel($data: updateProtectedInput!) {
+  updateProtectedChannel(data: $data) {
+    id
+    name
+    owner_id
+    description
+    visibility
+    admins {
+      id
+      username
+      email
+      profileImgUrl
+    }
+    members {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+
+mutation UpdatePublicPrivateChannel($data: updatePublicPrivateInput!) {
+  updatePublicPrivateChannel(data: $data) {
+    id
+    owner_id
+    name
+    description
+    visibility
+    admins {
+      id
+      username
+      email
+      profileImgUrl
+    }
+    members {
+      id
+      email
+      profileImgUrl
+      username
+    }
+  }
+}
+
+query FindChannelById($userId: Float!, $groupId: Float!) {
+  findChannelById(userId: $userId, groupId: $groupId) {
+    id
+    owner_id
+    name
+    description
+    visibility
+    admins {
+      id
+      username
+      email
+      profileImgUrl
+    }
+    members {
+      id
+      username
+      email
+      profileImgUrl
+    }
   }
 }

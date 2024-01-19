@@ -805,7 +805,57 @@ export type FindChanneMemebersQueryVariables = Exact<{
 }>;
 
 
-export type FindChanneMemebersQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username: string, profileImgUrl: string }> | null, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username: string, profileImgUrl: string }> | null } | null };
+export type FindChanneMemebersQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, visibility: string, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username: string, profileImgUrl: string }> | null, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username: string, profileImgUrl: string }> | null } | null };
+
+export type AddAdminMutationVariables = Exact<{
+  data: ActionToMemberInput;
+}>;
+
+
+export type AddAdminMutation = { __typename?: 'Mutation', addAdmin: boolean };
+
+export type AddMemberMutationVariables = Exact<{
+  data: ActionToMemberInput;
+}>;
+
+
+export type AddMemberMutation = { __typename?: 'Mutation', addMember: boolean };
+
+export type DeleteChannelMutationVariables = Exact<{
+  data: MemberInput;
+}>;
+
+
+export type DeleteChannelMutation = { __typename?: 'Mutation', deleteChannel: boolean };
+
+export type LeaveChannelMutationVariables = Exact<{
+  data: MemberInput;
+}>;
+
+
+export type LeaveChannelMutation = { __typename?: 'Mutation', leaveChannel: boolean };
+
+export type UpdateProtectedChannelMutationVariables = Exact<{
+  data: UpdateProtectedInput;
+}>;
+
+
+export type UpdateProtectedChannelMutation = { __typename?: 'Mutation', updateProtectedChannel: { __typename?: 'GQLChannelModel', id: string, name: string, owner_id: number, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username: string, email: string, profileImgUrl: string }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username: string, profileImgUrl: string }> | null } };
+
+export type UpdatePublicPrivateChannelMutationVariables = Exact<{
+  data: UpdatePublicPrivateInput;
+}>;
+
+
+export type UpdatePublicPrivateChannelMutation = { __typename?: 'Mutation', updatePublicPrivateChannel: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username: string, email: string, profileImgUrl: string }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, email: string, profileImgUrl: string, username: string }> | null } };
+
+export type FindChannelByIdQueryVariables = Exact<{
+  userId: Scalars['Float']['input'];
+  groupId: Scalars['Float']['input'];
+}>;
+
+
+export type FindChannelByIdQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username: string, email: string, profileImgUrl: string }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username: string, email: string, profileImgUrl: string }> | null } | null };
 
 export type GetBlockedUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1517,6 +1567,7 @@ export const FindChanneMemebersDocument = gql`
       username
       profileImgUrl
     }
+    visibility
   }
 }
     `;
@@ -1554,6 +1605,284 @@ export type FindChanneMemebersQueryHookResult = ReturnType<typeof useFindChanneM
 export type FindChanneMemebersLazyQueryHookResult = ReturnType<typeof useFindChanneMemebersLazyQuery>;
 export type FindChanneMemebersSuspenseQueryHookResult = ReturnType<typeof useFindChanneMemebersSuspenseQuery>;
 export type FindChanneMemebersQueryResult = Apollo.QueryResult<FindChanneMemebersQuery, FindChanneMemebersQueryVariables>;
+export const AddAdminDocument = gql`
+    mutation AddAdmin($data: ActionToMemberInput!) {
+  addAdmin(data: $data)
+}
+    `;
+export type AddAdminMutationFn = Apollo.MutationFunction<AddAdminMutation, AddAdminMutationVariables>;
+
+/**
+ * __useAddAdminMutation__
+ *
+ * To run a mutation, you first call `useAddAdminMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddAdminMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addAdminMutation, { data, loading, error }] = useAddAdminMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useAddAdminMutation(baseOptions?: Apollo.MutationHookOptions<AddAdminMutation, AddAdminMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddAdminMutation, AddAdminMutationVariables>(AddAdminDocument, options);
+      }
+export type AddAdminMutationHookResult = ReturnType<typeof useAddAdminMutation>;
+export type AddAdminMutationResult = Apollo.MutationResult<AddAdminMutation>;
+export type AddAdminMutationOptions = Apollo.BaseMutationOptions<AddAdminMutation, AddAdminMutationVariables>;
+export const AddMemberDocument = gql`
+    mutation AddMember($data: ActionToMemberInput!) {
+  addMember(data: $data)
+}
+    `;
+export type AddMemberMutationFn = Apollo.MutationFunction<AddMemberMutation, AddMemberMutationVariables>;
+
+/**
+ * __useAddMemberMutation__
+ *
+ * To run a mutation, you first call `useAddMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addMemberMutation, { data, loading, error }] = useAddMemberMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useAddMemberMutation(baseOptions?: Apollo.MutationHookOptions<AddMemberMutation, AddMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddMemberMutation, AddMemberMutationVariables>(AddMemberDocument, options);
+      }
+export type AddMemberMutationHookResult = ReturnType<typeof useAddMemberMutation>;
+export type AddMemberMutationResult = Apollo.MutationResult<AddMemberMutation>;
+export type AddMemberMutationOptions = Apollo.BaseMutationOptions<AddMemberMutation, AddMemberMutationVariables>;
+export const DeleteChannelDocument = gql`
+    mutation DeleteChannel($data: MemberInput!) {
+  deleteChannel(data: $data)
+}
+    `;
+export type DeleteChannelMutationFn = Apollo.MutationFunction<DeleteChannelMutation, DeleteChannelMutationVariables>;
+
+/**
+ * __useDeleteChannelMutation__
+ *
+ * To run a mutation, you first call `useDeleteChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteChannelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteChannelMutation, { data, loading, error }] = useDeleteChannelMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useDeleteChannelMutation(baseOptions?: Apollo.MutationHookOptions<DeleteChannelMutation, DeleteChannelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteChannelMutation, DeleteChannelMutationVariables>(DeleteChannelDocument, options);
+      }
+export type DeleteChannelMutationHookResult = ReturnType<typeof useDeleteChannelMutation>;
+export type DeleteChannelMutationResult = Apollo.MutationResult<DeleteChannelMutation>;
+export type DeleteChannelMutationOptions = Apollo.BaseMutationOptions<DeleteChannelMutation, DeleteChannelMutationVariables>;
+export const LeaveChannelDocument = gql`
+    mutation LeaveChannel($data: MemberInput!) {
+  leaveChannel(data: $data)
+}
+    `;
+export type LeaveChannelMutationFn = Apollo.MutationFunction<LeaveChannelMutation, LeaveChannelMutationVariables>;
+
+/**
+ * __useLeaveChannelMutation__
+ *
+ * To run a mutation, you first call `useLeaveChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLeaveChannelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [leaveChannelMutation, { data, loading, error }] = useLeaveChannelMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useLeaveChannelMutation(baseOptions?: Apollo.MutationHookOptions<LeaveChannelMutation, LeaveChannelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LeaveChannelMutation, LeaveChannelMutationVariables>(LeaveChannelDocument, options);
+      }
+export type LeaveChannelMutationHookResult = ReturnType<typeof useLeaveChannelMutation>;
+export type LeaveChannelMutationResult = Apollo.MutationResult<LeaveChannelMutation>;
+export type LeaveChannelMutationOptions = Apollo.BaseMutationOptions<LeaveChannelMutation, LeaveChannelMutationVariables>;
+export const UpdateProtectedChannelDocument = gql`
+    mutation UpdateProtectedChannel($data: updateProtectedInput!) {
+  updateProtectedChannel(data: $data) {
+    id
+    name
+    owner_id
+    description
+    visibility
+    admins {
+      id
+      username
+      email
+      profileImgUrl
+    }
+    members {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+    `;
+export type UpdateProtectedChannelMutationFn = Apollo.MutationFunction<UpdateProtectedChannelMutation, UpdateProtectedChannelMutationVariables>;
+
+/**
+ * __useUpdateProtectedChannelMutation__
+ *
+ * To run a mutation, you first call `useUpdateProtectedChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProtectedChannelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProtectedChannelMutation, { data, loading, error }] = useUpdateProtectedChannelMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateProtectedChannelMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProtectedChannelMutation, UpdateProtectedChannelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProtectedChannelMutation, UpdateProtectedChannelMutationVariables>(UpdateProtectedChannelDocument, options);
+      }
+export type UpdateProtectedChannelMutationHookResult = ReturnType<typeof useUpdateProtectedChannelMutation>;
+export type UpdateProtectedChannelMutationResult = Apollo.MutationResult<UpdateProtectedChannelMutation>;
+export type UpdateProtectedChannelMutationOptions = Apollo.BaseMutationOptions<UpdateProtectedChannelMutation, UpdateProtectedChannelMutationVariables>;
+export const UpdatePublicPrivateChannelDocument = gql`
+    mutation UpdatePublicPrivateChannel($data: updatePublicPrivateInput!) {
+  updatePublicPrivateChannel(data: $data) {
+    id
+    owner_id
+    name
+    description
+    visibility
+    admins {
+      id
+      username
+      email
+      profileImgUrl
+    }
+    members {
+      id
+      email
+      profileImgUrl
+      username
+    }
+  }
+}
+    `;
+export type UpdatePublicPrivateChannelMutationFn = Apollo.MutationFunction<UpdatePublicPrivateChannelMutation, UpdatePublicPrivateChannelMutationVariables>;
+
+/**
+ * __useUpdatePublicPrivateChannelMutation__
+ *
+ * To run a mutation, you first call `useUpdatePublicPrivateChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePublicPrivateChannelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePublicPrivateChannelMutation, { data, loading, error }] = useUpdatePublicPrivateChannelMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdatePublicPrivateChannelMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePublicPrivateChannelMutation, UpdatePublicPrivateChannelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePublicPrivateChannelMutation, UpdatePublicPrivateChannelMutationVariables>(UpdatePublicPrivateChannelDocument, options);
+      }
+export type UpdatePublicPrivateChannelMutationHookResult = ReturnType<typeof useUpdatePublicPrivateChannelMutation>;
+export type UpdatePublicPrivateChannelMutationResult = Apollo.MutationResult<UpdatePublicPrivateChannelMutation>;
+export type UpdatePublicPrivateChannelMutationOptions = Apollo.BaseMutationOptions<UpdatePublicPrivateChannelMutation, UpdatePublicPrivateChannelMutationVariables>;
+export const FindChannelByIdDocument = gql`
+    query FindChannelById($userId: Float!, $groupId: Float!) {
+  findChannelById(userId: $userId, groupId: $groupId) {
+    id
+    owner_id
+    name
+    description
+    visibility
+    admins {
+      id
+      username
+      email
+      profileImgUrl
+    }
+    members {
+      id
+      username
+      email
+      profileImgUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useFindChannelByIdQuery__
+ *
+ * To run a query within a React component, call `useFindChannelByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindChannelByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindChannelByIdQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      groupId: // value for 'groupId'
+ *   },
+ * });
+ */
+export function useFindChannelByIdQuery(baseOptions: Apollo.QueryHookOptions<FindChannelByIdQuery, FindChannelByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindChannelByIdQuery, FindChannelByIdQueryVariables>(FindChannelByIdDocument, options);
+      }
+export function useFindChannelByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindChannelByIdQuery, FindChannelByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindChannelByIdQuery, FindChannelByIdQueryVariables>(FindChannelByIdDocument, options);
+        }
+export function useFindChannelByIdSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<FindChannelByIdQuery, FindChannelByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FindChannelByIdQuery, FindChannelByIdQueryVariables>(FindChannelByIdDocument, options);
+        }
+export type FindChannelByIdQueryHookResult = ReturnType<typeof useFindChannelByIdQuery>;
+export type FindChannelByIdLazyQueryHookResult = ReturnType<typeof useFindChannelByIdLazyQuery>;
+export type FindChannelByIdSuspenseQueryHookResult = ReturnType<typeof useFindChannelByIdSuspenseQuery>;
+export type FindChannelByIdQueryResult = Apollo.QueryResult<FindChannelByIdQuery, FindChannelByIdQueryVariables>;
 export const GetBlockedUsersDocument = gql`
     query getBlockedUsers {
   getBlockedUsers {

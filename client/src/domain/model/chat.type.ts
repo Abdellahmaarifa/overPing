@@ -15,3 +15,20 @@ export interface DMType {
   user2: DMUserType;
   image: string;
 }
+
+interface ChannelSampleMember {
+    id : string;
+      username: string;
+      email : string;
+      profileImgUrl : string;
+}
+
+export interface ChannelSample {
+  id: string;
+  owner_id: number;
+  name: string;
+  description?: string;
+  visibility: "public" | "protected" | "private";
+  admins :  ChannelSampleMember[] | [];
+  members : ChannelSampleMember[] | [];
+}
