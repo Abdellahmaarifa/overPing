@@ -30,7 +30,6 @@ export class DeletionInput {
   @IsNumber()
   groupChatId: number;
 
-  @Field()
-  @IsNumber()
+  @Field({nullable: true})
   messageId?: number;
 }

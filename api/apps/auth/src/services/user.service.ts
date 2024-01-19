@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   IAuthUser,
   IUser,
@@ -12,10 +12,16 @@ import { UpdateProfileDto } from '../dto/user.updateProfileId.dto';
 import { User, Prisma } from '@prisma/client';
 import { PrismaError } from '@app/common/exception-handling';
 import { UpdateUserDto } from '../dto/user.update.dto';
+import { RabbitMqService } from '@app/rabbit-mq';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class UserService {
   constructor(
+    @Inject(IRmqSeverName.PROFILE)
+    private readonly client: ClientProxy,
+    private readonly clientService: RabbitMqService,
     private readonly rpcExceptionService: RpcExceptionService,
     private prisma: PrismaService,
   ) {}
@@ -408,7 +414,7 @@ export class UserService {
   }
 
   async getUsersInfo(users: number[]): Promise<IUser[]> {
-    const usersInfo = await this.prisma.user.findMany({
+    const usersInfo: IUser[] = await this.prisma.user.findMany({
       where: {
         id: { in: users },
       },
@@ -421,6 +427,19 @@ export class UserService {
         profileImgUrl: true,
       },
     });
+    
+    const usersIds = usersInfo.map((user) => user.id);
+    const usersNickname = (await this.clientService.sendMessageWithPayload(
+      this.client,
+      { role: 'profile', cmd: 'get-users-nickname' },
+      usersIds,
+      ));
+    
+    usersInfo.forEach((user) => {
+      const nickname = usersNickname.find((u) => u.user_id === user.id);
+      user.nickname = nickname.nickname;
+    });
+
     return usersInfo;
   }
-}
+} 
