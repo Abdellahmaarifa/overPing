@@ -51,8 +51,6 @@ export class ProfileController {
 
   @MessagePattern({ role: 'profile', cmd: 'get-users-nickname' })
   async getUsersNickname(userIds: any): Promise<{ user_id: number, nickname: string }[]> {
-    const dt = await this.profileService.getUsersNickname(userIds);
-    console.log("****************\n", dt, "\n****************");
-    return dt;
+    return await this.profileService.getUsersNickname(userIds);
   }
 }

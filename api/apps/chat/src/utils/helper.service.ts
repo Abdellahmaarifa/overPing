@@ -180,15 +180,16 @@ export class HelperService {
 
   async findUser(user_id: number, throwStatus: boolean) : Promise<IUser> {
     try {
-      const user = await this.clientService.sendMessageWithPayload(
+      const user: IUser = await this.clientService.sendMessageWithPayload(
           this.client,
           {
               role: 'user',
-              cmd: 'findById'
+              cmd: 'getUsersInfo'
           },
-          user_id
+          [user_id]
       );
-      return user;
+
+      return user![0] || null;
     }
     catch {
       if (throwStatus) {

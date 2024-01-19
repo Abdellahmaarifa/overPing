@@ -41,7 +41,6 @@ export class UserController {
 
   @MessagePattern({role: 'user', cmd: 'getUsersInfo'})
   async getUsersInfo(users: number[]) : Promise<IUser[]> {
-console.log("********************\nusers: ", users, "\n********************");
     return this.userService.getUsersInfo(users);
   }
 

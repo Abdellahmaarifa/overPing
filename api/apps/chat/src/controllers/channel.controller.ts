@@ -23,10 +23,7 @@ export class ChannelController {
   @MessagePattern({role: 'channel', cmd: 'find-channel-by-id'})
   async findChannelById(payload: any) : Promise<IChannel> { // {channel: IChannel, members: IMembersWithInfo}
     const {id, user_id} = payload;
-    const res = await this.channelService.findById(id, user_id);
-
-console.log("********************\nusers: ", res, "\n********************");
-    return res;
+    return await this.channelService.findById(id, user_id);
   }
 
   /*********** Search For channel by Name ***********/
@@ -34,8 +31,7 @@ console.log("********************\nusers: ", res, "\n********************");
   @MessagePattern({role: 'channel', cmd: 'search'})
   async searchForChannel(payload: any) : Promise<IChannelSearch[]> {
     const {channelName, user_id} = payload;
-    const res = await this.channelService.search(channelName, user_id);
-    return res;
+    return await this.channelService.search(channelName, user_id);
   }
 
   /************* Get Channels of a User *************/
@@ -51,8 +47,7 @@ console.log("********************\nusers: ", res, "\n********************");
 
   @MessagePattern({role: 'channel', cmd: 'create'})
   async createChannel(payload: CreateChanneldto) : Promise<IChannel> {
-    const channel = await this.channelService.create(payload);
-    return channel;
+    return await this.channelService.create(payload);
   }
 
   @MessagePattern({role: 'channel', cmd: 'update'})

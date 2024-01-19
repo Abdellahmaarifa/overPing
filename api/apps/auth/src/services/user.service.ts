@@ -427,14 +427,13 @@ export class UserService {
         profileImgUrl: true,
       },
     });
-
+    
     const usersIds = usersInfo.map((user) => user.id);
     const usersNickname = (await this.clientService.sendMessageWithPayload(
       this.client,
       { role: 'profile', cmd: 'get-users-nickname' },
       usersIds,
       ));
-console.log("********************\nusersNickname: ", usersNickname, "\n********************");
     
     usersInfo.forEach((user) => {
       const nickname = usersNickname.find((u) => u.user_id === user.id);

@@ -166,7 +166,7 @@ export class ChannelService {
         },
       }
     });
-console.log("********************\nusers: ", users, "\n********************");
+
     return {
       owner: await this.clientService.sendMessageWithPayload(
               this.client, { role: 'user', cmd: 'getUsersInfo' }, [users.owner_id]
