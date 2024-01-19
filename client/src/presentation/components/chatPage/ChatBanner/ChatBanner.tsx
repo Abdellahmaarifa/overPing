@@ -62,6 +62,9 @@ const ChatBanner = () => {
     setUserRole();
   }, []);
   console.log("my role is : ", role);
+  const addAdmin = () => () => console.log("admin here hello!");
+  const addMember = () => () => console.log("admin here hello!");
+
   return (
     <ChatBannerContainer>
       <ChatBannerLeft>
@@ -119,9 +122,7 @@ const ChatBanner = () => {
                   onClick={() => {
                     setIncludeChannelInSearch(false);
                     setShowSearchModel(true);
-                    setUserHandlerCallBack(
-                      () => () => console.log("admin here hello!")
-                    );
+                    setUserHandlerCallBack(addAdmin);
                   }}
                 >
                   Add Admin
@@ -130,6 +131,9 @@ const ChatBanner = () => {
               <ExtraMenuLink
                 onClick={() => {
                   setShowSearchModel(true);
+                  setIncludeChannelInSearch(false);
+
+                  setUserHandlerCallBack(addMember);
                 }}
               >
                 Add Member
