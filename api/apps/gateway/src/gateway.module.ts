@@ -40,6 +40,7 @@ import { ChannelResolver } from "./microservices/chat/graphql/mutations/gw.chann
 import { directMessageResolver } from "./microservices/chat/graphql/mutations/gw.directMessages.mutations.resolver";
 import { ChatQueriesResolver } from "./microservices/chat/graphql/queries/gw.chat.query";
 import { formatError } from "./global-filter/gqlFilter";
+import { UserCheckService } from "./microservices/chat/services/userCheck.service";
 @Module({
   imports: [
     PassportModule,
@@ -60,7 +61,7 @@ import { formatError } from "./global-filter/gqlFilter";
       path: '/graphql',
     },
   },
-      formatError: formatError,
+      // formatError: formatError,
     }),
   RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
   RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),
@@ -82,6 +83,7 @@ import { formatError } from "./global-filter/gqlFilter";
     GwFriendMutationsResolver,
     //end of friend
     //chat 
+    UserCheckService,
     GwDirectMessageService,
     GwChannelService,
     directMessageResolver,

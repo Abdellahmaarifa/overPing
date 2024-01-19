@@ -21,7 +21,6 @@ class CreationChannelInput {
 
 @InputType()
 export class CreatePublicPrivateInput extends CreationChannelInput {
-
   @Field(() => String)
   @IsString()
   @IsIn([IVisibility.PUBLIC, IVisibility.PRIVATE])
@@ -30,7 +29,6 @@ export class CreatePublicPrivateInput extends CreationChannelInput {
 
 @InputType()
 export class CreateProtectedInput extends CreationChannelInput {
-
   @Field(() => String)
   @IsString()
   @IsIn([IVisibility.PROTECTED])

@@ -161,6 +161,23 @@ export class ProfileService {
     }
   }
 
+  async getUsersNickname(userIds: number[]): Promise<{ user_id: number, nickname: string }[]> {
+    try {
+      const users = await this.prisma.userProfile.findMany({
+        where: {
+          user_id: { in: userIds },
+        },
+        select: {
+          user_id: true,
+          nickname: true,
+        },
+      });
+      return users;
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
+  }
+
   private handlePrismaError(error: any): void {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       const prismaError = new PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);

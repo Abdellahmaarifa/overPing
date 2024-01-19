@@ -109,8 +109,15 @@ export class DirectMessageService {
           { user2_id: user_id },
         ]
       },
+      orderBy: { latestMessage_at: 'desc' },
+      include: {
+        messages: {
+          orderBy: { created_at: 'desc' },
+          take: 30,
+        },
+      }
     });
-    if (!directMessages) {
+    if (!directMessages || directMessages.length === 0) {
       return [];
     }
 
@@ -118,9 +125,9 @@ export class DirectMessageService {
     const user2: IUser[] = await this.clientService.sendMessageWithPayload(
       this.client, { role: 'user', cmd: 'getUsersInfo' }, directMessages.map((dm) => {
         if (user1.id === dm.user1_id) {
-          return { userId: dm.user2_id };
+          return dm.user2_id ;
         } else {
-          return { userId: dm.user1_id };
+          return dm.user1_id;
         }
       })
     );
@@ -130,6 +137,7 @@ export class DirectMessageService {
         id: dm.id,
         user1,
         user2: user2[i++],
+        // messages: dm.messages,
         created_at: dm.created_at,
       };
     }));
@@ -191,7 +199,7 @@ export class DirectMessageService {
   }
 
   async addMessage(data: AddMessageInDMdto) : Promise<any> {
-    return await this.prisma.messages.create({
+    const message = await this.prisma.messages.create({
       data: {
         sender_id: data.userId,
         text: data.text ?? null,
@@ -199,6 +207,18 @@ export class DirectMessageService {
         created_at: data.created_at || new Date(),
       }
     });
+    if (!message) {
+      return null;
+    }
+    await this.prisma.directMessage.update({
+      where: {
+        id: data.groupChatId
+      },
+      data: {
+        latestMessage_at: new Date(),
+      }
+    });
+    return message;
   }
 
   async updateMessage(data: UpdateMessageInDMdto) : Promise<any> {

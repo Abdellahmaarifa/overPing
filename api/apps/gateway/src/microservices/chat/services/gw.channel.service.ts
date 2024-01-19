@@ -12,7 +12,7 @@ export class GwChannelService {
     @Inject(IRmqSeverName.CHAT)
     private readonly client: ClientProxy,
     private readonly clientService: RabbitMqService,
-  ) { }
+  ) {}
 
   /************** Get Channels of a User **************/
 

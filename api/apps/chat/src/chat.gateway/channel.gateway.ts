@@ -72,6 +72,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage(CHANNEL.join_channel)
   async joinChannel(client: Socket, data: MemberOfChanneldto) {
+    const socket = connectedChannelUsers.get(data.userId);
     const userId = await this.helper.getUserId(client);
     if (!userId || userId !== data.userId) {
       this.rpcExceptionService.throwBadRequest(`Failed to find the user id ${userId}`);
@@ -124,11 +125,11 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage(CHANNEL.getChannelMessages)
   async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[]> {
-    // const userId = await this.helper.getUserId(client);
-    // if (!userId || userId !== data.userId) {
-    //   return;
-    // }
-    // await this.helper.findUser(data.userId, true);
+    const userId = await this.helper.getUserId(client);
+    if (!userId || userId !== data.userId) {
+      return;
+    }
+    await this.helper.findUser(data.userId, true);
 
     const blockedUsers = (await this.checker.blockStatus(
       data.userId, 
@@ -165,15 +166,15 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage(CHANNEL.getChannelMembers)
   async getMembers(client: Socket, data: MemberOfChanneldto) : Promise<IMembersWithInfo> {
-    const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
-      return;
-    }
-    await this.helper.findUser(data.userId, true);
+    // const userId = await this.helper.getUserId(client);
+    // if (!userId || userId !== data.userId) {
+    //   return;
+    // }
+    // await this.helper.findUser(data.userId, true);
 
-    if (await this.checker.isMember(userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
-    }
+    // if (await this.checker.isMember(userId, data.channelId) === false) {
+    //   this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
+    // }
 
     return await this.channelService.getMembers(data.channelId);
   }

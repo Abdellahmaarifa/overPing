@@ -6,7 +6,14 @@ import { JwtAccessTokenStrategy } from 'apps/gateway/src/microservices/auth/stra
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { FriendshipController } from './controllers/friend.controller';
 import { FriendshipService } from './services/friend.servicet';
+import { RabbitMqModule } from '@app/rabbit-mq';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+
 @Module({
+    imports: [
+      RabbitMqModule,
+      RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),
+    ],
   providers: [
       UserService,
       PrismaService,

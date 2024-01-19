@@ -1,4 +1,3 @@
-import { UserAccessAuthorizationGuard } from '../../../auth/guards/user-auth.guard';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { GwChannelService } from '../../services';
@@ -15,26 +14,39 @@ import {
 } from '../input/channel.input';
 import { GQLChannelModel, GQLMessageModel } from '../models';
 import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
+import { Context } from '@nestjs/graphql'
+import { UserCheckService } from '../../services/userCheck.service';
+
 
 @Resolver()
 @UseGuards(GqlJwtAuthGuard)
 export class ChannelResolver {
-  constructor(private readonly channelService: GwChannelService) {}
+  constructor(
+    private readonly channelService: GwChannelService,
+    private readonly userCheck: UserCheckService,
+  ) {}
 
   @Mutation(() => GQLChannelModel)
-  async createPublicPrivateChannel(
-    @Args('data', {type: () => CreatePublicPrivateInput}) data: CreatePublicPrivateInput ) : Promise<GQLChannelModel> {
+  async createPublicPrivateChannel(@Context() ctx,
+    @Args('data', {type: () => CreatePublicPrivateInput}) data: CreatePublicPrivateInput) : Promise<GQLChannelModel> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return await this.channelService.createChannel( data );
   }
 
   @Mutation(() => GQLChannelModel)
-  async createProtectedChannel(
-    @Args('data', {type: () => CreateProtectedInput}) data: CreateProtectedInput ) : Promise<GQLChannelModel> {
+  async createProtectedChannel(@Context() ctx,
+    @Args('data', {type: () => CreateProtectedInput}) data: CreateProtectedInput ) : Promise<GQLChannelModel>
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.createChannel( data );
   }
 
   @Mutation(() => GQLChannelModel)
-  async updatePublicPrivateChannel(@Args('data') data: updatePublicPrivateInput) : Promise<GQLChannelModel> {
+  async updatePublicPrivateChannel(@Context() ctx,
+    @Args('data') data: updatePublicPrivateInput) : Promise<GQLChannelModel>
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.updateChannel( data );
   }
 
@@ -44,73 +56,105 @@ export class ChannelResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteChannel(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async deleteChannel(@Context() ctx,
+    @Args('data') data: MemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.deleteChannel( data );
   }
   
   @Mutation(() => GQLMessageModel)
-  async updateMessageInChannel(@Args('data') data: UpdateMessageInput) : Promise<GQLMessageModel> {
+  async updateMessageInChannel(@Context() ctx,
+  @Args('data') data: UpdateMessageInput) : Promise<GQLMessageModel> {
     return this.channelService.updateMessageInChannel( data );
   }
 
   @Mutation(() => Boolean)
-  async deleteMessageInChannel(@Args('data') data: DeleteMessageInput) : Promise<Boolean>  {
+  async deleteMessageInChannel(@Context() ctx,
+  @Args('data') data: DeleteMessageInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.deleteMessageInChannel( data );
   }
 
   @Mutation(() => GQLChannelModel)
-  async joinChannel(@Args('data') data: MemberInput) : Promise<GQLChannelModel> {
+  async joinChannel(@Context() ctx,
+  @Args('data') data: MemberInput) : Promise<GQLChannelModel> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.joinChannel( data );
   }
 
   @Mutation(() => Boolean)
-  async leaveChannel(@Args('data') data: MemberInput) : Promise<Boolean> {
+  async leaveChannel(@Context() ctx,
+  @Args('data') data: MemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.leaveChannel( data );
   }
 
 
   @Mutation(() => Boolean)
-  async addMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async addMember(@Context() ctx,
+    @Args('data') data: ActionToMemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.addMember( data );
   }
 
   @Mutation(() => Boolean)
-  async removeMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
-    return this.channelService.removeMember(data);
-  }
-
-  @Mutation(() => Boolean)
-  async addAdmin(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async addAdmin(@Context() ctx,
+    @Args('data') data: ActionToMemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.addChannelAdmin( data );
   }
 
   @Mutation(() => Boolean)
-  async removeAdmin(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async removeAdmin(@Context() ctx,
+    @Args('data') data: ActionToMemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.removeChannelAdmin( data );
   }
 
   @Mutation(() => Boolean)
-  async kickMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async kickMember(@Context() ctx,
+    @Args('data') data: ActionToMemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.kickMember( data );
   }
 
   @Mutation(() => Boolean)
-  async banMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async banMember(@Context() ctx,
+    @Args('data') data: ActionToMemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.banMember( data );
   }
 
   @Mutation(() => Boolean)
-  async unbanMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async unbanMember(@Context() ctx,
+    @Args('data') data: ActionToMemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.unbanMember( data );
   }
 
   @Mutation(() => Boolean)
-  async muteMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async muteMember(@Context() ctx,
+    @Args('data') data: ActionToMemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.muteMember( data );
   }
 
   @Mutation(() => Boolean)
-  async unmuteMember(@Args('data') data: ActionToMemberInput) : Promise<Boolean> {
+  async unmuteMember(@Context() ctx,
+    @Args('data') data: ActionToMemberInput) : Promise<Boolean> 
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.unmuteMember( data );
   }
 }
