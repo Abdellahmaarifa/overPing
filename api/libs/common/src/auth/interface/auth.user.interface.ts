@@ -14,8 +14,9 @@ export class IAuthUser {
 export class IUser {
     id: number;
     username: string;
+    nickname?: string = null;
     email: string;
-    lastSeen: Date;
+    lastSeen: any;
     profileImgUrl: string;
 }
   

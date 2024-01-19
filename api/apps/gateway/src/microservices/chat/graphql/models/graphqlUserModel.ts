@@ -9,13 +9,16 @@ export class GQLUser {
   @Field()
   username: string;
 
+  @Field({nullable: true})
+  nickname?: string;
+
   @Field({ nullable: true })
   @IsOptional()
   email?: string;
 
   @Field({ nullable: true })
   @IsOptional()
-  lastSeen?: Date;
+  lastSeen?: string;
 
   @Field()
   profileImgUrl: string;

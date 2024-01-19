@@ -43,8 +43,16 @@ export class ProfileController {
   async getUserAchievements(userId: number): Promise<IAchievement[]> {
     return this.profileService.getUserAchievements(userId);
   }
+
   @MessagePattern({role: 'profile', cmd: 'get-all-achievements'})
   async getAllAchievements(): Promise<IAchievement[]> {
     return this.profileService.getAllAchievements();
+  }
+
+  @MessagePattern({ role: 'profile', cmd: 'get-users-nickname' })
+  async getUsersNickname(userIds: any): Promise<{ user_id: number, nickname: string }[]> {
+    const dt = await this.profileService.getUsersNickname(userIds);
+    console.log("****************\n", dt, "\n****************");
+    return dt;
   }
 }

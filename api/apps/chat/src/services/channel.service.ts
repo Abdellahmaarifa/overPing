@@ -37,7 +37,15 @@ export class ChannelService {
     await this.helper.findUser(user_id, true);
 
     if (await this.checker.isMember(user_id, id) === false) {
-      this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
+      return await this.prisma.channel.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          owner_id: true,
+          name: true,
+          visibility: true,
+          },
+      });
     }
 
     const blockedUsers = (await this.checker.blockStatus(
@@ -78,29 +86,24 @@ export class ChannelService {
   async getUserChannels(userId: number) : Promise<IChannel[]> {
     await this.helper.findUser(userId, true);
 
-    const linkedChannels = await this.prisma.channel.findMany({
-      where: {
-        OR: [
-          { members: { some: { userId } } },
-          { admins: { some: { userId } } },
-        ]
-      },
-      orderBy: { updated_at: 'asc' },
-      select: { id: true },
-    });
-
-    const channelIds = linkedChannels.map((member) => member.id);
-
     const userChannels = await this.prisma.channel.findMany({
       where: {
-        id: { in: channelIds },
+        OR: [
+          { admins: { some: { userId } } },
+          { members: { some: { userId } } },
+        ]
       },
+      orderBy: { latestMessage_at: 'desc' },
       select: {
         id: true,
         owner_id: true,
         name: true,
         visibility: true,
-        messages: true,
+        latestMessage_at: true,
+        // messages: {
+        //   orderBy: { created_at: 'desc' },
+        //   take: 30,
+        // },
       }
     });
 
@@ -163,7 +166,7 @@ export class ChannelService {
         },
       }
     });
-
+console.log("********************\nusers: ", users, "\n********************");
     return {
       owner: await this.clientService.sendMessageWithPayload(
               this.client, { role: 'user', cmd: 'getUsersInfo' }, [users.owner_id]
@@ -305,9 +308,14 @@ export class ChannelService {
         channel: { connect: { id: data.channelId } }
       }
     });
+    if (!message) {
+      return null;
+    }
     await this.prisma.channel.update({
       where: { id: data.channelId },
-      data: { updated_at: new Date() }
+      data: {
+        latestMessage_at: new Date()
+      }
     });
     return message;
   }

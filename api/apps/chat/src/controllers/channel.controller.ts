@@ -24,6 +24,8 @@ export class ChannelController {
   async findChannelById(payload: any) : Promise<IChannel> { // {channel: IChannel, members: IMembersWithInfo}
     const {id, user_id} = payload;
     const res = await this.channelService.findById(id, user_id);
+
+console.log("********************\nusers: ", res, "\n********************");
     return res;
   }
 

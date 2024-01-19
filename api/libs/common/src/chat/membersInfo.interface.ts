@@ -1,7 +1,7 @@
 import { IUser } from "@app/common";
 
 export class IMembersWithInfo {
-  owner:   IMembers
+  owner:   IAdmins
   admins:  IAdmins[]
   members: IMembers[]
 }
@@ -9,6 +9,7 @@ export class IMembersWithInfo {
 class IAdmins {
   id:             number;
   username?:      string;
+  nickname?:      string;
   email?:         string;
   lastSeen?:      Date;
   profileImgUrl?: string;
@@ -17,6 +18,7 @@ class IAdmins {
 class IMembers {
   id:             number;
   username?:      string;
+  nickname?:      string;
   email?:         string;
   lastSeen?:      Date;
   profileImgUrl?: string;

@@ -16,6 +16,7 @@ export class IChannel {
 export class IAdmins {
   id:             number;
   username?:      string;
+  nickname?:      string;
   email?:         string;
   lastSeen?:      any;
   profileImgUrl?: string;
@@ -24,6 +25,7 @@ export class IAdmins {
 export class IMembers {
   id:             number;
   username?:      string;
+  nickname?:      string;
   email?:         string;
   lastSeen?:      any;
   profileImgUrl?: string;

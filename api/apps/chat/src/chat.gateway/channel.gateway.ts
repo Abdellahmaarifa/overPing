@@ -45,16 +45,16 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @UseGuards(ClientAccessAuthorizationGuard)
   async handleConnection(client: Socket, ...args: any[]) {
-    // const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
-    // const userId = await this.helper.getUserId(client);
-    // if (user || userId) {
+    const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
+    const userId = await this.helper.getUserId(client);
+    if (user || userId) {
       this.logger.log(`User connected: ${client.id}`);
-    //   connectedChannelUsers.set(((user)? user.id : userId), client.id);
-    // }
-    // else {
-    //   this.logger.log(`User authentication failed: ${client.id}`);
-    //   client.disconnect();
-    // }
+      connectedChannelUsers.set(((user)? user.id : userId), client.id);
+    }
+    else {
+      this.logger.log(`User authentication failed: ${client.id}`);
+      client.disconnect();
+    }
   }
 
   async handleDisconnect(client: Socket) {
@@ -72,6 +72,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage(CHANNEL.join_channel)
   async joinChannel(client: Socket, data: MemberOfChanneldto) {
+    const socket = connectedChannelUsers.get(data.userId);
     const userId = await this.helper.getUserId(client);
     if (!userId || userId !== data.userId) {
       this.rpcExceptionService.throwBadRequest(`Failed to find the user id ${userId}`);

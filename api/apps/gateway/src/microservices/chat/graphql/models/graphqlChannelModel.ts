@@ -7,16 +7,19 @@ export class GQLAdminsModel {
   @Field()
   id: number;
   
-  @Field()
+  @Field({nullable: true})
   username?: string;
+
+  @Field({nullable: true})
+  nickname?: string;
   
-  @Field()
+  @Field({nullable: true})
   email?: string;
   
-  @Field()
+  @Field({nullable: true})
   lastSeen?: string;
   
-  @Field()
+  @Field({nullable: true})
   profileImgUrl?: string;
 }
 
@@ -25,16 +28,19 @@ export class GQLMembersModel {
   @Field()
   id: number;
   
-  @Field()
+  @Field({nullable: true})
   username?: string;
+
+  @Field({nullable: true})
+  nickname?: string;
   
-  @Field()
+  @Field({nullable: true})
   email?: string;
   
-  @Field()
+  @Field({nullable: true})
   lastSeen?: string;
   
-  @Field()
+  @Field({nullable: true})
   profileImgUrl?: string;
 }
 
