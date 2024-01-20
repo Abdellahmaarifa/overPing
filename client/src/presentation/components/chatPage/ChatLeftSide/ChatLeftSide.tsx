@@ -39,20 +39,11 @@ import {
   useCreateDirectMessageMutation,
 } from "gql/index";
 import { useUserContext } from "context/user.context";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { ChannelType, DMType } from "domain/model/chat.type";
-
-const ChatLeftSide = ({
-  channels,
-  setChannels,
-  dm,
-  setDm,
-}: {
-  channels: ChannelType[] | [];
-  setChannels: Dispatch<SetStateAction<[] | ChannelType[]>>;
-  dm: DMType[] | [];
-  setDm: Dispatch<SetStateAction<[] | DMType[]>>;
-}) => {
+import tw from "twin.macro";
+import toast from "react-hot-toast";
+const ChatLeftSide = () => {
   const {
     showChatMenu: [showChatMenu, setShowChatMenu],
     showSearchModel: [showSearchModel, setShowSearchModel],
@@ -60,29 +51,52 @@ const ChatLeftSide = ({
     includeChannelInSearch: [includeChannelInSearch, setIncludeChannelInSearch],
     userHandlerCallBack: [userHandlerCallBack, setUserHandlerCallBack],
     channelHandlerCallBack: [channelHandlerCallBack, setChannelHandlerCallBack],
+    currentChannel: [currentChannel, setCurrentChannel],
+    channels: [channels, setChannels],
+    dms: [dms, setDms],
   } = useChatContext();
 
   const { user } = useUserContext();
   const client = useApolloClient();
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const deleteDm = async (id: number) => {
     try {
-      const data = await client.mutate({
-        mutation: DeleteDirectMessageDocument,
-        variables: {
-          data: {
-            userId: Number(user?.id),
-            groupChatId: id,
-            messageId: 1,
-          },
-        },
-      });
-      console.log("deleted!! ", data);
+      // const data = await client.mutate({
+      //   mutation: DeleteDirectMessageDocument,
+      //   variables: {
+      //     data: {
+      //       userId: Number(user?.id),
+      //       groupChatId: id,
+      //       messageId: 1,
+      //     },
+      //   },
+      // });
+      // console.log("deleted!! ", data);
+      const newDms = dms.filter((e) => Number(e.id) != id);
+      console.log(newDms);
+      setDms(newDms);
     } catch (err) {
       console.log("in dele dm: ", err);
     }
   };
+
+  const searchUserAndChannelsHandler = () => {
+    setIncludeChannelInSearch(true);
+    setChannelHandlerCallBack(
+      () => (id: string) => navigate(`/chat/channel/${id}`)
+    );
+    setUserHandlerCallBack(() => (id: string) => navigate(`/chat/dm/${id}`));
+    setShowSearchModel(true);
+  };
+
+  const searchUserHandler = () => {
+    setIncludeChannelInSearch(false);
+    setUserHandlerCallBack(() => (id: string) => navigate(`/chat/dm/${id}`));
+    setShowSearchModel(true);
+  };
+
   return (
     <ChatLeftSideContainer
       style={
@@ -98,16 +112,7 @@ const ChatLeftSide = ({
           $text="Search"
           $size="auto"
           $Icon={SearchIcon}
-          onClick={() => {
-            setIncludeChannelInSearch(true);
-            setChannelHandlerCallBack(
-              () => (id: string) => navigate(`/chat/channel/${id}`)
-            );
-            setUserHandlerCallBack(
-              () => (id: string) => navigate(`/chat/dm/${id}`)
-            );
-            setShowSearchModel(true);
-          }}
+          onClick={() => searchUserAndChannelsHandler()}
         />
       </MessagesSearch>
       <MessagesBox>
@@ -125,6 +130,7 @@ const ChatLeftSide = ({
           {channels.map((e: ChannelType) => {
             return (
               <ChannelConatiner
+                active={currentChannel && currentChannel?.id == e.id}
                 key={e.id}
                 onClick={() => navigate(`/chat/channel/${e.id}`)}
               >
@@ -140,22 +146,15 @@ const ChatLeftSide = ({
       <MessagesBox>
         <MessagesHeaderContainer>
           <MessagesHeader>direct messages</MessagesHeader>
-          <MessagesHeaderIcon
-            onClick={() => {
-              setIncludeChannelInSearch(false);
-              setUserHandlerCallBack(
-                () => (id: string) => navigate(`/chat/dm/${id}`)
-              );
-              setShowSearchModel(true);
-            }}
-          >
+          <MessagesHeaderIcon onClick={() => searchUserHandler()}>
             <PlusIcon />
           </MessagesHeaderIcon>
         </MessagesHeaderContainer>
         <MessagesContent>
-          {dm.map((e: DMType) => {
+          {dms.map((e: DMType) => {
             return (
               <DMContainer
+                active={!currentChannel && e.user2.id == id}
                 key={e.id}
                 onClick={() => navigate(`/chat/dm/${e.user2.id}`)}
               >

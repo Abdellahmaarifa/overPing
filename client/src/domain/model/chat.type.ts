@@ -1,4 +1,3 @@
-
 export interface ChannelType {
   id: string;
   name: string;
@@ -17,10 +16,10 @@ export interface DMType {
 }
 
 interface ChannelSampleMember {
-    id : string;
-      username: string;
-      email : string;
-      profileImgUrl : string;
+  id: string;
+  username: string;
+  email: string;
+  profileImgUrl: string;
 }
 
 export interface ChannelSample {
@@ -29,6 +28,6 @@ export interface ChannelSample {
   name: string;
   description?: string;
   visibility: "public" | "protected" | "private";
-  admins :  ChannelSampleMember[] | [];
-  members : ChannelSampleMember[] | [];
+  admins: ChannelSampleMember[] | [];
+  members: ChannelSampleMember[] | [];
 }

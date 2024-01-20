@@ -1,6 +1,5 @@
 import { IVisibility } from "@app/common/chat";
-import { Optional } from "@nestjs/common";
-import { InputType, Field } from "@nestjs/graphql";
+import { Field, InputType } from "@nestjs/graphql";
 import { IsAlphanumeric, IsDate, IsIn, IsNumber, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 @InputType()
@@ -145,7 +144,6 @@ export class MemberInput {
   channelId: number;
   
   @Field({nullable: true})
-  @IsString()
   password?: string;
   
   @Field({nullable: true})

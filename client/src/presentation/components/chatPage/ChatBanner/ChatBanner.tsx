@@ -1,7 +1,7 @@
 import { useChatContext } from "context/chat.context";
 import { useLayoutContext } from "context/layout.context";
 import { MouseEvent, useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import ChatMobIcon from "assets/common/chat-mob.svg?react";
 import DotsIcon from "assets/common/dots.svg?react";
@@ -18,11 +18,16 @@ import {
 } from "./ChatBanner.style";
 import { useApolloClient } from "@apollo/client";
 import { useUserContext } from "context/user.context";
-import { FindChanneMemebersDocument } from "gql/index";
+import {
+  AddAdminDocument,
+  AddMemberDocument,
+  FindChanneMemebersDocument,
+  LeaveChannelDocument,
+} from "gql/index";
 import { ChatSearchInput } from "../ChatSearch/ChatSearch.style";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { set } from "mobx";
 const ChatBanner = () => {
-  const [isChannel, setIsChannel] = useState(false);
   const { mobileMenuState } = useLayoutContext();
   const [mobileMenu, setMobileMenu] = mobileMenuState;
   const location = useLocation();
@@ -46,40 +51,125 @@ const ChatBanner = () => {
   const { id } = useParams();
   const [role, setRole] = useState<"owner" | "admin" | "member">("member");
   const [visibility, setVisibility] = useState<
-    "private" | "public" | "protected"
-  >();
-  const setUserRole = async () => {
-    const res = await client.query({
-      query: FindChanneMemebersDocument,
-      variables: {
-        userId: Number(user?.id),
-        groupId: Number(id),
-      },
-    });
-    const result = res.data.findChannelById;
-    if (result) setVisibility(result.visibility);
-    console.log("res mem : ", result);
-    if (result && result.admins.find((e) => e.id == user?.id)) setRole("admin");
-    if (result && result.owner_id == user?.id) setRole("owner");
-  };
+    "public" | "private" | "protected"
+  >("public");
+  const {
+    currentChannel: [currentChannel, setCurrentChannel],
+  } = useChatContext();
+  const navigate = useNavigate();
   useEffect(() => {
-    if (location.pathname.includes("channel")) setIsChannel(true);
-    setUserRole();
-  }, []);
-  console.log("my role is : ", role);
+    if (
+      currentChannel &&
+      currentChannel.admins &&
+      currentChannel.admins.find((e) => e.id == user?.id)
+    )
+      setRole("admin");
+    if (currentChannel && currentChannel.owner_id == Number(user?.id))
+      setRole("owner");
+    if (currentChannel?.visibility) setVisibility(currentChannel?.visibility);
+  }, [currentChannel]);
+  console.log("my role is : ", role, currentChannel);
 
-  const addAdmin = () => () => {
+  /*
+  userId: Float!
+channelId: Float!
+password: String
+muteTimeLimit: DateTime
+targetId: Float!
+  */
+  const addAdmin = () => async (userId: string) => {
+    // let password: string | null = null;
+    // if (visibility === "protected") {
+    //   password = prompt("please give me the passowrd");
+    // }
+    try {
+      const data = await client.mutate({
+        mutation: AddAdminDocument,
+        variables: {
+          data: {
+            userId: Number(user?.id),
+            targetId: Number(userId),
+            channelId: Number(id),
+          },
+        },
+      });
+      const resault = data.data.addAdmin;
+      if (!resault) throw { message: "can't add this user as an admin" };
+      toast.success("admin added successfuly");
+    } catch (err: any) {
+      console.log(err);
+      toast.error(err.message ? err.message : "something went wrong");
+    }
+    setShowSearchModel(false);
+  };
+  const addMember = () => async (userId: string) => {
+    try {
+      const data = await client.mutate({
+        mutation: AddMemberDocument,
+        variables: {
+          data: {
+            userId: Number(user?.id),
+            targetId: Number(userId),
+            channelId: Number(id),
+          },
+        },
+      });
+      const resault = data.data.addMember;
+      if (!resault) throw { message: "can't add this user as a member" };
+      toast.success("member added successfuly");
+    } catch (err: any) {
+      console.log(err);
+      toast.error(err.message ? err.message : "something went wrong");
+    }
+    setShowSearchModel(false);
+  };
+
+  const leaveChannel = async () => {
+    try {
+      const data = await client.mutate({
+        mutation: LeaveChannelDocument,
+        variables: {
+          data: {
+            userId: Number(user?.id),
+            channelId: Number(id),
+          },
+        },
+      });
+      const resault = data.data.leaveChannel;
+      if (!resault) throw { message: "You ment to stay forever!" };
+      toast.success("See you again!");
+      navigate("/chat");
+    } catch (err: any) {
+      console.log(err);
+      toast.error(err.message ? err.message : "something went wrong");
+    }
+  };
+
+  const deleteChannel = async () => {
     let password: string | null = null;
     if (visibility === "protected") {
       password = prompt("please give me the passowrd");
     }
-    // client.query({
-
-    // })
+    try {
+      const data = await client.mutate({
+        mutation: LeaveChannelDocument,
+        variables: {
+          data: {
+            userId: Number(user?.id),
+            password,
+            channelId: Number(id),
+          },
+        },
+      });
+      const resault = data.data.leaveChannel;
+      if (!resault) throw { message: "This channel will stay forever LOL!" };
+      toast.success("You are good at brokig things");
+      navigate("/chat");
+    } catch (err: any) {
+      console.log(err);
+      toast.error(err.message ? err.message : "something went wrong");
+    }
   };
-  const addMember = () => () => console.log("admin here hello!");
-  const leaveChannel = () => {};
-  const deleteChannel = () => {};
 
   return (
     <ChatBannerContainer>
@@ -97,7 +187,7 @@ const ChatBanner = () => {
         </ChatBannerIcon>
       </ChatBannerLeft>
       <ChatBannerRight>
-        {isChannel && (
+        {currentChannel && (
           <ChatBannerIcon>
             <FreindsIcon
               onClick={(e: MouseEvent) => {
@@ -120,7 +210,7 @@ const ChatBanner = () => {
             }}
           />
         </ChatBannerIcon>
-        {isChannel && (
+        {currentChannel && (
           <ChatBannerIcon>
             <DotsIcon
               onClick={(e: MouseEvent) => {

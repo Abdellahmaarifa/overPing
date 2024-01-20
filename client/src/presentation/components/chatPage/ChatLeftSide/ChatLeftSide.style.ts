@@ -1,5 +1,6 @@
-import tw from "twin.macro";
-export const DMContainer = tw.div`
+import tw, { styled } from "twin.macro";
+export const DMContainer = styled.div<any>(({ active }) => [
+  tw`
     p-[12px]
     flex
     gap-[8px]
@@ -7,7 +8,9 @@ export const DMContainer = tw.div`
     rounded-[8px]
     w-full
     items-center
-`;
+`,
+  active && tw`[border: 1px solid aliceblue]`,
+]);
 export const DMProfile = tw.img`
     w-[48px]
     h-[48px]
@@ -109,7 +112,8 @@ export const MessagesContent = tw.div`
     w-full
 `;
 
-export const ChannelConatiner = tw.div`
+export const ChannelConatiner = styled.div<any>(({ active }) => [
+  tw`
     flex
     items-start
     gap-[8px]
@@ -117,9 +121,9 @@ export const ChannelConatiner = tw.div`
     rounded-[8px]
     p-[12px]
     w-full
-    cursor-pointer
-
-`;
+    cursor-pointer`,
+  active && tw`[border: 1px solid aliceblue]`,
+]);
 export const ChannelName = tw.h4`
     font-rubik
     text-[#A4A5BC]

@@ -70,7 +70,7 @@ export type DeleteMessageInput = {
 
 export type DeletionInput = {
   groupChatId: Scalars['Float']['input'];
-  messageId: Scalars['Float']['input'];
+  messageId?: InputMaybe<Scalars['Float']['input']>;
   userId: Scalars['Float']['input'];
 };
 
@@ -85,11 +85,12 @@ export type GqlAchievement = {
 
 export type GqlAdminsModel = {
   __typename?: 'GQLAdminsModel';
-  email: Scalars['String']['output'];
+  email?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
-  lastSeen: Scalars['String']['output'];
-  profileImgUrl: Scalars['String']['output'];
-  username: Scalars['String']['output'];
+  lastSeen?: Maybe<Scalars['String']['output']>;
+  nickname?: Maybe<Scalars['String']['output']>;
+  profileImgUrl?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
 };
 
 export type GqlChannelModel = {
@@ -146,11 +147,12 @@ export type GqliUserModel = {
 
 export type GqlMembersModel = {
   __typename?: 'GQLMembersModel';
-  email: Scalars['String']['output'];
+  email?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
-  lastSeen: Scalars['String']['output'];
-  profileImgUrl: Scalars['String']['output'];
-  username: Scalars['String']['output'];
+  lastSeen?: Maybe<Scalars['String']['output']>;
+  nickname?: Maybe<Scalars['String']['output']>;
+  profileImgUrl?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
 };
 
 export type GqlMessageModel = {
@@ -167,7 +169,8 @@ export type GqlUser = {
   __typename?: 'GQLUser';
   email?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
-  lastSeen?: Maybe<Scalars['DateTime']['output']>;
+  lastSeen?: Maybe<Scalars['String']['output']>;
+  nickname?: Maybe<Scalars['String']['output']>;
   profileImgUrl: Scalars['String']['output'];
   username: Scalars['String']['output'];
 };
@@ -752,14 +755,14 @@ export type CreatePublicPrivateChannelMutationVariables = Exact<{
 }>;
 
 
-export type CreatePublicPrivateChannelMutation = { __typename?: 'Mutation', createPublicPrivateChannel: { __typename?: 'GQLChannelModel', id: string, name: string } };
+export type CreatePublicPrivateChannelMutation = { __typename?: 'Mutation', createPublicPrivateChannel: { __typename?: 'GQLChannelModel', id: string, name: string, visibility: string } };
 
 export type CreateProtectedChannelMutationVariables = Exact<{
   data: CreateProtectedInput;
 }>;
 
 
-export type CreateProtectedChannelMutation = { __typename?: 'Mutation', createProtectedChannel: { __typename?: 'GQLChannelModel', id: string, name: string } };
+export type CreateProtectedChannelMutation = { __typename?: 'Mutation', createProtectedChannel: { __typename?: 'GQLChannelModel', id: string, name: string, visibility: string } };
 
 export type SearchForChannelQueryVariables = Exact<{
   channelName: Scalars['String']['input'];
@@ -805,7 +808,7 @@ export type FindChanneMemebersQueryVariables = Exact<{
 }>;
 
 
-export type FindChanneMemebersQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, visibility: string, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username: string, profileImgUrl: string }> | null, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username: string, profileImgUrl: string }> | null } | null };
+export type FindChanneMemebersQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, visibility: string, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, profileImgUrl?: string | null }> | null, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, profileImgUrl?: string | null }> | null } | null };
 
 export type AddAdminMutationVariables = Exact<{
   data: ActionToMemberInput;
@@ -840,14 +843,14 @@ export type UpdateProtectedChannelMutationVariables = Exact<{
 }>;
 
 
-export type UpdateProtectedChannelMutation = { __typename?: 'Mutation', updateProtectedChannel: { __typename?: 'GQLChannelModel', id: string, name: string, owner_id: number, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username: string, email: string, profileImgUrl: string }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username: string, profileImgUrl: string }> | null } };
+export type UpdateProtectedChannelMutation = { __typename?: 'Mutation', updateProtectedChannel: { __typename?: 'GQLChannelModel', id: string, name: string, owner_id: number, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, profileImgUrl?: string | null }> | null } };
 
 export type UpdatePublicPrivateChannelMutationVariables = Exact<{
   data: UpdatePublicPrivateInput;
 }>;
 
 
-export type UpdatePublicPrivateChannelMutation = { __typename?: 'Mutation', updatePublicPrivateChannel: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username: string, email: string, profileImgUrl: string }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, email: string, profileImgUrl: string, username: string }> | null } };
+export type UpdatePublicPrivateChannelMutation = { __typename?: 'Mutation', updatePublicPrivateChannel: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, email?: string | null, profileImgUrl?: string | null, username?: string | null }> | null } };
 
 export type FindChannelByIdQueryVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -855,7 +858,7 @@ export type FindChannelByIdQueryVariables = Exact<{
 }>;
 
 
-export type FindChannelByIdQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username: string, email: string, profileImgUrl: string }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username: string, email: string, profileImgUrl: string }> | null } | null };
+export type FindChannelByIdQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null } | null };
 
 export type GetBlockedUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1295,6 +1298,7 @@ export const CreatePublicPrivateChannelDocument = gql`
   createPublicPrivateChannel(data: $data) {
     id
     name
+    visibility
   }
 }
     `;
@@ -1329,6 +1333,7 @@ export const CreateProtectedChannelDocument = gql`
   createProtectedChannel(data: $data) {
     id
     name
+    visibility
   }
 }
     `;

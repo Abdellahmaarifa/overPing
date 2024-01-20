@@ -18,6 +18,8 @@ import { useCreateProtectedChannelMutation } from "gql/index";
 import toast, { Toaster } from "react-hot-toast";
 import * as Yup from "yup";
 import Validate from "domain/validation";
+import { ChannelType } from "domain/model/chat.type";
+import { useNavigate } from "react-router-dom";
 
 interface CreateChannelData {
   channelName: string;
@@ -30,8 +32,9 @@ interface CreateChannelData {
 const ChannelModel = () => {
   const {
     showChannelModel: [showChannelModel, setShowChannelModel],
+    channels: [channels, setChannels],
   } = useChatContext();
-
+  const navigate = useNavigate();
   const [name, setName] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [pass, setPass] = useState<string | undefined>(undefined);
@@ -85,12 +88,21 @@ const ChannelModel = () => {
               loading: "please wait ..",
               success: (data: any) => {
                 console.log(data);
-                if (data.data.createProtectedChannel)
-                  setShowChannelModel(false);
+                const channel = data.data.createProtectedChannel;
+                if (channel) setShowChannelModel(false);
+                // update the current state
+                const newChannel = {
+                  id: channel?.id,
+                  name: channel?.name,
+                  visibility: channel?.visibility,
+                };
+                console.log("****** new channel: ", newChannel);
+                navigate(`/chat/channel/${newChannel.id}`);
                 return "channel created succesfully";
               },
               error: (err) => {
                 console.log(err);
+                setShowChannelModel(false);
                 return err?.message ? err?.message : "something went wrong";
               },
             }
@@ -112,8 +124,15 @@ const ChannelModel = () => {
               loading: "please wait ..",
               success: (data: any) => {
                 console.log(data);
-                if (data.data.createPublicPrivateChannel)
-                  setShowChannelModel(false);
+                const channel = data.data.createPublicPrivateChannel;
+
+                if (channel) setShowChannelModel(false);
+                const newChannel = {
+                  id: channel?.id,
+                  name: channel?.name,
+                  visibility: channel?.visibility,
+                };
+                navigate(`/chat/channel/${newChannel.id}`);
                 return "channel created succesfully";
               },
               error: (err) => {

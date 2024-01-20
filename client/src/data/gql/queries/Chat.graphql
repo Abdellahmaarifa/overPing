@@ -26,6 +26,7 @@ mutation CreatePublicPrivateChannel($data: CreatePublicPrivateInput!) {
   createPublicPrivateChannel(data: $data) {
     id
     name
+    visibility
   }
 }
 
@@ -33,6 +34,7 @@ mutation CreateProtectedChannel($data: CreateProtectedInput!) {
   createProtectedChannel(data: $data) {
     id
     name
+    visibility
   }
 }
 
