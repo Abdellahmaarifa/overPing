@@ -90,13 +90,13 @@ export class updateProtectedInput extends UpdateChannelInput {
   @IsString()
   oldPassword?: string
   
-  @Field()
+  @Field({nullable: true})
   @IsString()
   @MinLength(4, {message: 'Sets the minimum length of the password to 4 characters.'})
   @MaxLength(30, {message: 'Sets the maximum length of the password to 30 characters.'})
   @IsAlphanumeric()
   @Matches(/^(?=.*[a-zA-Z])(?=.*\d)/, {message: 'Password must contain both letters and at least one digit'})
-  newPassword: string;
+  newPassword?: string;
 }
 
 @InputType()
