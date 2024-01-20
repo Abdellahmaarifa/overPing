@@ -22,5 +22,8 @@ export const RABBIT_SERVICES: Record<IRmqSeverName, { queue: string }> = {
     },
     [IRmqSeverName.CHAT]: {
         queue: 'chat_queue'
+    },
+    [IRmqSeverName.GAME]: {
+        queue: 'game_queue'
     }
 }

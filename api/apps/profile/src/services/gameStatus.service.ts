@@ -1,11 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { RpcExceptionService, PrismaError } from "@app/common/exception-handling";
 import { PrismaService } from "apps/profile/prisma/prisma.service";
-import { Prisma, GameMatch } from '@prisma/client';
 import { MatchResultDto } from "../dto/matchResult.input";
-import { MatchMode } from "../dto/gameModeInterface";
 import { TitleService, XpService } from "./xp.service";
 import { AchievementService } from "./achievement.service";
+import { WalletService } from "./wallet.service";
 
 @Injectable()
 export class GameStatusService {
@@ -15,26 +14,8 @@ export class GameStatusService {
         private readonly xpService: XpService,
         private readonly titleService: TitleService,
         private readonly achievementService: AchievementService,
-    ) {
-        const input: MatchResultDto = {
-            user_id: 23,
-            score_for: 11,
-            score_against: 5,
-            is_winner: true,
-            bet: 1000,
-            matchMode: MatchMode.ONLINE_RANDOM,
-            strict_shot_goals: 30,
-            rebounded_goals: 100,
-            starts_collected: 20,
-        }
-        // this.updateGameStatusAndUserProfile(input)
-    }
-
-    async createGameMatch(data: Prisma.GameMatchCreateInput): Promise<GameMatch> {
-        return this.prisma.gameMatch.create({
-            data,
-        });
-    }
+        private readonly walletService: WalletService,
+    ) {}
 
     async updateGameStatusAndUserProfile(input: MatchResultDto) {
 
@@ -48,7 +29,9 @@ export class GameStatusService {
                 }
             }
         });
-        console.log("the user profile: ", userProfile)
+        if (!userProfile){
+            this.rpcExceptionService.throwBadRequest('profile user not found');
+        }
         // // Update the GameStats
         await this.setUserGameUpdates(input, userProfile);
 
@@ -82,15 +65,16 @@ export class GameStatusService {
             console.log("error:", error);
         }
 
-
     }
 
 
     private async setUserGameUpdates(input: any, userProfile: any) {
         if (input.is_winner) {
             this.handleWinnerUpdates(userProfile, input);
+            this.walletService.updateWalletBalance(input.user_id, input.bet);
         } else {
             this.handleLoserUpdates(userProfile);
+            this.walletService.updateWalletBalance(input.user_id, -input.bet)
         }
 
     }

@@ -29,6 +29,14 @@ export class MatchMakingMutationsResolver {
         return this.pubSub.asyncIterator(`waitingList${userId}`);
       }
       
+
+      @Subscription((returns) => PlayersMatching, {
+        resolve: (payload: PlayersMatching) => payload,
+      })
+      matchWaitingDirc(@Args('userId') userId: number) {
+        return this.pubSub.asyncIterator(`waitingListDirc${userId}`);
+      }
+
       @Mutation((returns) =>  Boolean, { nullable: true })
       async joinMatchmakingQueue(@Args('JoinMatchmakingInput') joinMatchData: JoinMatchmakingInput) {
         this.gwMatchMakingService.joinMatchmakingQueue(joinMatchData);

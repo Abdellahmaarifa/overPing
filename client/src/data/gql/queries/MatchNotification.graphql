@@ -11,8 +11,29 @@ subscription MatchWaitingList($userId: Float!) {
       bet
       matchType
     }
+    requestType
   }
 }
+
+subscription matchWaitingDirc($userId: Float!) {
+  matchWaitingDirc(userId: $userId) {
+    matchKey
+    user1 {
+      id
+      bet
+      matchType
+    }
+    user2 {
+      id
+      bet
+      matchType
+    }
+    requestType
+  }
+}
+
+
+
 
 subscription notification($userId: Float!) {
   notification(userId: $userId) {

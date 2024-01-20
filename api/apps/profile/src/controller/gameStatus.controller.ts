@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { GameStatusService } from '../services/gameStatus.service';
-import { MessagePattern, EventPattern } from '@nestjs/microservices';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller()
 export class UserGameStatusController {
@@ -11,21 +11,18 @@ export class UserGameStatusController {
   }
 
 
-  @MessagePattern({role: 'game', cmd: 'create-match'})
-  async createUserGameStatus(data: any){
-    this.gameStatusService.createGameMatch(data);
-  }
-
-  @EventPattern({role: 'game', cmd: 'game-result'})
+  @MessagePattern({role: 'game', cmd: 'game-result'})
   async handleGameResult(payload: any) {
+    console.log("the reslute: ", payload);
     try {
       const stats = await this.gameStatusService.updateGameStatusAndUserProfile( payload );
       // await this.statistic.updateUserStatistic( payload );
+      console.log("HEEEEERE: ", stats);
       return stats;
     }
     catch (error) {
       return error;
     }
-}
+  }
 
 }

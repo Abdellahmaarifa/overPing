@@ -14,6 +14,7 @@ import {
   useAcceptMatchToPlayMutation,
   useFindProfileByUserIdQuery,
   useMatchWaitingListSubscription,
+  useMatchWaitingDircSubscription,
   useNotificationSubscription,
   UserDocument,
   AccountDocument,
@@ -24,6 +25,8 @@ import tw from "twin.macro";
 import Button from "../Button/Button";
 import ConfirmModel from "../ConfirmModel/ConfirmModel";
 import Settings from "../Settings/Settings";
+import './Layout.css'
+
 import { useApolloClient } from "@apollo/client";
 import { Notification } from "domain/model/notification";
 const temp = tw.a``;
@@ -81,7 +84,7 @@ const Layout = () => {
   const { data, loading, error } = useNotificationSubscription({
     variables: { userId: Number(user?.id) },
   });
-  const { data: dataM } = useMatchWaitingListSubscription({
+  const { data: dataM } = useMatchWaitingDircSubscription({
     variables: { userId: Number(user?.id) },
   });
   const [acceptMatchRequest] = useAcceptMatchToPlayMutation();
@@ -157,14 +160,15 @@ const Layout = () => {
   }, [data]);
 
   useEffect(() => {
-    if (dataM) {
+    if (dataM ) {
+      console.log("this i sit: ", dataM)
       navigate(
-        `/game?user1=${dataM.matchWaitingList.user1?.id}&user2=${dataM.matchWaitingList.user2?.id}&type="classic"`
+        `/game?type="friend"&user1=${dataM.matchWaitingDirc.user1?.id}&user2=${dataM.matchWaitingDirc.user2?.id}&game-type="classic"&key=${dataM.matchWaitingDirc.matchKey}`
       );
     }
   }, [dataM]);
 
-  console.log("data in sub :", data, dataM);
+  //console.log("data in sub :", data, dataM);
   return (
     <div tw="w-full h-full min-h-screen flex justify-center items-start bg-[#0F1A24] overflow-hidden">
       <LayoutContextProvider>

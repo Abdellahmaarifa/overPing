@@ -21,7 +21,7 @@ export class WalletService {
     return true;
   }
 
-  private async updateWalletBalance(userId: number, amount: number): Promise<void> {
+  async updateWalletBalance(userId: number, amount: number): Promise<void> {
     try {
       await this.prisma.wallet.update({
         where: { user_id: userId },
@@ -34,6 +34,12 @@ export class WalletService {
 
   async placeBet(placeBetData: PlaceBetDto): Promise<boolean> {
     try{
+      const wallet = await this.prisma.wallet.findUnique({
+        where: { user_id: placeBetData.userId },
+      });
+      if (!wallet || wallet.balance < placeBetData.betAmount){
+        this.rpcExceptionService.throwBadRequest('is not enough balace to bet with');
+      }
     await this.prisma.wallet.update({
       where: { user_id: placeBetData.userId },
       data: { betAmount:  placeBetData.betAmount  },

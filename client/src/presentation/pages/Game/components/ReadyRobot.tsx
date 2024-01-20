@@ -14,7 +14,7 @@ interface readyProps
     updatePlayerTwo : (newPlayWithRobot : boolean, newTabId : string, newMatchId : string, newMatchWager: number,
         newModePlaying: number, newUserName : string, newUserAvatar: string, newUserLogo : string, newMatchWon : number,
         newBestWinStreak : number , newMatchPlayed : number, newLevel: number, newTournentPlayed : number,
-        newTournentWon : number, newPlayWithMouse : number , usrid: number) => void;
+        newTournentWon : number, newPlayWithMouse : number , usrid: number, friend : boolean) => void;
 }
 
 
@@ -52,9 +52,9 @@ let ReadyRobot = ( {playerOne, playerTwo, robot, updateReadyState , updateUserIn
         updateUserInfoWagerAndModeTwo(wagerPlay, modePlay)
         updateUserInfoWagerAndMode(wagerPlay, modePlay)
         updatePlayerTwo(robot.playWithRobot, robot.tabId, robot.matchId, 
-        robot.matchWager, robot.modePlaying, robot.userName, robot.userAvatar,
+        playerOne.matchWager, robot.modePlaying, robot.userName, robot.userAvatar,
         robot.userLogo , robot.matchWon, robot.bestWinStreak, robot.matchPlyed,
-        robot.level, robot.tournentPlayed, robot.tournentWon, robot.playWithMouse, robot.userId);
+        robot.level, robot.tournentPlayed, robot.tournentWon, robot.playWithMouse, robot.userId, false);
         
         if (playerOne.playWithRobot)
              updateMatchId('robot' + (Math.floor(Math.random() * 10000) + 1).toString() + Date.now().toString())

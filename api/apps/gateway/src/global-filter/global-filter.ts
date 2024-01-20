@@ -42,7 +42,7 @@ export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
     //     const obj : any = exception.getResponse();
     //     return obj.message.toString();
     // })();
-    const message = (exception.getResponse() as any)?.message as string || null;
+    const message = this.getValidationMessage(exception);
     // const gqlMessage = (exception.getResponse() as any).extensions?.originalError?.message as string || null;
     const errorResponse = {
       statusCode: status,
@@ -85,6 +85,26 @@ export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
 
     }
   }
+
+  getValidationMessage(exception): string | null {
+      const response = exception.getResponse();
+  
+      if (typeof response === "string") {
+          return null;
+      }
+      if (response && 'message' in response) {    
+      if (Array.isArray(response.message)) {
+          return response.message.join(', ');
+      }
+  
+      if (typeof response.message === "string") {
+          return response.message;
+      }
+    }
+      return null;
+
+  }
+
 }
 
 export class GraphqlException extends HttpException {

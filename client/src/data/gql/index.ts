@@ -518,6 +518,7 @@ export type Player = {
 export type PlayersMatching = {
   __typename?: 'PlayersMatching';
   matchKey: Scalars['String']['output'];
+  requestType: Scalars['String']['output'];
   user1?: Maybe<Player>;
   user2?: Maybe<Player>;
 };
@@ -636,8 +637,14 @@ export type RespondToPlay = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  matchWaitingDirc: PlayersMatching;
   matchWaitingList: PlayersMatching;
   notification: RespondToPlay;
+};
+
+
+export type SubscriptionMatchWaitingDircArgs = {
+  userId: Scalars['Float']['input'];
 };
 
 
@@ -952,7 +959,14 @@ export type MatchWaitingListSubscriptionVariables = Exact<{
 }>;
 
 
-export type MatchWaitingListSubscription = { __typename?: 'Subscription', matchWaitingList: { __typename?: 'PlayersMatching', matchKey: string, user1?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null, user2?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null } };
+export type MatchWaitingListSubscription = { __typename?: 'Subscription', matchWaitingList: { __typename?: 'PlayersMatching', matchKey: string, requestType: string, user1?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null, user2?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null } };
+
+export type MatchWaitingDircSubscriptionVariables = Exact<{
+  userId: Scalars['Float']['input'];
+}>;
+
+
+export type MatchWaitingDircSubscription = { __typename?: 'Subscription', matchWaitingDirc: { __typename?: 'PlayersMatching', matchKey: string, requestType: string, user1?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null, user2?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null } };
 
 export type NotificationSubscriptionVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -2476,6 +2490,7 @@ export const MatchWaitingListDocument = gql`
       bet
       matchType
     }
+    requestType
   }
 }
     `;
@@ -2502,6 +2517,47 @@ export function useMatchWaitingListSubscription(baseOptions: Apollo.Subscription
       }
 export type MatchWaitingListSubscriptionHookResult = ReturnType<typeof useMatchWaitingListSubscription>;
 export type MatchWaitingListSubscriptionResult = Apollo.SubscriptionResult<MatchWaitingListSubscription>;
+export const MatchWaitingDircDocument = gql`
+    subscription matchWaitingDirc($userId: Float!) {
+  matchWaitingDirc(userId: $userId) {
+    matchKey
+    user1 {
+      id
+      bet
+      matchType
+    }
+    user2 {
+      id
+      bet
+      matchType
+    }
+    requestType
+  }
+}
+    `;
+
+/**
+ * __useMatchWaitingDircSubscription__
+ *
+ * To run a query within a React component, call `useMatchWaitingDircSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMatchWaitingDircSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMatchWaitingDircSubscription({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useMatchWaitingDircSubscription(baseOptions: Apollo.SubscriptionHookOptions<MatchWaitingDircSubscription, MatchWaitingDircSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<MatchWaitingDircSubscription, MatchWaitingDircSubscriptionVariables>(MatchWaitingDircDocument, options);
+      }
+export type MatchWaitingDircSubscriptionHookResult = ReturnType<typeof useMatchWaitingDircSubscription>;
+export type MatchWaitingDircSubscriptionResult = Apollo.SubscriptionResult<MatchWaitingDircSubscription>;
 export const NotificationDocument = gql`
     subscription notification($userId: Float!) {
   notification(userId: $userId) {

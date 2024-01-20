@@ -74,6 +74,7 @@ export class MatchmakingService {
           },
           user2: {},
           matchKey: "null",
+          matchType: 'random'
         }
       } else {
         matched = {
@@ -88,6 +89,7 @@ export class MatchmakingService {
             matchType: player2.type,
           },
           matchKey: this.generateMatchKey(20),
+          requestType: 'random'
         }
       }
       console.log('match is found ', matched)
@@ -148,12 +150,13 @@ export class MatchmakingService {
         matchType: player.type,
       },
       matchKey: this.generateMatchKey(20),
+      requestType: 'friend'
     }
     this.clientService.sendMessageWithPayload(
       this.gatewayClient,
       {
         role: 'gateway',
-        cmd: 'matchFound',
+        cmd: 'matchDirc',
       },
       matched,
     );
