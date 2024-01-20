@@ -21,7 +21,6 @@ export class GQLUserModel {
     @Field({ nullable: true })
     fortyTwoId?: string;
 
-
     @Field()
     twoStepVerificationEnabled?: boolean;
 

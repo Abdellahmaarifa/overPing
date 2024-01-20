@@ -21,10 +21,7 @@ import {
   TwoFActorAuthInput,
   UserCreationInput
 } from '../input';
-import { TwoFAModel } from 'apps/gateway/src/models/graphqlTwoFAModel';
 import {HttpException} from "@nestjs/common";
-import { AccessTokenGuard } from '../../guards/accessToken.guard';
-import { UserProfileUpdateInput } from '../input/UserProfileUpdate.input';
 import { UpdateUserInput } from '../input/userUpdate.input';
 import { GqlJwtAuthGuard } from '../../guards/gql.accessToken.guard';
 import { UserStatusService } from '../../services/gw.userStatus.service';
@@ -103,10 +100,12 @@ export class AuthMutationsResolver {
      return this.authService.logOut(id);
   }
 
-  // @UseGuards(UserAccessAuthorizationGuard)
+  @UseGuards(UserAccessAuthorizationGuard)
   @Mutation(() => Boolean)
   async deleteAccount(@Args("id") id: number,@Args("password") password: string): Promise<boolean> {
-    return this.userService.removeAccount(id, password);
+    const isUserDeleted = this.userService.deleteUser(id, password);
+    // const isPorfileDeleted = this.profileService.
+    return (isUserDeleted)
   }
 
   @UseGuards(GqlJwtRefreshGuard)

@@ -65,6 +65,11 @@ export class UserController {
     return this.userService.remove(input.id, input.password);
   }
 
+  @MessagePattern({ role: 'user', cmd: 'delete-account' })
+  async deleteUser(userId: number): Promise<boolean> {
+    return this.userService.deleteUser(userId);
+  }
+
   @MessagePattern({ role: 'user', cmd: 'update' })
   async updateUser(input : { id : number , data: UpdateUserDto}): Promise<boolean> {
     return this.userService.updateUser(input.id, input.data);
