@@ -30,7 +30,7 @@ export class RankingService {
     }
 
 
-    // @Cron(CronExpression.EVERY_MINUTE)
+    @Cron(CronExpression.EVERY_MINUTE)
     async calculateAllplayerRanking() {
         console.log('runing.....')
         const userprofiles = await this.getAllProfiles();

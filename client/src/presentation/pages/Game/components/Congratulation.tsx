@@ -1,16 +1,16 @@
 import './Congratulation.css'
 import UserInfo from './UserInfo'
 import { Howl, Howler } from 'howler';
-import { PrismaClient } from '@prisma/client';
-// import { prismaService } from '../../../../../../GameBackend/prisma/prisma.service';
 import { io, Socket } from 'socket.io-client';
 import { IGameData } from './game.interface';
 import { Result } from './Result';
+import { Achieve, MatchMode } from './Achieve';
 const serverUrl: string = 'ws://localhost:4055';
+import { useEffect } from 'react'; 
+import { fa } from '@faker-js/faker';
 
-
-
-
+export class MatchResultDto {
+  }
 
 Howler.volume(1.0);
 interface CongraProps
@@ -123,14 +123,41 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
         //console.log(`App Disconnected from WebSocket server in tab `);
       });
   
-      //socket.emit('customResult', gameData);
-
+      
       //      console.log("Users: -----> ", playerOne, playerTwo);
+      
+      
+      useEffect(() => {
 
+          const player1 : Achieve = {
+            user_id: 2,
+            score_for: 0,
+            score_against: 4,
+            is_winner:  false,
+            bet: 0,
+            matchMode: MatchMode.TOURNAMENT,
+            strict_shot_goals:  2,
+            rebounded_goals: 3,
+            starts_collected: 0,
+          };
     
-
-
-
+          const player2 : Achieve = {
+            user_id: 3,
+            score_for: 5,
+            score_against: 2,
+            is_winner:  true,
+            bet: 400000,
+            matchMode: MatchMode.TOURNAMENT,
+            strict_shot_goals:  2,
+            rebounded_goals: 2,
+            starts_collected: 0,
+          };
+    
+          socket?.emit('customAchieve', { player1, player2 });
+      }, [])
+      ///
+      //
+      //
 
 
 

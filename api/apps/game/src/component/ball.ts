@@ -287,6 +287,7 @@ class Ball
         let reboundAngle : number = 0;
                                     //racket height  |____|_|____|
         ballHitTheMiddleOfRacket = (data.lRacketH / 100 * 20) / 2;
+        
         // console.log("left ball : ", this.ballAngle, this.ballY - data.lRacketY ) 
         if (data.lRacketY)
         {
