@@ -13,12 +13,10 @@ import {
 } from "./ChannelModel.style";
 import Button from "components/common/Button/Button";
 import { useUserContext } from "context/user.context";
-import { useCreatePublicPrivateChannelMutation } from "gql/index";
-import { useCreateProtectedChannelMutation } from "gql/index";
+import { useCreateChannelMutation } from "gql/index";
 import toast, { Toaster } from "react-hot-toast";
 import * as Yup from "yup";
 import Validate from "domain/validation";
-import { ChannelType } from "domain/model/chat.type";
 import { useNavigate } from "react-router-dom";
 
 interface CreateChannelData {
@@ -41,9 +39,10 @@ const ChannelModel = () => {
   const [confirmPass, setConfirmPass] = useState<string | undefined>(undefined);
   const [visibility, setVisibility] = useState<boolean>(false);
   const { user } = useUserContext();
-  const [createPublicPrivateChannel] = useCreatePublicPrivateChannelMutation();
-  const [createProtectedChannel] = useCreateProtectedChannelMutation();
+  // const [createPublicPrivateChannel] = useCreatePublicPrivateChannelMutation();
+  // const [createProtectedChannel] = useCreateProtectedChannelMutation();
 
+  const [createChannelMutation] = useCreateChannelMutation();
   const createChannel = async () => {
     console.log(
       "this is data to craete channel: ",
@@ -74,76 +73,39 @@ const ChannelModel = () => {
         password: pass,
         visibility: visibility ? "private" : pass ? "protected" : "public",
       });
-
-      if (data.password && !visibility) {
-        // create a protected channel
-        try {
-          await toast.promise(
-            createProtectedChannel({
-              variables: {
-                data: data as any,
-              },
-            }),
-            {
-              loading: "please wait ..",
-              success: (data: any) => {
-                console.log(data);
-                const channel = data.data.createProtectedChannel;
-                if (channel) setShowChannelModel(false);
-                // update the current state
-                const newChannel = {
-                  id: channel?.id,
-                  name: channel?.name,
-                  visibility: channel?.visibility,
-                };
-                console.log("****** new channel: ", newChannel);
-                navigate(`/chat/channel/${newChannel.id}`);
-                return "channel created succesfully";
-              },
-              error: (err) => {
-                console.log(err);
-                setShowChannelModel(false);
-                return err?.message ? err?.message : "something went wrong";
-              },
-            }
-          );
-        } catch (err) {
-          console.log("err from  creating channel : ", err);
-        }
-      } else {
-        // cretae public or private channel!
-        const { password, ...rest } = data;
-        try {
-          await toast.promise(
-            createPublicPrivateChannel({
-              variables: {
-                data: rest,
-              },
-            }),
-            {
-              loading: "please wait ..",
-              success: (data: any) => {
-                console.log(data);
-                const channel = data.data.createPublicPrivateChannel;
-
-                if (channel) setShowChannelModel(false);
-                const newChannel = {
-                  id: channel?.id,
-                  name: channel?.name,
-                  visibility: channel?.visibility,
-                };
-                navigate(`/chat/channel/${newChannel.id}`);
-                return "channel created succesfully";
-              },
-              error: (err) => {
-                console.log(err);
-                return err?.message ? err?.message : "something went wrong";
-              },
-            }
-          );
-        } catch (err) {
-          console.log("err from  creating channel : ", err);
-        }
+      // create a protected channel
+      try {
+        await toast.promise(
+          createChannelMutation({
+            variables: {
+              data: data as any,
+            },
+          }),
+          {
+            loading: "please wait ..",
+            success: (data: any) => {
+              console.log(data);
+              const channel = data.data.createChannel;
+              if (channel) setShowChannelModel(false);
+              // update the current state
+              const newChannel = {
+                id: channel?.id,
+                name: channel?.name,
+                visibility: channel?.visibility,
+              };
+              console.log("****** new channel: ", newChannel);
+              navigate(`/chat/channel/${newChannel.id}`);
+              return "channel created succesfully";
+            },
+            error: (err) => {
+              console.log(err);
+              setShowChannelModel(false);
+              return err?.message ? err?.message : "something went wrong";
+            },
+          }
+        );
+      } catch (err) {
+        console.log("err from  creating channel : ", err);
       }
     } catch (err: any) {
       toast.error(err?.message ? err.message : "something went wrong");

@@ -15,10 +15,9 @@ import {
   EditLinkName,
 } from "./EditChannelModel.style";
 import Button from "components/common/Button/Button";
-import { useUpdateProtectedChannelMutation } from "gql";
 import { useUserContext } from "context/user.context";
 import { useParams } from "react-router-dom";
-import { useUpdatePublicPrivateChannelMutation } from "gql";
+import { useUpdateChannelMutation } from "gql/index";
 
 const EditChannelModel = () => {
   const {
@@ -35,8 +34,9 @@ const EditChannelModel = () => {
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [oldPass, setOldPass] = useState<string | undefined>(undefined);
   const [pass, setPass] = useState<string | undefined>(undefined);
-  const [updateProtectedChannel] = useUpdateProtectedChannelMutation();
-  const [updatePublicPrivateChannel] = useUpdatePublicPrivateChannelMutation();
+  // const [updateProtectedChannel] = useUpdateProtectedChannelMutation();
+  // const [updatePublicPrivateChannel] = useUpdatePublicPrivateChannelMutation();
+  const [updateChannelMutation] = useUpdateChannelMutation();
   const { user } = useUserContext();
   const { id } = useParams();
   /*
@@ -48,21 +48,15 @@ const EditChannelModel = () => {
     oldPassword: String
     newPassword: String!
   */
-  const upateProtected = async (data: any) => {
-    const res = await updateProtectedChannel({
-      variables: {
-        data: data,
-      },
-    });
-    console.log("uddate ... ", res);
-  };
+
   const updatePublic = async (data: any) => {
-    const res = await updatePublicPrivateChannel({
+    const res = await updateChannelMutation({
       variables: {
         data: data,
       },
     });
     console.log("uddate ... ", res);
+    return res;
   };
   const updateChannel = async () => {
     try {
@@ -70,7 +64,16 @@ const EditChannelModel = () => {
       // public &&  private => protected : protected
       // protected : protected
       // protected => public &&  private : public &&  private
-
+      const tes = await updatePublic({
+        userId: Number(user?.id),
+        channelId: Number(id),
+        channelName: name,
+        description: description,
+        visibility: pass ? "protected" : currentChannel?.visibility,
+        oldPassword: oldPass,
+        newPassword: pass,
+      });
+      console.log("updated ** ", tes);
       if (
         currentChannel?.visibility == "public" ||
         currentChannel?.visibility == "private"

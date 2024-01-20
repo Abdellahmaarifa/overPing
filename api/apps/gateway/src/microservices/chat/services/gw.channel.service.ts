@@ -86,7 +86,7 @@ export class GwChannelService {
     );
   }
 
-  async deleteChannel(payload: UpdateChannelInput) : Promise<Boolean> {
+  async deleteChannel(payload: MemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {

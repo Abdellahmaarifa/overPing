@@ -22,16 +22,8 @@ query GetUserDirectMessages($userId: Float!) {
   }
 }
 
-mutation CreatePublicPrivateChannel($data: CreatePublicPrivateInput!) {
-  createPublicPrivateChannel(data: $data) {
-    id
-    name
-    visibility
-  }
-}
-
-mutation CreateProtectedChannel($data: CreateProtectedInput!) {
-  createProtectedChannel(data: $data) {
+mutation CreateChannel($data: CreateChannelInput!) {
+  createChannel(data: $data) {
     id
     name
     visibility
@@ -114,8 +106,8 @@ mutation LeaveChannel($data: MemberInput!) {
   leaveChannel(data: $data)
 }
 
-mutation UpdateProtectedChannel($data: updateProtectedInput!) {
-  updateProtectedChannel(data: $data) {
+mutation UpdateChannel($data: UpdateChannelInput!) {
+  updateChannel(data: $data) {
     id
     name
     owner_id
@@ -134,29 +126,6 @@ mutation UpdateProtectedChannel($data: updateProtectedInput!) {
     }
   }
 }
-
-mutation UpdatePublicPrivateChannel($data: updatePublicPrivateInput!) {
-  updatePublicPrivateChannel(data: $data) {
-    id
-    owner_id
-    name
-    description
-    visibility
-    admins {
-      id
-      username
-      email
-      profileImgUrl
-    }
-    members {
-      id
-      email
-      profileImgUrl
-      username
-    }
-  }
-}
-
 query FindChannelById($userId: Float!, $groupId: Float!) {
   findChannelById(userId: $userId, groupId: $groupId) {
     id

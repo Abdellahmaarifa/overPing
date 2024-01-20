@@ -1,48 +1,38 @@
 import { IVisibility } from "@app/common/chat";
 import { Field, InputType } from "@nestjs/graphql";
 import { IsAlphanumeric, IsDate, IsIn, IsNumber, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
-
 @InputType()
-class CreationChannelInput {
+export class CreateChannelInput {
   @Field()
   @IsNumber()
   userId: number;
 
-  @Field()
+
+  @Field({nullable: true})
   @IsString()
   @MinLength(4)
   @MaxLength(20)
   channelName: string;
 
   @Field({nullable: true})
+  @IsString()
+  @IsOptional()
   description?: string;
-}
 
-@InputType()
-export class CreatePublicPrivateInput extends CreationChannelInput {
-  @Field(() => String)
-  @IsString()
-  @IsIn([IVisibility.PUBLIC, IVisibility.PRIVATE])
-  visibility: string;
-}
-
-@InputType()
-export class CreateProtectedInput extends CreationChannelInput {
-  @Field(() => String)
-  @IsString()
-  @IsIn([IVisibility.PROTECTED])
-  visibility: string;
-  
   @Field()
   @IsString()
-  @MinLength(4, {message: 'Sets the minimum length of the password to 4 characters.'})
-  @MaxLength(30, {message: 'Sets the maximum length of the password to 30 characters.'})
-  @IsAlphanumeric()
-  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)/, {message: 'Password must contain both letters and at least one digit'})
-  password: string;
+  @IsOptional()
+  @IsIn(['public', 'private', 'protected'])
+  visibility: string = 'public';
+
+  @Field({nullable: true})
+  @IsString()
+  @MinLength(4)
+  @MaxLength(30)
+  @IsOptional()
+  @Matches(/^(?=.*\d)/, { message: 'Password must contain at least one digit' })
+  password?: string;
 }
-
-
 
 @InputType()
 export class UpdateChannelInput {
@@ -55,47 +45,33 @@ export class UpdateChannelInput {
   channelId: number;
 
   @Field({nullable: true})
+  @IsString()
   @MinLength(4)
   @MaxLength(20)
   @IsOptional()
   channelName?: string;
 
   @Field({nullable: true})
+  @IsString()
   @IsOptional()
   description?: string;
-}
 
-@InputType()
-export class updatePublicPrivateInput extends UpdateChannelInput {
-
-  @Field(() => String)
+  @Field()
   @IsString()
-  @IsIn([IVisibility.PUBLIC, IVisibility.PRIVATE])
-  visibility: string;
-
-  @Field({nullable: true})
   @IsOptional()
-  password?: string
-}
-
-@InputType()
-export class updateProtectedInput extends UpdateChannelInput {
-
-  @Field(() => String)
-  @IsString()
-  @IsIn([IVisibility.PROTECTED])
+  @IsIn(['public', 'private', 'protected'])
   visibility: string;
 
   @Field({nullable: true})
   @IsString()
-  oldPassword?: string
-  
+  oldPassword?: string;
+
   @Field({nullable: true})
   @IsString()
-  @MinLength(4, {message: 'Sets the minimum length of the password to 4 characters.'})
-  @MaxLength(30, {message: 'Sets the maximum length of the password to 30 characters.'})
-  @IsAlphanumeric()
-  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)/, {message: 'Password must contain both letters and at least one digit'})
+  @MinLength(4)
+  @MaxLength(30)
+  @IsOptional()
+  @Matches(/^(?=.*\d)/, { message: 'Password must contain at least one digit' })
   newPassword?: string;
 }
 

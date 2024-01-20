@@ -42,24 +42,18 @@ export type CancelRequestInput = {
   senderId: Scalars['Float']['input'];
 };
 
+export type CreateChannelInput = {
+  channelId: Scalars['Float']['input'];
+  channelName?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['Float']['input'];
+  visibility?: Scalars['String']['input'];
+};
+
 export type CreateProfileInput = {
   userId: Scalars['Float']['input'];
   username: Scalars['String']['input'];
-};
-
-export type CreateProtectedInput = {
-  channelName: Scalars['String']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  password: Scalars['String']['input'];
-  userId: Scalars['Float']['input'];
-  visibility: Scalars['String']['input'];
-};
-
-export type CreatePublicPrivateInput = {
-  channelName: Scalars['String']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  userId: Scalars['Float']['input'];
-  visibility: Scalars['String']['input'];
 };
 
 export type DeleteMessageInput = {
@@ -233,10 +227,9 @@ export type Mutation = {
   blockUser: Scalars['Boolean']['output'];
   cancelFriendRequest: Scalars['Boolean']['output'];
   cancelRequestToPlay?: Maybe<Scalars['Boolean']['output']>;
+  createChannel: GqlChannelModel;
   createDirectMessage: GqlDirectMessageModel;
   createProfile: GqlUserProfileModel;
-  createProtectedChannel: GqlChannelModel;
-  createPublicPrivateChannel: GqlChannelModel;
   deleteAccount: Scalars['Boolean']['output'];
   deleteChannel: Scalars['Boolean']['output'];
   deleteDirectMessage: Scalars['Boolean']['output'];
@@ -263,11 +256,10 @@ export type Mutation = {
   unblockUser: Scalars['Boolean']['output'];
   unfriendUser: Scalars['Boolean']['output'];
   unmuteMember: Scalars['Boolean']['output'];
+  updateChannel: GqlChannelModel;
   updateMessageInChannel: GqlMessageModel;
   updateMessageInDM: GqlMessageModel;
   updateProfileBgImg: Scalars['String']['output'];
-  updateProtectedChannel: GqlChannelModel;
-  updatePublicPrivateChannel: GqlChannelModel;
   updateUser: Scalars['Boolean']['output'];
   updateUserAvatarImg: Scalars['String']['output'];
   updateUserStatus: Scalars['Boolean']['output'];
@@ -326,6 +318,11 @@ export type MutationCancelRequestToPlayArgs = {
 };
 
 
+export type MutationCreateChannelArgs = {
+  data: CreateChannelInput;
+};
+
+
 export type MutationCreateDirectMessageArgs = {
   targetID: Scalars['Float']['input'];
   userID: Scalars['Float']['input'];
@@ -334,16 +331,6 @@ export type MutationCreateDirectMessageArgs = {
 
 export type MutationCreateProfileArgs = {
   profileCredentials: CreateProfileInput;
-};
-
-
-export type MutationCreateProtectedChannelArgs = {
-  data: CreateProtectedInput;
-};
-
-
-export type MutationCreatePublicPrivateChannelArgs = {
-  data: CreatePublicPrivateInput;
 };
 
 
@@ -474,6 +461,11 @@ export type MutationUnmuteMemberArgs = {
 };
 
 
+export type MutationUpdateChannelArgs = {
+  data: UpdateChannelInput;
+};
+
+
 export type MutationUpdateMessageInChannelArgs = {
   data: UpdateMessageInput;
 };
@@ -487,16 +479,6 @@ export type MutationUpdateMessageInDmArgs = {
 export type MutationUpdateProfileBgImgArgs = {
   image: Scalars['Upload']['input'];
   userId: Scalars['Float']['input'];
-};
-
-
-export type MutationUpdateProtectedChannelArgs = {
-  data: UpdateProtectedInput;
-};
-
-
-export type MutationUpdatePublicPrivateChannelArgs = {
-  data: UpdatePublicPrivateInput;
 };
 
 
@@ -674,6 +656,16 @@ export type TransferFundsInput = {
   senderId: Scalars['Float']['input'];
 };
 
+export type UpdateChannelInput = {
+  channelId: Scalars['Float']['input'];
+  channelName?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  newPassword?: InputMaybe<Scalars['String']['input']>;
+  oldPassword?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['Float']['input'];
+  visibility: Scalars['String']['input'];
+};
+
 export type UpdateInput = {
   groupChatId: Scalars['Float']['input'];
   messageId: Scalars['Float']['input'];
@@ -705,25 +697,6 @@ export type UserCreationInput = {
   username: Scalars['String']['input'];
 };
 
-export type UpdateProtectedInput = {
-  channelId: Scalars['Float']['input'];
-  channelName?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  newPassword: Scalars['String']['input'];
-  oldPassword?: InputMaybe<Scalars['String']['input']>;
-  userId: Scalars['Float']['input'];
-  visibility: Scalars['String']['input'];
-};
-
-export type UpdatePublicPrivateInput = {
-  channelId: Scalars['Float']['input'];
-  channelName?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  password?: InputMaybe<Scalars['String']['input']>;
-  userId: Scalars['Float']['input'];
-  visibility: Scalars['String']['input'];
-};
-
 export type GetUserAchievementsQueryVariables = Exact<{
   userId: Scalars['Float']['input'];
 }>;
@@ -750,19 +723,12 @@ export type GetUserDirectMessagesQueryVariables = Exact<{
 
 export type GetUserDirectMessagesQuery = { __typename?: 'Query', getUserDirectMessages?: Array<{ __typename?: 'GQLDirectMessageModel', id: string, user2: { __typename?: 'GQLUser', username: string, profileImgUrl: string, id: string }, user1: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } }> | null };
 
-export type CreatePublicPrivateChannelMutationVariables = Exact<{
-  data: CreatePublicPrivateInput;
+export type CreateChannelMutationVariables = Exact<{
+  data: CreateChannelInput;
 }>;
 
 
-export type CreatePublicPrivateChannelMutation = { __typename?: 'Mutation', createPublicPrivateChannel: { __typename?: 'GQLChannelModel', id: string, name: string, visibility: string } };
-
-export type CreateProtectedChannelMutationVariables = Exact<{
-  data: CreateProtectedInput;
-}>;
-
-
-export type CreateProtectedChannelMutation = { __typename?: 'Mutation', createProtectedChannel: { __typename?: 'GQLChannelModel', id: string, name: string, visibility: string } };
+export type CreateChannelMutation = { __typename?: 'Mutation', createChannel: { __typename?: 'GQLChannelModel', id: string, name: string, visibility: string } };
 
 export type SearchForChannelQueryVariables = Exact<{
   channelName: Scalars['String']['input'];
@@ -838,19 +804,12 @@ export type LeaveChannelMutationVariables = Exact<{
 
 export type LeaveChannelMutation = { __typename?: 'Mutation', leaveChannel: boolean };
 
-export type UpdateProtectedChannelMutationVariables = Exact<{
-  data: UpdateProtectedInput;
+export type UpdateChannelMutationVariables = Exact<{
+  data: UpdateChannelInput;
 }>;
 
 
-export type UpdateProtectedChannelMutation = { __typename?: 'Mutation', updateProtectedChannel: { __typename?: 'GQLChannelModel', id: string, name: string, owner_id: number, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, profileImgUrl?: string | null }> | null } };
-
-export type UpdatePublicPrivateChannelMutationVariables = Exact<{
-  data: UpdatePublicPrivateInput;
-}>;
-
-
-export type UpdatePublicPrivateChannelMutation = { __typename?: 'Mutation', updatePublicPrivateChannel: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, email?: string | null, profileImgUrl?: string | null, username?: string | null }> | null } };
+export type UpdateChannelMutation = { __typename?: 'Mutation', updateChannel: { __typename?: 'GQLChannelModel', id: string, name: string, owner_id: number, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, profileImgUrl?: string | null }> | null } };
 
 export type FindChannelByIdQueryVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -1293,76 +1252,41 @@ export type GetUserDirectMessagesQueryHookResult = ReturnType<typeof useGetUserD
 export type GetUserDirectMessagesLazyQueryHookResult = ReturnType<typeof useGetUserDirectMessagesLazyQuery>;
 export type GetUserDirectMessagesSuspenseQueryHookResult = ReturnType<typeof useGetUserDirectMessagesSuspenseQuery>;
 export type GetUserDirectMessagesQueryResult = Apollo.QueryResult<GetUserDirectMessagesQuery, GetUserDirectMessagesQueryVariables>;
-export const CreatePublicPrivateChannelDocument = gql`
-    mutation CreatePublicPrivateChannel($data: CreatePublicPrivateInput!) {
-  createPublicPrivateChannel(data: $data) {
+export const CreateChannelDocument = gql`
+    mutation CreateChannel($data: CreateChannelInput!) {
+  createChannel(data: $data) {
     id
     name
     visibility
   }
 }
     `;
-export type CreatePublicPrivateChannelMutationFn = Apollo.MutationFunction<CreatePublicPrivateChannelMutation, CreatePublicPrivateChannelMutationVariables>;
+export type CreateChannelMutationFn = Apollo.MutationFunction<CreateChannelMutation, CreateChannelMutationVariables>;
 
 /**
- * __useCreatePublicPrivateChannelMutation__
+ * __useCreateChannelMutation__
  *
- * To run a mutation, you first call `useCreatePublicPrivateChannelMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreatePublicPrivateChannelMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChannelMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createPublicPrivateChannelMutation, { data, loading, error }] = useCreatePublicPrivateChannelMutation({
+ * const [createChannelMutation, { data, loading, error }] = useCreateChannelMutation({
  *   variables: {
  *      data: // value for 'data'
  *   },
  * });
  */
-export function useCreatePublicPrivateChannelMutation(baseOptions?: Apollo.MutationHookOptions<CreatePublicPrivateChannelMutation, CreatePublicPrivateChannelMutationVariables>) {
+export function useCreateChannelMutation(baseOptions?: Apollo.MutationHookOptions<CreateChannelMutation, CreateChannelMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreatePublicPrivateChannelMutation, CreatePublicPrivateChannelMutationVariables>(CreatePublicPrivateChannelDocument, options);
+        return Apollo.useMutation<CreateChannelMutation, CreateChannelMutationVariables>(CreateChannelDocument, options);
       }
-export type CreatePublicPrivateChannelMutationHookResult = ReturnType<typeof useCreatePublicPrivateChannelMutation>;
-export type CreatePublicPrivateChannelMutationResult = Apollo.MutationResult<CreatePublicPrivateChannelMutation>;
-export type CreatePublicPrivateChannelMutationOptions = Apollo.BaseMutationOptions<CreatePublicPrivateChannelMutation, CreatePublicPrivateChannelMutationVariables>;
-export const CreateProtectedChannelDocument = gql`
-    mutation CreateProtectedChannel($data: CreateProtectedInput!) {
-  createProtectedChannel(data: $data) {
-    id
-    name
-    visibility
-  }
-}
-    `;
-export type CreateProtectedChannelMutationFn = Apollo.MutationFunction<CreateProtectedChannelMutation, CreateProtectedChannelMutationVariables>;
-
-/**
- * __useCreateProtectedChannelMutation__
- *
- * To run a mutation, you first call `useCreateProtectedChannelMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateProtectedChannelMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createProtectedChannelMutation, { data, loading, error }] = useCreateProtectedChannelMutation({
- *   variables: {
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useCreateProtectedChannelMutation(baseOptions?: Apollo.MutationHookOptions<CreateProtectedChannelMutation, CreateProtectedChannelMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateProtectedChannelMutation, CreateProtectedChannelMutationVariables>(CreateProtectedChannelDocument, options);
-      }
-export type CreateProtectedChannelMutationHookResult = ReturnType<typeof useCreateProtectedChannelMutation>;
-export type CreateProtectedChannelMutationResult = Apollo.MutationResult<CreateProtectedChannelMutation>;
-export type CreateProtectedChannelMutationOptions = Apollo.BaseMutationOptions<CreateProtectedChannelMutation, CreateProtectedChannelMutationVariables>;
+export type CreateChannelMutationHookResult = ReturnType<typeof useCreateChannelMutation>;
+export type CreateChannelMutationResult = Apollo.MutationResult<CreateChannelMutation>;
+export type CreateChannelMutationOptions = Apollo.BaseMutationOptions<CreateChannelMutation, CreateChannelMutationVariables>;
 export const SearchForChannelDocument = gql`
     query SearchForChannel($channelName: String!, $userId: Float!) {
   searchForChannel(channelName: $channelName, userId: $userId) {
@@ -1734,9 +1658,9 @@ export function useLeaveChannelMutation(baseOptions?: Apollo.MutationHookOptions
 export type LeaveChannelMutationHookResult = ReturnType<typeof useLeaveChannelMutation>;
 export type LeaveChannelMutationResult = Apollo.MutationResult<LeaveChannelMutation>;
 export type LeaveChannelMutationOptions = Apollo.BaseMutationOptions<LeaveChannelMutation, LeaveChannelMutationVariables>;
-export const UpdateProtectedChannelDocument = gql`
-    mutation UpdateProtectedChannel($data: updateProtectedInput!) {
-  updateProtectedChannel(data: $data) {
+export const UpdateChannelDocument = gql`
+    mutation UpdateChannel($data: UpdateChannelInput!) {
+  updateChannel(data: $data) {
     id
     name
     owner_id
@@ -1756,81 +1680,32 @@ export const UpdateProtectedChannelDocument = gql`
   }
 }
     `;
-export type UpdateProtectedChannelMutationFn = Apollo.MutationFunction<UpdateProtectedChannelMutation, UpdateProtectedChannelMutationVariables>;
+export type UpdateChannelMutationFn = Apollo.MutationFunction<UpdateChannelMutation, UpdateChannelMutationVariables>;
 
 /**
- * __useUpdateProtectedChannelMutation__
+ * __useUpdateChannelMutation__
  *
- * To run a mutation, you first call `useUpdateProtectedChannelMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProtectedChannelMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateChannelMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateProtectedChannelMutation, { data, loading, error }] = useUpdateProtectedChannelMutation({
+ * const [updateChannelMutation, { data, loading, error }] = useUpdateChannelMutation({
  *   variables: {
  *      data: // value for 'data'
  *   },
  * });
  */
-export function useUpdateProtectedChannelMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProtectedChannelMutation, UpdateProtectedChannelMutationVariables>) {
+export function useUpdateChannelMutation(baseOptions?: Apollo.MutationHookOptions<UpdateChannelMutation, UpdateChannelMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateProtectedChannelMutation, UpdateProtectedChannelMutationVariables>(UpdateProtectedChannelDocument, options);
+        return Apollo.useMutation<UpdateChannelMutation, UpdateChannelMutationVariables>(UpdateChannelDocument, options);
       }
-export type UpdateProtectedChannelMutationHookResult = ReturnType<typeof useUpdateProtectedChannelMutation>;
-export type UpdateProtectedChannelMutationResult = Apollo.MutationResult<UpdateProtectedChannelMutation>;
-export type UpdateProtectedChannelMutationOptions = Apollo.BaseMutationOptions<UpdateProtectedChannelMutation, UpdateProtectedChannelMutationVariables>;
-export const UpdatePublicPrivateChannelDocument = gql`
-    mutation UpdatePublicPrivateChannel($data: updatePublicPrivateInput!) {
-  updatePublicPrivateChannel(data: $data) {
-    id
-    owner_id
-    name
-    description
-    visibility
-    admins {
-      id
-      username
-      email
-      profileImgUrl
-    }
-    members {
-      id
-      email
-      profileImgUrl
-      username
-    }
-  }
-}
-    `;
-export type UpdatePublicPrivateChannelMutationFn = Apollo.MutationFunction<UpdatePublicPrivateChannelMutation, UpdatePublicPrivateChannelMutationVariables>;
-
-/**
- * __useUpdatePublicPrivateChannelMutation__
- *
- * To run a mutation, you first call `useUpdatePublicPrivateChannelMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdatePublicPrivateChannelMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updatePublicPrivateChannelMutation, { data, loading, error }] = useUpdatePublicPrivateChannelMutation({
- *   variables: {
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useUpdatePublicPrivateChannelMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePublicPrivateChannelMutation, UpdatePublicPrivateChannelMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdatePublicPrivateChannelMutation, UpdatePublicPrivateChannelMutationVariables>(UpdatePublicPrivateChannelDocument, options);
-      }
-export type UpdatePublicPrivateChannelMutationHookResult = ReturnType<typeof useUpdatePublicPrivateChannelMutation>;
-export type UpdatePublicPrivateChannelMutationResult = Apollo.MutationResult<UpdatePublicPrivateChannelMutation>;
-export type UpdatePublicPrivateChannelMutationOptions = Apollo.BaseMutationOptions<UpdatePublicPrivateChannelMutation, UpdatePublicPrivateChannelMutationVariables>;
+export type UpdateChannelMutationHookResult = ReturnType<typeof useUpdateChannelMutation>;
+export type UpdateChannelMutationResult = Apollo.MutationResult<UpdateChannelMutation>;
+export type UpdateChannelMutationOptions = Apollo.BaseMutationOptions<UpdateChannelMutation, UpdateChannelMutationVariables>;
 export const FindChannelByIdDocument = gql`
     query FindChannelById($userId: Float!, $groupId: Float!) {
   findChannelById(userId: $userId, groupId: $groupId) {

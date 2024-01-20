@@ -3,14 +3,11 @@ import { UseGuards } from '@nestjs/common';
 import { GwChannelService } from '../../services';
 import {
   ActionToMemberInput,
-  CreateProtectedInput,
-  CreatePublicPrivateInput,
+  CreateChannelInput,
   DeleteMessageInput,
   MemberInput,
   UpdateChannelInput,
   UpdateMessageInput,
-  updateProtectedInput,
-  updatePublicPrivateInput
 } from '../input/channel.input';
 import { GQLChannelModel, GQLMessageModel } from '../models';
 import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
@@ -25,36 +22,15 @@ export class ChannelResolver {
     private readonly channelService: GwChannelService,
     private readonly userCheck: UserCheckService,
   ) {}
-
   @Mutation(() => GQLChannelModel)
-  async createPublicPrivateChannel(@Context() ctx,
-    @Args('data', {type: () => CreatePublicPrivateInput}) data: CreatePublicPrivateInput) : Promise<GQLChannelModel> 
-  {
-    await this.userCheck.validationId(data.userId, ctx.req.user.id);
-    return await this.channelService.createChannel( data );
-  }
-
-  @Mutation(() => GQLChannelModel)
-  async createProtectedChannel(@Context() ctx,
-    @Args('data', {type: () => CreateProtectedInput}) data: CreateProtectedInput ) : Promise<GQLChannelModel>
-  {
-    await this.userCheck.validationId(data.userId, ctx.req.user.id);
+  async createChannel(@Args('data') data: CreateChannelInput) : Promise<GQLChannelModel> {
     return this.channelService.createChannel( data );
   }
 
   @Mutation(() => GQLChannelModel)
-  async updatePublicPrivateChannel(@Context() ctx,
-    @Args('data') data: updatePublicPrivateInput) : Promise<GQLChannelModel>
-  {
-    await this.userCheck.validationId(data.userId, ctx.req.user.id);
+  async updateChannel(@Args('data') data: UpdateChannelInput) : Promise<GQLChannelModel> {
     return this.channelService.updateChannel( data );
   }
-
-  @Mutation(() => GQLChannelModel)
-  async updateProtectedChannel(@Args('data') data: updateProtectedInput) : Promise<GQLChannelModel> {
-    return this.channelService.updateChannel( data );
-  }
-
   @Mutation(() => Boolean)
   async deleteChannel(@Context() ctx,
     @Args('data') data: MemberInput) : Promise<Boolean> 
