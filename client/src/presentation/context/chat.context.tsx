@@ -1,8 +1,9 @@
+import { ChannelSample, ChannelType, DMType } from "domain/model/chat.type";
 import { createContext, useContext, useState } from "react";
 
 type UseStateType<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
-type ChatCtxType = {
+export type ChatCtxType = {
   showChatMenu: UseStateType<Boolean>;
   showChatAbout: UseStateType<Boolean>;
   showFriends: UseStateType<Boolean>;
@@ -10,6 +11,12 @@ type ChatCtxType = {
   showChannelModel: UseStateType<Boolean>;
   showChannelMenu: UseStateType<Boolean>;
   showEditChannelModel: UseStateType<Boolean>;
+  includeChannelInSearch: UseStateType<Boolean>;
+  userHandlerCallBack: UseStateType<(id: string) => void>;
+  channelHandlerCallBack: UseStateType<(id: string) => void>;
+  currentChannel: UseStateType<ChannelSample | null>;
+  channels: UseStateType<ChannelType[] | []>;
+  dms: UseStateType<DMType[] | []>;
 };
 
 export class ChatContextValue implements ChatCtxType {
@@ -20,6 +27,12 @@ export class ChatContextValue implements ChatCtxType {
   showChannelModel: UseStateType<Boolean>;
   showChannelMenu: UseStateType<Boolean>;
   showEditChannelModel: UseStateType<Boolean>;
+  includeChannelInSearch: UseStateType<Boolean>;
+  userHandlerCallBack: UseStateType<(id: string) => void>;
+  channelHandlerCallBack: UseStateType<(id: string) => void>;
+  currentChannel: UseStateType<ChannelSample | null>;
+  channels: UseStateType<ChannelType[] | []>;
+  dms: UseStateType<DMType[] | []>;
   constructor() {
     this.showChatMenu = useState<Boolean>(false);
     this.showChatAbout = useState<Boolean>(false);
@@ -28,6 +41,16 @@ export class ChatContextValue implements ChatCtxType {
     this.showChannelModel = useState<Boolean>(false);
     this.showChannelMenu = useState<Boolean>(false);
     this.showEditChannelModel = useState<Boolean>(false);
+    this.includeChannelInSearch = useState<Boolean>(false);
+    this.userHandlerCallBack = useState<(id: string) => void>(
+      (id: string) => {}
+    );
+    this.channelHandlerCallBack = useState<(id: string) => void>(
+      (id: string) => {}
+    );
+    this.currentChannel = useState<ChannelSample | null>(null);
+    this.channels = useState<ChannelType[] | []>([]);
+    this.dms = useState<DMType[] | []>([]);
   }
 }
 
@@ -39,6 +62,12 @@ const ChatContext = createContext<ChatCtxType>({
   showChannelModel: [false, () => {}],
   showChannelMenu: [false, () => {}],
   showEditChannelModel: [false, () => {}],
+  includeChannelInSearch: [false, () => {}],
+  userHandlerCallBack: [(id: string) => {}, () => () => {}],
+  channelHandlerCallBack: [(id: string) => {}, () => () => {}],
+  currentChannel: [null, () => {}],
+  channels: [[], () => {}],
+  dms: [[], () => {}],
 });
 
 type Props = {

@@ -184,6 +184,7 @@ export class ChannelService {
   /******* create ******* update ***** delete *******/
 
   async create(data: CreateChanneldto) : Promise<IChannel> {
+    
     await this.helper.findUser(data.userId, true);
 
     await this.helper.channelNameValidation(data.channelName);

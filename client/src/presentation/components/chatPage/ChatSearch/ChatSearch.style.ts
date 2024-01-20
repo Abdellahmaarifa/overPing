@@ -72,6 +72,7 @@ export const ChatResaultContainer = tw.div`
     items-center
     w-full
     h-full
+    overflow-scroll
 `;
 export const ChatSearchResault = tw.div`
     rounded-[8px]
