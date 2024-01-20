@@ -41,11 +41,6 @@ export class UserService {
     );
     if (!isPasswordValid)
       this.rpcExceptionService.throwForbidden('Invalid username or password.');
-
-    if (userFound.twoStepVerificationEnabled) {
-      return null;
-      // this.rpcExceptionService.throwUnauthorised("Two-factor authentication is required. Please provide the 2FA code.")
-    }
     return userFound;
   }
 

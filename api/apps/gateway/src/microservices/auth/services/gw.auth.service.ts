@@ -123,4 +123,16 @@ export class GatewayService {
 			twoFActorAuthInput
 		);
 	}
+
+	async disableTwoFactor(userId: number): Promise<boolean> {
+		return await this.clientService.sendMessageWithPayload(
+			this.client,
+			{
+				role: 'auth',
+				cmd: 'disableTwoFactor'
+			},
+			userId
+		);
+	}
+
 }

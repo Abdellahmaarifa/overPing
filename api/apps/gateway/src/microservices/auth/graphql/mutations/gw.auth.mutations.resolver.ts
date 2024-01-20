@@ -43,9 +43,8 @@ export class AuthMutationsResolver {
     @Context() context,
     @Args('authCredentials') authCredentialsInput: AuthCredentialsInput,): Promise<GQLUserModel> {
     const response= await this.authService.signIn(authCredentialsInput);
-    this.userStatusService.updateUserStatus(response.user.id, Date().toString());
     const { res } = context;
-
+    
     if (response.twoFactorAuth){
       res.cookie('twoFactorAuth', response.twoFactorAuth, {
         httpOnly: true,
@@ -54,7 +53,8 @@ export class AuthMutationsResolver {
       });
       throw new HttpException("Two-factor", 401);
     }
-
+    
+    this.userStatusService.updateUserStatus(response.user.id, Date().toString());
     res.cookie('Refresh_token', response.refreshToken, {
       httpOnly: true,
       secure: true,
@@ -163,9 +163,15 @@ export class AuthMutationsResolver {
   }
 
   @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => Boolean)
+  async disableTwoFactor(@Context() ctx ): Promise<boolean>{
+    const { id} = ctx.req.user;
+    return this.authService.disableTwoFactor(id);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation ( () => Boolean)
   async updateUser(@Context() cxt, @Args('userUpdateInput') updateInput: UpdateUserInput ): Promise<boolean>{
-      // return this.userService.updateUser(updateInput);
       const {id} = cxt.req.user;
 
       return this.userService.updateUser(id, updateInput);
@@ -174,7 +180,6 @@ export class AuthMutationsResolver {
   @UseGuards(GqlJwtAuthGuard)
   @Mutation ( () => Boolean)
   async updateUserStatus(@Context() cxt, @Args('currentTime') currentTime: string ): Promise<boolean>{
-      // return this.userService.updateUser(updateInput);
       const {id} = cxt.req.user;
       return this.userStatusService.updateUserStatus(id, currentTime);
   }

@@ -123,6 +123,6 @@ import { UserCheckService } from "./microservices/chat/services/userCheck.servic
 })
 export class GatewayModule {
   configure(consumer: any) {
-    consumer.apply(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 })).forRoutes('graphql');
+    consumer.apply(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 3 })).forRoutes('graphql');
   }
 }

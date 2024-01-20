@@ -52,21 +52,6 @@ CREATE TABLE "Statistics" (
 );
 
 -- CreateTable
-CREATE TABLE "GameMatch" (
-    "id" SERIAL NOT NULL,
-    "player1" INTEGER NOT NULL,
-    "player2" INTEGER NOT NULL,
-    "winner" INTEGER NOT NULL,
-    "loser" INTEGER NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "player1Score" INTEGER NOT NULL DEFAULT 0,
-    "player2Score" INTEGER NOT NULL DEFAULT 0,
-    "VictoryWager" INTEGER NOT NULL DEFAULT 0,
-
-    CONSTRAINT "GameMatch_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Achievement" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
@@ -105,18 +90,6 @@ CREATE UNIQUE INDEX "GameStatus_user_id_key" ON "GameStatus"("user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Statistics_user_id_key" ON "Statistics"("user_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "GameMatch_player1_key" ON "GameMatch"("player1");
-
--- CreateIndex
-CREATE UNIQUE INDEX "GameMatch_player2_key" ON "GameMatch"("player2");
-
--- CreateIndex
-CREATE UNIQUE INDEX "GameMatch_winner_key" ON "GameMatch"("winner");
-
--- CreateIndex
-CREATE UNIQUE INDEX "GameMatch_loser_key" ON "GameMatch"("loser");
 
 -- AddForeignKey
 ALTER TABLE "Wallet" ADD CONSTRAINT "Wallet_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "UserProfile"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
