@@ -22,7 +22,7 @@ let connectedChannelUsers: Map<number, any> = new Map();
 
 @WebSocketGateway({
   cors: {
-    origin: `${process.env.FRONT_URL}`,
+    origin: `${process.env.CHAT_FRONT_URL}`,
     credentials: true
   },
   namespace: CHANNEL.namespace,

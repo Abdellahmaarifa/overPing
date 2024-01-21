@@ -1,4 +1,3 @@
-import { ClientAccessAuthorizationGuard } from '../guards/client.guard';
 import { Logger, UseGuards } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer,
   OnGatewayInit, OnGatewayConnection,
@@ -12,13 +11,12 @@ import { HelperService } from '../utils/helper.service';
 import { FriendshipStatus } from '@app/common';
 import { GroupType } from '../interface/group.interface';
 import { DIRECTMESSAGE } from '../interface';
-import { GqlJwtAuthGuard } from 'apps/gateway/src/microservices/auth/guards/gql.accessToken.guard';
 
 let connectedUsers: Map<number, any> = new Map();
 
 @WebSocketGateway({
   cors: {
-    origin: `${process.env.FRONT_URL}`,
+    origin: `${process.env.CHAT_FRONT_URL}`,
     credentials: true
   },
   namespace: DIRECTMESSAGE.namespace,
@@ -61,11 +59,11 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   @SubscribeMessage(DIRECTMESSAGE.sendMessageToUser)
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
     // this.logger.log(`User connected: ${userId} [${client.id}]`);
+    console.log(`******* data *******\n`, data);
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
       return;
     }
-    console.log(`******* data *******\n`, data);
     const existedRecipient = await this.checker.checkForUser(data.recipientId);
     if (!existedRecipient) {
       console.log(`Recipient doesn't exist!`);
@@ -96,27 +94,32 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   @SubscribeMessage(DIRECTMESSAGE.getDMMessages)
   async getMessages(client: Socket, data: DMMessagesdto) {
-    const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
-      return;
-    }
-    await this.helper.findUser(data.userId, true);
-
-    return await this.prisma.directMessage.findUnique({
-      where: {
-        id: data.groupChatId,
-        OR: [
-          { user1_id: data.userId },
-          { user2_id: data.userId }
-        ]
-      },
-      select: {
-        messages: {
-          orderBy: { created_at: 'desc' },
-          skip: ( data.page - 1 ) * 30,
-          take: 30,
-        },
+    try {
+      const userId = await this.helper.getUserId(client);
+      if (!userId || userId !== data.userId) {
+        return;
       }
-    });
+      await this.helper.findUser(data.userId, true);
+  
+      return await this.prisma.directMessage.findUnique({
+        where: {
+          id: data.groupChatId,
+          OR: [
+            { user1_id: data.userId },
+            { user2_id: data.userId }
+          ]
+        },
+        select: {
+          messages: {
+            orderBy: { created_at: 'desc' },
+            skip: ( data.page - 1 ) * 30,
+            take: 30,
+          },
+        }
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 }

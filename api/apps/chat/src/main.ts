@@ -4,6 +4,7 @@ import { RabbitMqService } from '@app/rabbit-mq';
 import { RABBIT_SERVICES } from '@app/rabbit-mq/constent/rabbit-constent'
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { ChatExceptionFilter } from './chat-global-filter/chat-global-filter';
+import { ValidationPipe } from '@nestjs/common';
 
 
 async function bootstrap() {
@@ -15,6 +16,9 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
   await app.init();
+  app.useGlobalPipes(
+    new ValidationPipe({skipMissingProperties: true,})
+  );
 
   await app.listen(`${process.env.CHAT_PORT}`);
 }

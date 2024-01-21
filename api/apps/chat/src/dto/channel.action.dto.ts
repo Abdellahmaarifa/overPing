@@ -73,3 +73,18 @@ export class UpdateChanneldto {
   @Matches(/^(?=.*[a-zA-Z])(?=.*\d)/, {message: 'Password must contain both letters and at least one digit'})
   newPassword?: string;
 }
+
+@InputType()
+export class DeleteChannelInput {
+  @Field()
+  @IsNumber()
+  userId: number;
+
+  @Field()
+  @IsNumber()
+  channelId: number;
+
+  @Field()
+  @IsString()
+  password: string;
+}

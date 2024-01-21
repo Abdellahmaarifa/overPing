@@ -4,6 +4,7 @@ import { GwChannelService } from '../../services';
 import {
   ActionToMemberInput,
   CreateChannelInput,
+  DeleteChannelInput,
   DeleteMessageInput,
   MemberInput,
   UpdateChannelInput,
@@ -23,18 +24,24 @@ export class ChannelResolver {
     private readonly userCheck: UserCheckService,
   ) {}
   @Mutation(() => GQLChannelModel)
-  async createChannel(@Args('data') data: CreateChannelInput) : Promise<GQLChannelModel> {
+  async createChannel(@Context() ctx,
+  @Args('data') data: CreateChannelInput) : Promise<GQLChannelModel>
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.createChannel( data );
   }
 
   @Mutation(() => GQLChannelModel)
-  async updateChannel(@Args('data') data: UpdateChannelInput) : Promise<GQLChannelModel> {
+  async updateChannel(@Context() ctx,
+  @Args('data') data: UpdateChannelInput) : Promise<GQLChannelModel>
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.updateChannel( data );
   }
 
   @Mutation(() => Boolean)
   async deleteChannel(@Context() ctx,
-    @Args('data') data: MemberInput) : Promise<Boolean> 
+    @Args('data') data: DeleteChannelInput) : Promise<Boolean> 
   {
     await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.deleteChannel( data );
@@ -42,7 +49,9 @@ export class ChannelResolver {
   
   @Mutation(() => GQLMessageModel)
   async updateMessageInChannel(@Context() ctx,
-  @Args('data') data: UpdateMessageInput) : Promise<GQLMessageModel> {
+  @Args('data') data: UpdateMessageInput) : Promise<GQLMessageModel>
+  {
+    await this.userCheck.validationId(data.userId, ctx.req.user.id);
     return this.channelService.updateMessageInChannel( data );
   }
 

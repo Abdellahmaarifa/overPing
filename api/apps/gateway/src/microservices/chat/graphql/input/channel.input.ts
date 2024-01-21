@@ -73,6 +73,21 @@ export class UpdateChannelInput {
 }
 
 @InputType()
+export class DeleteChannelInput {
+  @Field()
+  @IsNumber()
+  userId: number;
+
+  @Field()
+  @IsNumber()
+  channelId: number;
+
+  @Field()
+  @IsString()
+  password: string;
+}
+
+@InputType()
 export class UpdateMessageInput {
   @Field()
   @IsNumber()
@@ -91,6 +106,7 @@ export class UpdateMessageInput {
   @MaxLength(255)
   text: string;
 }
+
 
 @InputType()
 export class DeleteMessageInput {

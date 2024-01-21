@@ -86,7 +86,7 @@ export class HelperService {
     try {
       const session = client.handshake.headers.cookie;
       console.log('>> session:', session);
-      const token = session?.split(';')[1].split('=')[1];
+      const token = session!.split(';')[1]!.split('=')[1] || null;
       if (token) {
         const user = await this.jwtService.verifyAsync(token, {
           secret: this.configService.get('JWT_ACCESS_SECRET'),
@@ -134,9 +134,9 @@ export class HelperService {
     
   async ownerLeavedChannel(channelId: number) : Promise<void> {
     const admins = await this.findAdminsById(channelId);
-    if (!admins?.length) {
+    if (admins.length === 0) {
       const members = await this.findMembersById(channelId);
-      if (!members?.length) {
+      if (members.length === 0) {
         await this.prisma.channel.delete({
           where: { id: channelId }
         });
@@ -192,9 +192,6 @@ export class HelperService {
       return user![0] || null;
     }
     catch {
-      if (throwStatus) {
-        this.rpcExceptionService.throwBadRequest(`Failed to find user: ${user_id}`);
-      }
       return null;
     }
   }
