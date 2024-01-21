@@ -6,6 +6,7 @@ CREATE TABLE "Channel" (
     "description" TEXT,
     "visibility" TEXT NOT NULL,
     "password" TEXT,
+    "latestMessage_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -17,6 +18,7 @@ CREATE TABLE "DirectMessage" (
     "id" SERIAL NOT NULL,
     "user1_id" INTEGER NOT NULL,
     "user2_id" INTEGER NOT NULL,
+    "latestMessage_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "DirectMessage_pkey" PRIMARY KEY ("id")

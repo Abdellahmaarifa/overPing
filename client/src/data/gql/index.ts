@@ -42,24 +42,18 @@ export type CancelRequestInput = {
   senderId: Scalars['Float']['input'];
 };
 
+export type CreateChannelInput = {
+  channelId: Scalars['Float']['input'];
+  channelName?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['Float']['input'];
+  visibility?: Scalars['String']['input'];
+};
+
 export type CreateProfileInput = {
   userId: Scalars['Float']['input'];
   username: Scalars['String']['input'];
-};
-
-export type CreateProtectedInput = {
-  channelName: Scalars['String']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  password: Scalars['String']['input'];
-  userId: Scalars['Float']['input'];
-  visibility: Scalars['String']['input'];
-};
-
-export type CreatePublicPrivateInput = {
-  channelName: Scalars['String']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  userId: Scalars['Float']['input'];
-  visibility: Scalars['String']['input'];
 };
 
 export type DeleteMessageInput = {
@@ -233,10 +227,9 @@ export type Mutation = {
   blockUser: Scalars['Boolean']['output'];
   cancelFriendRequest: Scalars['Boolean']['output'];
   cancelRequestToPlay?: Maybe<Scalars['Boolean']['output']>;
+  createChannel: GqlChannelModel;
   createDirectMessage: GqlDirectMessageModel;
   createProfile: GqlUserProfileModel;
-  createProtectedChannel: GqlChannelModel;
-  createPublicPrivateChannel: GqlChannelModel;
   deleteAccount: Scalars['Boolean']['output'];
   deleteChannel: Scalars['Boolean']['output'];
   deleteDirectMessage: Scalars['Boolean']['output'];
@@ -263,11 +256,10 @@ export type Mutation = {
   unblockUser: Scalars['Boolean']['output'];
   unfriendUser: Scalars['Boolean']['output'];
   unmuteMember: Scalars['Boolean']['output'];
+  updateChannel: GqlChannelModel;
   updateMessageInChannel: GqlMessageModel;
   updateMessageInDM: GqlMessageModel;
   updateProfileBgImg: Scalars['String']['output'];
-  updateProtectedChannel: GqlChannelModel;
-  updatePublicPrivateChannel: GqlChannelModel;
   updateUser: Scalars['Boolean']['output'];
   updateUserAvatarImg: Scalars['String']['output'];
   updateUserStatus: Scalars['Boolean']['output'];
@@ -326,6 +318,11 @@ export type MutationCancelRequestToPlayArgs = {
 };
 
 
+export type MutationCreateChannelArgs = {
+  data: CreateChannelInput;
+};
+
+
 export type MutationCreateDirectMessageArgs = {
   targetID: Scalars['Float']['input'];
   userID: Scalars['Float']['input'];
@@ -334,16 +331,6 @@ export type MutationCreateDirectMessageArgs = {
 
 export type MutationCreateProfileArgs = {
   profileCredentials: CreateProfileInput;
-};
-
-
-export type MutationCreateProtectedChannelArgs = {
-  data: CreateProtectedInput;
-};
-
-
-export type MutationCreatePublicPrivateChannelArgs = {
-  data: CreatePublicPrivateInput;
 };
 
 
@@ -487,16 +474,6 @@ export type MutationUpdateMessageInDmArgs = {
 export type MutationUpdateProfileBgImgArgs = {
   image: Scalars['Upload']['input'];
   userId: Scalars['Float']['input'];
-};
-
-
-export type MutationUpdateProtectedChannelArgs = {
-  data: UpdateProtectedInput;
-};
-
-
-export type MutationUpdatePublicPrivateChannelArgs = {
-  data: UpdatePublicPrivateInput;
 };
 
 
@@ -678,6 +655,16 @@ export type TransferFundsInput = {
   amount: Scalars['Float']['input'];
   recipientId: Scalars['Float']['input'];
   senderId: Scalars['Float']['input'];
+};
+
+export type UpdateChannelInput = {
+  channelId: Scalars['Float']['input'];
+  channelName?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  newPassword?: InputMaybe<Scalars['String']['input']>;
+  oldPassword?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['Float']['input'];
+  visibility: Scalars['String']['input'];
 };
 
 export type UpdateInput = {

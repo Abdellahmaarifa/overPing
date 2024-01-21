@@ -67,7 +67,7 @@ export class ChannelService {
         },
       },
     });
-  
+
     if (!channel) {
       this.rpcExceptionService.throwNotFound(`Failed to find channel: ${id}`)
     }
@@ -166,6 +166,9 @@ export class ChannelService {
         },
       }
     });
+    if (!users) {
+      return {owner: null, admins: null, members: null};
+    }
 
     return {
       owner: await this.clientService.sendMessageWithPayload(
@@ -184,6 +187,7 @@ export class ChannelService {
   /******* create ******* update ***** delete *******/
 
   async create(data: CreateChanneldto) : Promise<IChannel> {
+    
     await this.helper.findUser(data.userId, true);
 
     await this.helper.channelNameValidation(data.channelName);
@@ -211,6 +215,10 @@ export class ChannelService {
         messages: true,
       }
     });
+
+    if (!createdChannel) {
+      this.rpcExceptionService.throwNotFound(`Failed to create channel: [${data.channelName}]`)
+    }
 
     const members = await this.getMembers(createdChannel.id);
 
@@ -253,10 +261,14 @@ export class ChannelService {
       }
     });
 
+    if (!updatedChannel) {
+      this.rpcExceptionService.throwNotFound(`Failed to update channel ${data.channelId}`)
+    }
+
     await this.channelGateway.sendUpdatedChannelInfo(data.channelId, {
-      name: data.channelName || channel.name,
-      description: data.description || channel.description,
-      visibility: data.visibility || channel.visibility,
+      name: data.channelName || updatedChannel.name,
+      description: data.description || updatedChannel.description,
+      visibility: data.visibility || updatedChannel.visibility,
     });
 
     const members = await this.getMembers(data.channelId);
@@ -283,11 +295,11 @@ export class ChannelService {
     if (!channel) {
       this.rpcExceptionService.throwNotFound(`Failed to find channel: ${data.channelId}`);
     }
-    else if (channel.visibility === IVisibility.PROTECTED && !data.password) {
+    else if (channel.visibility === IVisibility.PROTECTED && !data.newPassword) {
       this.rpcExceptionService.throwUnauthorised(`This action requires a PASSWORD!`)
     }
-    else if (channel.visibility === IVisibility.PROTECTED && data.password) {
-      await this.helper.isPasswordMatched(channel.password, data.password);
+    else if (channel.visibility === IVisibility.PROTECTED && data.newPassword) {
+      await this.helper.isPasswordMatched(channel.password, data.newPassword);
     }
 
     await this.prisma.channel.delete({
@@ -469,8 +481,8 @@ export class ChannelService {
         },
       });
     }
-
-    if (await this.checker.isOwner(userID, channelID) === true) {
+    const isOwner = await this.checker.isOwner(userID, channelID);
+    if (isOwner === true) {
       await this.helper.ownerLeavedChannel(channelID);
     }
 

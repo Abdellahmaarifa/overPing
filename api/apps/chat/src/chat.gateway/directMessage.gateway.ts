@@ -1,4 +1,3 @@
-import { ClientAccessAuthorizationGuard } from '../guards/client.guard';
 import { Logger, UseGuards } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer,
   OnGatewayInit, OnGatewayConnection,
@@ -17,7 +16,7 @@ let connectedUsers: Map<number, any> = new Map();
 
 @WebSocketGateway({
   cors: {
-    origin: `${process.env.FRONT_URL}`,
+    origin: `${process.env.CHAT_FRONT_URL}`,
     credentials: true
   },
   namespace: DIRECTMESSAGE.namespace,
@@ -37,21 +36,18 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     this.logger.log('WebSocket initialized');
   }
 
-  @UseGuards(ClientAccessAuthorizationGuard)
   async handleConnection(client: Socket, ...args: any[]) {
-    const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
     const userId = await this.helper.getUserId(client);
-
-    if (user || userId) {
-      this.logger.log(`User connected: ${client.id}`);
-      connectedUsers.set(((user)? user.id : userId), client.id);
+    if (userId) {
+      this.logger.log(`User connected: ${userId} [${client.id}`);
+      connectedUsers.set(userId, client);
     }
     else {
-      this.logger.log(`User authentication failed: ${client.id}`);
+      this.logger.log(`User authentication failed: ${userId} [${client.id}`);
       client.disconnect();
     }
   }
-
+ 
   async handleDisconnect(client: Socket) {
     const userId = await this.helper.getUserId(client);
     if (userId) {
@@ -62,11 +58,12 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   @SubscribeMessage(DIRECTMESSAGE.sendMessageToUser)
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
+    // this.logger.log(`User connected: ${userId} [${client.id}]`);
+    console.log(`******* data *******\n`, data);
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
       return;
     }
-    
     const existedRecipient = await this.checker.checkForUser(data.recipientId);
     if (!existedRecipient) {
       console.log(`Recipient doesn't exist!`);
@@ -76,12 +73,11 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.Blocked, GroupType.DM);
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.BlockedBy, GroupType.DM);
 
-    const socket = connectedUsers.get(data.recipientId);
-    if (socket) {
-      const message = this.directMessageService.addMessage(data);
-      if (message) {
-        socket.emit(DIRECTMESSAGE.sendMessageToUser, message);
-      }
+    const message = await this.directMessageService.addMessage(data);
+    const socket =  connectedUsers.get(data.recipientId);
+    if (socket && message) {
+      socket.emit(DIRECTMESSAGE.recMessageFromUser , message);
+      client.emit(DIRECTMESSAGE.recMessageFromUser , message);
     }
     // else {
     //   // const truncText = data.text?.length > 30 ? data.text?.substring(0, 30) + '...' : data.text;
@@ -98,27 +94,32 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   @SubscribeMessage(DIRECTMESSAGE.getDMMessages)
   async getMessages(client: Socket, data: DMMessagesdto) {
-    const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
-      return;
-    }
-    await this.helper.findUser(data.userId, true);
-
-    return await this.prisma.directMessage.findUnique({
-      where: {
-        id: data.groupChatId,
-        OR: [
-          { user1_id: data.userId },
-          { user2_id: data.userId }
-        ]
-      },
-      select: {
-        messages: {
-          orderBy: { created_at: 'desc' },
-          skip: ( data.page - 1 ) * 30,
-          take: 30,
-        },
+    try {
+      const userId = await this.helper.getUserId(client);
+      if (!userId || userId !== data.userId) {
+        return;
       }
-    });
+      await this.helper.findUser(data.userId, true);
+  
+      return await this.prisma.directMessage.findUnique({
+        where: {
+          id: data.groupChatId,
+          OR: [
+            { user1_id: data.userId },
+            { user2_id: data.userId }
+          ]
+        },
+        select: {
+          messages: {
+            orderBy: { created_at: 'desc' },
+            skip: ( data.page - 1 ) * 30,
+            take: 30,
+          },
+        }
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 }

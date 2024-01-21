@@ -203,24 +203,24 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
   handleGoalsEvent(client: Socket, obj : infoObj )//matchId : string)//, tabsId : string) 
   {
       let room = getRoomByMatchId(rooms, obj.ID.substring(1, obj.ID.length));
-      if (room.numberOfClients === 1 && room.late == false)
-      {
-        const intervalId: NodeJS.Timeout = setInterval(() => 
-        {
-          const elapsedTime: number = Date.now() - room.startTime;
-          const elapsedMinutes: number = Math.floor(elapsedTime / (1000));
+      // if (room.numberOfClients === 1 && room.late == false)
+      // {
+      //   const intervalId: NodeJS.Timeout = setInterval(() => 
+      //   {
+      //     const elapsedTime: number = Date.now() - room.startTime;
+      //     const elapsedMinutes: number = Math.floor(elapsedTime / (1000));
       
-          console.log(`Client two has spent ${elapsedMinutes} second in the room`);
+      //     console.log(`Client two has spent ${elapsedMinutes} second in the room`);
       
-          if (elapsedMinutes >= 20) 
-          {
-            client.emit('playerLeaveTheGame');
-            console.log(`Client two should lose after : ${elapsedMinutes} second `);
-            room.late = true;
-            clearInterval(intervalId);
-          }
-        }, 1000); 
-      }
+      //     if (elapsedMinutes >= 20) 
+      //     {
+      //       client.emit('playerLeaveTheGame');
+      //       console.log(`Client two should lose after : ${elapsedMinutes} second `);
+      //       room.late = true;
+      //       clearInterval(intervalId);
+      //     }
+      //   }, 1000); 
+      // }
       if (room !== undefined && room.numberOfClients === 2)
       {
         let goal : Goals = new Goals();

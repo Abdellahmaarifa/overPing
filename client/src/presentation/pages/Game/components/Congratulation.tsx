@@ -7,8 +7,6 @@ import { Result } from './Result';
 import { Achieve, MatchMode } from './Achieve';
 const serverUrl: string = 'ws://localhost:4055';
 import { useEffect } from 'react'; 
-import { fa } from '@faker-js/faker';
-import e from 'express';
 
 export class MatchResultDto {
   }
@@ -130,6 +128,7 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
       
       useEffect(() => {
 
+<<<<<<< HEAD
         let mode : MatchMode ;
 
         console.log("cong : ", playerOne.matchType, playerTwo.matchType);
@@ -169,6 +168,33 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
           console.log("The game result is : ", gameResult)
           console.log("player One : ", player1);
           console.log("player One : ", player2);
+=======
+          const player1 : Achieve = {
+            user_id: 2,
+            score_for: 0,
+            score_against: 4,
+            is_winner:  false,
+            bet: 0,
+            matchMode: MatchMode.TOURNAMENT,
+            strict_shot_goals:  2,
+            rebounded_goals: 3,
+            starts_collected: 0,
+          };
+    
+          const player2 : Achieve = {
+            user_id: 3,
+            score_for: 5,
+            score_against: 2,
+            is_winner:  true,
+            bet: 400000,
+            matchMode: MatchMode.TOURNAMENT,
+            strict_shot_goals:  2,
+            rebounded_goals: 2,
+            starts_collected: 0,
+          };
+    
+          socket?.emit('customAchieve', { player1, player2 });
+>>>>>>> 94663e315c39c4c9b2d64334a3e6ae5186178d1c
       }, [])
       ///
       //

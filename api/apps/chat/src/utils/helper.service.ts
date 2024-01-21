@@ -1,20 +1,19 @@
+import { FriendshipStatus, IUser } from '@app/common';
+import { IAdmins, IChannel, IMembers } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
-import { Socket } from 'socket.io'
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
-import { CheckerService } from './checker.service';
-import { IAdmins, IChannel, IMembers } from '@app/common/chat';
-import { FriendshipStatus, IUser } from '@app/common';
-import { GroupType } from '../interface/group.interface';
-import { ChannelGateway } from '../chat.gateway/channel.gateway';
 import { hash, verify } from 'argon2';
+import { Socket } from 'socket.io';
+import { ChannelGateway } from '../chat.gateway/channel.gateway';
+import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
+import { CheckerService } from './checker.service';
 
 // const argon2 = require('argon2');
 
@@ -86,7 +85,8 @@ export class HelperService {
   async getUserId(client: Socket) : Promise<number | null> {
     try {
       const session = client.handshake.headers.cookie;
-      const token = session?.split('=')[1];
+      console.log('>> session:', session);
+      const token = session!.split(';')[1]!.split('=')[1] || null;
       if (token) {
         const user = await this.jwtService.verifyAsync(token, {
           secret: this.configService.get('JWT_ACCESS_SECRET'),
@@ -134,9 +134,9 @@ export class HelperService {
     
   async ownerLeavedChannel(channelId: number) : Promise<void> {
     const admins = await this.findAdminsById(channelId);
-    if (!admins?.length) {
+    if (admins.length === 0) {
       const members = await this.findMembersById(channelId);
-      if (!members?.length) {
+      if (members.length === 0) {
         await this.prisma.channel.delete({
           where: { id: channelId }
         });
@@ -192,9 +192,6 @@ export class HelperService {
       return user![0] || null;
     }
     catch {
-      if (throwStatus) {
-        this.rpcExceptionService.throwBadRequest(`Failed to find user: ${user_id}`);
-      }
       return null;
     }
   }

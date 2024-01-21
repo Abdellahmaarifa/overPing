@@ -10,17 +10,8 @@ import { Request, Response } from "express";
 import { GqlArgumentsHost, GqlExceptionFilter } from "@nestjs/graphql";
 import { GraphQLResolveInfo } from "graphql";
 
-export interface errorFormat{
-  statusCode: number,
-  timestamp: string,
-  error: string,
-  path: string,
-  method?: string,
-  type?: any
-}
-
 @Catch(HttpException)
-export class HttpExceptionFilter implements ExceptionFilter, GqlExceptionFilter {
+export class ChatExceptionFilter implements ExceptionFilter, GqlExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();

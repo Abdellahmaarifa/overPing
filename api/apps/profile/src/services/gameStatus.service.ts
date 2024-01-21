@@ -1,9 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RpcExceptionService, PrismaError } from "@app/common/exception-handling";
 import { PrismaService } from "apps/profile/prisma/prisma.service";
-import { Prisma, GameMatch } from '@prisma/client';
 import { MatchResultDto } from "../dto/matchResult.input";
-import { MatchMode } from "../dto/gameModeInterface";
 import { TitleService, XpService } from "./xp.service";
 import { AchievementService } from "./achievement.service";
 import { WalletService } from "./wallet.service";
@@ -18,12 +16,6 @@ export class GameStatusService {
         private readonly achievementService: AchievementService,
         private readonly walletService: WalletService,
     ) {}
-
-    async createGameMatch(data: Prisma.GameMatchCreateInput): Promise<GameMatch> {
-        return this.prisma.gameMatch.create({
-            data,
-        });
-    }
 
     async updateGameStatusAndUserProfile(input: MatchResultDto) {
 

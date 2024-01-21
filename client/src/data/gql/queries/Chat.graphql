@@ -1,0 +1,149 @@
+query GetUserChannels($userId: Float!) {
+  getUserChannels(id: $userId) {
+    id
+    name
+    visibility
+  }
+}
+
+query GetUserDirectMessages($userId: Float!) {
+  getUserDirectMessages(id: $userId) {
+    id
+    user2 {
+      username
+      profileImgUrl
+      id
+    }
+    user1 {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+
+mutation CreateChannel($data: CreateChannelInput!) {
+  createChannel(data: $data) {
+    id
+    name
+    visibility
+  }
+}
+
+query SearchForChannel($channelName: String!, $userId: Float!) {
+  searchForChannel(channelName: $channelName, userId: $userId) {
+    id
+    name
+    visibility
+  }
+}
+
+mutation CreateDirectMessage($userId: Float!, $targetId: Float!) {
+  createDirectMessage(userID: $userId, targetID: $targetId) {
+    id
+    user1 {
+      id
+      username
+      profileImgUrl
+    }
+    user2 {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+
+query getChannelVisibility($userId: Float!, $groupId: Float!) {
+  findChannelById(userId: $userId, groupId: $groupId) {
+    name
+    id
+    visibility
+  }
+}
+
+mutation JoinChannel($data: MemberInput!) {
+  joinChannel(data: $data) {
+    id
+  }
+}
+
+mutation DeleteDirectMessage($data: DeletionInput!) {
+  deleteDirectMessage(data: $data)
+}
+
+query FindChanneMemebers($userId: Float!, $groupId: Float!) {
+  findChannelById(userId: $userId, groupId: $groupId) {
+    id
+    owner_id
+    members {
+      id
+      username
+      profileImgUrl
+    }
+    admins {
+      id
+      username
+      profileImgUrl
+    }
+    visibility
+  }
+}
+
+mutation AddAdmin($data: ActionToMemberInput!) {
+  addAdmin(data: $data)
+}
+
+mutation AddMember($data: ActionToMemberInput!) {
+  addMember(data: $data)
+}
+
+mutation DeleteChannel($data: MemberInput!) {
+  deleteChannel(data: $data)
+}
+
+mutation LeaveChannel($data: MemberInput!) {
+  leaveChannel(data: $data)
+}
+
+mutation UpdateChannel($data: UpdateChannelInput!) {
+  updateChannel(data: $data) {
+    id
+    name
+    owner_id
+    description
+    visibility
+    admins {
+      id
+      username
+      email
+      profileImgUrl
+    }
+    members {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+query FindChannelById($userId: Float!, $groupId: Float!) {
+  findChannelById(userId: $userId, groupId: $groupId) {
+    id
+    owner_id
+    name
+    description
+    visibility
+    admins {
+      id
+      username
+      email
+      profileImgUrl
+    }
+    members {
+      id
+      username
+      email
+      profileImgUrl
+    }
+  }
+}
