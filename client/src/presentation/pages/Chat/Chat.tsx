@@ -12,6 +12,8 @@ import { useApolloClient } from "@apollo/client";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChatViewModel } from "./ChatViewModel";
 import { Toaster } from "react-hot-toast";
+import { io } from "socket.io-client";
+import { CHANNEL_CMD, socket } from "constant/constants";
 
 const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   // call of hooks
@@ -38,6 +40,27 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
 
   useEffect(() => {
     // GET ALL THE CHANNELS AND THE DMS AT ONCE!
+    // socket.on("connect******************************", () => {
+    //   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+    // });
+
+    socket.on("disconnect*********************", () => {
+      console.log(socket.id); // undefined
+    });
+    socket.emit(
+      "get_channel_messages",
+      {
+        userId: Number(user?.id),
+        channelId: Number(id),
+        page: 1,
+      },
+      (data) => {
+        console.log("This ************* ", data);
+      }
+    );
+    // return () => {
+    //   socket.disconnect();
+    // };
     viewModel.initChat();
   }, []);
 

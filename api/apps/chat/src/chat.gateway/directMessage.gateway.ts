@@ -17,7 +17,7 @@ let connectedUsers: Map<number, any> = new Map();
 
 @WebSocketGateway({
   cors: {
-    origin: `${process.env.FRONT_URL}`,
+    origin: true,
     credentials: true
   },
   namespace: DIRECTMESSAGE.namespace,

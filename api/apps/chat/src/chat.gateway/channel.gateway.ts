@@ -1,25 +1,28 @@
-import { ClientAccessAuthorizationGuard } from '../guards/client.guard';
-import { Inject, Logger, UseGuards, forwardRef } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer,
-  OnGatewayInit, OnGatewayConnection,
-  OnGatewayDisconnect, SubscribeMessage } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { AddMessageInChanneldto, ChannelMessagesdto, MemberOfChanneldto } from '../dto';
-import { CheckerService } from '../utils/checker.service';
-import { ChannelService } from '../services/channel.service';
-import { HelperService } from '../utils/helper.service';
-import { PrismaService } from 'apps/chat/prisma/prisma.service';
-import { RpcExceptionService } from '@app/common/exception-handling';
-import { GroupType } from '../interface/group.interface';
 import { FriendshipStatus } from '@app/common';
 import { IChannelInfo, IMembersWithInfo, IMessage } from '@app/common/chat';
+import { RpcExceptionService } from '@app/common/exception-handling';
+import { Inject, Logger, forwardRef } from '@nestjs/common';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
+  SubscribeMessage,
+  WebSocketGateway, WebSocketServer
+} from '@nestjs/websockets';
+import { PrismaService } from 'apps/chat/prisma/prisma.service';
+import { Server, Socket } from 'socket.io';
+import { AddMessageInChanneldto, ChannelMessagesdto, MemberOfChanneldto } from '../dto';
 import { CHANNEL } from '../interface';
+import { GroupType } from '../interface/group.interface';
+import { ChannelService } from '../services/channel.service';
+import { CheckerService } from '../utils/checker.service';
+import { HelperService } from '../utils/helper.service';
 
 let connectedChannelUsers: Map<number, any> = new Map();
 
 @WebSocketGateway({
   cors: {
-    origin: `${process.env.FRONT_URL}`,
+    origin: '*',
     credentials: true
   },
   namespace: CHANNEL.namespace,
@@ -43,13 +46,12 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     this.logger.log('WebSocket initialized');
   }
 
-  @UseGuards(ClientAccessAuthorizationGuard)
   async handleConnection(client: Socket, ...args: any[]) {
-    const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
     const userId = await this.helper.getUserId(client);
-    if (user || userId) {
+    console.log('userId: ', userId)
+    if (userId) {
       this.logger.log(`User connected: ${client.id}`);
-      connectedChannelUsers.set(((user)? user.id : userId), client.id);
+      connectedChannelUsers.set(userId, client);
     }
     else {
       this.logger.log(`User authentication failed: ${client.id}`);
@@ -72,61 +74,61 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage(CHANNEL.join_channel)
   async joinChannel(client: Socket, data: MemberOfChanneldto) {
+    console.log('********* TRYING TO JOIN CHANNEL');
     const socket = connectedChannelUsers.get(data.userId);
     const userId = await this.helper.getUserId(client);
     if (!userId || userId !== data.userId) {
       this.rpcExceptionService.throwBadRequest(`Failed to find the user id ${userId}`);
     }
     if (await this.checker.checkForUser(data.userId) === false
-     || await this.checker.checkForChannel(data.channelId) === false) {
+     || await this.checker.checkForChannel(data.channelId, userId) === false) {
       this.rpcExceptionService.throwBadRequest(`Invalid user/channel id`);
     }
+    console.log('>> joined to :', data.userId);
     const channelName = `channel_` + data.channelId;
     client.join(channelName);
   }
 
   @SubscribeMessage(CHANNEL.sendMessageInchannel)
-  async sendMessageToUser(client: Socket, data: AddMessageInChanneldto) {
+  async sendMessageInChannel(client: Socket, data: AddMessageInChanneldto) {
+  //  : Promise<IMessage> {
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
       return;
     }
-    
-    const existingChannel = await this.checker.checkForChannel(data.channelId);
-    if (!existingChannel || !this.checker.isMember(userId, data.channelId)) {
+  
+    if (await this.checker.checkForChannel(data.channelId, userId) === false) {
       return;
     }
     
-    if (this.checker.isMuted(data.userId, data.channelId)) {
-      return;
-    }
-
-    const message = this.channelService.addMessage(data);
+    await this.checker.isMuted(data.userId, data.channelId);
+    
+    const message = await this.channelService.addMessage(data);
     if (message) {
       const channelName = `channel_` + data.channelId;
-
+      
       const blockedByUsers = (await this.checker.blockStatus(
         data.userId, 
         0, 
         FriendshipStatus.BlockedBy, 
         GroupType.CHANNEL
-      )) as number[];
+        )) as number[];
 
-      blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
+        blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
 
-      client.to(channelName).emit(CHANNEL.recMessageFromChannel, {
-        channelId: data.channelId,
-        message
-      });
+      client.to(channelName).emit(CHANNEL.recMessageFromChannel, message);
+      client.emit(CHANNEL.recMessageFromChannel, message);
 
       blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).join(channelName) });
     }
+    // return message;
   }
 
   @SubscribeMessage(CHANNEL.getChannelMessages)
   async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[]> {
     const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
+    console.log('id:', userId, '||| data.userId:', data.userId);
+    if (!userId || !data.channelId || userId !== data.userId) {
       return;
     }
     await this.helper.findUser(data.userId, true);
@@ -137,6 +139,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       FriendshipStatus.Blocked, 
       GroupType.CHANNEL
     )) as number[];
+console.log('channel id:', data.channelId);
 
     const channel = await this.prisma.channel.findUnique({
       where: {
@@ -160,6 +163,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     if (!channel) {
       this.rpcExceptionService.throwNotFound(`Failed to find channel: ${data.channelId}`)
     }
+    // console.log('message:', channel.messages);
     return channel.messages || [];
   }
 

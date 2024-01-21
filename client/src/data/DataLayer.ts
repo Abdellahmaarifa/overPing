@@ -1,5 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { initApolloClient } from "./gql/Apollo";
+import { Socket } from "socket.io-client";
 
 export default class initializeDataLayer {
   client: ApolloClient<NormalizedCacheObject>;

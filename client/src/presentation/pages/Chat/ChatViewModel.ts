@@ -9,6 +9,7 @@ import { FindChannelByIdDocument } from "gql/index";
 import { JoinChannelDocument } from "gql/index";
 import toast from "react-hot-toast";
 import { tabId } from "pages/Game/components/App";
+import { CHANNEL_CMD, socket } from "constant/constants";
 interface HooksType {
   navigate: NavigateFunction;
 }
@@ -177,6 +178,15 @@ export class ChatViewModel {
       // update dms
     }
     if (type == "channel") {
+      // join to socket channel
+      socket.emit(
+        CHANNEL_CMD.join_channel,
+        {
+          userId: Number(this.data.user?.id),
+          channelId: Number(this.data.id),
+        },
+        () => {}
+      );
       // get the data about the current channel
       if (currentChannel?.id == id) return;
       const channel = await this.fetchCurrentChannel();

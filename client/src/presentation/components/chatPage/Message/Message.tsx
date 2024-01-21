@@ -11,19 +11,26 @@ import {
   MessageSenderName,
 } from "./Message.style";
 import SenderCard from "../SenderCard/SenderCard";
-const Message = () => {
+const Message = ({
+  name,
+  date,
+  message,
+  image,
+}: {
+  name: string;
+  date: string;
+  message: string;
+  image: string;
+}) => {
   const [IsShown, setIsShown] = useState<boolean>(false);
 
   return (
     <MessageContainer onMouseLeave={() => setIsShown(false)}>
-      <MessageProfile
-        src={faker.image.avatar()}
-        onMouseEnter={() => setIsShown(true)}
-      />
+      <MessageProfile src={image} onMouseEnter={() => setIsShown(true)} />
       <MessageInfo>
         <MessageSender>
-          <MessageSenderName>salma</MessageSenderName>
-          <MessageSenderDate>Today at 10:22 PM</MessageSenderDate>
+          <MessageSenderName>{name}</MessageSenderName>
+          <MessageSenderDate>{date}</MessageSenderDate>
           {IsShown && (
             <SenderCard
               user={{
@@ -39,18 +46,7 @@ const Message = () => {
           )}
         </MessageSender>
         <MessageSample>
-          <span>hello world!</span>
-        </MessageSample>
-        <MessageSample>
-          <span>I hope you are doing okay!</span>
-        </MessageSample>
-        <MessageSample>
-          <span>see u again.</span>
-        </MessageSample>
-        <MessageSample>
-          <MessageImage
-            src={faker.image.urlLoremFlickr({ category: "nature" })}
-          />
+          <span>{message}</span>
         </MessageSample>
       </MessageInfo>
     </MessageContainer>
