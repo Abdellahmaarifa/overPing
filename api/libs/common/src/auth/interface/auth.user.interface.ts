@@ -1,7 +1,7 @@
 export class IAuthUser {
     id: number;
     username: string;
-    email?: string;
+    email: string;
     profileImgUrl: string;
     googleId?: string;
     fortyTwoId?: string;

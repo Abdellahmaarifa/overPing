@@ -61,7 +61,7 @@ import { UserCheckService } from "./microservices/chat/services/userCheck.servic
       path: '/graphql',
     },
   },
-      // formatError: formatError,
+      formatError: formatError,
     }),
   RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
   RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),

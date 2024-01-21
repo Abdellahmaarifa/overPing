@@ -89,6 +89,27 @@ export class UserService {
       this.handlePrismaError(error);
     }
   }
+  async searchUser(pageNumber =1, limit, username): Promise<IUser[]>{
+      const skip = (pageNumber - 1) * limit;
+      const users = await this.prisma.user.findMany({
+        where : {
+            username: {
+              startsWith : username
+            }
+          },
+          select: {
+            id: true,
+            username: true,
+            profileImgUrl: true,
+            email: true,
+            lastSeen: true,
+          },
+          skip,
+          take: limit,
+        })
+      return users;
+  }
+
 
   async findUserByUsername(username: string){
     try {
