@@ -78,7 +78,7 @@ export class AuthService {
       },
       {
         secret: this.configService.get<string>('Jwt_TWOFA_SECRET'),
-        expiresIn: '1m',
+        expiresIn: '7d',
       },
     );
     return newTFactorAccess;
@@ -93,7 +93,7 @@ export class AuthService {
         },
         {
           secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-          expiresIn: '1m',
+          expiresIn: '7d',
         },
       ),
       this.jwtService.signAsync(
