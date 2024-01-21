@@ -84,7 +84,7 @@ const NotificationList = ({
   active: boolean;
   data: Notification[];
 }) => {
-  console.log("from notification ", data);
+  //console.log("from notification ", data);
 
   return (
     <div

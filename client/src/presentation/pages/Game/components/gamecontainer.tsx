@@ -26,6 +26,10 @@ class GameContainer
   leftPlayerGoals : number = 0;
   rightPlayerGoals : number = 0; 
   alertY : number = 0;
+  leftPlayerRebound : number = 0;
+  leftPlayerStrict : number = 0;
+  rightPlayerRebound : number = 0;
+  rightPlayerStrict : number = 0;
   
 }
 export default GameContainer;

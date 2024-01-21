@@ -16,7 +16,7 @@ import { SERVER_END_POINT } from "constant/constants";
 
 // Log any GraphQL errors or network error that occurred
 const errorLink = onError((err) => {
-  console.log("catch err in apollo: ", err);
+  //console.log("catch err in apollo: ", err);
   // const { graphQLErrors, networkError } = err;
   // if (graphQLErrors)
   //   graphQLErrors.forEach(({ message, locations, path }) =>

@@ -27,8 +27,8 @@ export class PlayersMatching {
   matchKey: string;
 
 
-  @Field()
-  requestType: string;
+  // @Field()
+  // requestType: string;
 
 }
 

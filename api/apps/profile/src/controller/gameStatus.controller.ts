@@ -16,16 +16,18 @@ export class UserGameStatusController {
     this.gameStatusService.createGameMatch(data);
   }
 
-  @EventPattern({role: 'game', cmd: 'game-result'})
+  @MessagePattern({role: 'game', cmd: 'game-result'})
   async handleGameResult(payload: any) {
+    console.log("the reslute: ", payload);
     try {
       const stats = await this.gameStatusService.updateGameStatusAndUserProfile( payload );
       // await this.statistic.updateUserStatistic( payload );
+      console.log("HEEEEERE: ", stats);
       return stats;
     }
     catch (error) {
       return error;
     }
-}
+  }
 
 }

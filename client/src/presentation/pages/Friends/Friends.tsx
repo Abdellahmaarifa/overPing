@@ -114,7 +114,7 @@ const Friends = () => {
         } else {
           setFriends([]);
         }
-        console.log("hola >> : ", data);
+        //console.log("hola >> : ", data);
       })
       .catch((err) => console.log(err));
 

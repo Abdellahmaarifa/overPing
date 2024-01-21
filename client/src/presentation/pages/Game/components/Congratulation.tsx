@@ -1,16 +1,17 @@
 import './Congratulation.css'
 import UserInfo from './UserInfo'
 import { Howl, Howler } from 'howler';
-import { PrismaClient } from '@prisma/client';
-// import { prismaService } from '../../../../../../GameBackend/prisma/prisma.service';
 import { io, Socket } from 'socket.io-client';
 import { IGameData } from './game.interface';
 import { Result } from './Result';
+import { Achieve, MatchMode } from './Achieve';
 const serverUrl: string = 'ws://localhost:4055';
+import { useEffect } from 'react'; 
+import { fa } from '@faker-js/faker';
+import e from 'express';
 
-
-
-
+export class MatchResultDto {
+  }
 
 Howler.volume(1.0);
 interface CongraProps
@@ -123,14 +124,55 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
         //console.log(`App Disconnected from WebSocket server in tab `);
       });
   
-      //socket.emit('customResult', gameData);
-
+      
       //      console.log("Users: -----> ", playerOne, playerTwo);
+      
+      
+      useEffect(() => {
 
+        let mode : MatchMode ;
+
+        console.log("cong : ", playerOne.matchType, playerTwo.matchType);
+        if (playerOne.matchType === "online-random-match")
+            mode = MatchMode.ONLINE_RANDOM;
+        else if (playerOne.matchType === "match-against-computer")
+            mode = MatchMode.VS_COMPUTER;
+        else
+            mode = MatchMode.VS_FRIENDS;
+
+        let player1 : Achieve;
+        let player2 : Achieve;
+          player1 = {
+            user_id: playerOne.userId,
+            score_for: gameResult.plyOneGoals,
+            score_against: gameResult.plyTwoGoals,
+            is_winner:  true,
+            bet: playerOne.matchWager * 2,
+            matchMode: mode,
+            strict_shot_goals:  gameResult.leftPlayerStrict,
+            rebounded_goals: gameResult.leftPlayerRebound,
+            starts_collected: 0,
+          };
     
-
-
-
+          player2  = {
+            user_id: playerTwo.userId,
+            score_for: gameResult.plyTwoGoals,
+            score_against: gameResult.plyOneGoals,
+            is_winner:  false,
+            bet: 0,
+            matchMode: mode,
+            strict_shot_goals:  gameResult.rightPlayerStrict,
+            rebounded_goals: gameResult.rightPlayerRebound,
+            starts_collected: 0,
+          };
+          socket?.emit('customAchieve', { player1, player2 });
+          console.log("The game result is : ", gameResult)
+          console.log("player One : ", player1);
+          console.log("player One : ", player2);
+      }, [])
+      ///
+      //
+      //
 
 
 

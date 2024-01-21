@@ -21,7 +21,7 @@ export class WalletService {
     return true;
   }
 
-  private async updateWalletBalance(userId: number, amount: number): Promise<void> {
+  async updateWalletBalance(userId: number, amount: number): Promise<void> {
     try {
       await this.prisma.wallet.update({
         where: { user_id: userId },

@@ -52,7 +52,7 @@ const Profile = () => {
           fetchPolicy: "no-cache",
         })
         .then((data) => {
-          console.log("gettign the data: ", data);
+          //console.log("gettign the data: ", data);
 
           client
             .query({
@@ -64,7 +64,7 @@ const Profile = () => {
               fetchPolicy: "no-cache",
             })
             .then((data) => {
-              console.log("relation: ", data);
+              //console.log("relation: ", data);
               //if (data?.data?.getFriendship?.status === "BLOCKED") navigate("/error");
               if (!data?.data?.getFriendshipStatus) setFriendStatus(null);
               else setFriendStatus(data?.data?.getFriendshipStatus?.status);
@@ -85,7 +85,7 @@ const Profile = () => {
 
   // console.log("this is the profile: ", profile);
   //
-  console.log("this is the final profile: ", userProfile);
+ // console.log("this is the final profile: ", userProfile);
 
   const blockUser = async () => {
     await toast.promise(
@@ -137,7 +137,7 @@ const Profile = () => {
     );
   };
 
-  console.log("relation", friendsStatus);
+  //console.log("relation", friendsStatus);
   if (isLoading) return <h1>loading..</h1>;
   return (
     <ProfileConatiner>
