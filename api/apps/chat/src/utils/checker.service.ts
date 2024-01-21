@@ -1,17 +1,15 @@
+import { FriendshipStatus } from '@app/common';
+import { IVisibility } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
-import { Socket } from 'socket.io'
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
-import { FriendshipStatus } from '@app/common';
-import { GroupType } from '../interface/group.interface';
-import { IChannel, IVisibility } from '@app/common/chat';
 import { UpdateChanneldto } from '../dto';
+import { GroupType } from '../interface/group.interface';
 import { HelperService } from './helper.service';
 
 @Injectable()
@@ -109,6 +107,7 @@ export class CheckerService {
         user_id,
       },
     });
+    console.log('user muted:', mutedMember);
     if (mutedMember && mutedMember.expiry <= new Date()) {
       await this.prisma.mutedMembers.deleteMany({
         where: {
@@ -144,14 +143,20 @@ export class CheckerService {
       },
       id
     )
-    return !!!existedUser;
+    return !!existedUser;
   }
 
-  async checkForChannel(id: number) : Promise<Boolean> {
+  async checkForChannel(id: number, userId: number) : Promise<Boolean> {
     const existedChannel = await this.prisma.channel.findUnique({
-      where: { id }
+      where: {
+        id, 
+        OR: [
+          { admins: { some: { userId } } },
+          { members: { some: { userId } } },
+        ]
+      }
     });
-    return !!!existedChannel;
+    return !!existedChannel;
   }
 
   async channelVisibility(channelID: number) : Promise<string> {
@@ -185,7 +190,7 @@ export class CheckerService {
       && (data.visibility === IVisibility.PUBLIC || data.visibility === IVisibility.PRIVATE))
     {
       // PASSWORD REQUIRED TO AUTHORIZED THE UPDATE
-      if (data.password && await this.helper.isPasswordMatched(channel.password, data.password) === true) {
+      if (data.newPassword && await this.helper.isPasswordMatched(channel.password, data.newPassword) === true) {
         return null;
       } else {
         this.rpcExceptionService.throwBadRequest(`The update authorization requires a PASSWORD!`);

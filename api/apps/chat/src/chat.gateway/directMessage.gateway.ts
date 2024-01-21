@@ -12,6 +12,7 @@ import { HelperService } from '../utils/helper.service';
 import { FriendshipStatus } from '@app/common';
 import { GroupType } from '../interface/group.interface';
 import { DIRECTMESSAGE } from '../interface';
+import { GqlJwtAuthGuard } from 'apps/gateway/src/microservices/auth/guards/gql.accessToken.guard';
 
 let connectedUsers: Map<number, any> = new Map();
 
@@ -37,21 +38,18 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     this.logger.log('WebSocket initialized');
   }
 
-  @UseGuards(ClientAccessAuthorizationGuard)
   async handleConnection(client: Socket, ...args: any[]) {
-    const user = args[0]?.req?.user; // TEST IT IF IT WORKS ?????
     const userId = await this.helper.getUserId(client);
-
-    if (user || userId) {
-      this.logger.log(`User connected: ${client.id}`);
-      connectedUsers.set(((user)? user.id : userId), client.id);
+    if (userId) {
+      this.logger.log(`User connected: ${userId} [${client.id}`);
+      connectedUsers.set(userId, client);
     }
     else {
-      this.logger.log(`User authentication failed: ${client.id}`);
+      this.logger.log(`User authentication failed: ${userId} [${client.id}`);
       client.disconnect();
     }
   }
-
+ 
   async handleDisconnect(client: Socket) {
     const userId = await this.helper.getUserId(client);
     if (userId) {
@@ -62,11 +60,12 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   @SubscribeMessage(DIRECTMESSAGE.sendMessageToUser)
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
+    // this.logger.log(`User connected: ${userId} [${client.id}]`);
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
       return;
     }
-    
+    console.log(`******* data *******\n`, data);
     const existedRecipient = await this.checker.checkForUser(data.recipientId);
     if (!existedRecipient) {
       console.log(`Recipient doesn't exist!`);
@@ -76,12 +75,11 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.Blocked, GroupType.DM);
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.BlockedBy, GroupType.DM);
 
-    const socket = connectedUsers.get(data.recipientId);
-    if (socket) {
-      const message = this.directMessageService.addMessage(data);
-      if (message) {
-        socket.emit(DIRECTMESSAGE.sendMessageToUser, message);
-      }
+    const message = await this.directMessageService.addMessage(data);
+    const socket =  connectedUsers.get(data.recipientId);
+    if (socket && message) {
+      socket.emit(DIRECTMESSAGE.recMessageFromUser , message);
+      client.emit(DIRECTMESSAGE.recMessageFromUser , message);
     }
     // else {
     //   // const truncText = data.text?.length > 30 ? data.text?.substring(0, 30) + '...' : data.text;

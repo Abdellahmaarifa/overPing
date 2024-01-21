@@ -284,11 +284,11 @@ export class ChannelService {
     if (!channel) {
       this.rpcExceptionService.throwNotFound(`Failed to find channel: ${data.channelId}`);
     }
-    else if (channel.visibility === IVisibility.PROTECTED && !data.password) {
+    else if (channel.visibility === IVisibility.PROTECTED && !data.newPassword) {
       this.rpcExceptionService.throwUnauthorised(`This action requires a PASSWORD!`)
     }
-    else if (channel.visibility === IVisibility.PROTECTED && data.password) {
-      await this.helper.isPasswordMatched(channel.password, data.password);
+    else if (channel.visibility === IVisibility.PROTECTED && data.newPassword) {
+      await this.helper.isPasswordMatched(channel.password, data.newPassword);
     }
 
     await this.prisma.channel.delete({

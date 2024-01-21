@@ -31,6 +31,7 @@ export class ChannelResolver {
   async updateChannel(@Args('data') data: UpdateChannelInput) : Promise<GQLChannelModel> {
     return this.channelService.updateChannel( data );
   }
+
   @Mutation(() => Boolean)
   async deleteChannel(@Context() ctx,
     @Args('data') data: MemberInput) : Promise<Boolean> 
