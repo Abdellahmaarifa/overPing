@@ -14,6 +14,7 @@ import { ChannelGateway } from '../chat.gateway/channel.gateway';
 import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from './checker.service';
+import * as cookie from 'cookie'
 
 // const argon2 = require('argon2');
 
@@ -85,10 +86,12 @@ export class HelperService {
   async getUserId(client: Socket) : Promise<number | null> {
     try {
       const session = client.handshake.headers.cookie;
-      console.log('>> session:', session);
-      const token = session!.split(';')[1]!.split('=')[1] || null;
-      if (token) {
-        const user = await this.jwtService.verifyAsync(token, {
+      
+      const cookies = cookie.parse(client.handshake.headers.cookie || '');
+      const accessToken = cookies['Access_token'];
+
+      if (accessToken) {
+        const user = await this.jwtService.verifyAsync(accessToken, {
           secret: this.configService.get('JWT_ACCESS_SECRET'),
         });
         return user.sub;
@@ -149,10 +152,16 @@ export class HelperService {
   }
   
   async setOwner(channelId: number, newOwner: number, oldStatus: string) : Promise<void> {
-    await this.prisma.channel.update({
+    const updatedInfo = await this.prisma.channel.update({
       where: { id: channelId },
       data: {
         owner_id: newOwner
+      },
+      select: {
+        name: true,
+        owner_id: true,
+        description: true,
+        visibility: true
       }
     });
     if (oldStatus === "isMember") {
@@ -170,9 +179,7 @@ export class HelperService {
       });
     }
 
-    // await this.channelGateway.sendUpdatedChannelInfo(channelId, {
-    //   owner_id: newOwner,
-    // });
+    await this.channelGateway.sendUpdatedChannelInfo(channelId, updatedInfo);
   }
 
   
@@ -223,5 +230,11 @@ export class HelperService {
     return channelAdmins.map((admin) => ({
       id: admin.userId,
     }));
+  }
+
+  handleError(errorMsg: string) {
+    return {
+      error: { message: errorMsg }
+    }
   }
 }

@@ -166,7 +166,7 @@ export class ChannelService {
       return {owner: null, admins: null, members: null};
     }
 
-    return {
+    const list = {
       owner: await this.clientService.sendMessageWithPayload(
               this.client, { role: 'user', cmd: 'getUsersInfo' }, [users.owner_id]
             ),
@@ -177,6 +177,8 @@ export class ChannelService {
               this.client, { role: 'user', cmd: 'getUsersInfo' }, users.members.map((member) => member.userId)
             ),
     }
+    console.log('**************list*************\n', list, '\n**************************');
+    return list;
   }
 
   /***************** CHANNEL ACTIONS ****************/
@@ -461,7 +463,7 @@ export class ChannelService {
 
     return true;
   }
-
+ 
   async leave(userID: number, channelID: number) : Promise<Boolean> {
     if (await this.checker.isAdmin(userID, channelID) == true) {
       await this.prisma.admins.deleteMany({
@@ -503,6 +505,7 @@ export class ChannelService {
       this.rpcExceptionService.throwBadRequest(`The user is already an Admin`);
     }
 
+    
     await this.prisma.admins.create({
       data: {
         userId: data.targetId,
@@ -515,7 +518,7 @@ export class ChannelService {
         channelId: data.channelId,
       },
     });
-
+    
     await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
     await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
 

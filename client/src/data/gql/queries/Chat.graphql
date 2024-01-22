@@ -98,7 +98,7 @@ mutation AddMember($data: ActionToMemberInput!) {
   addMember(data: $data)
 }
 
-mutation DeleteChannel($data: MemberInput!) {
+mutation DeleteChannel($data: DeleteChannelInput!) {
   deleteChannel(data: $data)
 }
 

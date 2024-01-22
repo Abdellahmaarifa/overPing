@@ -3,6 +3,8 @@ import AyoubImg from "assets/landingPage/team/ayoub.png";
 import IlyasImg from "assets/landingPage/team/ilyas.png";
 import MaarifaImg from "assets/landingPage/team/maarifa.png";
 import TariqImg from "assets/landingPage/team/tariq.png";
+import PhantomImg from "assets/landingPage/team/phantom.png";
+
 import {
   FoooterCreatorIcon,
   FooterContainer,
@@ -62,9 +64,20 @@ const Footer = () => {
             <GithubIcon />
           </FoooterCreatorIcon>
         </FooterCreator>
+        <FooterCreator>
+          <FooterCreatorImg href="https://github.com/ayoubak141" target="_blank">
+            <img src={PhantomImg} alt="" />
+          </FooterCreatorImg>
+          <FoooterCreatorIcon
+            href="https://github.com/ayoubak141"
+            target="_blank"
+          >
+            <GithubIcon />
+          </FoooterCreatorIcon>
+        </FooterCreator>
       </FooterContent>
       <FooterCopyright>
-        Copyright © 2023 PingPong them All rights reserved.
+        Copyright © 2024 OverPing them All rights reserved.
       </FooterCopyright>
     </FooterContainer>
   );
