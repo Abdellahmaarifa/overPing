@@ -50,7 +50,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     const userId = await this.helper.getUserId(client);
     if (userId) {
       this.logger.log(`User connected: ${userId} [${client.id}`);
-      connectedChannelUsers.set(userId, client.id);
+      connectedChannelUsers.set(userId, client);
     }
     else {
       this.logger.log(`User authentication failed: ${userId} [${client.id}`);
@@ -75,12 +75,18 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async joinChannel(client: Socket, data: MemberOfChanneldto) {
     const socket = connectedChannelUsers.get(data.userId);
     const userId = await this.helper.getUserId(client);
+
     if (!userId || userId !== data.userId) {
-      this.rpcExceptionService.throwBadRequest(`Failed to find the user id ${userId}`);
+      this.logger.error({ error : {   message: `Failed to find the user id ${userId}` }});
+      return { error : {
+          message: `Failed to find the user id ${userId}`
+        }};
     }
     if (await this.checker.checkForUser(data.userId) === false
      || await this.checker.checkForChannel(data.channelId, userId) === false) {
-      this.rpcExceptionService.throwBadRequest(`Invalid user/channel id`);
+      return { error : {
+        message: `Invalid user/channel id`
+      }};
     }
     const channelName = `channel_` + data.channelId;
     client.join(channelName);
@@ -99,7 +105,9 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     
     const muteExpired = await this.checker.isMuted(userId, data.channelId);
     if (!!muteExpired) {
-      this.rpcExceptionService.throwBadRequest(`Failed: you're muted! go back at ${muteExpired}`);
+      return { error : {
+        message: `Failed: you're muted! go back at ${muteExpired}`
+      }};
     }
     
     const message = await this.channelService.addMessage(data);
@@ -122,7 +130,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   }
 
   @SubscribeMessage(CHANNEL.getChannelMessages)
-  async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[]> {
+  async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[] | any> {
     const userId = await this.helper.getUserId(client);
     if (!userId || !data.channelId || userId !== data.userId) {
       return;
@@ -158,14 +166,17 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       }
     });
     if (!channel) {
-      this.rpcExceptionService.throwNotFound(`Failed to find channel: ${data.channelId}`)
+      return { error : {
+        message: `Failed to find channel: ${data.channelId}`
+      }};
+      this.rpcExceptionService.throwNotFound()
     }
     return channel.messages || [];
   }
 
 
   @SubscribeMessage(CHANNEL.getChannelMembers)
-  async getMembers(client: Socket, data: MemberOfChanneldto) : Promise<IMembersWithInfo> {
+  async getMembers(client: Socket, data: MemberOfChanneldto) : Promise<IMembersWithInfo | any> {
     const userId = await this.helper.getUserId(client);
     if (!userId || userId !== data.userId) {
       return;
@@ -173,7 +184,9 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     await this.helper.findUser(data.userId);
 
     if (await this.checker.isMember(userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
+      return { error : {
+        message: `Failed to find channel: you're not a member`
+      }};
     }
 
     return await this.channelService.getMembers(data.channelId);
@@ -183,6 +196,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async sendUpdatedChannelInfo(channelId: number, updatedInfo: IChannelInfo) {
     const channelName = `channel_` + channelId;
   
+console.log(`>>>>> updatedInfo sent !!!!\n`, updatedInfo);
     this.server.to(channelName).emit(CHANNEL.recUpdatedChannelInfo, {
       channelId,
       updatedInfo
@@ -199,15 +213,13 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   }
 
   async sendUpdatedListOfChannels(userId: number, updatedList: IChannel[]) {
-    const client = this.server.sockets.sockets[connectedChannelUsers.get(userId)];
+    const client = connectedChannelUsers.get(userId);
     if (client) {
+      console.log(`(${userId}) updated list:`, updatedList, "\nclient:");
       client.emit(CHANNEL.recUpdatedChannelsList, updatedList);
     }
   }
 }
-
-
-
 
 
 // mute check // DONE

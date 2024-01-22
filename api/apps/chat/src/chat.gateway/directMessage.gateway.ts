@@ -42,7 +42,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     const userId = await this.helper.getUserId(client);
     if (userId) {
       this.logger.log(`User connected: ${userId} [${client.id}`);
-      connectedUsers.set(userId, client.id);
+      connectedUsers.set(userId, client);
     }
     else {
       this.logger.log(`User authentication failed: ${userId} [${client.id}`);
@@ -76,9 +76,9 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.BlockedBy, GroupType.DM);
 
     const message = await this.directMessageService.addMessage(data);
-    const recSocketId =  connectedUsers.get(data.recipientId);
-    if (recSocketId && message) {
-      this.server.sockets.sockets[recSocketId].emit(DIRECTMESSAGE.recMessageFromUser , message);
+    const recSocket =  connectedUsers.get(data.recipientId);
+    if (recSocket && message) {
+      recSocket.emit(DIRECTMESSAGE.recMessageFromUser , message);
       client.emit(DIRECTMESSAGE.recMessageFromUser , message);
     }
     // else {
@@ -128,12 +128,15 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   }
 
   async sendUpdatedListOfDMs(user1: number, user2: number, updatedList1: IDirectMessage[], updatedList2: IDirectMessage[]) {
-    const client1 = this.server.sockets.sockets[connectedUsers.get(user1)];
-    const client2 = this.server.sockets.sockets[connectedUsers.get(user2)];
-    if (client1) {
+    const client1_id = connectedUsers.get(user1);
+    const client2_id = connectedUsers.get(user2);
+
+    if (client1_id) {
+      const client1 = this.server.sockets.sockets[client1_id];
       client1.emit(DIRECTMESSAGE.recUpdatedDMsList, updatedList1);
     }
-    if (client2) {
+    if (client2_id) {
+      const client2 = this.server.sockets.sockets[client2_id];
       client2.emit(DIRECTMESSAGE.recUpdatedDMsList, updatedList2);
     }
   }

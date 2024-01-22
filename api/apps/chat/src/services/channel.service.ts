@@ -503,6 +503,7 @@ export class ChannelService {
       this.rpcExceptionService.throwBadRequest(`The user is already an Admin`);
     }
 
+    
     await this.prisma.admins.create({
       data: {
         userId: data.targetId,
@@ -515,7 +516,7 @@ export class ChannelService {
         channelId: data.channelId,
       },
     });
-
+    
     await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
     await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
 
