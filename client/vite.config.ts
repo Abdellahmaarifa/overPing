@@ -1,8 +1,15 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
+//import removeConsole from "vite-plugin-remove-console";
+
 // https://vitejs.dev/config/
 export default defineConfig({
+  envPrefix: "OVER_PING_",
+  define: {
+    "process.env": {},
+  },
   optimizeDeps: {
     esbuildOptions: {
       target: "es2020",
@@ -19,12 +26,24 @@ export default defineConfig({
       },
     }),
     svgr(),
+    nodePolyfills({
+      protocolImports: true,
+    }),
+    // removeConsole(),
   ],
   resolve: {
     alias: {
-      pages: "/src/pages",
-      components: "/src/components",
-      assets: "/src/assets",
+      pages: "/src/presentation/pages",
+      components: "/src/presentation/components",
+      assets: "/src/presentation/assets",
+      types: "/src/types",
+      context: "/src/presentation/context",
+      helpers: "/src/infrastructure/helpers",
+      gql: "/src/data/gql",
+      state: "/src/state",
+      constant: "/src/data/constant",
+      domain: "/src/domain",
+      presentation: "/src/presentation",
     },
   },
 });

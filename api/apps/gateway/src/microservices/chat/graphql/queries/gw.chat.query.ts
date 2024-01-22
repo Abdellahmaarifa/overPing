@@ -1,0 +1,57 @@
+import { UseGuards } from '@nestjs/common';
+import { Resolver,Query, Args} from '@nestjs/graphql';
+import { GwChannelService, GwDirectMessageService } from '../../services';
+import { GQLChannelModel, GQLChannelSearchModel, GQLDirectMessageModel } from '../models';
+import { IChannel, IMembersWithInfo } from '@app/common/chat';
+import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
+
+@Resolver()
+@UseGuards(GqlJwtAuthGuard)
+export class ChatQueriesResolver {
+  constructor(
+    private readonly directMessageService: GwDirectMessageService,
+    private readonly channelService: GwChannelService
+  ) {}
+
+  /******* Queries to get DIRECT-MESSAGES / CHANNELS of a User *******/
+
+  @Query(() => [GQLDirectMessageModel], { nullable: true })
+  async getUserDirectMessages(@Args('id') id: number): Promise<GQLDirectMessageModel[]> {
+    return await this.directMessageService.getUserDirectMessages(id);
+  }
+
+  @Query(() => [GQLChannelModel], { nullable: true })
+  async getUserChannels(@Args('id') id: number): Promise<GQLChannelModel[]> {
+    return await this.channelService.getUserChannels(id);
+  }
+
+
+  /****** Queries to find DIRECT-MESSAGES / CHANNELS by user and group ID ******/
+
+  @Query(() => GQLDirectMessageModel, { nullable: true })
+  async findDirectMessageById(
+    @Args('userId') userId: number,
+    @Args('groupId') groupId: number
+  ): Promise<GQLDirectMessageModel> {
+    return await this.directMessageService.findDirectMessageById(userId, groupId);
+  }
+
+  @Query(() => GQLChannelModel, { nullable: true })
+  async findChannelById(
+    @Args('userId') userId: number,
+    @Args('groupId') groupId: number
+  ): Promise<{channel: IChannel, members: IMembersWithInfo}> {
+    return await this.channelService.findChannelById(userId, groupId);
+  }
+
+  /*********** Search For channel by Name ***********/
+
+  @Query(() => [GQLChannelSearchModel], { nullable: true })
+  async searchForChannel(
+    @Args('channelName') channelName: string,
+    @Args('userId') userId: number
+    ): Promise<GQLChannelSearchModel[]> {
+    return await this.channelService.searchForChannel(channelName, userId);
+  }
+
+}

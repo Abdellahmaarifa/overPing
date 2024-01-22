@@ -1,0 +1,26 @@
+#!/bin/bash
+
+docker exec -it -w /usr/src/app/apps/auth/prisma auth npx prisma migrate dev --name my_migration_auth 
+docker exec -i -w /usr/src/app/apps/auth/prisma auth npx prisma migrate reset --force
+docker restart auth
+docker exec -w /usr/src/app/apps/auth/prisma auth npx prisma studio &
+
+
+docker exec -it -w /usr/src/app/apps/profile/prisma profile npx prisma migrate dev --name my_migration_profile
+docker exec -i -w /usr/src/app/apps/profile/prisma profile npx prisma migrate reset --force
+docker restart profile
+docker exec -w /usr/src/app/apps/auth/prisma profile npx prisma studio &
+
+
+docker exec -it -w /usr/src/app/apps/chat/prisma chat npx prisma migrate dev --name my_migration_chat
+docker exec -i -w /usr/src/app/apps/chat/prisma chat npx prisma migrate reset --force
+docker restart chat
+docker exec -w /usr/src/app/apps/chat/prisma chat npx prisma studio &
+
+
+
+docker exec -it -w /usr/src/app/apps/game/prisma theGame npx prisma migrate dev --name my_migration_game
+docker exec -i -w /usr/src/app/apps/game/prisma theGame npx prisma migrate reset --force
+docker restart theGame
+docker exec -w /usr/src/app/apps/game/prisma theGame npx prisma studio &
+

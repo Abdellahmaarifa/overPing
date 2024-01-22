@@ -1,0 +1,25 @@
+query findProfileByUserId($userId: Float!) {
+  findProfileByUserId(userId: $userId) {
+    id
+    user_id
+    nickname
+    title
+    xp
+    rank
+    about
+    bgImageUrl
+    wallet {
+      id
+      balance
+      user_id
+      betAmount
+    }
+    gameStatus {
+      matchesLoss
+      matchesWon
+      totalMatches
+      win_streak
+      best_win_streak
+    }
+  }
+}

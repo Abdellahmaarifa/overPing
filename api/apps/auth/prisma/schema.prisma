@@ -1,0 +1,39 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                         Int      @id @default(autoincrement())
+  username                   String   @unique
+  email                      String
+  profileImgUrl              String   @default("http://localhost:5500/image/avatar/defaultAvatar.jpg")
+  password                   String?
+  googleId                   String?  @unique
+  fortyTwoId                 String?  @unique
+  refreshToken               String?
+  twoFactorSecret            String   @default("")
+  twoStepVerificationEnabled Boolean  @default(false)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+  showUpdateWin              Boolean  @default(false)
+  lastSeen                   DateTime @default(now())
+  inGame                     Boolean  @default(false)
+
+    // Friends and FriendOf relations
+  friends  User[] @relation("friends")
+  friendOf User[] @relation("friends")
+
+  // Block system relation
+  blocks    User[] @relation("blocks")
+  blockedBy User[] @relation("blocks")
+
+   // Friend requests and pending friends relations
+  friendRequests User[] @relation("friendRequests")
+  pendingFriends User[] @relation("friendRequests")
+}

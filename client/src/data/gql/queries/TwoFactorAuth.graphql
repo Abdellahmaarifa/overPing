@@ -1,0 +1,18 @@
+mutation enableTwoFactorAuth($id: Float!) {
+    enableTwoFactorAuth(id: $id)
+}
+
+
+mutation verifyTwoFactorAuth($id : Float!, $code: String!) {
+    verifyTwoFactorAuth(id: $id, code:$code)
+}
+
+
+mutation authenticate_2fa($code: String!){
+    authenticate_2fa(code: $code) {
+        id
+        email
+        username
+        twoStepVerificationEnabled
+    }
+}

@@ -1,13 +1,12 @@
-import React from "react";
+import App from "presentation/PresentationLayer";
 import { createRoot } from "react-dom/client";
-import App from "./App";
-import GlobalStyles from "./styles/GlobalStyles";
+import initializeDataLayer from "./data/DataLayer";
+import initializeDomainLayer from "./domain/DomainLayer";
+import { registerGlobalEvents } from "gql/events";
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
-root.render(
-  <React.StrictMode>
-    <GlobalStyles />
-    <App />
-  </React.StrictMode>
-);
+registerGlobalEvents();
+const { client } = new initializeDataLayer();
+const store = new initializeDomainLayer(client);
+root.render(<App store={store} />);

@@ -1,0 +1,69 @@
+# GET THE User
+query User($id: Float!) {
+  findUserById(id: $id) {
+    id
+    email
+    username
+    twoStepVerificationEnabled
+    profileImgUrl
+  }
+}
+
+# DELETE THE User
+mutation deleteAccount($id: Float!, $password: String!) {
+  deleteAccount(id: $id, password: $password)
+}
+
+query Account($userId: Float!) {
+  findUserById(id: $userId) {
+    id
+    email
+    username
+    profileImgUrl
+  }
+
+  findProfileByUserId(userId: $userId) {
+    id
+    nickname
+    title
+    xp
+    rank
+    about
+    bgImageUrl
+    wallet {
+      id
+      balance
+      betAmount
+    }
+    gameStatus {
+      matchesLoss
+      matchesWon
+      totalMatches
+      win_streak
+      best_win_streak
+    }
+  }
+}
+
+mutation UpdateUserProfile(
+  $userId: Float!
+  $UpdateProfileInput: UpdateProfileInput!
+) {
+  UpdateUserProfile(userId: $userId, UpdateProfileInput: $UpdateProfileInput)
+}
+
+mutation updateUserAvatarImg($userId: Float!, $AvatarImage: Upload!) {
+  updateUserAvatarImg(userId: $userId, image: $AvatarImage)
+}
+
+mutation updateProfileBgImg($userId: Float!, $BgImage: Upload!) {
+  updateProfileBgImg(userId: $userId, image: $BgImage)
+}
+
+mutation updateUser($userUpdateInput: UpdateUserInput!) {
+  updateUser(userUpdateInput: $userUpdateInput)
+}
+
+mutation updateUserStatus($currentTime: String!) {
+  updateUserStatus(currentTime: $currentTime)
+}

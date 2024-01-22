@@ -1,0 +1,165 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type GQLUserModel {
+  id: ID!
+  username: String!
+  email: String!
+  profileImgUrl: String!
+  googleId: String
+  fortyTwoId: String
+  twoStepVerificationEnabled: Boolean!
+  showUpdateWin: Boolean
+}
+
+type GQLWalletModel {
+  id: ID!
+  balance: Float!
+  user_id: Float!
+  betAmount: Float!
+}
+
+type GQLGameStatusModel {
+  matchesLoss: Float!
+  matchesWon: Float!
+  totalMatches: Float!
+  win_streak: Float!
+  best_win_streak: Float!
+}
+
+type GQLUserProfileModel {
+  id: ID!
+  user_id: Float!
+  nickname: String!
+  title: String!
+  xp: Float!
+  rank: Float!
+  about: String!
+  bgImageUrl: String!
+  wallet: GQLWalletModel!
+  gameStatus: GQLGameStatusModel!
+}
+
+type GQLAchievement {
+  id: ID!
+  title: String!
+  requirement: String!
+  description: String!
+  imageURL: String!
+}
+
+type PingPongPayload {
+  user1Id: Float!
+  user2Id: Float!
+  matchKey: String!
+}
+
+type GQLFriendShipeStatus {
+  id: ID!
+  userA: ID!
+  userB: ID!
+  blocker: ID
+  status: String!
+}
+
+type GQLFriendsModel {
+  friends: [GQLUserModel!]!
+}
+
+type Query {
+  hello: String!
+  findProfileById(id: Float!): GQLUserProfileModel
+  findProfileByUserId(userId: Float!): GQLUserProfileModel
+  getUserAchievements(userId: Float!): [GQLAchievement!]
+  getAllAchievements: [GQLAchievement!]
+  helloT: String!
+  findUserById(userId: Float!): GQLUserModel!
+  findAllUsers(pageNumber: Float!): [GQLUserModel!]!
+  getUser: GQLUserModel!
+  getFriendship(userId: Float!, friendId: Float!): GQLFriendShipeStatus
+  getUserFriends(userId: Float!): GQLFriendsModel!
+  getFriendshipRequests(userId: Float!): GQLFriendsModel!
+  getBlockedUsers(userId: Float!): GQLFriendsModel!
+}
+
+type Mutation {
+  joinMatchmakingQueue(JoinMatchmakingInput: JoinMatchmakingInput!): Boolean
+  addFriend(userId: Float!, friendId: Float!): Boolean!
+  removeFriend(userId: Float!, friendId: Float!): Boolean!
+  acceptFriendship(userId: Float!, friendId: Float!): Boolean!
+  blockUser(userId: Float!, friendId: Float!): Boolean!
+  unblockUser(userId: Float!, friendId: Float!): Boolean!
+  updateUserAvatarImg(userId: Float!, image: Upload!): String!
+  updateProfileBgImg(userId: Float!, image: Upload!): String!
+  createProfile(profileCredentials: CreateProfileInput!): GQLUserProfileModel!
+  removeUserProfile(userId: Float!): Boolean!
+  UpdateUserProfile(userId: Float!, UpdateProfileInput: UpdateProfileInput!): Boolean!
+  transferFunds(transferFundsInput: TransferFundsInput!): Boolean
+  placeBet(transferFundsInput: PlaceBetInput!): Boolean
+  resolveBet(resolveBetInput: ResolveBetInput!): Boolean
+  signIn(authCredentials: AuthCredentialsInput!): GQLUserModel!
+  signUp(userCreationInput: UserCreationInput!, profileImage: Upload): GQLUserModel!
+  logOut(id: Float!): Boolean!
+  deleteAccount(id: Float!, password: String!): Boolean!
+  refresh: String!
+  enableTwoFactorAuth(id: Float!): String!
+  verifyTwoFactorAuth(id: Float!, code: String!): Boolean!
+  authenticate_2fa(code: String!): GQLUserModel!
+  updateUser(userUpdateInput: UpdateUserInput!): Boolean!
+}
+
+input JoinMatchmakingInput {
+  userId: Float!
+  matchType: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input CreateProfileInput {
+  userId: Float!
+  username: String!
+}
+
+input UpdateProfileInput {
+  nickname: String
+  about: String
+  bgImageUrl: String
+}
+
+input TransferFundsInput {
+  senderId: Float!
+  recipientId: Float!
+  amount: Float!
+}
+
+input PlaceBetInput {
+  userId: Float!
+  betAmount: Float!
+}
+
+input ResolveBetInput {
+  userId: Float!
+  isWinner: Boolean!
+}
+
+input AuthCredentialsInput {
+  username: String!
+  password: String!
+}
+
+input UserCreationInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  email: String!
+  showUpdateWin: Boolean!
+}
+
+type Subscription {
+  matchWaitingList(userId: Float!): PingPongPayload!
+}

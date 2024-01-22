@@ -1,0 +1,190 @@
+.ModeContainer
+{
+    background-color: rgb(14, 24, 33);
+    background-color: rgb(43, 56, 67);
+    display: inline-block;
+    /* width: 59vw;
+    height: 69vh; */
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+}
+
+.ModeTitle
+{
+    display:inline-block;
+    width: 100%;
+    height: 15%;
+    font-size: 0;
+}
+.ModeTitle > p
+{
+    width: 100%;
+    height: 100%;
+    font-size: 4.5vmin;
+    font-weight: bolder;
+    color: lightgray;
+    text-align: center;
+    padding: 4% 0vw;
+}
+
+.ModeHint
+{
+    display:inline-block;
+    width: 100%;
+    height: 15%;
+    font-size: 0vh;
+}
+
+.ModeHint > p
+{
+    width: 100%;
+    height: 100%;
+    font-size: 3.2vmin;
+    padding: 2.5vh 0;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+.Modes
+{
+    width: 100%;
+    height: 50%;
+    display: inline-block;
+    font-size: 0;
+}
+
+.ModeSubContainer
+{
+    width: 80%;
+    height: 85%;
+    border: 0.5vh solid gray;
+    border-radius: 1vh;
+    margin: 0% 10%;
+    display: flex;
+    flex-direction: row;
+    /* flex-wrap: wrap; */
+    justify-content: space-around;
+    background-color: rgb(28, 35, 42);
+}
+
+.mode1
+{
+    width: 25%;
+    height: 60%;
+    font-size: 0;
+    margin: 6vmin 0;
+    border-radius: 1vh;
+    background-color: rgb(40, 47, 55);
+    
+}
+.mode2
+{
+    width: 25%;
+    height: 60%;
+    font-size: 0;
+    margin: 6vmin 0;
+    border-radius: 1vh;
+    background-color: rgb(40, 47, 55);
+}
+.mode3
+{
+    width: 25%;
+    height: 60%;
+    font-size: 0;
+    margin: 6vmin 0;
+    border-radius: 1vh;
+    background-color: rgb(40, 47, 55);
+}
+
+.ModeImg
+{
+    width: 93%;
+    height: 65%;
+    background-color: #3c5c99;
+    margin: 1vh auto ;
+    border: 0.1vmin solid gray;
+}
+
+.modeName
+{
+    width: 93%;
+    height: 25%;
+    font-size: 0;
+    margin: auto;
+}
+
+.modeName > p
+{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3vmin;
+    color: gray;
+}
+
+.i1
+{
+    /* background: radial-gradient(25.64% 75.76% at 50% 50%, #134371 0%, #09152B 97.4%); */
+    background-image: url('../../public/BackgroundImages/background_image1.jpg') ;
+    background-size: 100% 100%;
+}
+.i2
+{
+    background-image: url('../../public/BackgroundImages/background_image2.jpg') ;
+    background-size: 100% 100%;
+}
+
+.i3
+{
+    background-image: url('../../public/BackgroundImages/background_image3.jpg') ;
+    background-size: 100% 100%;
+}
+
+.ModeConfirm
+{
+    display:inline-block;
+    width: 100%;
+    height: 20%;
+    text-align: center;
+    font-size: 0;
+}
+
+.ModeConfirm > button
+{
+    width: 20%;
+    height: 35.5%;
+    cursor: pointer;
+    background-color: lightgray;
+    border-radius: 1vh;
+    font-size: 2vmin;
+    border: none;
+}
+
+button:hover
+{
+    background-color: #3c5c99;
+}
+
+.mode1:hover > .modeName > p , .mode2:hover > .modeName > p , .mode3:hover > .modeName > p
+{
+    color: white;
+}
+
+.hoverMode1  , .hoverMode2, .hoverMode3
+{
+    background-color:rgb(76, 82, 88);
+    cursor: pointer; 
+}
+/* @media all and (orientation: portrait) {
+    body {
+        -webkit-transform: rotate(90deg); 
+        -moz-transform: rotate(90deg); 
+        -ms-transform: rotate(90deg); 
+        -o-transform: rotate(90deg); 
+        transform: rotate(90deg); 
+    }
+} */

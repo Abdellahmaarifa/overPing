@@ -1,0 +1,318 @@
+.betterContainer
+{
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    font-size: 0;
+    /* background-color: rgb(48, 48, 151); */
+    background: radial-gradient(25.64% 75.76% at 50% 50%, #134371 0%, #09152B 97.4%);
+
+}
+
+.betterState
+{
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    height: 20%;
+    z-index: 2;
+    animation: neon1 1.5s ease-in-out infinite alternate;
+    /* background-color: aqua; */
+}
+.betterVs
+{
+    position: absolute;
+    display: inline-block;
+    z-index: 2;
+    top: 20%;
+    width: 100%;
+    height: 30%;
+    text-align: center;
+    /* background-color: rgb(36, 103, 103); */
+}
+.betterCoins
+{
+    position: absolute;
+    display: inline-block;
+    z-index: 2;
+    top: 50%;
+    width: 100%;
+    height: 30%;
+    /* background-color: rgb(72, 170, 170); */
+    font-size: 0;
+    text-align: center;
+}
+
+
+.betterState > p , .betterVs > p
+{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    font-size: 6vh;
+    font-weight: bolder;
+    font-style: italic;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-align: center;
+    color: white; 
+    z-index: 4;
+    font-size: 5vmin;
+}
+
+.betterState > p 
+{
+    padding-top: 3vh;
+    font-size: 6vmin;
+    color: gray;
+}
+
+
+.betterCoins > p 
+{
+    position: absolute;
+    width: 14%;
+    height: 30%;
+    left: 43%;
+    border-radius: 1vh;
+    text-align: center;
+    border: 0.1vh solid white;
+    font-size: 2vw;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: white; 
+    padding: auto auto;
+}
+
+.betterFlashLight
+{
+    position: absolute;
+    z-index: 1;
+    top: 70%;
+    left: 41%;
+    width: 18%;
+    height: 0.6vmin;
+    border-radius: 50%;
+    background-color: rgb(225, 225, 225);
+    box-shadow: 0vh 0vw 0.7vh 0.6vh rgb(199, 199, 199);
+    text-align: center;
+}
+
+.betterFlashLight > p
+{
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    z-index: 1;
+    top: -3.5vmin;
+    /* left: 35%; */
+    color: white;
+    opacity: 1;
+    font-weight: bolder;
+    font-style: italic;
+    font-size: 6vmin;
+    font-family: 'Courier New', Courier, monospace;
+
+}
+
+.betterPlayer1
+{
+    position: absolute;
+    display: inline-block;
+    z-index: 5;
+    top: 15%;
+    left: 22%;
+    width: 17%;
+    height: 75%;
+    background-color: #1f70b7;
+    text-align: center;
+    transform: skew(5deg);
+}
+
+.betterPlyInside1
+{
+    display: inline-block;
+    width: 95%;
+    height: 90%;
+    margin: 0 1%;
+    margin-top: 10%;
+    background-color: rgba(0, 0, 0, 0.3); 
+    text-align: center;
+}
+
+.betterAvatarR1Cover
+{
+    display: inline-block;
+    width: 70%;
+    height: 30%;
+    background-color: rgb(10, 36, 59) ;
+    clip-path    : polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+    padding: 0.5vmin 0.5vmin;
+    /* margin-left: 3vw; */
+    margin-top: 20%;
+    transform: skew(-5deg);
+    animation: neon0 1s ease-in-out infinite alternate;
+}
+
+.betterAvatarR1
+{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background-color: #134371;
+    background-image: url('../../public/images/kilua.jpg');
+    background-size: 100% 100%;
+    clip-path    : polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+}
+
+.betterPlayer2
+{
+    position: absolute;
+    display: inline-block;
+    z-index: 5;
+    top: 15%;
+    left : 61%;
+    width: 17%;
+    height: 75%;
+    background-color:  #DA989E;
+    font-size: 0;
+    text-align: center;
+    transform: skew(-5deg);
+}
+
+.betterPlyInside2
+{
+    display: inline-block;
+    width: 95%;
+    height: 90%;
+    margin: 0 1%;
+    margin-top: 10%;
+    background-color: rgba(0, 0, 0, 0.3); 
+    text-align: center;
+}
+
+.betterAvatarR2Cover
+{
+    display: inline-block;
+    width: 70%;
+    height: 30%;
+    background-color: rgb(94, 59, 63)  ;
+    clip-path    : polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+    padding: 2%;
+    /* margin-left: 3vw; */
+    margin-top: 20%;
+    transform: skew(5deg);
+}
+
+.betterAvatarR2
+{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../public/images/machi.jpg');
+    background-size: 100% 100%;
+    clip-path    : polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+}
+
+.betterPlayerName2 , .betterPlayerName1
+{
+    display: inline-block;
+    width: 100%;
+    height: 7%;
+    font-size: 0;
+    margin-top: 8%;
+    /* background-color: #134371; */
+    text-align: center; 
+}
+
+.betterPlayerName2 > p , .betterPlayerName1 > p
+{
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    font-size: 2vmin;
+    color: white;
+    vertical-align: top; 
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.betterDiposit1 , .betterDiposit2
+{
+    display: inline-block;
+    width: 50%;
+    height: 8%;
+    border-radius: 1vh;
+    font-size: 0;
+    background-color: #1f70b7;
+    margin: 2.5vh 0vw;   
+    border: 0.1vh solid white;
+    border-radius: 1vh;
+    text-align: center;
+}
+
+.betterDiposit1 > p , .betterDiposit2 > p
+{
+    /* display: inline-block; */
+    /* position: relative; */
+    /* top: 10%; */
+    width: 100%;
+    height: 100%;
+    font-size: 2vmin;
+    color: white;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+@keyframes neon0
+{
+    from {
+        background-color: rgb(94, 59, 63);
+    }
+    to {
+        background-color: #cec023;
+    }
+}
+
+
+
+.betterWinLose
+{
+    width: 100%;
+    height: 10%;
+    color: yellow;
+    font-size: 4vmin;
+    text-align: center;
+    vertical-align: top;
+    font-weight: bold;
+}
+
+@media (max-width : 400px)
+{
+    .betterPlayer1 , .betterPlayer2, .betterAvatarR2Cover, .betterAvatarR1Cover 
+    {
+        transform: skew(0deg);
+    }
+}
+
+#betterAvatar1 , #betterAvatar2
+{
+    width: 100%;
+    height: 100%;
+}
+
+/* @media all and (orientation: portrait) {
+    body {
+        -webkit-transform: rotate(90deg); 
+        -moz-transform: rotate(90deg); 
+        -ms-transform: rotate(90deg); 
+        -o-transform: rotate(90deg); 
+        transform: rotate(90deg); 
+    }
+} */

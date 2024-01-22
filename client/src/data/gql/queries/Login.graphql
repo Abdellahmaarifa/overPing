@@ -1,0 +1,14 @@
+# mutation Login($password: String!, $email: String!) {
+#   login(password: $password, email: $email) {
+#     accessToken
+#   }
+# }
+
+mutation Login($password: String!, $email: String!) {
+  signIn(authCredentials: { username: $email, password: $password }){
+    id
+    username,
+  }
+}
+
+

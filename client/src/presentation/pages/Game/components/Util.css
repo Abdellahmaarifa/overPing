@@ -1,0 +1,169 @@
+.UtilContainer
+{
+    background-color: #0e1821;
+    background-color: rgb(43, 56, 67);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+    top : 0;
+}
+
+.UtilTitle
+{
+    display:inline-block;
+    width: 100%;
+    height: 15%;
+    font-size: 0;
+}
+.UtilTitle > p
+{
+    width: 100%;
+    height: 100%;
+    font-size: 4.5vmin;
+    font-weight: bolder;
+    color: lightgray;
+    text-align: center;
+    padding: 4% 0vw;
+}
+
+.UtilHint
+{
+    display:inline-block;
+    width: 100%;
+    height: 15%;
+    font-size: 0vh;
+}
+
+.UtilHint > p
+{
+    width: 100%;
+    height: 100%;
+    font-size: 3.2vmin;
+    padding: 2.5vh 0;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+.Utils
+{
+    width: 100%;
+    height: 50%;
+    display: inline-block;
+    font-size: 0;
+    /* background-color: rgb(26, 196, 196); */
+}
+
+.UtilContainers
+{
+    width: 70%;
+    height: 85%;
+    background-color: rgb(57, 57, 136); 
+    border: 0.5vh solid gray;
+    border-radius: 1vh;
+    margin: 0% 15%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    background-color: rgb(28, 35, 42);
+}
+
+.util1
+{
+    width: 30.5%;
+    height: 70%;
+    font-size: 0;
+    margin: 3vmin 0;
+    border-radius: 1vh;
+    border: 0.1vmin solid gray;
+    text-align: center;
+}
+.util2
+{
+    width: 30.5%;
+    height: 70%;
+    font-size: 0;
+    margin: 3vmin 0;
+    border-radius: 1vh;
+    border: 0.1vmin solid gray;
+    text-align: center;
+}
+
+.UtilImg
+{
+    display: inline-block;
+    width: 93%;
+    height: 70%;
+    background-color: #3c5c99;
+    margin: 1vh 0vw;
+    border: 0.1vmin solid gray;
+}
+
+.UtilName
+{
+    display: inline-block;
+    width: 93%;
+    height: 20%;
+    font-size: 0;
+    text-align: center;
+}
+
+.UtilName > p
+{
+    width: 100%;
+    height: 100%;
+    /* background-color: aquamarine; */
+    font-size: 3vmin;
+    color: gray;
+}
+
+.U1
+{
+    background-image: url('../../public/images/mouse.jpg') ;
+    background-size: 100% 100%;
+}
+
+.U2
+{
+    background-image: url('../../public/images/keyboard.jpg') ;
+    background-size: 100% 100%;
+}
+
+.UntilConfirm
+{
+    display:inline-block;
+    width: 100%;
+    height: 20%;
+    text-align: center;
+    font-size: 0;
+}
+
+.UntilConfirm > button
+{
+    width: 20%;
+    height: 35.5%;
+    cursor: pointer;
+    background-color: lightgray;
+    border-radius: 1vh;
+    font-size: 2vmin;
+    border: none;
+}
+
+button:hover
+{
+    background-color: #3c5c99;
+}
+
+.util1:hover > .UtilName > p , .util2:hover > .UtilName > p
+{
+    color: white;
+}
+
+.hoverUtil1  , .hoverUtil2
+{
+    background-color:rgb(76, 82, 88);
+    cursor: pointer; 
+}
+
