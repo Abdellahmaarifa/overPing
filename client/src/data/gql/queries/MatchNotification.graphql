@@ -11,7 +11,6 @@ subscription MatchWaitingList($userId: Float!) {
       bet
       matchType
     }
-    requestType
   }
 }
 
@@ -28,7 +27,6 @@ subscription matchWaitingDirc($userId: Float!) {
       bet
       matchType
     }
-    requestType
   }
 }
 

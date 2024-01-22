@@ -25,5 +25,9 @@ class GameContainer
   rLastPosY : number = 0;
   leftPlayerGoal : number = 0;
   rightPlayerGoal : number = 0;
+  leftPlayerRebound : number = 0;
+  leftPlayerStrict : number = 0;
+  rightPlayerRebound : number = 0;
+  rightPlayerStrict : number = 0;
 }
 export default GameContainer;

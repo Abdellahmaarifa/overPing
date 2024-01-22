@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-
+import { MatchMode } from "./Achieve";
 class UserInfo
 {
     constructor (tabId : string, id: string, wager: number, mode: number, name: string,
@@ -40,6 +40,9 @@ class UserInfo
     playWithMouse : number = 0;
     userId : number = 0;
     friend : boolean = false;
+    ply2userId : number = 0;
+    matchType : string = MatchMode.ONLINE_RANDOM;
 };
+
 
 export default UserInfo;

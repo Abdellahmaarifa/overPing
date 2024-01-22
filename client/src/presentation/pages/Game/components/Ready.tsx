@@ -14,7 +14,7 @@ interface readyProps
     updatePlayerTwo: (newPlayWithRobot: boolean, newTabId: string, newMatchId: string, newMatchWager: number,
         newModePlaying: number, newUserName: string, newUserAvatar: string, newUserLogo: string, newMatchWon: number,
         newBestWinStreak: number, newMatchPlayed: number, newLevel: number, newTournentPlayed: number,
-        newTournentWon: number, newPlayWithMouse: number, usrid : number, friend : boolean) => void;
+        newTournentWon: number, newPlayWithMouse: number, usrid : number, friend : boolean, ply2userId : number, matchType: string) => void;
 }
 
 
@@ -30,35 +30,6 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updateUserInfoWagerAndMo
           userId: playerTwo.userId,
         },
       });
-    //get mode
-    // useEffect(() =>{
-    //     if (playerOne.matchWager > playerTwo.matchWager)
-    //     {
-    //         modePlay = playerOne.modePlaying;
-    //     }
-    //     else if (playerTwo.matchWager > playerOne.matchWager)
-    //     {
-    //         modePlay = playerTwo.modePlaying;
-    //     }
-    //     else if (playerOne.matchWager === playerTwo.matchWager)
-    //     {
-    //         if (playerOne.modePlaying > playerTwo.modePlaying)
-    //             modePlay = playerOne.modePlaying;
-    //         else
-    //             modePlay = playerTwo.modePlaying;
-    //     }
-    //     //get wager
-    //     if (playerOne.matchWager < playerTwo.matchWager)
-    //         wagerPlay = playerOne.matchWager;
-    //     else 
-    //         wagerPlay = playerTwo.matchWager;
-    
-    //     updateUserInfoWagerAndModeTwo(wagerPlay, modePlay)
-    //     updateUserInfoWagerAndMode(wagerPlay, modePlay)
-    //     if (playerOne.playWithRobot)
-    //          updateMatchId('robot' + (Math.floor(Math.random() * 10000) + 1).toString() + Date.now().toString())
-
-    // }, [])
 
     setTimeout( () => {
         plyOneImg  = document.getElementById("ReadyAvatar2");
@@ -69,20 +40,18 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updateUserInfoWagerAndMo
 
     }, 200)
 
-   console.log("+++++++++++++++ players 1 2 id: ",playerOne.userId, " - ", playerTwo.userId)
-   console.log("+++++++++++++++ players 1 2 id: ",playerOne, " - ", playerTwo)
   
 
     if (loading)
       return (<p>Loading...</p>)
     else if (error)
     {
-        console.log("error : ", error)
-        return (<p>Error...</p>)
+        console.log("error : ", error, playerTwo.userId)
+        return (<p>Error...T</p>)
     }
     else
     {
-        if (playerOne.friend === false)
+        setTimeout(() =>
         {
 
             let ply2Username : string = data?.findUserById.username as string;
@@ -95,6 +64,8 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updateUserInfoWagerAndMo
             let ply2TournenetWon : number = data?.findProfileByUserId?.gameStatus.win_streak as number;
             let ply2UserLogo : string = "";
             let ply2TabId : string = playerTwo.userId.toString();
+            let ply1UserId : number = playerOne.ply2userId
+            let ply1MatchType : string = playerOne.matchType;
             if (data?.findProfileByUserId?.rank  as number < 100)
                 ply2UserLogo = "/public/images/badge-1.png"
             if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
@@ -117,18 +88,13 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updateUserInfoWagerAndMo
             {
                 updatePlayerTwo(false, ply2TabId, ply2MatchId, ply2MatchWager, ply2ModePlaying, ply2Username, ply2UserAvatar,
                 ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2MatchPlyed, ply2BestWinSteak,
-                ply2TournentPlayed, ply2TournenetWon, ply2UserId, false);
+                ply2TournentPlayed, ply2TournenetWon, ply2UserId, false, ply1UserId, ply1MatchType);
             }
-            setTimeout( () => {
-                updateReadyState(false);
-            }, 10000);
-        }
-        else
+        }, 500)
+        setTimeout( () => 
         {
-            setTimeout( () => {
                 updateReadyState(false);
-            }, 10000); 
-        }
+        }, 5000); 
         
         return (
             <div className='ReadyContainer'>

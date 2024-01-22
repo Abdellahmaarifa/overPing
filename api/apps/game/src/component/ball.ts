@@ -26,6 +26,7 @@ class Ball
     goalRestart : boolean = false;
     alertY : number = 0;
     alertDirection : boolean = true;
+    ballRebounded : boolean = false;
 
     
     drawAndMove(data : GameContainer, nbrOfclt : number)
@@ -97,11 +98,19 @@ class Ball
                 if ((this.ballDirection && this.ballX > this.width - data.rRacketW  && (this.ballY < data.rRacketY || this.ballY > data.rRacketY + data.rRacketH)))
                 {
                     data.rightPlayerGoal++;
+                    if (this.ballRebounded === true)
+                        data.rightPlayerRebound++;
+                    else
+                        data.rightPlayerStrict++;
                     // console.log("right player goal : " , data.rightPlayerGoal);
                 }
                 else
                 {
                     data.leftPlayerGoal++;
+                    if (this.ballRebounded === true)
+                        data.leftPlayerRebound++;
+                    else
+                        data.leftPlayerStrict++;
                     // console.log("left player goal : " , data.leftPlayerGoal);
                 }
                 this.goalRestart = true;
@@ -130,6 +139,7 @@ class Ball
 
     calculateTopAndBottomBallRebound()
     {
+        this.ballRebounded = true;
         // console.log('top rebound : ', this.ballAngle)
         if (this.ballTopTan <= 0)
         {
@@ -203,10 +213,12 @@ class Ball
         let radAngle : number;
         let tmpAngle : number;
 
+
         let ballHitTheMiddleOfRacket : number = 0; // in this case ball go straight with angle 100 or 300 depending on its direction
         let reboundAngle : number = 0;
                                     //racket height  |____|_|____|
         ballHitTheMiddleOfRacket = (data.rRacketH / 100 * 20) / 2;
+        this.ballRebounded = false;
         // console.log("right ball : ", this.ballAngle) 
         if (data.rRacketY)
         {
@@ -287,6 +299,7 @@ class Ball
         let reboundAngle : number = 0;
                                     //racket height  |____|_|____|
         ballHitTheMiddleOfRacket = (data.lRacketH / 100 * 20) / 2;
+        this.ballRebounded = false;
         
         // console.log("left ball : ", this.ballAngle, this.ballY - data.lRacketY ) 
         if (data.lRacketY)

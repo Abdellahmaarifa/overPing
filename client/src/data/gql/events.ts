@@ -25,7 +25,7 @@ export const registerGlobalEvents = () => {
         if (!res?.data?.updateUserStatus) {
           console.log("failed to update the status to online!");
         }
-        console.log("i am live!", res.data.updateUserStatus);
+        //console.log("i am live!", res.data.updateUserStatus);
         window.dispatchEvent(new Event("alive"));
       }, 30000);
     },

@@ -228,6 +228,10 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
         {
           goal.leftPlayerGoals = room.container.leftPlayerGoal;
           goal.rightPlayerGoals = room.container.rightPlayerGoal;
+          goal.leftPlayerRebound = room.container.leftPlayerRebound;
+          goal.leftPlayerStrict = room.container.leftPlayerStrict;
+          goal.rightPlayerRebound = room.container.rightPlayerRebound;
+          goal.rightPlayerStrict = room.container.rightPlayerStrict;
           goal.playerNumber = 1;
           if (room.clientOneInfoSocket === null)
             room.clientOneInfoSocket = client;
@@ -236,6 +240,10 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
         {
           goal.leftPlayerGoals = room.container.rightPlayerGoal;
           goal.rightPlayerGoals = room.container.leftPlayerGoal;
+          goal.leftPlayerRebound = room.container.rightPlayerRebound;
+          goal.leftPlayerRebound = room.container.rightPlayerStrict;
+          goal.rightPlayerRebound = room.container.leftPlayerRebound;
+          goal.rightPlayerStrict = room.container.leftPlayerStrict;
           goal.playerNumber = 2;
           if (room.clientTwoInfoSocket === null)
             room.clientTwoInfoSocket = client;
@@ -249,6 +257,12 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
 
         goal.leftPlayerGoals = room.container.leftPlayerGoal;
         goal.rightPlayerGoals = room.container.rightPlayerGoal;
+        goal.leftPlayerGoals = room.container.leftPlayerGoal;
+        goal.rightPlayerGoals = room.container.rightPlayerGoal;
+        goal.leftPlayerRebound = room.container.leftPlayerRebound;
+        goal.leftPlayerStrict = room.container.leftPlayerStrict;
+        goal.rightPlayerRebound = room.container.rightPlayerRebound;
+        goal.rightPlayerStrict = room.container.rightPlayerStrict;
         goal.playerNumber = 1;
         if (room.clientOneInfoSocket === null)
             room.clientOneInfoSocket = client;

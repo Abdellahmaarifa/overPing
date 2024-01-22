@@ -24,8 +24,8 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
         },
       });
 
-    console.log("butter 1: ", playerOne)
-    console.log("butter 2: ", playerTwo)
+    console.log("better 1: ", playerOne)
+    console.log("better 2: ", playerTwo)
     Howler.stop();
     setTimeout(() => {
           loseSound.play();
