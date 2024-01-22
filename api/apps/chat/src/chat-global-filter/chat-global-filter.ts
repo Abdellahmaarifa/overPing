@@ -55,7 +55,7 @@ export class ChatExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
       Logger.error(
         `${request.method} ${request.url}`,
         JSON.stringify(error),
-        "ExceptionFilter",
+        "ChatExceptionFilter",
       );
 
       response.status(status).json(errorResponse);
@@ -70,7 +70,7 @@ export class ChatExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
       Logger.error(
         `${info.parentType} ${info.fieldName}`,
         JSON.stringify(error),
-        "ExceptionFilter",
+        "ChatExceptionFilter",
       );
       throw new GraphqlException(error.error, error.statusCode);
 

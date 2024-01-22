@@ -163,6 +163,9 @@ export class ProfileService {
 
   async getUsersNickname(userIds: number[]): Promise<{ user_id: number, nickname: string }[]> {
     try {
+      if (userIds.length === 0) {
+        return [];
+      }
       const users = await this.prisma.userProfile.findMany({
         where: {
           user_id: { in: userIds },

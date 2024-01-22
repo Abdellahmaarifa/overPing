@@ -1,5 +1,5 @@
 import { FriendshipStatus } from '@app/common';
-import { IChannelInfo, IMembersWithInfo, IMessage } from '@app/common/chat';
+import { IChannel, IChannelInfo, IMembersWithInfo, IMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { Inject, Logger, forwardRef } from '@nestjs/common';
 import {
@@ -50,7 +50,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     const userId = await this.helper.getUserId(client);
     if (userId) {
       this.logger.log(`User connected: ${userId} [${client.id}`);
-      connectedChannelUsers.set(userId, client);
+      connectedChannelUsers.set(userId, client.id);
     }
     else {
       this.logger.log(`User authentication failed: ${userId} [${client.id}`);
@@ -97,7 +97,10 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       return;
     }
     
-    await this.checker.isMuted(data.userId, data.channelId);
+    const muteExpired = await this.checker.isMuted(userId, data.channelId);
+    if (!!muteExpired) {
+      this.rpcExceptionService.throwBadRequest(`Failed: you're muted! go back at ${muteExpired}`);
+    }
     
     const message = await this.channelService.addMessage(data);
     if (message) {
@@ -108,12 +111,11 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
         0, 
         FriendshipStatus.BlockedBy, 
         GroupType.CHANNEL
-        )) as number[];
+      )) as number[];
 
-        blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
+      blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
 
-      client.to(channelName).emit(CHANNEL.recMessageFromChannel, message);
-      client.emit(CHANNEL.recMessageFromChannel, message);
+      this.server.to(channelName).emit(CHANNEL.recMessageFromChannel, message);
 
       blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).join(channelName) });
     }
@@ -126,7 +128,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     if (!userId || !data.channelId || userId !== data.userId) {
       return;
     }
-    await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId);
 
     const blockedUsers = (await this.checker.blockStatus(
       data.userId, 
@@ -149,8 +151,10 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
             NOT: { sender_id: { in: blockedUsers } }
           },
           orderBy: { created_at: 'desc' },
-          skip: ( data.page - 1 ) * 30,
-          take: 30,
+          ...(data.page !== 0) ? {
+            skip: ( data.page - 1 ) * 30,
+            take: 30,
+          } : {},
         },
       }
     });
@@ -167,7 +171,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     // if (!userId || userId !== data.userId) {
     //   return;
     // }
-    // await this.helper.findUser(data.userId, true);
+    // await this.helper.findUser(data.userId);
 
     // if (await this.checker.isMember(userId, data.channelId) === false) {
     //   this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
@@ -193,8 +197,22 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       channelId,
       updatedList
     });
-
-    return updatedList;
   }
 
+  async sendUpdatedListOfChannels(userId: number, updatedList: IChannel[]) {
+    const client = this.server.sockets.sockets[connectedChannelUsers.get(userId)];
+    if (client) {
+      client.emit(CHANNEL.recUpdatedChannelsList, updatedList);
+    }
+  }
 }
+
+
+
+
+
+// mute check // DONE
+// return all messages when 0 is sent as page number // DONE
+// updated channel/dm list // DONE
+// inputs validation
+// {error: {message:""}}

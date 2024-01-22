@@ -178,7 +178,7 @@ export class HelperService {
   
   /******* Check and Get User Information by ID *******/
 
-  async findUser(user_id: number, throwStatus: boolean) : Promise<IUser> {
+  async findUser(user_id: number) : Promise<IUser> {
     try {
       const user: IUser = await this.clientService.sendMessageWithPayload(
           this.client,
@@ -188,7 +188,6 @@ export class HelperService {
           },
           [user_id]
       );
-
       return user![0] || null;
     }
     catch {

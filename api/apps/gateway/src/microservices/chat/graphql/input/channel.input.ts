@@ -145,5 +145,5 @@ export class ActionToMemberInput extends MemberInput {
   
   @Field({nullable: true})
   @IsDate()
-  muteTimeLimit?: Date;
+  muteTimeLimit?: number;
 }

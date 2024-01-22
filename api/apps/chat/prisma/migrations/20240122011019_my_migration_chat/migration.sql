@@ -42,6 +42,7 @@ CREATE TABLE "Messages" (
 CREATE TABLE "Members" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
+    "muteStatus" BOOLEAN NOT NULL DEFAULT false,
     "channelId" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -52,6 +53,7 @@ CREATE TABLE "Members" (
 CREATE TABLE "Admins" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
+    "muteStatus" BOOLEAN NOT NULL DEFAULT false,
     "channelId" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

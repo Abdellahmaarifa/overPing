@@ -54,6 +54,7 @@ model Messages {
 model Members {
   id         Int      @id @default(autoincrement())
   userId     Int
+  muteStatus Boolean  @default(false)
   channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
   channelId  Int
   created_at DateTime @default(now())
@@ -62,16 +63,17 @@ model Members {
 model Admins {
   id         Int      @id @default(autoincrement())
   userId     Int
+  muteStatus Boolean  @default(false)
   channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
   channelId  Int
   created_at DateTime @default(now())
 }
 
 model BannedMembers {
-  id        Int     @id @default(autoincrement())
-  userId    Int
-  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  channelId Int
+  id         Int     @id @default(autoincrement())
+  userId     Int
+  channel    Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId  Int
 }
 
 model MutedMembers {

@@ -378,6 +378,7 @@ export class UserService {
         id: true,
         username: true,
         profileImgUrl: true,
+        email: true,
       },
     });
     console.log('friends: ', friends);
@@ -461,6 +462,9 @@ export class UserService {
   }
 
   async getUsersInfo(users: number[]): Promise<IUser[]> {
+    if (users.length === 0) {
+      return [];
+    }
     const usersInfo: IUser[] = await this.prisma.user.findMany({
       where: {
         id: { in: users },
@@ -473,7 +477,12 @@ export class UserService {
         lastSeen: true,
         profileImgUrl: true,
       },
-    });
+    })
+    if (usersInfo.length === 0) {
+      this.rpcExceptionService.throwBadRequest(
+        `User(s) not found`,
+      );
+    }
 
     const usersIds = usersInfo.map((user) => user.id);
     const usersNickname = (await this.clientService.sendMessageWithPayload(

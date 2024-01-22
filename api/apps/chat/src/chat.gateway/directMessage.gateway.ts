@@ -1,4 +1,4 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { Inject, Logger, UseGuards, forwardRef } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer,
   OnGatewayInit, OnGatewayConnection,
   OnGatewayDisconnect, SubscribeMessage } from '@nestjs/websockets';
@@ -11,6 +11,7 @@ import { HelperService } from '../utils/helper.service';
 import { FriendshipStatus } from '@app/common';
 import { GroupType } from '../interface/group.interface';
 import { DIRECTMESSAGE } from '../interface';
+import { IDirectMessage } from '@app/common/chat';
 
 let connectedUsers: Map<number, any> = new Map();
 
@@ -23,6 +24,7 @@ let connectedUsers: Map<number, any> = new Map();
 })
 export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor( 
+    @Inject(forwardRef(() => DirectMessageService))
     private readonly directMessageService: DirectMessageService,
     private readonly prisma: PrismaService,
     private readonly checker: CheckerService,
@@ -40,7 +42,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     const userId = await this.helper.getUserId(client);
     if (userId) {
       this.logger.log(`User connected: ${userId} [${client.id}`);
-      connectedUsers.set(userId, client);
+      connectedUsers.set(userId, client.id);
     }
     else {
       this.logger.log(`User authentication failed: ${userId} [${client.id}`);
@@ -74,9 +76,9 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.BlockedBy, GroupType.DM);
 
     const message = await this.directMessageService.addMessage(data);
-    const socket =  connectedUsers.get(data.recipientId);
-    if (socket && message) {
-      socket.emit(DIRECTMESSAGE.recMessageFromUser , message);
+    const recSocketId =  connectedUsers.get(data.recipientId);
+    if (recSocketId && message) {
+      this.server.sockets.sockets[recSocketId].emit(DIRECTMESSAGE.recMessageFromUser , message);
       client.emit(DIRECTMESSAGE.recMessageFromUser , message);
     }
     // else {
@@ -99,7 +101,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
       if (!userId || userId !== data.userId) {
         return;
       }
-      await this.helper.findUser(data.userId, true);
+      await this.helper.findUser(data.userId);
   
       return await this.prisma.directMessage.findUnique({
         where: {
@@ -112,14 +114,27 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
         select: {
           messages: {
             orderBy: { created_at: 'desc' },
-            skip: ( data.page - 1 ) * 30,
-            take: 30,
+            ...(data.page !== 0) ? {
+              skip: ( data.page - 1 ) * 30,
+              take: 30,
+            } : {},
           },
         }
       });
     }
     catch (error) {
       console.log(error);
+    }
+  }
+
+  async sendUpdatedListOfDMs(user1: number, user2: number, updatedList1: IDirectMessage[], updatedList2: IDirectMessage[]) {
+    const client1 = this.server.sockets.sockets[connectedUsers.get(user1)];
+    const client2 = this.server.sockets.sockets[connectedUsers.get(user2)];
+    if (client1) {
+      client1.emit(DIRECTMESSAGE.recUpdatedDMsList, updatedList1);
+    }
+    if (client2) {
+      client2.emit(DIRECTMESSAGE.recUpdatedDMsList, updatedList2);
     }
   }
 }
