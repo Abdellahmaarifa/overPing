@@ -378,6 +378,7 @@ export class UserService {
         id: true,
         username: true,
         profileImgUrl: true,
+        email: true,
       },
     });
     console.log('friends: ', friends);
