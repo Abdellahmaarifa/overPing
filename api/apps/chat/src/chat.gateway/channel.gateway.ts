@@ -1,5 +1,5 @@
 import { FriendshipStatus } from '@app/common';
-import { IChannelInfo, IMembersWithInfo, IMessage } from '@app/common/chat';
+import { IChannel, IChannelInfo, IMembersWithInfo, IMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { Inject, Logger, forwardRef } from '@nestjs/common';
 import {
@@ -22,7 +22,7 @@ let connectedChannelUsers: Map<number, any> = new Map();
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: `${process.env.CHAT_FRONT_URL}`,
     credentials: true
   },
   namespace: CHANNEL.namespace,
@@ -48,13 +48,12 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   async handleConnection(client: Socket, ...args: any[]) {
     const userId = await this.helper.getUserId(client);
-    console.log('userId: ', userId)
     if (userId) {
-      this.logger.log(`User connected: ${client.id}`);
+      this.logger.log(`User connected: ${userId} [${client.id}`);
       connectedChannelUsers.set(userId, client);
     }
     else {
-      this.logger.log(`User authentication failed: ${client.id}`);
+      this.logger.log(`User authentication failed: ${userId} [${client.id}`);
       client.disconnect();
     }
   }
@@ -74,24 +73,27 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage(CHANNEL.join_channel)
   async joinChannel(client: Socket, data: MemberOfChanneldto) {
-    console.log('********* TRYING TO JOIN CHANNEL');
     const socket = connectedChannelUsers.get(data.userId);
     const userId = await this.helper.getUserId(client);
+
     if (!userId || userId !== data.userId) {
-      this.rpcExceptionService.throwBadRequest(`Failed to find the user id ${userId}`);
+      this.logger.error({ error : {   message: `Failed to find the user id ${userId}` }});
+      return { error : {
+          message: `Failed to find the user id ${userId}`
+        }};
     }
     if (await this.checker.checkForUser(data.userId) === false
      || await this.checker.checkForChannel(data.channelId, userId) === false) {
-      this.rpcExceptionService.throwBadRequest(`Invalid user/channel id`);
+      return { error : {
+        message: `Invalid user/channel id`
+      }};
     }
-    console.log('>> joined to :', data.userId);
     const channelName = `channel_` + data.channelId;
     client.join(channelName);
   }
 
   @SubscribeMessage(CHANNEL.sendMessageInchannel)
   async sendMessageInChannel(client: Socket, data: AddMessageInChanneldto) {
-  //  : Promise<IMessage> {
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
       return;
@@ -101,7 +103,12 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       return;
     }
     
-    await this.checker.isMuted(data.userId, data.channelId);
+    const muteExpired = await this.checker.isMuted(userId, data.channelId);
+    if (!!muteExpired) {
+      return { error : {
+        message: `Failed: you're muted! go back at ${muteExpired}`
+      }};
+    }
     
     const message = await this.channelService.addMessage(data);
     if (message) {
@@ -112,26 +119,23 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
         0, 
         FriendshipStatus.BlockedBy, 
         GroupType.CHANNEL
-        )) as number[];
+      )) as number[];
 
-        blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
+      blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
 
-      client.to(channelName).emit(CHANNEL.recMessageFromChannel, message);
-      client.emit(CHANNEL.recMessageFromChannel, message);
+      this.server.to(channelName).emit(CHANNEL.recMessageFromChannel, message);
 
       blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).join(channelName) });
     }
-    // return message;
   }
 
   @SubscribeMessage(CHANNEL.getChannelMessages)
-  async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[]> {
+  async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[] | any> {
     const userId = await this.helper.getUserId(client);
-    console.log('id:', userId, '||| data.userId:', data.userId);
     if (!userId || !data.channelId || userId !== data.userId) {
       return;
     }
-    await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId);
 
     const blockedUsers = (await this.checker.blockStatus(
       data.userId, 
@@ -139,7 +143,6 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       FriendshipStatus.Blocked, 
       GroupType.CHANNEL
     )) as number[];
-console.log('channel id:', data.channelId);
 
     const channel = await this.prisma.channel.findUnique({
       where: {
@@ -155,30 +158,36 @@ console.log('channel id:', data.channelId);
             NOT: { sender_id: { in: blockedUsers } }
           },
           orderBy: { created_at: 'desc' },
-          skip: ( data.page - 1 ) * 30,
-          take: 30,
+          ...(data.page !== 0) ? {
+            skip: ( data.page - 1 ) * 30,
+            take: 30,
+          } : {},
         },
       }
     });
     if (!channel) {
-      this.rpcExceptionService.throwNotFound(`Failed to find channel: ${data.channelId}`)
+      return { error : {
+        message: `Failed to find channel: ${data.channelId}`
+      }};
+      this.rpcExceptionService.throwNotFound()
     }
-    // console.log('message:', channel.messages);
     return channel.messages || [];
   }
 
 
   @SubscribeMessage(CHANNEL.getChannelMembers)
-  async getMembers(client: Socket, data: MemberOfChanneldto) : Promise<IMembersWithInfo> {
-    // const userId = await this.helper.getUserId(client);
-    // if (!userId || userId !== data.userId) {
-    //   return;
-    // }
-    // await this.helper.findUser(data.userId, true);
+  async getMembers(client: Socket, data: MemberOfChanneldto) : Promise<IMembersWithInfo | any> {
+    const userId = await this.helper.getUserId(client);
+    if (!userId || userId !== data.userId) {
+      return;
+    }
+    await this.helper.findUser(data.userId);
 
-    // if (await this.checker.isMember(userId, data.channelId) === false) {
-    //   this.rpcExceptionService.throwUnauthorised(`Failed to find channel: you're not a member`);
-    // }
+    if (await this.checker.isMember(userId, data.channelId) === false) {
+      return { error : {
+        message: `Failed to find channel: you're not a member`
+      }};
+    }
 
     return await this.channelService.getMembers(data.channelId);
   }
@@ -187,6 +196,7 @@ console.log('channel id:', data.channelId);
   async sendUpdatedChannelInfo(channelId: number, updatedInfo: IChannelInfo) {
     const channelName = `channel_` + channelId;
   
+console.log(`>>>>> updatedInfo sent !!!!\n`, updatedInfo);
     this.server.to(channelName).emit(CHANNEL.recUpdatedChannelInfo, {
       channelId,
       updatedInfo
@@ -200,8 +210,20 @@ console.log('channel id:', data.channelId);
       channelId,
       updatedList
     });
-
-    return updatedList;
   }
 
+  async sendUpdatedListOfChannels(userId: number, updatedList: IChannel[]) {
+    const client = connectedChannelUsers.get(userId);
+    if (client) {
+      console.log(`(${userId}) updated list:`, updatedList, "\nclient:");
+      client.emit(CHANNEL.recUpdatedChannelsList, updatedList);
+    }
+  }
 }
+
+
+// mute check // DONE
+// return all messages when 0 is sent as page number // DONE
+// updated channel/dm list // DONE
+// inputs validation
+// {error: {message:""}}

@@ -67,6 +67,7 @@ const ChatBody = () => {
         console.log("****************** get // ");
       }
     );
+    setMsg("");
   };
 
   useEffect(() => {
@@ -100,7 +101,7 @@ const ChatBody = () => {
       {
         userId: Number(user?.id),
         channelId: Number(id),
-        page: 1,
+        page: 0,
       },
       (data) => {
         console.log("This should return all msgs but, ", data);
@@ -130,10 +131,11 @@ const ChatBody = () => {
 
           return (
             <Message
-              name={membersMap?.get(e.sender_id)?.name}
-              image={membersMap?.get(e.sender_id)?.image}
+              name={membersMap?.get(e.sender_id)?.name!}
+              image={membersMap?.get(e.sender_id)?.image!}
               message={e.text}
               date={e.created_at}
+              key={e.id}
             />
           );
         })}
@@ -150,6 +152,7 @@ const ChatBody = () => {
           <SendMessageInput
             placeholder="Message"
             onChange={(e) => setMsg(e.target.value)}
+            value={msg}
           />
         </form>
       </SendMessageFeild>

@@ -1,16 +1,19 @@
-import { IDirectMessage, IMessage } from '@app/common/chat';
+import { FriendshipStatus, IUser } from '@app/common';
+import { IDirectMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
+import { RabbitMqService } from '@app/rabbit-mq';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable } from '@nestjs/common';
-import { AddMessageInDMdto, DeleteDirectMessagedto,
-         DeleteMessageInDMdto, UpdateMessageInDMdto } from '../dto';
+import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
+import { DirectMessageGateway } from '../chat.gateway/directMessage.gateway';
+import {
+  AddMessageInDMdto, DeleteDirectMessagedto,
+  DeleteMessageInDMdto, UpdateMessageInDMdto
+} from '../dto';
+import { GroupType } from '../interface/group.interface';
 import { CheckerService } from '../utils/checker.service';
 import { HelperService } from '../utils/helper.service';
-import { FriendshipStatus, IUser } from '@app/common';
-import { GroupType } from '../interface/group.interface';
-import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
-import { ClientProxy } from '@nestjs/microservices';
-import { RabbitMqService } from '@app/rabbit-mq';
 
 @Injectable()
 export class DirectMessageService {
@@ -21,11 +24,12 @@ export class DirectMessageService {
     private readonly prisma: PrismaService,
     private readonly checker: CheckerService,
     private readonly helper: HelperService,
+    private readonly directMessageGateway: DirectMessageGateway,
     private readonly rpcExceptionService: RpcExceptionService,
   ) {}
 
   async findById(id: number, user_id: number) : Promise<IDirectMessage> {
-    await this.helper.findUser(user_id, true);
+    await this.helper.findUser(user_id);
 
     const directMessage = await this.prisma.directMessage.findUnique({
       where: {
@@ -46,12 +50,12 @@ export class DirectMessageService {
       this.rpcExceptionService.throwNotFound(`Failed to find direct message: ${id}`);
     }
 
-    const user1 = await this.helper.findUser(user_id, false);
+    const user1 = await this.helper.findUser(user_id);
     let user2: IUser;
     if (user1.id === directMessage.user1_id) {
-      user2 = await this.helper.findUser(directMessage.user2_id, false);
+      user2 = await this.helper.findUser(directMessage.user2_id);
     } else {
-      user2 = await this.helper.findUser(directMessage.user1_id, false);
+      user2 = await this.helper.findUser(directMessage.user1_id);
     }
 
     return {
@@ -82,12 +86,12 @@ export class DirectMessageService {
       return null;
     }
 
-    const user1 = await this.helper.findUser(id1, false);
+    const user1 = await this.helper.findUser(id1);
     let user2: IUser;
     if (user1.id === directMessage.user1_id) {
-      user2 = await this.helper.findUser(directMessage.user2_id, false);
+      user2 = await this.helper.findUser(directMessage.user2_id);
     } else {
-      user2 = await this.helper.findUser(directMessage.user1_id, false);
+      user2 = await this.helper.findUser(directMessage.user1_id);
     }
 
     return {
@@ -100,7 +104,7 @@ export class DirectMessageService {
   }
 
   async getUserDirectMessages(user_id: number) : Promise<IDirectMessage[]> {
-    await this.helper.findUser(user_id, true);
+    await this.helper.findUser(user_id);
 
     const directMessages = await this.prisma.directMessage.findMany({
       where: {
@@ -110,18 +114,18 @@ export class DirectMessageService {
         ]
       },
       orderBy: { latestMessage_at: 'desc' },
-      include: {
-        messages: {
-          orderBy: { created_at: 'desc' },
-          take: 30,
-        },
-      }
+      // include: {
+      //   messages: {
+      //     orderBy: { created_at: 'desc' },
+      //     take: 30,
+      //   },
+      // }
     });
     if (!directMessages || directMessages.length === 0) {
       return [];
     }
 
-    const user1: IUser = await this.helper.findUser(user_id, false);
+    const user1: IUser = await this.helper.findUser(user_id);
     const user2: IUser[] = await this.clientService.sendMessageWithPayload(
       this.client, { role: 'user', cmd: 'getUsersInfo' }, directMessages.map((dm) => {
         if (user1.id === dm.user1_id) {
@@ -147,8 +151,8 @@ export class DirectMessageService {
     if (userID === targetID) {
       this.rpcExceptionService.throwBadRequest(`Failed: You can't create a direct message with yourself!`);
     }
-    await this.helper.findUser(userID, true);
-    await this.helper.findUser(targetID, true);
+    await this.helper.findUser(userID);
+    await this.helper.findUser(targetID);
 
     const directMessage = await this.findByUsers(userID, targetID);
     
@@ -176,13 +180,20 @@ export class DirectMessageService {
       this.rpcExceptionService.throwBadRequest(`Failed to create direct message`);
     }
 
-    const user1 = await this.helper.findUser(userID, false);
+    const user1 = await this.helper.findUser(userID);
     let user2: IUser;
     if (user1.id === createdDirectMessage.user1_id) {
-      user2 = await this.helper.findUser(createdDirectMessage.user2_id, false);
+      user2 = await this.helper.findUser(createdDirectMessage.user2_id);
     } else {
-      user2 = await this.helper.findUser(createdDirectMessage.user1_id, false);
+      user2 = await this.helper.findUser(createdDirectMessage.user1_id);
     }
+
+    await this.directMessageGateway.sendUpdatedListOfDMs(
+      userID,
+      targetID,
+      await this.getUserDirectMessages(userID),
+      await this.getUserDirectMessages(targetID),
+    );
 
     return {
       id: createdDirectMessage.id,
@@ -194,7 +205,7 @@ export class DirectMessageService {
   }
 
   async delete(data: DeleteDirectMessagedto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId);
     return false;
   }
 
@@ -218,11 +229,19 @@ export class DirectMessageService {
         latestMessage_at: new Date(),
       }
     });
+
+    await this.directMessageGateway.sendUpdatedListOfDMs(
+      data.userId,
+      data.recipientId,
+      await this.getUserDirectMessages(data.userId),
+      await this.getUserDirectMessages(data.recipientId),
+    );
+
     return message;
   }
 
   async updateMessage(data: UpdateMessageInDMdto) : Promise<any> {
-    await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId);
 
     this.checker.blockStatus(data.userId, data.groupChatId, FriendshipStatus.Blocked, GroupType.DM);
     this.checker.blockStatus(data.userId, data.groupChatId, FriendshipStatus.BlockedBy, GroupType.DM);
@@ -249,7 +268,7 @@ export class DirectMessageService {
   }
 
   async deleteMessage(data: DeleteMessageInDMdto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId, true);
+    await this.helper.findUser(data.userId);
 
     const message = await this.prisma.messages.findUnique({
       where: {

@@ -1,11 +1,10 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
-import { UserService } from '../services/user.service';
-import { UserCreationDto } from '../dto';
 import { IAuthUser, IUser } from '@app/common/auth/interface/auth.user.interface';
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { UpdateProfileDto } from '../dto/user.updateProfileId.dto';
+import { Controller } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
+import { UserCreationDto } from '../dto';
 import { UpdateUserDto } from '../dto/user.update.dto';
+import { UserService } from '../services/user.service';
 @Controller()
 export class UserController {
   constructor(
@@ -93,6 +92,11 @@ export class UserController {
   @MessagePattern({role: 'user', cmd: 'getOnlineFriends'})
   async getOnlineFriends({userId, pageNumber, limit}) : Promise<IUser[]>{
       return this.userService.getOnlineFriends(userId, pageNumber, limit);
+  }
+
+  @MessagePattern({role: 'user', cmd: 'searchUser'})
+  async searchUser({ pageNumber, limit, username}) : Promise<IUser[]>{
+      return this.userService.searchUser(pageNumber, limit, username);
   }
 
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {

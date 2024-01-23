@@ -18,6 +18,10 @@ export class GQLDirectMessageModel {
   @IsOptional()
   messages?: GQLMessageModel[];
 
+  @Field({nullable: true})
+  @IsOptional()
+  latestMessage_at?: string;
+
   @Field()
   created_at: string;
 }

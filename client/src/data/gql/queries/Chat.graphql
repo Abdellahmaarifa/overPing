@@ -80,11 +80,13 @@ query FindChanneMemebers($userId: Float!, $groupId: Float!) {
       id
       username
       profileImgUrl
+      muteStatus
     }
     admins {
       id
       username
       profileImgUrl
+      muteStatus
     }
     visibility
   }
@@ -98,7 +100,7 @@ mutation AddMember($data: ActionToMemberInput!) {
   addMember(data: $data)
 }
 
-mutation DeleteChannel($data: MemberInput!) {
+mutation DeleteChannel($data: DeleteChannelInput!) {
   deleteChannel(data: $data)
 }
 
@@ -146,4 +148,24 @@ query FindChannelById($userId: Float!, $groupId: Float!) {
       profileImgUrl
     }
   }
+}
+
+mutation muteMember($data: ActionToMemberInput!) {
+  muteMember(data: $data)
+}
+
+mutation UnmuteMember($data: ActionToMemberInput!) {
+  unmuteMember(data: $data)
+}
+
+mutation KickMember($data: ActionToMemberInput!) {
+  kickMember(data: $data)
+}
+
+mutation BanMember($data: ActionToMemberInput!) {
+  banMember(data: $data)
+}
+
+mutation UnbanMember($data: ActionToMemberInput!) {
+  unbanMember(data: $data)
 }

@@ -1,22 +1,21 @@
+import { AuthResponseDto } from '@app/common';
+import { JwtPayloadDto } from '@app/common/auth/dto';
+import { GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto';
+import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
+import { PrismaError, RpcExceptionService } from '@app/common/exception-handling';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { Prisma } from '@prisma/client';
+import * as argon2 from 'argon2';
+import * as QRCode from 'qrcode';
+import * as speakeasy from 'speakeasy';
 import {
   SignInCredentialsDto,
   SignUpCredentialsDto,
   TwoFActorAuthDto,
 } from '../dto';
 import { UserService } from './user.service';
-import { IAuthUser } from '@app/common/auth/interface/auth.user.interface';
-import { AuthResponseDto } from '@app/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as argon2 from 'argon2';
-import { GetRefreshUserDto } from '@app/common/auth/dto/getRefreshUser.dto';
-import { RpcExceptionService } from '@app/common/exception-handling';
-import { JwtPayloadDto } from '@app/common/auth/dto';
-import * as speakeasy from 'speakeasy';
-import * as QRCode from 'qrcode';
-import { Prisma } from '@prisma/client';
-import { PrismaError } from '@app/common/exception-handling';
 
 @Injectable()
 export class AuthService {
@@ -78,7 +77,7 @@ export class AuthService {
       },
       {
         secret: this.configService.get<string>('Jwt_TWOFA_SECRET'),
-        expiresIn: '30m',
+        expiresIn: '7d',
       },
     );
     return newTFactorAccess;
@@ -93,7 +92,7 @@ export class AuthService {
         },
         {
           secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-          expiresIn: '30m',
+          expiresIn: '7d',
         },
       ),
       this.jwtService.signAsync(

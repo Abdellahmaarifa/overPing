@@ -17,8 +17,21 @@ import { memo, useContext, useEffect, useState } from "react";
 import { useApolloClient } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import { useUserContext } from "context/user.context";
-import { FindChanneMemebersDocument } from "gql/index";
-
+import {
+  FindChanneMemebersDocument,
+  useBanMemberMutation,
+  useKickMemberMutation,
+  useMuteMemberMutation,
+  useUnmuteMemberMutation,
+} from "gql/index";
+import tw from "twin.macro";
+import MuteIcon from "assets/chat/mute.svg?react";
+import KickIcon from "assets/chat/kick.svg?react";
+import BanIcon from "assets/chat/ban.svg?react";
+import UnmuteIcon from "assets/chat/unmute.svg?react";
+import toast from "react-hot-toast";
+import { useChatContext } from "context/chat.context";
+import { ChannelSampleMember } from "domain/model/chat.type";
 interface MemberType {
   profileImgUrl: string;
   id: number;
@@ -29,36 +42,131 @@ const ChannelMembers = () => {
   const client = useApolloClient();
   const { id } = useParams();
   const { user } = useUserContext();
-  const [members, setMembers] = useState<MemberType[] | []>([]);
-  const [owner, setOwner] = useState<MemberType[] | []>([]);
-  const [admins, setAdmins] = useState<MemberType[] | []>([]);
-  const [membersRep, setMembersRep] = useState<MemberType[] | []>([]);
-  const [ownerRep, setOwnerRep] = useState<MemberType[] | []>([]);
-  const [adminsRep, setAdminsRep] = useState<MemberType[] | []>([]);
+  const [members, setMembers] = useState<ChannelSampleMember[] | []>([]);
+  const [owner, setOwner] = useState<ChannelSampleMember[] | []>([]);
+  const [admins, setAdmins] = useState<ChannelSampleMember[] | []>([]);
+  const [KickUserMutation] = useKickMemberMutation();
+  const [muteMemberMutation] = useMuteMemberMutation();
+  const [banMemberMutation] = useBanMemberMutation();
+  const [unmuteUserMutation] = useUnmuteMemberMutation();
+  const {
+    currentChannel: [currentChannel, setCurrentChannel],
+  } = useChatContext();
+  const [role, setRole] = useState<"owner" | "admin" | "member">("member");
   const getMembers = async () => {
-    const resChannel = await client.query({
-      query: FindChanneMemebersDocument,
-      variables: {
-        userId: Number(user?.id),
-        groupId: Number(id),
-      },
-    });
-    console.log("thsi is res of mmebers: ", resChannel);
-    const { owner_id, admins, members } = resChannel.data.findChannelById;
-    setOwner([
-      (admins as MemberType[]).find((e) => e.id === owner_id) as MemberType,
-    ]);
-    setAdmins((admins as MemberType[]).filter((e) => e.id !== owner_id));
-    setMembers(members);
-    setOwnerRep([
-      (admins as MemberType[]).find((e) => e.id === owner_id) as MemberType,
-    ]);
-    setAdminsRep((admins as MemberType[]).filter((e) => e.id !== owner_id));
-    setMembersRep(members);
+    if (currentChannel) {
+      setOwner([
+        currentChannel.admins.find(
+          (e) => Number(e.id) == currentChannel.owner_id
+        ),
+      ] as ChannelSampleMember[]);
+      setAdmins(
+        (currentChannel.admins as ChannelSampleMember[]).filter(
+          (e) => Number(e.id) !== currentChannel.owner_id
+        )
+      );
+      setMembers(currentChannel.members);
+      if (currentChannel.owner_id === Number(user?.id)) setRole("owner");
+      else if (currentChannel.admins.find((e) => e.id === user?.id))
+        setRole("admin");
+    }
   };
   useEffect(() => {
     getMembers();
-  }, []);
+  }, [currentChannel]);
+
+  /*
+"data": {
+    "channelId": null,
+    "muteTimeLimit": null,
+    "password": null,
+    "userId": null,
+    "targetId": null
+  },
+
+*/
+  const kickUser = async (targetId, name) => {
+    try {
+      console.log("kicking this user");
+      const res = await KickUserMutation({
+        variables: {
+          data: {
+            channelId: Number(id),
+            userId: Number(user?.id),
+            targetId: Number(targetId),
+          },
+        },
+      });
+      if (res) toast.success(`${name} is out now!`);
+      console.log("done! muted: ", res);
+    } catch (err: any) {
+      console.log("error!");
+      toast.error(err.message ? err.message : "something went wrong!");
+    }
+  };
+
+  const muteUser = async (targetId, name) => {
+    try {
+      console.log("muting this user");
+      const res = await muteMemberMutation({
+        variables: {
+          data: {
+            channelId: Number(id),
+            muteTimeLimit: 1,
+            userId: Number(user?.id),
+            targetId: Number(targetId),
+          },
+        },
+      });
+      if (res) toast.success(`${name} is muted now!`);
+      console.log("done! muted: ", res);
+    } catch (err: any) {
+      console.log("error!");
+      toast.error(err.message ? err.message : "something went wrong!");
+    }
+  };
+
+  const unmuteUser = async (targetId, name) => {
+    try {
+      console.log("muting this user");
+      const res = await unmuteUserMutation({
+        variables: {
+          data: {
+            channelId: Number(id),
+            muteTimeLimit: 10,
+            userId: Number(user?.id),
+            targetId: Number(targetId),
+          },
+        },
+      });
+      if (res) toast.success(`${name} is muted now!`);
+      console.log("done! muted: ", res);
+    } catch (err: any) {
+      console.log("error!");
+      toast.error(err.message ? err.message : "something went wrong!");
+    }
+  };
+
+  const banUser = async (targetId, name) => {
+    try {
+      console.log("baning this user");
+      const res = await banMemberMutation({
+        variables: {
+          data: {
+            channelId: Number(id),
+            userId: Number(user?.id),
+            targetId: Number(targetId),
+          },
+        },
+      });
+      if (res) toast.success(`${name} is banned now!`);
+      console.log("done! muted: ", res);
+    } catch (err: any) {
+      console.log("error!");
+      toast.error(err.message ? err.message : "something went wrong!");
+    }
+  };
+
   return (
     <ChannelMembersContainer>
       <ChannelMembersSearch>
@@ -66,16 +174,24 @@ const ChannelMembers = () => {
           maxLength={35}
           placeholder="@ UserName"
           onChange={(event) => {
-            setOwner(
-              ownerRep.filter((e) => e.username.includes(event?.target.value))
-            );
-            setAdmins(
-              adminsRep.filter((e) => e.username.includes(event?.target.value))
-            );
+            if (currentChannel) {
+              setOwner(
+                currentChannel.admins
+                  .filter((e) => Number(e.id) == currentChannel.owner_id)
+                  .filter((e) => e.username.includes(event?.target.value))
+              );
+              setAdmins(
+                currentChannel.admins
+                  .filter((e) => Number(e.id) != currentChannel.owner_id)
+                  .filter((e) => e.username.includes(event?.target.value))
+              );
 
-            setMembers(
-              membersRep.filter((e) => e.username.includes(event?.target.value))
-            );
+              setMembers(
+                currentChannel.members.filter((e) =>
+                  e.username.includes(event?.target.value)
+                )
+              );
+            }
           }}
         />
         <ChannelMembersSearchIcon>
@@ -86,40 +202,83 @@ const ChannelMembers = () => {
         <ChannelMembersGroup>
           <ChannelMembersGroupHeader>Owner</ChannelMembersGroupHeader>
           <ChannelMembersGroupBody>
-            {owner.map((e) => {
-              return (
-                <ChannelMember>
-                  <ChannelMemberPhoto src={e?.profileImgUrl} />
-                  <ChannelMemberName>{e.username}</ChannelMemberName>
-                </ChannelMember>
-              );
-            })}
+            {currentChannel
+              ? owner.map((e) => {
+                  return (
+                    <ChannelMember>
+                      <ChannelMemberPhoto src={e?.profileImgUrl} />
+                      <ChannelMemberName>{e.username}</ChannelMemberName>
+                    </ChannelMember>
+                  );
+                })
+              : []}
           </ChannelMembersGroupBody>
         </ChannelMembersGroup>
         <ChannelMembersGroup>
           <ChannelMembersGroupHeader>Admin</ChannelMembersGroupHeader>
           <ChannelMembersGroupBody>
-            {admins.map((e: MemberType) => {
-              return (
-                <ChannelMember key={e.id}>
-                  <ChannelMemberPhoto src={e.profileImgUrl} />
-                  <ChannelMemberName>{e.username}</ChannelMemberName>
-                </ChannelMember>
-              );
-            })}
+            {currentChannel
+              ? admins.map((e: any) => {
+                  return (
+                    <ChannelMember key={e.id}>
+                      <ChannelMemberPhoto src={e.profileImgUrl} />
+                      <ChannelMemberName>{e.username}</ChannelMemberName>
+                    </ChannelMember>
+                  );
+                })
+              : []}
           </ChannelMembersGroupBody>
         </ChannelMembersGroup>
         <ChannelMembersGroup>
           <ChannelMembersGroupHeader>Members</ChannelMembersGroupHeader>
           <ChannelMembersGroupBody>
-            {members.map((e: MemberType) => {
-              return (
-                <ChannelMember key={e.id}>
-                  <ChannelMemberPhoto src={e.profileImgUrl} />
-                  <ChannelMemberName>{e.username}</ChannelMemberName>
-                </ChannelMember>
-              );
-            })}
+            {currentChannel
+              ? members.map((e: ChannelSampleMember) => {
+                  return (
+                    <ChannelMember key={e.id}>
+                      <ChannelMemberPhoto
+                        src={e.profileImgUrl}
+                        muted={e.muteStatus}
+                      />
+                      <ChannelMemberName muted={e.muteStatus}>
+                        {e.username}
+                      </ChannelMemberName>
+
+                      {(role === "admin" || role === "owner") && (
+                        <div tw="absolute top-[10px] right-0 flex justify-center items-center gap-[5px]">
+                          <div tw="w-[20px] h-[20px] ">
+                            {e.muteStatus ? (
+                              <UnmuteIcon
+                                tw="w-full h-full fill-[#B4B5CF]"
+                                onClick={(_event) =>
+                                  unmuteUser(e.id, e.username)
+                                }
+                              />
+                            ) : (
+                              <MuteIcon
+                                tw="w-full h-full fill-[#B4B5CF]"
+                                onClick={(_event) => muteUser(e.id, e.username)}
+                              />
+                            )}
+                          </div>
+                          <div tw="w-[20px] h-[20px] ">
+                            <KickIcon
+                              tw="w-full h-full fill-[#B4B5CF]"
+                              onClick={(_event) => kickUser(e.id, e.username)}
+                            />
+                          </div>
+                          <div tw="w-[20px] h-[20px] ">
+                            <BanIcon
+                              tw="w-full h-full fill-[#B4B5CF]"
+                              onClick={(_event) => banUser(e.id, e.username)}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </ChannelMember>
+                  );
+                })
+              : []}
           </ChannelMembersGroupBody>
         </ChannelMembersGroup>
       </ChannelMembersBody>

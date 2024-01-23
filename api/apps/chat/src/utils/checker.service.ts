@@ -66,7 +66,7 @@ export class CheckerService {
         owner_id: targetId,
       },
     });
-    if (isTargetChannelOwner) {
+    if (isTargetChannelOwner && isTargetChannelOwner.owner_id !== userId) {
       return false;
     }
     return await this.isAdmin(userId, channelId);
@@ -100,15 +100,17 @@ export class CheckerService {
     return null;
   }
 
-  async isMuted(user_id: number, channelId: number) {
+  async isMuted(user_id: number, channelId: number) : Promise<string | null> {
     const mutedMember = await this.prisma.mutedMembers.findFirst({
       where: {
         channelId,
         user_id,
       },
     });
-    console.log('user muted:', mutedMember);
-    if (mutedMember && mutedMember.expiry <= new Date()) {
+    if (!mutedMember) {
+      return null;
+    }
+    else if (mutedMember && mutedMember.expiry < new Date()) {
       await this.prisma.mutedMembers.deleteMany({
         where: {
           channelId,
@@ -117,9 +119,7 @@ export class CheckerService {
       });
       return;
     }
-    else if (mutedMember) {
-      this.rpcExceptionService.throwBadRequest(`failed: you are MUTED!`);
-    }
+    return mutedMember.expiry.toISOString();
   }
 
   async isBanned(userId: number, channelId: number) {
@@ -190,7 +190,7 @@ export class CheckerService {
       && (data.visibility === IVisibility.PUBLIC || data.visibility === IVisibility.PRIVATE))
     {
       // PASSWORD REQUIRED TO AUTHORIZED THE UPDATE
-      if (data.password && await this.helper.isPasswordMatched(channel.password, data.password) === true) {
+      if (data.newPassword && await this.helper.isPasswordMatched(channel.password, data.newPassword) === true) {
         return null;
       } else {
         this.rpcExceptionService.throwBadRequest(`The update authorization requires a PASSWORD!`);

@@ -187,7 +187,21 @@ export class UserService {
         )
     }
 
-
+    searchUser(userId, pageNumber, limit, username){
+        return  this.clientService.sendMessageWithPayload(
+            this.client,
+            {
+                role: 'user',
+                cmd: 'searchUser'
+            },
+            {
+               userId,
+               pageNumber,
+               limit,
+               username
+            }
+        )
+    }
 
 
 }

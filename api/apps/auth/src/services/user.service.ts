@@ -1,20 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
 import {
   IAuthUser,
   IUser,
 } from '@app/common/auth/interface/auth.user.interface';
-import { UserCreationDto } from '../dto';
-import { PrismaService } from 'apps/auth/prisma/prisma.service';
-import * as argon2 from 'argon2';
-import { SignInCredentialsDto } from '../dto';
-import { RpcExceptionService } from '@app/common/exception-handling';
-import { UpdateProfileDto } from '../dto/user.updateProfileId.dto';
-import { User, Prisma } from '@prisma/client';
-import { PrismaError } from '@app/common/exception-handling';
-import { UpdateUserDto } from '../dto/user.update.dto';
+import { PrismaError, RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from 'apps/auth/prisma/prisma.service';
+import * as argon2 from 'argon2';
+import { SignInCredentialsDto, UserCreationDto } from '../dto';
+import { UpdateUserDto } from '../dto/user.update.dto';
 
 @Injectable()
 export class UserService {
@@ -89,6 +86,27 @@ export class UserService {
       this.handlePrismaError(error);
     }
   }
+  async searchUser(pageNumber =1, limit, username): Promise<IUser[]>{
+      const skip = (pageNumber - 1) * limit;
+      const users = await this.prisma.user.findMany({
+        where : {
+            username: {
+              startsWith : username
+            }
+          },
+          select: {
+            id: true,
+            username: true,
+            profileImgUrl: true,
+            email: true,
+            lastSeen: true,
+          },
+          skip,
+          take: limit,
+        })
+      return users;
+  }
+
 
   async findUserByUsername(username: string){
     try {
@@ -357,6 +375,7 @@ export class UserService {
         id: true,
         username: true,
         profileImgUrl: true,
+        email: true,
       },
     });
     console.log('friends: ', friends);
@@ -440,6 +459,9 @@ export class UserService {
   }
 
   async getUsersInfo(users: number[]): Promise<IUser[]> {
+    if (users.length === 0) {
+      return [];
+    }
     const usersInfo: IUser[] = await this.prisma.user.findMany({
       where: {
         id: { in: users },
@@ -452,7 +474,12 @@ export class UserService {
         lastSeen: true,
         profileImgUrl: true,
       },
-    });
+    })
+    if (usersInfo.length === 0) {
+      this.rpcExceptionService.throwBadRequest(
+        `User(s) not found`,
+      );
+    }
 
     const usersIds = usersInfo.map((user) => user.id);
     const usersNickname = (await this.clientService.sendMessageWithPayload(

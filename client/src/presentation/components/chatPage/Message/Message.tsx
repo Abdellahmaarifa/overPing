@@ -1,8 +1,8 @@
 import { faker } from "@faker-js/faker";
 import { useState } from "react";
+import SenderCard from "../SenderCard/SenderCard";
 import {
   MessageContainer,
-  MessageImage,
   MessageInfo,
   MessageProfile,
   MessageSample,
@@ -10,17 +10,18 @@ import {
   MessageSenderDate,
   MessageSenderName,
 } from "./Message.style";
-import SenderCard from "../SenderCard/SenderCard";
 const Message = ({
   name,
   date,
   message,
   image,
+  key,
 }: {
   name: string;
   date: string;
   message: string;
   image: string;
+  key: number;
 }) => {
   const [IsShown, setIsShown] = useState<boolean>(false);
 

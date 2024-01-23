@@ -7,8 +7,7 @@ export class CreateChannelInput {
   @IsNumber()
   userId: number;
 
-
-  @Field({nullable: true})
+  @Field()
   @IsString()
   @MinLength(4)
   @MaxLength(20)
@@ -16,21 +15,20 @@ export class CreateChannelInput {
 
   @Field({nullable: true})
   @IsString()
-  @IsOptional()
+  @MinLength(50)
+  @MaxLength(255)
   description?: string;
 
   @Field()
   @IsString()
-  @IsOptional()
-  @IsIn(['public', 'private', 'protected'])
+  @IsIn([IVisibility.PUBLIC, IVisibility.PRIVATE, IVisibility.PROTECTED])
   visibility: string = 'public';
 
   @Field({nullable: true})
-  @IsString()
+  @IsAlphanumeric()
   @MinLength(4)
   @MaxLength(30)
-  @IsOptional()
-  @Matches(/^(?=.*\d)/, { message: 'Password must contain at least one digit' })
+  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)/, {message: 'Password must contain both letters and at least one digit'})
   password?: string;
 }
 
@@ -48,18 +46,17 @@ export class UpdateChannelInput {
   @IsString()
   @MinLength(4)
   @MaxLength(20)
-  @IsOptional()
   channelName?: string;
 
   @Field({nullable: true})
   @IsString()
-  @IsOptional()
+  @MinLength(50)
+  @MaxLength(255)
   description?: string;
 
   @Field()
   @IsString()
-  @IsOptional()
-  @IsIn(['public', 'private', 'protected'])
+  @IsIn([IVisibility.PUBLIC, IVisibility.PRIVATE, IVisibility.PROTECTED])
   visibility: string;
 
   @Field({nullable: true})
@@ -67,12 +64,26 @@ export class UpdateChannelInput {
   oldPassword?: string;
 
   @Field({nullable: true})
-  @IsString()
+  @IsAlphanumeric()
   @MinLength(4)
   @MaxLength(30)
-  @IsOptional()
-  @Matches(/^(?=.*\d)/, { message: 'Password must contain at least one digit' })
+  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)/, {message: 'Password must contain both letters and at least one digit'})
   newPassword?: string;
+}
+
+@InputType()
+export class DeleteChannelInput {
+  @Field()
+  @IsNumber()
+  userId: number;
+
+  @Field()
+  @IsNumber()
+  channelId: number;
+
+  @Field()
+  @IsString()
+  password: string;
 }
 
 @InputType()
@@ -91,8 +102,10 @@ export class UpdateMessageInput {
 
   @Field()
   @IsString()
+  @MaxLength(255)
   text: string;
 }
+
 
 @InputType()
 export class DeleteMessageInput {
@@ -121,10 +134,6 @@ export class MemberInput {
   
   @Field({nullable: true})
   password?: string;
-  
-  @Field({nullable: true})
-  @IsDate()
-  muteTimeLimit?: Date;
 }
 
 @InputType()
@@ -132,4 +141,8 @@ export class ActionToMemberInput extends MemberInput {
   @Field()
   @IsNumber()
   targetId: number;  
+  
+  @Field({nullable: true})
+  @IsDate()
+  muteTimeLimit?: number;
 }

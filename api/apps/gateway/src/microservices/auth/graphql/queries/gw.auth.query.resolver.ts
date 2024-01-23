@@ -1,14 +1,12 @@
-import { Resolver, Query, Args, Context } from '@nestjs/graphql';
+import { Args, Context, Query, Resolver } from '@nestjs/graphql';
 
-import { GQLUserModel } from 'apps/gateway/src/models';
-import { AuthCredentialsInput } from '../input';
-import { GatewayService, UserService } from '../../services';
-import { UseGuards } from '@nestjs/common';
-import { GqlJwtAuthGuard } from '../../guards/gql.accessToken.guard';
-import { AccessTokenGuard } from '../../guards/accessToken.guard';
-import { GQLIUserModel } from '../models/gw.friends';
-import { UserStatusService } from '../../services/gw.userStatus.service';
 import { IUser } from '@app/common';
+import { UseGuards } from '@nestjs/common';
+import { GQLUserModel } from 'apps/gateway/src/models';
+import { GqlJwtAuthGuard } from '../../guards/gql.accessToken.guard';
+import { GatewayService, UserService } from '../../services';
+import { UserStatusService } from '../../services/gw.userStatus.service';
+import { GQLIUserModel } from '../models/gw.friends';
 
 
 @Resolver()
@@ -26,8 +24,8 @@ export class AuthQueryResolver {
     }
 
     @UseGuards(GqlJwtAuthGuard)
-    @Query(() => GQLUserModel)
-    async findUserById(@Context() cxt ,@Args('id') id: number): Promise<GQLUserModel> {
+    @Query(() => GQLIUserModel)
+    async findUserById(@Context() cxt ,@Args('id') id: number): Promise<GQLIUserModel> {
         const userId = cxt.req.user.id;
         const user = await this.userService.findUserById(userId, id);
         return (user);
@@ -58,7 +56,7 @@ export class AuthQueryResolver {
     }
 
     @UseGuards(GqlJwtAuthGuard)
-    @Query(() => [GQLUserModel])
+    @Query(() => [GQLIUserModel])
     async getOnlineUsers(
         @Context() { req },
          @Args('pageNumber') pageNumber : number,
@@ -69,7 +67,7 @@ export class AuthQueryResolver {
     }
 
     @UseGuards(GqlJwtAuthGuard)
-    @Query(() => [GQLUserModel])
+    @Query(() => [GQLIUserModel])
     async getOnlineFriends(
         @Context() { req },
          @Args('pageNumber') pageNumber: number,
@@ -77,6 +75,19 @@ export class AuthQueryResolver {
     ): Promise<IUser[]> {
         const userId = req.user.id;
         return await this.userStatusService.getOnlineFriends(userId, pageNumber, limit)
+
+    }
+
+    @UseGuards(GqlJwtAuthGuard)
+    @Query(() => [GQLIUserModel])
+    async searchUser(
+        @Context() { req },
+         @Args('pageNumber') pageNumber: number,
+          @Args('limit') limit: number,
+          @Args('username') username: string,
+    ): Promise<IUser[]> {
+        const userId = req.user.id;
+        return await this.userService.searchUser(userId, pageNumber, limit, username);
 
     }
 

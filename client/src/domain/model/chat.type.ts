@@ -15,11 +15,12 @@ export interface DMType {
   image: string;
 }
 
-interface ChannelSampleMember {
+export interface ChannelSampleMember {
   id: string;
   username: string;
   email: string;
   profileImgUrl: string;
+  muteStatus: boolean;
 }
 
 export interface ChannelSample {
