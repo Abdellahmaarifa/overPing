@@ -13,6 +13,7 @@ import ChatBanner from "../ChatBanner/ChatBanner";
 import tw from "twin.macro";
 import { CHANNEL_CMD, socket } from "constant/constants";
 import { useUserContext } from "context/user.context";
+import toast from "react-hot-toast";
 
 // const ob = {
 //   id: 12,
@@ -63,8 +64,21 @@ const ChatBody = () => {
         channelId: Number(id),
         text: msg,
       },
-      () => {
-        console.log("****************** get // ");
+      (data) => {
+        console.log("****************** get // ", data);
+        if (data.error.message) {
+          const time = new Date(data.error.message.split(" ").at(-1));
+          const now = new Date();
+          if (time) {
+            const newDate = new Date(time.getTime() - now.getTime());
+            toast.error(
+              `try again after:  ${newDate
+                .getMinutes()
+                .toString()
+                .padStart(2, "0")}:${newDate.getSeconds()}`
+            );
+          }
+        }
       }
     );
     setMsg("");

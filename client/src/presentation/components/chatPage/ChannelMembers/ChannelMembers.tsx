@@ -38,53 +38,13 @@ interface MemberType {
   username: string;
 }
 
-const ChannelMembers = () => {
-  const client = useApolloClient();
+const ActioneMemeber = ({ e }: { e: any }) => {
   const { id } = useParams();
   const { user } = useUserContext();
-  const [members, setMembers] = useState<ChannelSampleMember[] | []>([]);
-  const [owner, setOwner] = useState<ChannelSampleMember[] | []>([]);
-  const [admins, setAdmins] = useState<ChannelSampleMember[] | []>([]);
   const [KickUserMutation] = useKickMemberMutation();
   const [muteMemberMutation] = useMuteMemberMutation();
   const [banMemberMutation] = useBanMemberMutation();
   const [unmuteUserMutation] = useUnmuteMemberMutation();
-  const {
-    currentChannel: [currentChannel, setCurrentChannel],
-  } = useChatContext();
-  const [role, setRole] = useState<"owner" | "admin" | "member">("member");
-  const getMembers = async () => {
-    if (currentChannel) {
-      setOwner([
-        currentChannel.admins.find(
-          (e) => Number(e.id) == currentChannel.owner_id
-        ),
-      ] as ChannelSampleMember[]);
-      setAdmins(
-        (currentChannel.admins as ChannelSampleMember[]).filter(
-          (e) => Number(e.id) !== currentChannel.owner_id
-        )
-      );
-      setMembers(currentChannel.members);
-      if (currentChannel.owner_id === Number(user?.id)) setRole("owner");
-      else if (currentChannel.admins.find((e) => e.id === user?.id))
-        setRole("admin");
-    }
-  };
-  useEffect(() => {
-    getMembers();
-  }, [currentChannel]);
-
-  /*
-"data": {
-    "channelId": null,
-    "muteTimeLimit": null,
-    "password": null,
-    "userId": null,
-    "targetId": null
-  },
-
-*/
   const kickUser = async (targetId, name) => {
     try {
       console.log("kicking this user");
@@ -166,7 +126,84 @@ const ChannelMembers = () => {
       toast.error(err.message ? err.message : "something went wrong!");
     }
   };
+  return (
+    <div tw="absolute top-[10px] right-0 flex justify-center items-center gap-[5px]">
+      <div tw="w-[20px] h-[20px] ">
+        {e.muteStatus ? (
+          <UnmuteIcon
+            tw="w-full h-full fill-[#B4B5CF]"
+            onClick={(_event) => unmuteUser(e.id, e.username)}
+          />
+        ) : (
+          <MuteIcon
+            tw="w-full h-full fill-[#B4B5CF]"
+            onClick={(_event) => muteUser(e.id, e.username)}
+          />
+        )}
+      </div>
+      <div tw="w-[20px] h-[20px] ">
+        <KickIcon
+          tw="w-full h-full fill-[#B4B5CF]"
+          onClick={(_event) => kickUser(e.id, e.username)}
+        />
+      </div>
+      <div tw="w-[20px] h-[20px] ">
+        <BanIcon
+          tw="w-full h-full fill-[#B4B5CF]"
+          onClick={(_event) => banUser(e.id, e.username)}
+        />
+      </div>
+    </div>
+  );
+};
+const ChannelMembers = () => {
+  const client = useApolloClient();
+  const [members, setMembers] = useState<ChannelSampleMember[] | []>([]);
+  const [owner, setOwner] = useState<ChannelSampleMember[] | []>([]);
+  const [admins, setAdmins] = useState<ChannelSampleMember[] | []>([]);
 
+  const { id } = useParams();
+  const { user } = useUserContext();
+  const {
+    currentChannel: [currentChannel, setCurrentChannel],
+  } = useChatContext();
+  const [role, setRole] = useState<"owner" | "admin" | "member">("member");
+  const getMembers = async () => {
+    if (currentChannel) {
+      setOwner([
+        currentChannel.admins.find(
+          (e) => Number(e.id) == currentChannel.owner_id
+        ),
+      ] as ChannelSampleMember[]);
+      setAdmins(
+        (currentChannel.admins as ChannelSampleMember[]).filter(
+          (e) => Number(e.id) !== currentChannel.owner_id
+        )
+      );
+      setMembers(currentChannel.members);
+      if (currentChannel.owner_id === Number(user?.id)) setRole("owner");
+      else {
+        if (currentChannel.admins.find((e) => e.id == user?.id)) {
+          setRole("admin");
+        }
+      }
+    }
+  };
+  useEffect(() => {
+    getMembers();
+  }, [currentChannel]);
+
+  /*
+"data": {
+    "channelId": null,
+    "muteTimeLimit": null,
+    "password": null,
+    "userId": null,
+    "targetId": null
+  },
+
+*/
+  console.log("my role is : ", role, currentChannel);
   return (
     <ChannelMembersContainer>
       <ChannelMembersSearch>
@@ -223,6 +260,9 @@ const ChannelMembers = () => {
                     <ChannelMember key={e.id}>
                       <ChannelMemberPhoto src={e.profileImgUrl} />
                       <ChannelMemberName>{e.username}</ChannelMemberName>
+
+                      {(role === "admin" || role === "owner") &&
+                        e.id != user?.id && <ActioneMemeber e={e} />}
                     </ChannelMember>
                   );
                 })
@@ -244,37 +284,8 @@ const ChannelMembers = () => {
                         {e.username}
                       </ChannelMemberName>
 
-                      {(role === "admin" || role === "owner") && (
-                        <div tw="absolute top-[10px] right-0 flex justify-center items-center gap-[5px]">
-                          <div tw="w-[20px] h-[20px] ">
-                            {e.muteStatus ? (
-                              <UnmuteIcon
-                                tw="w-full h-full fill-[#B4B5CF]"
-                                onClick={(_event) =>
-                                  unmuteUser(e.id, e.username)
-                                }
-                              />
-                            ) : (
-                              <MuteIcon
-                                tw="w-full h-full fill-[#B4B5CF]"
-                                onClick={(_event) => muteUser(e.id, e.username)}
-                              />
-                            )}
-                          </div>
-                          <div tw="w-[20px] h-[20px] ">
-                            <KickIcon
-                              tw="w-full h-full fill-[#B4B5CF]"
-                              onClick={(_event) => kickUser(e.id, e.username)}
-                            />
-                          </div>
-                          <div tw="w-[20px] h-[20px] ">
-                            <BanIcon
-                              tw="w-full h-full fill-[#B4B5CF]"
-                              onClick={(_event) => banUser(e.id, e.username)}
-                            />
-                          </div>
-                        </div>
-                      )}
+                      {(role === "admin" || role === "owner") &&
+                        e.id != user?.id && <ActioneMemeber e={e} />}
                     </ChannelMember>
                   );
                 })

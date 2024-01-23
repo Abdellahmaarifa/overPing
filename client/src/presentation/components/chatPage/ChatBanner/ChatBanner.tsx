@@ -23,10 +23,13 @@ import {
   AddMemberDocument,
   FindChanneMemebersDocument,
   LeaveChannelDocument,
+  useUnbanMemberMutation,
 } from "gql/index";
 import { ChatSearchInput } from "../ChatSearch/ChatSearch.style";
 import toast, { Toaster } from "react-hot-toast";
 import { set } from "mobx";
+import Button from "components/common/Button/Button";
+import tw from "twin.macro";
 const ChatBanner = () => {
   const { mobileMenuState } = useLayoutContext();
   const [mobileMenu, setMobileMenu] = mobileMenuState;
@@ -45,7 +48,7 @@ const ChatBanner = () => {
     userHandlerCallBack: [userHandlerCallBack, setUserHandlerCallBack],
     channelHandlerCallBack: [channelHandlerCallBack, setChannelHandlerCallBack],
   } = useChatContext();
-
+  const [unbanUserMutation] = useUnbanMemberMutation();
   const client = useApolloClient();
   const { user } = useUserContext();
   const { id } = useParams();
@@ -102,6 +105,24 @@ targetId: Float!
     }
     setShowSearchModel(false);
   };
+  const unbanUser = async (userId: string) => {
+    // try to unban the user:
+    try {
+      const res = await unbanUserMutation({
+        variables: {
+          data: {
+            channelId: Number(id),
+            userId: Number(user?.id),
+            targetId: Number(userId),
+          },
+        },
+      });
+      addMember()(userId);
+      toast.success("user is back to the channela gain!");
+    } catch (err: any) {
+      toast.error(err.message ? err.message : "something went wrong");
+    }
+  };
   const addMember = () => async (userId: string) => {
     try {
       const data = await client.mutate({
@@ -119,7 +140,20 @@ targetId: Float!
       toast.success("member added successfuly");
     } catch (err: any) {
       console.log(err);
-      toast.error(err.message ? err.message : "something went wrong");
+      if (err.message == "failed: You are BANNED!") {
+        toast((t) => (
+          <span tw="flex items-center justify-center">
+            this user is banned, do u want to unban them?
+            <Button
+              $text="unban"
+              onClick={() => {
+                unbanUser(userId);
+                toast.dismiss(t.id);
+              }}
+            />
+          </span>
+        ));
+      } else toast.error(err.message ? err.message : "something went wrong");
     }
     setShowSearchModel(false);
   };
