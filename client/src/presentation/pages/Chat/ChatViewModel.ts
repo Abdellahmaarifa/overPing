@@ -158,6 +158,7 @@ export class ChatViewModel {
         this.hooks.navigate("/chat");
       }
       console.log("Error from: joinchannel ", err);
+      this.hooks.navigate("/error");
     }
   };
 
