@@ -144,7 +144,7 @@ const ChatBody = () => {
             //const a = membersMap!.get("0");
             //console.log("sender: ", membersMap, e.sender_id, a);
             // if (membersMap?.has("3")) console.log("there is@!");
-            console.log("**** ----- --- -- - -- -", membersMap);
+            console.log("**** ----- --- -- - -- -", membersMap, e);
 
             return (
               <Message
@@ -153,6 +153,7 @@ const ChatBody = () => {
                 message={e.text}
                 date={e.created_at}
                 key={e.id}
+                id={e.sender_id}
               />
             );
           })}

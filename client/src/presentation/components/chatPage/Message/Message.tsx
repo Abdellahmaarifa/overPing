@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SenderCard from "../SenderCard/SenderCard";
 import {
   MessageContainer,
@@ -10,29 +10,77 @@ import {
   MessageSenderDate,
   MessageSenderName,
 } from "./Message.style";
+import BannedDeafultImg from "assets/chat/default_banned.jpg";
+import { AccountDocument, useAccountQuery } from "gql/index";
+import { useApolloClient } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+
 const Message = ({
   name,
   date,
   message,
   image,
   key,
+  id,
 }: {
   name: string;
   date: string;
   message: string;
   image: string;
   key: number;
+  id: number;
 }) => {
-  const [IsShown, setIsShown] = useState<boolean>(false);
-
+  //const [IsShown, setIsShown] = useState<boolean>(false);
+  const [user, setUser] = useState<{ name: string; image: string }>({
+    name,
+    image,
+  });
+  const navigate = useNavigate();
+  const client = useApolloClient();
+  useEffect(() => {
+    if (id) {
+      client
+        .query({
+          query: AccountDocument,
+          variables: {
+            userId: id,
+          },
+        })
+        .then((data) => {
+          console.log(data);
+          setUser({
+            name: data.data.findUserById.username,
+            image: data.data.findUserById.profileImgUrl,
+          });
+        })
+        .catch((error) => console.log(error));
+    }
+  }, []);
+  console.log("id  >> : ", id);
   return (
-    <MessageContainer onMouseLeave={() => setIsShown(false)}>
-      <MessageProfile src={image} onMouseEnter={() => setIsShown(true)} />
+    <MessageContainer
+      // onMouseLeave={() => setIsShown(false)}
+      style={
+        !name && !image
+          ? {
+              opacity: "0.2",
+            }
+          : undefined
+      }
+    >
+      <MessageProfile
+        src={image || user.image || BannedDeafultImg}
+        // onMouseEnter={() => setIsShown(true)}
+
+        onClick={() => navigate(`/profile/${id}`)}
+      />
       <MessageInfo>
         <MessageSender>
-          <MessageSenderName>{name}</MessageSenderName>
+          <MessageSenderName>
+            {name || user.name || "[left recently]"}
+          </MessageSenderName>
           <MessageSenderDate>{date}</MessageSenderDate>
-          {IsShown && (
+          {/* {IsShown && (
             <SenderCard
               user={{
                 name: "maarifa",
@@ -44,7 +92,7 @@ const Message = ({
                 isFriend: false,
               }}
             />
-          )}
+          )} */}
         </MessageSender>
         <MessageSample>
           <span>{message}</span>
