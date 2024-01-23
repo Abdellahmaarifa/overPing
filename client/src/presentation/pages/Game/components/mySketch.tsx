@@ -439,13 +439,16 @@ function setup(game : Game)
       game.canvasResizedHeight = canvasHeight;
       game.canvasResizedWidth = canvasWidth;
       Sounds.soundButton = game.p5.createButton('mute');
-      Sounds.soundButton.parent("#muteBtn")
-      Sounds.soundButton.size(game.canvasPranetDiv.elt.clientWidth / 14)
-      Sounds.soundButton.style("z-index", "6");
-      Sounds.soundButton.style("color", "black");
-      Sounds.soundButton.style("font-size", "1.5vmin");
-      Sounds.soundButton.style("background-color", "white");
-      Sounds.soundButton.position(game.canvasPranetDiv.elt.clientWidth / 2 - (game.canvasPranetDiv.elt.clientWidth / 28 ), 0, 'absolute');
+      if (Sounds.soundButton)
+      {
+        Sounds.soundButton.parent("#muteBtn")
+        Sounds.soundButton.size(game.canvasPranetDiv.elt.clientWidth / 14)
+        Sounds.soundButton.style("z-index", "6");
+        Sounds.soundButton.style("color", "black");
+        Sounds.soundButton.style("font-size", "1.5vmin");
+        Sounds.soundButton.style("background-color", "white");
+        Sounds.soundButton.position(game.canvasPranetDiv.elt.clientWidth / 2 - (game.canvasPranetDiv.elt.clientWidth / 28 ), 0, 'absolute');
+      }
 
     }
     else

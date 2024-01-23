@@ -152,6 +152,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
                     }, 100);
                 }, 1000);
 
+            }
         }
         else if (subscriptionData )
         {
@@ -257,5 +258,3 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
 };
 
 export default Waiting;
-
-

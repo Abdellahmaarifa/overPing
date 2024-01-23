@@ -125,7 +125,11 @@ let Util = ({ playerOne , playerTwo, updateUserInfoUtil, updatePlayerOne, update
                         p1.userAvatar,p1.userLogo, p1.matchWon, p1.bestWinStreak, p1.matchPlyed, p1.level, 
                         p1.tournentPlayed, p1.tournentWon, p1.playWithMouse,p1.userId, p1.friend, p1.ply2userId, p1.matchType);
                 } 
-                updateUserInfoUtil(1);
+                if (p1.friend)
+                {
+                    updateUserInfoUtil(1);
+            
+                }
             }
         }, 500)
         if (playerOne.friend)
@@ -134,7 +138,8 @@ let Util = ({ playerOne , playerTwo, updateUserInfoUtil, updatePlayerOne, update
                 updateUserInfoUtil(1);
             }, 7000)
         }
- 
+        
+        console.log("THIS TIME OUT IS WORKING!!")
             
         return (
             <div className="UtilContainer" >
