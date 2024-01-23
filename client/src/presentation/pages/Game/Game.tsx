@@ -21,40 +21,67 @@ import {useSearchParams} from "react-router-dom"
 import ReadyRobot from './components/ReadyRobot';
 import { IGameData } from './components/game.interface';
 import { Result } from './components/Result';
-let gameCapsule: GameContainer = new GameContainer();
+import ReadyFriend from './components/ReadyFriend';
+import Goals  from './components/Goals'
 
+let gameCapsule: GameContainer = new GameContainer();
 let playerOne : UserInfo = new UserInfo(tabId, "", 0, 0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
 let playerTwo : UserInfo | undefined = new UserInfo(tabId, "", 0, 0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
 let robot     : UserInfo = new UserInfo(tabId, "", playerOne.matchWager, playerOne.modePlaying, "Mr Robot <|o_o|>", "/images/robot.jpg", "/images/badge-3.png", 10, 10 ,10, 12, 10, 0, 0)
 
-
-function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlayerTwo} : { playerOne : UserInfo , playerTwo : UserInfo | undefined })
+function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlayerTwo } : 
+    { playerOne : UserInfo , playerTwo : UserInfo | undefined})
 {
     
-    // const { user } =  useUserContext();
-    // const { data, loading, error } = useAccountQuery({
-    //     variables: {
-    //       userId: Number(user?.id),
-    //     },
-    //   });
-    // const [params] = useSearchParams()
-    let gameResult : Result = new Result()
+ 
+    let [gameResult, setGameResult] = useState<Result>(() => new Result());
 
-    let [theGameResult, setGameResult] = useState(gameResult);
-    
-   // console.log("params: ", params.get("type"));
-    //console.log("The data ----->: ", user, "--->\n", data);
-
-
-
-    /*useEffect(() => 
-    {
-    }, []);*/
-
-    let updateGameReuslt = (gameResult : Result) =>
-    {
-        setGameResult(gameResult);
+    const updateGameResult = (
+      newPlyOneId: number,
+      newPlyTwoId: number,
+      newPlyOneGoals: number,
+      newPlyTwoGoals: number,
+      newLeftPlayerRebound: number,
+      newLeftPlayerStrict: number,
+      newRightPlayerRebound: number,
+      newRightPlayerStrict: number
+    ) => {
+      setGameResult((prevGameResult) => ({
+        ...prevGameResult,
+        plyOneId: newPlyOneId,
+        plyTwoId: newPlyTwoId,
+        plyOneGoals: newPlyOneGoals,
+        plyTwoGoals: newPlyTwoGoals,
+        leftPlayerRebound: newLeftPlayerRebound,
+        leftPlayerStrict: newLeftPlayerStrict,
+        rightPlayerRebound: newRightPlayerRebound,
+        rightPlayerStrict: newRightPlayerStrict
+      }));
     };
+
+    // let [goal, setGoals] = useState<Goals>( () => new Goals());
+
+    // let updateGoalResult = (
+    //     newLeftPlayerGoal : number,
+    //     newRightPlayerGoal : number,
+    //     newPlayerNumber : number,
+    //     newLeftPlayerRebound : number,
+    //     newLeftPlayerStrict : number,
+    //     newRightPlayerrebound : number,
+    //     newRightPlayerStrict : number,
+    // ) => {
+    //     setGoals( (lastGoalResult) => ({
+    //         ...lastGoalResult,
+    //         leftPlayerGoals    : newRightPlayerGoal,
+    //         rightPlayerGoals   : newLeftPlayerGoal,
+    //         playerNumber       : newPlayerNumber,
+    //         leftPlayerRebound  : newLeftPlayerRebound,
+    //         leftPlayerStrict   : newLeftPlayerStrict,
+    //         rightPlayerRebound : newRightPlayerrebound,
+    //         rightPlayerStrict  : newRightPlayerStrict,
+    //     }))
+    // }
+
 
     let [playerTwo, setPlayerTwoState] = useState(
         {
@@ -76,13 +103,15 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
             playWithMouse  : renamePlayerTwo?.playWithMouse,
             userId         : renamePlayerTwo?.userId,
             friend         : renamePlayerTwo?.friend,
+            ply2userId     : renamePlayerTwo?.ply2userId,
+            matchType      : renamePlayerTwo?.matchType
         }
     );
 
     const updatePlayerTwo = (newPlayWithRobot : boolean, newTabId : string, newMatchId : string, newMatchWager: number,
         newModePlaying: number, newUserName : string, newUserAvatar: string, newUserLogo : string, newMatchWon : number,
         newBestWinStreak : number , newMatchPlayed : number, newLevel: number, newTournentPlayed : number,
-        newTournentWon : number, newPlayWithMouse : number , newUserId : number, isFriend : boolean) => 
+        newTournentWon : number, newPlayWithMouse : number , newUserId : number, isFriend : boolean, newPly2userId : number, newMatchType) => 
     {
         setPlayerTwoState({...playerTwo, playWithRobot : newPlayWithRobot, 
             tabId : newTabId, matchId : newMatchId, matchWager: newMatchWager,
@@ -91,7 +120,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
              matchWon : newMatchWon, bestWinStreak : newBestWinStreak,
              matchPlyed : newMatchPlayed, level : newLevel, 
              tournentPlayed : newTournentPlayed, tournentWon : newTournentWon,
-             playWithMouse : newPlayWithMouse, userId : newUserId, friend : isFriend});
+             playWithMouse : newPlayWithMouse, userId : newUserId, friend : isFriend, ply2userId : newPly2userId, matchType : newMatchType});
     };
 
 
@@ -115,12 +144,14 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         playWithMouse  : renamePlayerOne.playWithMouse,
         userId         : renamePlayerOne.userId,
         friend         : renamePlayerOne.friend,
+        ply2userId     : renamePlayerOne.ply2userId,
+        matchType      : renamePlayerOne.matchType,
     })
 
     const updatePlayerOne = (newPlayWithRobot : boolean, newTabId : string, newMatchId : string, newMatchWager: number,
         newModePlaying: number, newUserName : string, newUserAvatar: string, newUserLogo : string, newMatchWon : number,
         newBestWinStreak : number , newMatchPlayed : number, newLevel: number, newTournentPlayed : number,
-        newTournentWon : number, newPlayWithMouse : number , newUserId : number, isFriend : boolean) => 
+        newTournentWon : number, newPlayWithMouse : number , newUserId : number, isFriend : boolean, newPly2userId : number, newMatchType) => 
     {
         SetUserInfoData({...playerOne, playWithRobot : newPlayWithRobot, 
             tabId : newTabId, matchId : newMatchId, matchWager: newMatchWager,
@@ -129,7 +160,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
              matchWon : newMatchWon, bestWinStreak : newBestWinStreak,
              matchPlyed : newMatchPlayed, level : newLevel, 
              tournentPlayed : newTournentPlayed, tournentWon : newTournentWon,
-             playWithMouse : newPlayWithMouse, userId : newUserId, friend : isFriend});
+             playWithMouse : newPlayWithMouse, userId : newUserId, friend : isFriend, ply2userId : newPly2userId, matchType : newMatchType});
     };
     const [readyState, setReadyState] = useState(true);
     
@@ -185,73 +216,45 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         setServerState(newState);
     }
 
-    // if (params.get("type") === "computer")
-    // {
-    //     playerOne.playWithRobot = true;   
-    //     robot.matchWager = playerOne.matchWager;
-    //     robot.modePlaying = playerOne.modePlaying;
-    // }
-
-    // if (loading) 
-    //     return <h1>loading...</h1>;
-    // else if (error)
-    //     return <h1>Error!..</h1>
-    // else
-    // {
-    //    playerOne.tabId = user?.id as string;
-    //    playerOne.userName = user?.username as string;
-    //    playerOne.userAvatar = data?.findUserById.profileImgUrl as string;
-    //    playerOne.matchPlyed = data?.findProfileByUserId?.gameStatus.totalMatches as number;
-    //    playerOne.matchWon = data?.findProfileByUserId?.gameStatus.matchesWon as number;
-    //    playerOne.bestWinStreak = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
-    //    playerOne.level = data?.findProfileByUserId?.xp as number;
-    //    playerOne.tournentWon = data?.findProfileByUserId?.gameStatus.win_streak as number;
-    //    playerOne.tournentPlayed = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
-    //    playerOne.userId = Number(data?.findUserById?.id);
-
-    //    console.log("---------------> " , playerOne.tabId, playerOne.userId);
-    //     if (data?.findProfileByUserId?.rank  as number < 100)
-    //         playerOne.userLogo = "/public/images/badge-1.png"
-    //     if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-    //         playerOne.userLogo = "/public/images/badge-2.png";
-    //     if (data?.findProfileByUserId?.rank  as number >= 200)
-    //         playerOne.userLogo = "/public/images/badge-3.png";
     
-        if (playerOne.playWithMouse === 0)
-            return (< Util playerOne={playerOne} playerTwo={playerTwo as UserInfo} updatePlayerOne={updatePlayerOne} updatePlayerTwo={updatePlayerTwo} updateUserInfoUtil={UpdateUserInfoUtil}/>);
-        else if (playerOne.modePlaying === 0)
-            return ( <Modes playerOne={playerOne} updateUserInfoMode={updateUserInfoMode}/>);
-        else if (playerOne.matchWager === 0)
-            return ( < Deposit playerOne={playerOne} updateUserInfoWager={updateuserinfoWager}/>);
-        else if (playerOne.matchId.length === 0 && playerOne.playWithRobot === false)
-            return (<Waiting playerOne={ playerOne } playerTwo={ playerTwo as UserInfo }
-                 updateRobotOpetion={updateRobotOpetion} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo}  />) 
-        if (playerOne.matchId.length > 0 && playerOne.playWithRobot === false && readyState)
-            return (< Ready playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateReadyState={updateReadyState}
-                 updateUserInfoWagerAndMode={updateUserInfoWagerAndMode} updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo}/>)
-        else if (playerOne.playWithRobot === true && readyState )
-        {
-            return (< ReadyRobot playerOne={playerOne} playerTwo={playerTwo as UserInfo} robot={robot} updateReadyState={updateReadyState} updateUserInfoWagerAndMode={updateUserInfoWagerAndMode}  updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo} />)
-        }
-        else if (matchState === undefined)
-        {
-            if (isServerDown === true)
-                return ( <ServerDown/>);
-            else
-                return (
-                    <>
-                        <Info  playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateMatchState={updateMatchState} updateGameResult={updateGameReuslt}/>
-                        <App  gameCapsule={gameCapsule} playerOne={playerOne} playerTwo={playerTwo as UserInfo}
-                         updateMatchState={updateMatchState} updateServerState={updateServerState}/>
-                    </>
-                )
-        }
-        else if (matchState === true)
-            return (< Congratulation playerOne={playerOne} playerTwo={playerTwo as UserInfo} gameResult={gameResult}/>)
-        else if (matchState === false)
-            return (< BetterLuck playerOne={playerOne} playerTwo={playerTwo as UserInfo} />)
-        return (null)
-   // }
+
+    if (playerOne.playWithMouse === 0)
+        return (< Util playerOne={playerOne} playerTwo={playerTwo as UserInfo} updatePlayerOne={updatePlayerOne} updatePlayerTwo={updatePlayerTwo} updateUserInfoUtil={UpdateUserInfoUtil}/>);
+    else if (playerOne.modePlaying === 0)
+        return ( <Modes playerOne={playerOne} updateUserInfoMode={updateUserInfoMode}/>);
+    else if (playerOne.matchWager === 0)
+        return ( < Deposit playerOne={playerOne} updateUserInfoWager={updateuserinfoWager}/>);
+    else if (playerOne.matchId.length === 0 && playerOne.playWithRobot === false)
+        return (<Waiting playerOne={ playerOne } playerTwo={ playerTwo as UserInfo }
+                updateRobotOpetion={updateRobotOpetion} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo}  />) 
+    if (playerOne.matchId.length > 0 && playerOne.playWithRobot === false && readyState && playerOne.friend === false)
+        return (< Ready playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateReadyState={updateReadyState} updatePlayerTwo={updatePlayerTwo}/>)
+    else if (playerOne.matchId.length > 0 && playerOne.playWithRobot === false && readyState && playerOne.friend)
+                return (< ReadyFriend playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateReadyState={updateReadyState} updatePlayerTwo={updatePlayerTwo}/>)
+    else if (playerOne.playWithRobot === true && readyState )
+    {
+        return (< ReadyRobot playerOne={playerOne} playerTwo={playerTwo as UserInfo} robot={robot} updateReadyState={updateReadyState} updateUserInfoWagerAndMode={updateUserInfoWagerAndMode}  
+            updateUserInfoWagerAndModeTwo={updateUserInfoWagerAndModeTwo} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo} />)
+    }
+    else if (matchState === undefined)
+    {
+        if (isServerDown === true)
+            return ( <ServerDown/>);
+        else
+            return (
+                <>
+                    <Info playerOne={playerOne} playerTwo={playerTwo as UserInfo} gameResult={gameResult} updateMatchState={updateMatchState}
+                        updateGameResult={updateGameResult} matchState={matchState}/>
+                    <App  gameCapsule={gameCapsule} playerOne={playerOne} playerTwo={playerTwo as UserInfo}
+                        updateMatchState={updateMatchState} updateServerState={updateServerState}/>
+                </>
+            )
+    }
+    else if (matchState === true)
+        return (< Congratulation playerOne={playerOne} playerTwo={playerTwo as UserInfo} gameResult={gameResult}/>)
+    else if (matchState === false)
+        return (< BetterLuck playerOne={playerOne} playerTwo={playerTwo as UserInfo} />)
+    return (null)
 }
   
 export default ParentComponent;

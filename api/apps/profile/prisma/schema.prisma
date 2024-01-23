@@ -60,17 +60,17 @@ model Statistics {
   gameStatus              GameStatus @relation(fields: [user_id], references: [user_id])
 }
 
-model GameMatch {
-  id           Int      @id @default(autoincrement())
-  player1      Int      @unique
-  player2      Int      @unique
-  winner       Int      @unique
-  loser        Int      @unique
-  createdAt    DateTime @default(now())
-  player1Score Int      @default(0)
-  player2Score Int      @default(0)
-  VictoryWager Int      @default(0)
-}
+// model GameMatch {
+//   id           Int      @id @default(autoincrement())
+//   player1      Int      @unique
+//   player2      Int      @unique
+//   winner       Int      @unique
+//   loser        Int      @unique
+//   createdAt    DateTime @default(now())
+//   player1Score Int      @default(0)
+//   player2Score Int      @default(0)
+//   VictoryWager Int      @default(0)
+// }
 
 model Achievement {
   id            Int                        @id @default(autoincrement())

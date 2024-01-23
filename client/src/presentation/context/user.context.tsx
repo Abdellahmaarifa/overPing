@@ -65,14 +65,14 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
     // we should sen a request to /refresh_token and then update the user with the new token.
     try {
       // console.log("the usrl of refersh: " ,import.meta.env.OVER_PING_REFRECH_TOKEN)
-      console.log("user refresh ", SERVER_REFRESH_END_POINT);
+      // console.log("user refresh ", SERVER_REFRESH_END_POINT);
       //if (user) return;
       const data = await fetch(SERVER_REFRESH_END_POINT, {
         credentials: "include",
         method: "GET",
       });
       const res = await data?.json();
-      console.log("the res: ", res);
+      // console.log("the res: ", res);
       store.setToken(res?.Access_token);
       if (res?.Access_token) {
         // update the status of the user every 2 seconds
@@ -92,7 +92,7 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
       });
       const userRes = await userData.json();
 
-      console.log("from user context: ", userRes?.data?.getUser);
+      //console.log("from user context: ", userRes?.data?.getUser);
       setUser(userRes?.data?.getUser);
 
       // set the profile
@@ -113,13 +113,13 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
           credentials: "include",
         });
         const profileRes = await profileData.json();
-        console.log(
-          "resualt of the query: ",
-          profileRes.data,
-          GetUserProfile(profileRes.data)
-        );
+        // console.log(
+        //   "resualt of the query: ",
+        //   profileRes.data,
+        //   GetUserProfile(profileRes.data)
+        // );
         setProfile(GetUserProfile(profileRes.data));
-        console.log("profile after done: ", profile);
+        //console.log("profile after done: ", profile);
       }
       //setUser(user);
       //if (res?.accessToken) setUser({ token: res?.accessToken, ...user });

@@ -19,7 +19,7 @@ let Modes = ({ playerOne , updateUserInfoMode} : ModesProps ) =>
           // You can play the sound or perform other actions here
         },
         onloaderror: (error: any) => {
-          console.error('Error loading audio:', error);
+          //console.error('Error loading audio:', error);
         },
       });
 

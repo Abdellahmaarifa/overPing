@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef, useCallback} from "react";
 import { io, Socket } from 'socket.io-client';
 import './Info.css';
 import Goals from "./Goals";
@@ -12,12 +12,17 @@ interface InfoProps
 {
     playerOne : UserInfo;
     playerTwo : UserInfo;
+    gameResult : Result;
     updateMatchState : (val : boolean ) => void;
-    updateGameResult : (val : Result) => void
+    updateGameResult : (newPlyOneId : number ,
+         newPlyTwoId : number, newPlyOneGoals : number, newPlyTwoGoals : number, newLeftPlayerRebound : number,
+         newLeftPlayerStrict : number, newRightPlayerRebound : number, newRightPlayerStrict : number) => void;
+    matchState : boolean | undefined;
+    
 }
 
 
-function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoProps) 
+function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameResult, matchState} : InfoProps) 
 {
     const [leftGoal, setLeftGoal] = useState(0);
     const [rightGoal, setRightGoal] = useState(0);
@@ -25,32 +30,30 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
     const [ID, setUsrId] = useState("A" + playerOne.matchId);
 
 
+    let TempGameResult : Result = new Result();
     //console.log("Logo ===> : ", playerOne.userLogo);
    // console.log("Logo ===> : ", playerTwo.userLogo);
     
-    //get room Match id before establish a connection
-    useEffect(() => 
+    // useEffect(() => 
+    // {
+    //     const checkUsrId = () => {
+    //     if (ID === undefined) {
+    //         setTimeout(() => 
+    //         {
+    //             setUsrId("A" + playerOne.matchId);
+
+    //         }, 1000); // Check every second
+    //     }
+    //     };
+
+    //     checkUsrId();
+    // }, [ID]);
+
+    const sendDataToServer = (ID : string, tabId : string) =>
     {
-        // Define a function to periodically check and update UsrId
-        const checkUsrId = () => {
-        if (ID === undefined) {
-            // Continue checking until UsrId is defined
-            setTimeout(() => 
-            {
-                setUsrId("A" + playerOne.matchId);
-
-            }, 1000); // Check every second
-        }
-        };
-
-        checkUsrId();
-    }, [ID]);
-
-    const sendDataToServer = (tabId : string) =>
-    {
-        if (socket && ID)
+        if (socket)
         {
-             console.log("the id ===> ", tabId)
+             //console.log("the id ===> ", tabId)
             socket.emit('customGoalsEvent', {ID , tabId});
         }
     };
@@ -78,14 +81,9 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
 
             socket.on('playerLeaveTheGame', () =>
             {
-                console.log('event is come------------->')
-                if (leftGoal !== 5 && rightGoal !== 5)
+                console.log("Leaving ===>")
+                if (leftGoal !== 5 && rightGoal !== 5 && matchState === undefined)
                 {
-                    // let gameResult : Result = new Result();
-                    // gameResult.plyOneId = playerOne.userId;
-                    // gameResult.plyTwoId = playerTwo.userId;
-                    // gameResult.plyOneGoals = 0;
-                    // gameResult.plyTwoGoals = 5;
                     const gameData : IGameData = 
                     {
                         playerOneId       : playerOne.userId,
@@ -101,8 +99,20 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
                         points            : playerOne.matchWager * 2,
                         level             : 60,
                       };
-                    console.log("Data : ", gameData);
                     playerOne.socket?.emit('customResult', gameData);
+                    TempGameResult.leftPlayerRebound = 5;
+                    TempGameResult.leftPlayerStrict = 0;
+                    TempGameResult.rightPlayerRebound = 0;
+                    TempGameResult.rightPlayerStrict = 0;
+                    TempGameResult.plyOneGoals = 5;
+                    TempGameResult.plyTwoGoals = 0;
+                    TempGameResult.plyOneId = playerOne.userId;
+                    TempGameResult.plyTwoId = playerTwo.userId;
+                    if (gameResult.plyOneId === 0)
+                        updateGameResult(TempGameResult.plyOneId, TempGameResult.plyTwoId,
+                                TempGameResult.plyOneGoals, TempGameResult.plyTwoGoals,
+                                TempGameResult.leftPlayerRebound, TempGameResult.leftPlayerStrict,
+                                TempGameResult.rightPlayerRebound, TempGameResult.rightPlayerStrict );
                     setTimeout(() => {
                         updateMatchState(true)
                     }, 2000)
@@ -111,11 +121,11 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
 
             socket.on('goalsEvent', (goal : Goals) => 
             {
-                setPlayerNumber(goal.playerNumber)
-                setLeftGoal(goal.rightPlayerGoals);
-                setRightGoal(goal.leftPlayerGoals);
+
+
                 if (goal.leftPlayerGoals === 5 || goal.rightPlayerGoals === 5)
                 {
+                    console.log("winning ===>")
                     setTimeout(() => {
                         let p1status : number = 0;
                         let p2status : number = 0;
@@ -145,13 +155,32 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
                             level             : 60,
                           };
                         playerOne.socket?.emit('customResult', gameData);
-                        if (goal.rightPlayerGoals === 5)
+                        TempGameResult.leftPlayerRebound = goal.leftPlayerRebound;
+                        TempGameResult.leftPlayerStrict = goal.leftPlayerStrict;
+                        TempGameResult.rightPlayerRebound = goal.rightPlayerRebound;
+                        TempGameResult.rightPlayerStrict = goal.rightPlayerStrict;
+                        TempGameResult.plyOneGoals = goal.leftPlayerGoals;
+                        TempGameResult.plyTwoGoals = goal.rightPlayerGoals;
+                        TempGameResult.plyOneId = playerOne.userId;
+                        TempGameResult.plyTwoId = playerTwo.userId;
+                        if (gameResult.plyOneId === 0)
+                            updateGameResult(TempGameResult.plyOneId, TempGameResult.plyTwoId,
+                                    TempGameResult.plyOneGoals, TempGameResult.plyTwoGoals,
+                                    TempGameResult.leftPlayerRebound, TempGameResult.leftPlayerStrict,
+                                    TempGameResult.rightPlayerRebound, TempGameResult.rightPlayerStrict );
+                        if (goal.rightPlayerGoals === 5 && matchState === undefined)
                             updateMatchState(false);
                         else
                             updateMatchState(true);
+
                     }, 3000);
                 }
-                // console.log("player n : " , goal.playerNumber);
+                if (matchState === undefined)
+                {
+                    setPlayerNumber(goal.playerNumber);
+                    setLeftGoal(goal.rightPlayerGoals);
+                    setRightGoal(goal.leftPlayerGoals);
+                }
             });
         }
     }
@@ -159,12 +188,13 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
     useEffect(() => 
     {
         setUpSocket(playerOne.tabId);
-        const intervalId = setInterval(() => sendDataToServer(playerOne.tabId), 500);
+        const intervalId = setInterval(() => sendDataToServer(playerOne.matchId, playerOne.tabId), 500);
         
         return () => {
             clearInterval(intervalId)
             if (socket)
             {
+                console.log("is disco")
                 socket.disconnect();
             }
         };
@@ -172,11 +202,9 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
 
 
 
-    //hover effect and display user info
     const [hovered1, setHovered1] = useState(false);
     const [hovered2, setHovered2] = useState(false);
 
-    // console.log("ply ", gameCapsule.playerNumber, leftGoal, rightGoal);
     setTimeout(() => {
 
         let leftImg : HTMLElement | null = document.getElementById("infoAvatar01");
@@ -197,31 +225,6 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
         }
     }, 100)
 
-
-    // if (playerNumber === 1)
-    // {
-    //     Usr.userAvatar = "kilua.jpg"    
-    //     Usr2.userAvatar = "machi.jpg"    
-    // }
-
-
-    // if (playerNumber === 2)
-    // {
-    //     Usr.userAvatar = "machi.jpg"
-    //     Usr2.userAvatar = "kilua.jpg"
-    // }
-
-    // if (leftImg && leftImgInfo && playerNumber)
-    // {
-    //     leftImg.setAttribute('src', Usr2.userAvatar);
-    //     leftImgInfo.setAttribute('src', Usr2.userAvatar);
-    // }
-
-    // if (rightImg && rightImgInfo && playerNumber)
-    // {
-    //     rightImg.setAttribute('src', Usr.userAvatar );
-    //     rightImgInfo.setAttribute('src', Usr.userAvatar );
-    // }
 
     return (
         <div id="muteBtn" className="playersInfo">
@@ -274,12 +277,12 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
                             <div className="achievement">
                                 <div className="userName"><p>{playerTwo.userName}</p></div>
                                 <div className="shields">
-                                    <span className="shld">Game Won : {playerTwo.matchWon}</span>
-                                    <span className="shld">Best Win : {playerTwo.bestWinStreak}</span>
-                                    <span className="shld">Game Played : {playerTwo.matchPlyed}</span>
-                                    <span className="shld">xp : {playerTwo.level}</span>
-                                    <span className="shld">win streak : {playerTwo.tournentWon}</span>
-                                    <span className="shld">matches loss : {playerTwo.tournentPlayed}</span>
+                                    <span className="shld"><center>Game Won<br/>{playerTwo.matchWon}</center> </span>
+                                    <span className="shld"><center>Best Win<br/>{playerTwo.bestWinStreak}</center></span>
+                                    <span className="shld"><center>Game Played<br />{playerTwo.matchPlyed}</center></span>
+                                    <span className="shld"><center>xp<br />{playerTwo.level}</center></span>
+                                    <span className="shld"><center>win streak<br />{playerTwo.tournentWon}</center></span>
+                                    <span className="shld"><center>matches loss<br />{playerTwo.tournentPlayed}</center></span>
                                 </div>
                             </div>
                             <div className="team"><img id="leftTeam" src={playerTwo.userLogo} alt="badge"/></div>
@@ -310,12 +313,12 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
                             <div className="achievement">
                                 <div className="userName"><p>{playerOne.userName}</p></div>
                                 <div className="shields">
-                                    <span className="shld">Game Won : {playerOne.matchWon}</span>
-                                    <span className="shld">Best Win : {playerOne.bestWinStreak}</span>
-                                    <span className="shld">Game Played : {playerOne.matchPlyed}</span>
-                                    <span className="shld">xp : {playerOne.level}</span>
-                                    <span className="shld">win streak : {playerOne.tournentWon}</span>
-                                    <span className="shld">matches loss : {playerOne.tournentPlayed}</span>
+                                    <span className="shld"><center>Game Won<br />{playerOne.matchWon}</center></span>
+                                    <span className="shld"><center>Best Win<br />{playerOne.bestWinStreak}</center></span>
+                                    <span className="shld"><center>Game Played<br />{playerOne.matchPlyed}</center></span>
+                                    <span className="shld"><center>xp<br /> {playerOne.level}</center></span>
+                                    <span className="shld"><center>win streak<br />{playerOne.tournentWon}</center></span>
+                                    <span className="shld"><center>matches loss<br />{playerOne.tournentPlayed}</center></span>
                                 </div>
                             </div>
                             <div className="team"><img id="rightTeam" src={playerTwo.userLogo} alt="badge"/></div>
@@ -336,167 +339,3 @@ function Info({playerOne, playerTwo, updateMatchState, updateGameResult} : InfoP
 }
 
 export default Info;
-
-
-
-/*import React , { useState } from "react";
-import { io, Socket } from 'socket.io-client';
-// import { gameCapsule } from "./App";
-import './Info.css'
-import { log } from "console";
-import GameContainer from "../components/gamecontainer";
-import { gameCapsule } from "./ParentComponent";
-import { userInfo as Usr } from "./App";
-// function Info ({ goals }: { goals: Goals } )
-
-
-
-const serverUrl: string = 'ws://localhost:4055';
-const UsrId = "A" + Usr.matchId
-
-function Info ( )
-{
-    let leftGoal : number = 0;
-    let rightGoal : number = 0;
-    while (UsrId === undefined)
-    {
-        setTimeout(function() {
-            console.log("End");
-        }, 1000);
-    }
-
-    let socket: Socket | null = null;
-    socket = io(serverUrl, { path: '/game-container', transports: ['websocket'], query: { UsrId }});
-
-    socket.on('connect', () => {
-      console.log(`Connected to WebSocket server`);
-    });
-
-    socket.on('disconnect', () => {
-      console.log(`Disconnected from WebSocket server`);
-    });
-
-
-    
-    const [hovered1, setHovered1] = useState(false);
-    const [hovered2, setHovered2] = useState(false);
-    if (gameCapsule.playerNumber === 1)
-    {
-        rightGoal = gameCapsule.leftPlayerGoals
-        leftGoal = gameCapsule.rightPlayerGoals
-    }
-    else if (gameCapsule.playerNumber === 2)
-    {
-        leftGoal = gameCapsule.leftPlayerGoals
-        rightGoal = gameCapsule.rightPlayerGoals
-    }
-    console.log("ply ", gameCapsule.playerNumber, leftGoal, rightGoal);
-
-    return (
-        <div className="playersInfo">
-            
-            <div className={`container0 ${hovered1 ? "hideContainer0" : ""}  ${hovered2 ? "hideContainer0" : ""}`}>
-                
-                <div className="head0"></div>
-     
-                <div className="middle0" >
-                    <span className="leftCurve"><p>{leftGoal}</p></span>
-                    <div className="playersContainer">
-                        <div  className="players"  >
-                            <div className="player1">
-                                <div className="hoverExpand1" onClick={() => setHovered1(true)} >
-                                    <div className="avatar1" ></div>
-                                </div>
-                            </div>
-                            <div className="vs"><p>vs</p></div>
-                            <div className="player2">
-                                <div className="hoverExpand1" onClick={() => setHovered2(true)} >
-                                    <div className="avatar2"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="infoFooter0">
-                            <div className="leftFooter0"></div>
-                            <div className="rightFooter0"></div>
-                        </div>
-                    </div>
-                    <span className="rightCurve"><p>{rightGoal}</p></span>
-                </div>
-
-            </div>
-
-            <div className={` container1 ${hovered1 ? "displayContainer1" : "" } `} >
-                
-                <div className="head1">
-                    <div className="playerShadow"></div>
-                </div>
-
-                <div className="middle1">
-                    <span className="leftCurvePlayer1"><p>{leftGoal}</p></span>
-                    <div className="player1Container">
-                        <div className="info1">
-                            <div className="info1Avatar1" onClick={() =>  setHovered1(false)}></div>
-                            <div className="achievement">
-                                <div className="userName"><p>Hunter 111</p></div>
-                                <div className="shields">
-                                    <span className="shld">🐲 **</span>
-                                    <span className="shld">🔑 *</span>
-                                    <span className="shld">🌋 *****</span>
-                                    <span className="shld">🍄 ****</span>
-                                    <span className="shld">💎 ***</span>
-                                    <span className="shld">🍫 ****</span>
-                                </div>
-                            </div>
-                            <div className="team"></div>
-                        </div>
-                        <div className="player1InfoFooter">
-                            <div className="player1LeftFooter"></div>
-                            <div className="player1RightFooter"></div>
-                        </div>
-                    </div>
-                    <span className="rightCurvePlayer1"><p>{rightGoal}</p></span>
-                </div>
-                
-            </div>
-            
-            <div className={` container2 ${hovered2 ? "displayContainer2" : "" } `}>
-                
-                <div className="head1">
-                    <div className="playerShadow"></div>
-                </div>
-
-                <div className="middle2">
-                    <span className="leftCurvePlayer2"><p>{rightGoal}</p></span>
-                    <div className="player2Container">
-                        <div className="info2">
-                            <div className="info2Avatar2" onClick={() => setHovered2(false)} ></div>
-                            <div className="achievement">
-                                <div className="userName"><p>Machi  </p></div>
-                                <div className="shields">
-                                    <span className="shld">💰 ***</span>
-                                    <span className="shld">🐳 *****</span>
-                                    <span className="shld">🔮 **</span>
-                                    <span className="shld">🏜 *****</span>
-                                    <span className="shld">🥇 ***</span>
-                                    <span className="shld">🍹 *****</span>
-                                </div>
-                            </div>
-                            <div className="team"></div>
-                        </div>
-                        <div className="player2InfoFooter">
-                            <div className="player2LeftFooter"></div>
-                            <div className="player2RightFooter"></div>
-                        </div>
-                    </div>
-                    <span className="rightCurvePlayer2"><p>{leftGoal}</p></span>
-                </div>
-
-            </div>
-
-
-        </div>
-    )   
-};
-
-export default Info;
-*/

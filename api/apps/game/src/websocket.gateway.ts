@@ -13,6 +13,12 @@ import WeaponTemplate, { moveAlert} from './component/Weapon';
 import { GameService } from './game.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { IGameData } from './Interfaces/game.interface';
+import { Achieve } from './Interfaces/achievements.interface';
+import { Inject } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+import { RabbitMqService } from '@app/rabbit-mq';
+import { RpcExceptionService } from '@app/common/exception-handling';
 
 interface PlayersList
 {
@@ -46,6 +52,12 @@ function startGame(room: Rooms)
 //if port not set it takes the port that the server listening on
 @WebSocketGateway({ path : '/game-container', transports: ['websocket'] })
 export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, OnGatewayDisconnect {
+  constructor (
+    @Inject(IRmqSeverName.PROFILE)
+    private readonly profileClient: ClientProxy,
+    private readonly clientService: RabbitMqService,
+  ) {}
+
   @WebSocketServer()
   server: Server;
   
@@ -143,6 +155,40 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
 //_______________________________________ End of events  come from waiting component _________
 
 
+
+
+
+
+
+
+
+@SubscribeMessage('customAchieve')
+handleAchievements(client: Socket, gameAchievement: any) {
+  try {
+    const { player1, player2 } = gameAchievement;
+    console.log("****p1************\n", player1, "\n***********************");
+    console.log("****p2************\n", player2, "\n***********************");
+
+    this.clientService.sendMessageWithPayload(
+      this.profileClient,
+      { role: 'game', cmd: 'game-result' },
+      player1
+    );
+
+    this.clientService.sendMessageWithPayload(
+      this.profileClient,
+      { role: 'game', cmd: 'game-result' },
+      player2
+    );
+
+  } catch (error) {
+    console.log("error:", error.message);
+    return;
+  }
+}
+
+
+
 //--------------------------------------- start of events come from info component
 
 @SubscribeMessage('customResult') // Listen for the 'customEventDataRequest' event
@@ -156,24 +202,23 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
   @SubscribeMessage('customGoalsEvent') // Listen for the 'customEventDataRequest' event
   handleGoalsEvent(client: Socket, obj : infoObj )//matchId : string)//, tabsId : string) 
   {
-      let room = getRoomByMatchId(rooms, obj.ID.substring(1, obj.ID.length));
-      if (room.numberOfClients === 1 && room.late == false)
+      //console.log("The id : ", obj. ID,obj.ID.substring(1, obj.ID.length) )
+      let room = getRoomByMatchId(rooms, obj.ID);
+     // if (room)
+       // console.log("Number of clients : ---> ", room.numberOfClients);
+      if (room && room.numberOfClients === 1 && room.late === false)
       {
-        const intervalId: NodeJS.Timeout = setInterval(() => 
-        {
           const elapsedTime: number = Date.now() - room.startTime;
           const elapsedMinutes: number = Math.floor(elapsedTime / (1000));
       
-          console.log(`Client two has spent ${elapsedMinutes} second in the room`);
+          console.log(`Client two has spent ${elapsedMinutes} second in the room`, room.numberOfClients );
       
-          if (elapsedMinutes >= 20) 
+          if (room.numberOfClients === 1 && elapsedMinutes >= 15) 
           {
             client.emit('playerLeaveTheGame');
             console.log(`Client two should lose after : ${elapsedMinutes} second `);
             room.late = true;
-            clearInterval(intervalId);
           }
-        }, 1000); 
       }
       if (room !== undefined && room.numberOfClients === 2)
       {
@@ -182,6 +227,10 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
         {
           goal.leftPlayerGoals = room.container.leftPlayerGoal;
           goal.rightPlayerGoals = room.container.rightPlayerGoal;
+          goal.leftPlayerRebound = room.container.leftPlayerRebound;
+          goal.leftPlayerStrict = room.container.leftPlayerStrict;
+          goal.rightPlayerRebound = room.container.rightPlayerRebound;
+          goal.rightPlayerStrict = room.container.rightPlayerStrict;
           goal.playerNumber = 1;
           if (room.clientOneInfoSocket === null)
             room.clientOneInfoSocket = client;
@@ -190,6 +239,10 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
         {
           goal.leftPlayerGoals = room.container.rightPlayerGoal;
           goal.rightPlayerGoals = room.container.leftPlayerGoal;
+          goal.leftPlayerRebound = room.container.rightPlayerRebound;
+          goal.leftPlayerRebound = room.container.rightPlayerStrict;
+          goal.rightPlayerRebound = room.container.leftPlayerRebound;
+          goal.rightPlayerStrict = room.container.leftPlayerStrict;
           goal.playerNumber = 2;
           if (room.clientTwoInfoSocket === null)
             room.clientTwoInfoSocket = client;
@@ -203,6 +256,12 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
 
         goal.leftPlayerGoals = room.container.leftPlayerGoal;
         goal.rightPlayerGoals = room.container.rightPlayerGoal;
+        goal.leftPlayerGoals = room.container.leftPlayerGoal;
+        goal.rightPlayerGoals = room.container.rightPlayerGoal;
+        goal.leftPlayerRebound = room.container.leftPlayerRebound;
+        goal.leftPlayerStrict = room.container.leftPlayerStrict;
+        goal.rightPlayerRebound = room.container.rightPlayerRebound;
+        goal.rightPlayerStrict = room.container.rightPlayerStrict;
         goal.playerNumber = 1;
         if (room.clientOneInfoSocket === null)
             room.clientOneInfoSocket = client;

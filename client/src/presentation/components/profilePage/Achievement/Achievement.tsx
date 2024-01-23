@@ -22,7 +22,7 @@ const Achievement = () => {
         query: GetAllAchievementsDocument,
       })
       .then((data) => {
-        console.log("ach: ", data.data.getAllAchievements);
+        //console.log("ach: ", data.data.getAllAchievements);
         setAchievements(data.data.getAllAchievements);
       })
       .catch((err) => console.log(err));

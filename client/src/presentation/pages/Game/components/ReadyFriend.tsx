@@ -11,11 +11,11 @@ interface readyProps
     updatePlayerTwo: (newPlayWithRobot: boolean, newTabId: string, newMatchId: string, newMatchWager: number,
         newModePlaying: number, newUserName: string, newUserAvatar: string, newUserLogo: string, newMatchWon: number,
         newBestWinStreak: number, newMatchPlayed: number, newLevel: number, newTournentPlayed: number,
-        newTournentWon: number, newPlayWithMouse: number, usrid : number, friend : boolean, ply2userId : number, matchType: string) => void;
+        newTournentWon: number, newPlayWithMouse: number, usrid : number, friend : boolean, ply2userId : number, matchType : string) => void;
 }
 
 
-let Ready = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : readyProps) =>
+let ReadyFriend = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : readyProps) =>
 {
     let plyOneImg : HTMLElement | null = null;
     let plyTwoImg : HTMLElement | null = null;
@@ -24,7 +24,7 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : ready
 
     const { data, loading, error } = useAccountQuery({
         variables: {
-          userId: playerTwo.userId,
+          userId: playerOne.ply2userId,
         },
       });
 
@@ -33,70 +33,65 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : ready
         plyTwoImg  = document.getElementById("ReadyAvatar1");
         plyOneImg?.setAttribute('src', playerOne.userAvatar);
         plyTwoImg?.setAttribute('src', playerTwo.userAvatar);
-        // else
 
     }, 200)
 
-  
 
     if (loading)
-      return (<p>Loading...Ready</p>)
+      return (<p>Loading...ReadyFriend</p>)
     else if (error)
     {
-        console.log("error : ", error, playerTwo.userId)
-        return (<p>Error...Ready</p>)
+        console.log("error : ", error)
+        return (<p>Error...ReadyFriend</p>)
     }
     else
     {
-        setTimeout(() =>
-        {
-
-            let ply2Username : string = data?.findUserById.username as string;
-            let ply2UserAvatar : string = data?.findUserById.profileImgUrl as string;
-            let ply2MatchWon : number = data?.findProfileByUserId?.gameStatus.matchesWon as number;
-            let ply2BestWinSteak : number = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
-            let ply2MatchPlyed : number = data?.findProfileByUserId?.gameStatus.totalMatches as number;
-            let ply2Level : number = data?.findProfileByUserId?.xp as number;
-            let ply2TournentPlayed : number = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
-            let ply2TournenetWon : number = data?.findProfileByUserId?.gameStatus.win_streak as number;
-            let ply2UserLogo : string = "";
-            let ply2TabId : string = playerTwo.userId.toString();
-            let ply1UserId : number = playerOne.ply2userId
-            let ply1MatchType : string = playerOne.matchType;
-            if (data?.findProfileByUserId?.rank  as number < 100)
-                ply2UserLogo = "/public/images/badge-1.png"
-            if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-                ply2UserLogo = "/public/images/badge-2.png";
-            if (data?.findProfileByUserId?.rank  as number >= 200)
-                ply2UserLogo = "/public/images/badge-3.png";
-            
-            let ply2MatchId : string = playerTwo.matchId;
-            let ply2MatchWager : number = playerTwo.matchWager;
-            let ply2UserId : number  =  playerTwo.userId;
-            let ply2ModePlaying : number = playerTwo.modePlaying;
-            if (data?.findProfileByUserId?.rank  as number < 100)
-                ply2UserLogo = "/public/images/badge-1.png"
-            if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-                ply2UserLogo = "/public/images/badge-2.png";
-            if (data?.findProfileByUserId?.rank  as number >= 200)
-                ply2UserLogo = "/public/images/badge-3.png";
+        let ply2Username : string = data?.findUserById.username as string;
+        let ply2UserAvatar : string = data?.findUserById.profileImgUrl as string;
+        let ply2MatchWon : number = data?.findProfileByUserId?.gameStatus.matchesWon as number;
+        let ply2BestWinSteak : number = data?.findProfileByUserId?.gameStatus.best_win_streak as number;
+        let ply2MatchPlyed : number = data?.findProfileByUserId?.gameStatus.totalMatches as number;
+        let ply2Level : number = data?.findProfileByUserId?.xp as number;
+        let ply2TournentPlayed : number = data?.findProfileByUserId?.gameStatus.matchesLoss as number;
+        let ply2TournenetWon : number = data?.findProfileByUserId?.gameStatus.win_streak as number;
+        let ply2UserLogo : string = "";
+        let ply2TabId : string = playerTwo.userId.toString();
+        let ply1UserId : number = playerOne.ply2userId;
+        let ply1MatchType : string = "friends-match";
+        if (data?.findProfileByUserId?.rank  as number < 100)
+            ply2UserLogo = "/public/images/badge-1.png"
+        if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
+            ply2UserLogo = "/public/images/badge-2.png";
+        if (data?.findProfileByUserId?.rank  as number >= 200)
+            ply2UserLogo = "/public/images/badge-3.png";
         
+        let ply2MatchId : string = playerTwo.matchId;
+        let ply2MatchWager : number = playerOne.matchWager;
+        let ply2UserId : number  =  playerTwo.userId;
+        let ply2ModePlaying : number = playerTwo.modePlaying;
+        if (data?.findProfileByUserId?.rank  as number < 100)
+            ply2UserLogo = "/public/images/badge-1.png"
+        if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
+            ply2UserLogo = "/public/images/badge-2.png";
+        if (data?.findProfileByUserId?.rank  as number >= 200)
+            ply2UserLogo = "/public/images/badge-3.png";
+    
+        setTimeout( () => {
             if (playerTwo.userLogo.length === 0)
             {
                 updatePlayerTwo(false, ply2TabId, ply2MatchId, ply2MatchWager, ply2ModePlaying, ply2Username, ply2UserAvatar,
                 ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2MatchPlyed, ply2BestWinSteak,
                 ply2TournentPlayed, ply2TournenetWon, ply2UserId, false, ply1UserId, ply1MatchType);
             }
-        }, 500)
-        setTimeout( () => 
-        {
-                updateReadyState(false);
-        }, 5000); 
-        
+        }, 1000)
+        setTimeout( () => {
+            updateReadyState(false);
+        }, 5000);
+    
         return (
             <div className='ReadyContainer'>
                 <div className='ReadyState'>
-                    <p>Ready!</p>
+                    <p>Ready!?</p>
                 </div>
                 <div className="ReadyVs">
                     <div className="ReadyFlashLight"><p>VS</p></div>
@@ -136,4 +131,4 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : ready
     }
 }
 
-export default Ready;
+export default ReadyFriend;

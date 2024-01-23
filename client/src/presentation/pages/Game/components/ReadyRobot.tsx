@@ -14,7 +14,7 @@ interface readyProps
     updatePlayerTwo : (newPlayWithRobot : boolean, newTabId : string, newMatchId : string, newMatchWager: number,
         newModePlaying: number, newUserName : string, newUserAvatar: string, newUserLogo : string, newMatchWon : number,
         newBestWinStreak : number , newMatchPlayed : number, newLevel: number, newTournentPlayed : number,
-        newTournentWon : number, newPlayWithMouse : number , usrid: number, friend : boolean) => void;
+        newTournentWon : number, newPlayWithMouse : number , usrid: number, friend : boolean, newPly1userId : number, matchType) => void;
 }
 
 
@@ -25,7 +25,6 @@ let ReadyRobot = ( {playerOne, playerTwo, robot, updateReadyState , updateUserIn
     let modePlay : number = 0;
     let wagerPlay : number = 0;
 
-    //get mode
     
     useEffect(() =>{
         if (playerOne.matchWager > playerTwo.matchWager)
@@ -43,7 +42,6 @@ let ReadyRobot = ( {playerOne, playerTwo, robot, updateReadyState , updateUserIn
             else
                 modePlay = playerTwo.modePlaying;
         }
-        //get wager
         if (playerOne.matchWager < playerTwo.matchWager)
             wagerPlay = playerOne.matchWager;
         else 
@@ -54,7 +52,7 @@ let ReadyRobot = ( {playerOne, playerTwo, robot, updateReadyState , updateUserIn
         updatePlayerTwo(robot.playWithRobot, robot.tabId, robot.matchId, 
         playerOne.matchWager, robot.modePlaying, robot.userName, robot.userAvatar,
         robot.userLogo , robot.matchWon, robot.bestWinStreak, robot.matchPlyed,
-        robot.level, robot.tournentPlayed, robot.tournentWon, robot.playWithMouse, robot.userId, false);
+        robot.level, robot.tournentPlayed, robot.tournentWon, robot.playWithMouse, robot.userId, false, 0, playerOne.matchType);
         
         if (playerOne.playWithRobot)
              updateMatchId('robot' + (Math.floor(Math.random() * 10000) + 1).toString() + Date.now().toString())
@@ -74,8 +72,6 @@ let ReadyRobot = ( {playerOne, playerTwo, robot, updateReadyState , updateUserIn
     setTimeout( () => {
         updateReadyState(false);
     }, 5000);
-
-    // console.log("players : ", playerOne,"\n==============\n", playerTwo);
 
     return (
         <div className='ReadyContainer'>

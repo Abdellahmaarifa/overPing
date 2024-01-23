@@ -24,6 +24,14 @@ export type AcceptRequestInput = {
   senderId: Scalars['Float']['input'];
 };
 
+export type ActionToMemberInput = {
+  channelId: Scalars['Float']['input'];
+  muteTimeLimit?: InputMaybe<Scalars['DateTime']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  targetId: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
+};
+
 export type AuthCredentialsInput = {
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
@@ -62,7 +70,7 @@ export type DeleteMessageInput = {
 
 export type DeletionInput = {
   groupChatId: Scalars['Float']['input'];
-  messageId: Scalars['Float']['input'];
+  messageId?: InputMaybe<Scalars['Float']['input']>;
   userId: Scalars['Float']['input'];
 };
 
@@ -77,20 +85,25 @@ export type GqlAchievement = {
 
 export type GqlAdminsModel = {
   __typename?: 'GQLAdminsModel';
-  userId: Scalars['Float']['output'];
+  email?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Float']['output'];
+  lastSeen?: Maybe<Scalars['String']['output']>;
+  nickname?: Maybe<Scalars['String']['output']>;
+  profileImgUrl?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
 };
 
 export type GqlChannelModel = {
   __typename?: 'GQLChannelModel';
-  admins: Array<GqlAdminsModel>;
-  created_at: Scalars['String']['output'];
-  description: Scalars['String']['output'];
+  admins?: Maybe<Array<GqlAdminsModel>>;
+  created_at?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
-  members: Array<GqlMembersModel>;
+  members?: Maybe<Array<GqlMembersModel>>;
   messages?: Maybe<Array<GqlMessageModel>>;
   name: Scalars['String']['output'];
   owner_id: Scalars['Float']['output'];
-  updated_at: Scalars['String']['output'];
+  updated_at?: Maybe<Scalars['String']['output']>;
   visibility: Scalars['String']['output'];
 };
 
@@ -106,8 +119,8 @@ export type GqlDirectMessageModel = {
   created_at: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   messages?: Maybe<Array<GqlMessageModel>>;
-  user1_id: Scalars['Float']['output'];
-  user2_id: Scalars['Float']['output'];
+  user1: GqlUser;
+  user2: GqlUser;
 };
 
 export type GqlFriendshipStatusModel = {
@@ -134,18 +147,32 @@ export type GqliUserModel = {
 
 export type GqlMembersModel = {
   __typename?: 'GQLMembersModel';
-  userId: Scalars['Float']['output'];
+  email?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Float']['output'];
+  lastSeen?: Maybe<Scalars['String']['output']>;
+  nickname?: Maybe<Scalars['String']['output']>;
+  profileImgUrl?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
 };
 
 export type GqlMessageModel = {
   __typename?: 'GQLMessageModel';
   created_at: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  media_id: Scalars['Float']['output'];
   sender_id: Scalars['Float']['output'];
   text?: Maybe<Scalars['String']['output']>;
   updated: Scalars['Boolean']['output'];
   updated_at: Scalars['String']['output'];
+};
+
+export type GqlUser = {
+  __typename?: 'GQLUser';
+  email?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lastSeen?: Maybe<Scalars['String']['output']>;
+  nickname?: Maybe<Scalars['String']['output']>;
+  profileImgUrl: Scalars['String']['output'];
+  username: Scalars['String']['output'];
 };
 
 export type GqlUserModel = {
@@ -189,9 +216,8 @@ export type JoinMatchmakingInput = {
 
 export type MemberInput = {
   channelId: Scalars['Float']['input'];
-  muteTimeLimit: Scalars['DateTime']['input'];
-  password: Scalars['String']['input'];
-  targetId: Scalars['Float']['input'];
+  muteTimeLimit?: InputMaybe<Scalars['DateTime']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
   userId: Scalars['Float']['input'];
 };
 
@@ -200,7 +226,7 @@ export type Mutation = {
   UpdateUserProfile: Scalars['Boolean']['output'];
   acceptFriendRequest: Scalars['Boolean']['output'];
   acceptMatchToPlay?: Maybe<Scalars['Boolean']['output']>;
-  addChannelAdmin: Scalars['Boolean']['output'];
+  addAdmin: Scalars['Boolean']['output'];
   addMember: Scalars['Boolean']['output'];
   authenticate_2fa: GqlUserModel;
   banMember: Scalars['Boolean']['output'];
@@ -225,8 +251,7 @@ export type Mutation = {
   muteMember: Scalars['Boolean']['output'];
   placeBet?: Maybe<Scalars['Boolean']['output']>;
   refresh: Scalars['String']['output'];
-  removeChannelAdmin: Scalars['Boolean']['output'];
-  removeMember: Scalars['Boolean']['output'];
+  removeAdmin: Scalars['Boolean']['output'];
   removeUserProfile: Scalars['Boolean']['output'];
   resolveBet?: Maybe<Scalars['Boolean']['output']>;
   sendFriendRequest: Scalars['Boolean']['output'];
@@ -266,13 +291,13 @@ export type MutationAcceptMatchToPlayArgs = {
 };
 
 
-export type MutationAddChannelAdminArgs = {
-  data: MemberInput;
+export type MutationAddAdminArgs = {
+  data: ActionToMemberInput;
 };
 
 
 export type MutationAddMemberArgs = {
-  data: MemberInput;
+  data: ActionToMemberInput;
 };
 
 
@@ -282,7 +307,7 @@ export type MutationAuthenticate_2faArgs = {
 
 
 export type MutationBanMemberArgs = {
-  data: MemberInput;
+  data: ActionToMemberInput;
 };
 
 
@@ -329,8 +354,7 @@ export type MutationDeleteAccountArgs = {
 
 
 export type MutationDeleteChannelArgs = {
-  channelID: Scalars['Float']['input'];
-  userID: Scalars['Float']['input'];
+  data: MemberInput;
 };
 
 
@@ -365,7 +389,7 @@ export type MutationJoinMatchmakingQueueArgs = {
 
 
 export type MutationKickMemberArgs = {
-  data: MemberInput;
+  data: ActionToMemberInput;
 };
 
 
@@ -380,7 +404,7 @@ export type MutationLogOutArgs = {
 
 
 export type MutationMuteMemberArgs = {
-  data: MemberInput;
+  data: ActionToMemberInput;
 };
 
 
@@ -389,13 +413,8 @@ export type MutationPlaceBetArgs = {
 };
 
 
-export type MutationRemoveChannelAdminArgs = {
-  data: MemberInput;
-};
-
-
-export type MutationRemoveMemberArgs = {
-  data: MemberInput;
+export type MutationRemoveAdminArgs = {
+  data: ActionToMemberInput;
 };
 
 
@@ -436,7 +455,7 @@ export type MutationTransferFundsArgs = {
 
 
 export type MutationUnbanMemberArgs = {
-  data: MemberInput;
+  data: ActionToMemberInput;
 };
 
 
@@ -451,7 +470,7 @@ export type MutationUnfriendUserArgs = {
 
 
 export type MutationUnmuteMemberArgs = {
-  data: MemberInput;
+  data: ActionToMemberInput;
 };
 
 
@@ -517,7 +536,6 @@ export type Player = {
 export type PlayersMatching = {
   __typename?: 'PlayersMatching';
   matchKey: Scalars['String']['output'];
-  requestType: Scalars['String']['output'];
   user1?: Maybe<Player>;
   user2?: Maybe<Player>;
 };
@@ -615,6 +633,7 @@ export type QueryGetUserDirectMessagesArgs = {
 
 export type QuerySearchForChannelArgs = {
   channelName: Scalars['String']['input'];
+  userId: Scalars['Float']['input'];
 };
 
 export type RequestToPlayInput = {
@@ -697,7 +716,7 @@ export type UpdateProtectedInput = {
   channelName?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   newPassword: Scalars['String']['input'];
-  oldPassword: Scalars['String']['input'];
+  oldPassword?: InputMaybe<Scalars['String']['input']>;
   userId: Scalars['Float']['input'];
   visibility: Scalars['String']['input'];
 };
@@ -706,6 +725,7 @@ export type UpdatePublicPrivateInput = {
   channelId: Scalars['Float']['input'];
   channelName?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
   userId: Scalars['Float']['input'];
   visibility: Scalars['String']['input'];
 };
@@ -721,13 +741,6 @@ export type GetAllAchievementsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetAllAchievementsQuery = { __typename?: 'Query', getAllAchievements?: Array<{ __typename?: 'GQLAchievement', title: string, requirement: string, description: string, imageURL: string }> | null };
-
-export type GetUserChatDataQueryVariables = Exact<{
-  id: Scalars['Float']['input'];
-}>;
-
-
-export type GetUserChatDataQuery = { __typename?: 'Query', getUserDirectMessages?: Array<{ __typename?: 'GQLDirectMessageModel', id: string, user1_id: number, user2_id: number }> | null, getUserChannels?: Array<{ __typename?: 'GQLChannelModel', id: string, name: string }> | null };
 
 export type GetBlockedUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -862,14 +875,14 @@ export type MatchWaitingListSubscriptionVariables = Exact<{
 }>;
 
 
-export type MatchWaitingListSubscription = { __typename?: 'Subscription', matchWaitingList: { __typename?: 'PlayersMatching', matchKey: string, requestType: string, user1?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null, user2?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null } };
+export type MatchWaitingListSubscription = { __typename?: 'Subscription', matchWaitingList: { __typename?: 'PlayersMatching', matchKey: string, user1?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null, user2?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null } };
 
 export type MatchWaitingDircSubscriptionVariables = Exact<{
   userId: Scalars['Float']['input'];
 }>;
 
 
-export type MatchWaitingDircSubscription = { __typename?: 'Subscription', matchWaitingDirc: { __typename?: 'PlayersMatching', matchKey: string, requestType: string, user1?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null, user2?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null } };
+export type MatchWaitingDircSubscription = { __typename?: 'Subscription', matchWaitingDirc: { __typename?: 'PlayersMatching', matchKey: string, user1?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null, user2?: { __typename?: 'Player', id?: string | null, bet?: number | null, matchType?: string | null } | null } };
 
 export type NotificationSubscriptionVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -1077,52 +1090,6 @@ export type GetAllAchievementsQueryHookResult = ReturnType<typeof useGetAllAchie
 export type GetAllAchievementsLazyQueryHookResult = ReturnType<typeof useGetAllAchievementsLazyQuery>;
 export type GetAllAchievementsSuspenseQueryHookResult = ReturnType<typeof useGetAllAchievementsSuspenseQuery>;
 export type GetAllAchievementsQueryResult = Apollo.QueryResult<GetAllAchievementsQuery, GetAllAchievementsQueryVariables>;
-export const GetUserChatDataDocument = gql`
-    query getUserChatData($id: Float!) {
-  getUserDirectMessages(id: $id) {
-    id
-    user1_id
-    user2_id
-  }
-  getUserChannels(id: $id) {
-    id
-    name
-  }
-}
-    `;
-
-/**
- * __useGetUserChatDataQuery__
- *
- * To run a query within a React component, call `useGetUserChatDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserChatDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserChatDataQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetUserChatDataQuery(baseOptions: Apollo.QueryHookOptions<GetUserChatDataQuery, GetUserChatDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserChatDataQuery, GetUserChatDataQueryVariables>(GetUserChatDataDocument, options);
-      }
-export function useGetUserChatDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserChatDataQuery, GetUserChatDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserChatDataQuery, GetUserChatDataQueryVariables>(GetUserChatDataDocument, options);
-        }
-export function useGetUserChatDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserChatDataQuery, GetUserChatDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetUserChatDataQuery, GetUserChatDataQueryVariables>(GetUserChatDataDocument, options);
-        }
-export type GetUserChatDataQueryHookResult = ReturnType<typeof useGetUserChatDataQuery>;
-export type GetUserChatDataLazyQueryHookResult = ReturnType<typeof useGetUserChatDataLazyQuery>;
-export type GetUserChatDataSuspenseQueryHookResult = ReturnType<typeof useGetUserChatDataSuspenseQuery>;
-export type GetUserChatDataQueryResult = Apollo.QueryResult<GetUserChatDataQuery, GetUserChatDataQueryVariables>;
 export const GetBlockedUsersDocument = gql`
     query getBlockedUsers {
   getBlockedUsers {
@@ -1836,7 +1803,6 @@ export const MatchWaitingListDocument = gql`
       bet
       matchType
     }
-    requestType
   }
 }
     `;
@@ -1877,7 +1843,6 @@ export const MatchWaitingDircDocument = gql`
       bet
       matchType
     }
-    requestType
   }
 }
     `;

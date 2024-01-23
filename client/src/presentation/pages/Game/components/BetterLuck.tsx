@@ -1,7 +1,7 @@
 import './BetterLuck.css'
 import UserInfo from './UserInfo';
 import { Howl, Howler } from 'howler';
-import { Result } from './Result';
+
 interface BetterProps
 {
     playerOne : UserInfo;
@@ -17,15 +17,12 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
         src: ['/Sounds/lose.wav'],
         onload: () => {
           //console.log('Audio loaded successfully');
-          // You can play the sound or perform other actions here
         },
         onloaderror: (error : any ) => {
-          console.error('Error loading audio:', error);
+          //console.error('Error loading audio:', error);
         },
       });
 
-    console.log("butter 1: ", playerOne)
-    console.log("butter 2: ", playerTwo)
     Howler.stop();
     setTimeout(() => {
           loseSound.play();
@@ -36,7 +33,6 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
         plyTwoImg  = document.getElementById("betterAvatar1");
         plyOneImg?.setAttribute('src', playerOne.userAvatar);
         plyTwoImg?.setAttribute('src', playerTwo.userAvatar);
-        // else
 
     }, 200)
 

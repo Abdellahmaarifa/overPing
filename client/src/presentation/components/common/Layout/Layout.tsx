@@ -109,7 +109,7 @@ const Layout = () => {
   };
 
   useEffect(() => {
-    console.log("I got new Data and i should notify the user!!");
+   // console.log("I got new Data and i should notify the user!!");
     if (data) {
       toast(
         (t) => (
@@ -161,7 +161,7 @@ const Layout = () => {
 
   useEffect(() => {
     if (dataM ) {
-      console.log("this i sit: ", dataM)
+      //console.log("this i sit: ", dataM)
       navigate(
         `/game?type="friend"&user1=${dataM.matchWaitingDirc.user1?.id}&user2=${dataM.matchWaitingDirc.user2?.id}&game-type="classic"&key=${dataM.matchWaitingDirc.matchKey}`
       );
