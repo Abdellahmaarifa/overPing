@@ -134,7 +134,7 @@ export class UserService {
         return users
     }
 
-    async removeAccount(id: number, password: string): Promise<boolean> {
+    async deleteUser(id: number, password: string): Promise<boolean> {
       const response = await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -148,6 +148,17 @@ export class UserService {
       );
       return response;
     }
+
+    async removeAccount(userId: number) {
+        this.clientService.emitMessageWithPayload(
+          this.client,
+          {
+            role: 'user',
+            cmd: 'delete-account',
+          },
+          userId
+        );
+      }
 
     async getUserByRefreshTokenMatch(refreshToken : GetRefreshUserDto){
 		const response = await this.clientService.sendMessageWithPayload(
@@ -176,7 +187,21 @@ export class UserService {
         )
     }
 
-
+    searchUser(userId, pageNumber, limit, username){
+        return  this.clientService.sendMessageWithPayload(
+            this.client,
+            {
+                role: 'user',
+                cmd: 'searchUser'
+            },
+            {
+               userId,
+               pageNumber,
+               limit,
+               username
+            }
+        )
+    }
 
 
 }

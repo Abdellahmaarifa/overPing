@@ -59,7 +59,7 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
     };
 
     //continuously get goals data
-    const setUpSocket = (tabId : string) =>
+    const setUpSocket = useCallback((tabId : string) =>
     {
         if (ID !== undefined) 
         {
@@ -183,7 +183,7 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                 }
             });
         }
-    }
+    },[ID, matchState, updateMatchState])
 
     useEffect(() => 
     {
@@ -198,7 +198,7 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                 socket.disconnect();
             }
         };
-    }, []);
+    }, [matchState, updateMatchState]);
 
 
 

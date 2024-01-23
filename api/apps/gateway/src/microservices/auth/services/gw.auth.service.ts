@@ -41,11 +41,21 @@ export class GatewayService {
 			{ role: 'auth', cmd: 'signUp' },
 			userInput,
 		);
-		this.profileService.createUserProfile({
-			userId: respond.user.id,
-			username: respond.user.username
-		})
-		const imgUrl = await this.mediaService.updateAvatarImg(respond.user.id, file);
+		try {
+			const profile = this.profileService.createUserProfile({
+				userId: respond.user.id,
+				username: respond.user.username
+			})
+		} catch (error) {
+			this.userService.removeAccount(respond.user.id);
+		}
+		try {
+			const imgUrl = await this.mediaService.updateAvatarImg(respond.user.id, file);
+		} catch (error) {
+			this.userService.removeAccount(respond.user.id);
+			this.profileService.removeProfile(respond.user.id);
+		}
+
 		return (respond);
 	}
 
@@ -58,7 +68,7 @@ export class GatewayService {
 	}
 
 	async refresh(payload: JwtPayloadDto): Promise<{
-		Access_token:string
+		Access_token: string
 	}> {
 		const response = await this.clientService.sendMessageWithPayload(
 			this.client,
@@ -66,7 +76,7 @@ export class GatewayService {
 			payload,
 		);
 		return {
-			Access_token:response.accessToken
+			Access_token: response.accessToken
 		};
 
 	}
@@ -81,8 +91,8 @@ export class GatewayService {
 			payload
 		)
 	}
-	async getTwoFacatorAccessToken(payload: JwtPayloadDto){
-		const token  = await this.clientService.sendMessageWithPayload(
+	async getTwoFacatorAccessToken(payload: JwtPayloadDto) {
+		const token = await this.clientService.sendMessageWithPayload(
 			this.client,
 			{
 				role: "auth",
@@ -123,4 +133,16 @@ export class GatewayService {
 			twoFActorAuthInput
 		);
 	}
+
+	async disableTwoFactor(userId: number): Promise<boolean> {
+		return await this.clientService.sendMessageWithPayload(
+			this.client,
+			{
+				role: 'auth',
+				cmd: 'disableTwoFactor'
+			},
+			userId
+		);
+	}
+
 }

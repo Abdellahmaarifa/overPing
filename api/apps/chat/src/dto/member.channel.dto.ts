@@ -4,5 +4,5 @@ export class MemberOfChanneldto {
   targetId?:      number
   channelId:      number
   password?:      string
-  muteTimeLimit?: Date
+  muteTimeLimit?: number
 }

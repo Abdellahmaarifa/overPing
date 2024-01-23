@@ -1,3 +1,4 @@
+import {File} from '@web-std/file';
 import { faker } from "@faker-js/faker";
 
 const RegisterDocument = `

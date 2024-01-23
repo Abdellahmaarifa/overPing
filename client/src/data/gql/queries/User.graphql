@@ -4,7 +4,7 @@ query User($id: Float!) {
     id
     email
     username
-    twoStepVerificationEnabled
+    # twoStepVerificationEnabled
     profileImgUrl
   }
 }

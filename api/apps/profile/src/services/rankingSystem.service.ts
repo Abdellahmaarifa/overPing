@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable,Logger } from "@nestjs/common";
 import { PrismaService } from "apps/profile/prisma/prisma.service";
 import { Cron, CronExpression, } from '@nestjs/schedule';
 
@@ -22,17 +22,15 @@ export class UserProfileRankingReturn {
 
 @Injectable()
 export class RankingService {
-
     constructor(
         private readonly prisma: PrismaService,
-    ) {
-        // this.calculateAllplayerRanking();
-    }
-
+        ) {
+        }
+        
 
     @Cron(CronExpression.EVERY_MINUTE)
     async calculateAllplayerRanking() {
-        console.log('runing.....')
+        Logger.log("new calculating the ranks of player")
         const userprofiles = await this.getAllProfiles();
 
         userprofiles.forEach((player) => {

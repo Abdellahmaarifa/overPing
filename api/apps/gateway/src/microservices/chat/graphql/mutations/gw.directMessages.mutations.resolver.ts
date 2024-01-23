@@ -13,7 +13,7 @@ export class directMessageResolver {
     private readonly directMessageService: GwDirectMessageService,
     private readonly userCheck: UserCheckService,
   ) {}
-    
+
   @Mutation(() => GQLDirectMessageModel)
   async createDirectMessage(@Context() ctx,
   @Args('userID') userID: number, @Args('targetID') targetID: number ) : Promise<GQLDirectMessageModel>

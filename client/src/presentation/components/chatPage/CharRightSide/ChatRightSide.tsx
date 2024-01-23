@@ -20,12 +20,17 @@ import {
 import { useChatContext } from "context/chat.context";
 import { ChannelMember } from "../ChannelMembers/ChannelMembers.style";
 import ChannelMembers from "../ChannelMembers/ChannelMembers";
+import { useEffect } from "react";
 
-const ChatRightSide = () => {
+const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
   const {
     showChatAbout: [showChatAbout, setShowChatAbout],
     showFriends: [showFriends, setShowFriends],
+    currentChannel: [currentChannel, setCurrentChannel],
   } = useChatContext();
+  useEffect(() => {
+    console.log("----********--take data frm : ", currentChannel);
+  }, [currentChannel]);
   return (
     <ChatRightSideContainer
       style={
@@ -40,36 +45,48 @@ const ChatRightSide = () => {
         <ChannelMembers />
       ) : (
         <>
-          <UserProfile>
-            <UserCover
-              style={{
-                background: `center/cover url(${faker.image.urlLoremFlickr()})`,
-              }}
-            ></UserCover>
-            <UserImage src={faker.image.avatar()} />
-          </UserProfile>
+          {type == "dm" && (
+            <UserProfile>
+              <UserCover
+                style={{
+                  background: `center/cover url(${faker.image.urlLoremFlickr()})`,
+                }}
+              ></UserCover>
+              <UserImage src={faker.image.avatar()} />
+            </UserProfile>
+          )}
           <UserInfoWrapper>
             <UserInformation>
               <UserInfoFeild>
-                <UserInfoName>amaarifa</UserInfoName>
-                <UserInfoUserName>@amaarifa</UserInfoUserName>
+                <UserInfoName>
+                  {type == "channel" ? currentChannel?.name : "amaarifa"}
+                </UserInfoName>
+                <UserInfoUserName>
+                  {type == "channel" ? `@${currentChannel?.name}` : "@amaarifa"}
+                </UserInfoUserName>
               </UserInfoFeild>
               <UserInfoFeild>
-                <UserInfoAboutHeader>About Me</UserInfoAboutHeader>
-                <UserInfoAbout>q whole universe in tiny dot.</UserInfoAbout>
+                <UserInfoAboutHeader>About</UserInfoAboutHeader>
+                <UserInfoAbout>
+                  {type == "channel"
+                    ? currentChannel?.description
+                    : "q whole universe in tiny dot."}
+                </UserInfoAbout>
               </UserInfoFeild>
-              <UserInfoStatusConatiner>
-                <UserInfoStatus>
-                  <UserInfoStatusHeading>Games Won</UserInfoStatusHeading>
-                  <UserInfoStatusRank>78</UserInfoStatusRank>
-                </UserInfoStatus>
-                <UserInfoStatus>
-                  <UserInfoStatusHeading>Games Won</UserInfoStatusHeading>
-                  <UserInfoStatusRank>78</UserInfoStatusRank>
-                </UserInfoStatus>
-              </UserInfoStatusConatiner>
+              {type == "dm" && (
+                <UserInfoStatusConatiner>
+                  <UserInfoStatus>
+                    <UserInfoStatusHeading>Games Won</UserInfoStatusHeading>
+                    <UserInfoStatusRank>78</UserInfoStatusRank>
+                  </UserInfoStatus>
+                  <UserInfoStatus>
+                    <UserInfoStatusHeading>Games Won</UserInfoStatusHeading>
+                    <UserInfoStatusRank>78</UserInfoStatusRank>
+                  </UserInfoStatus>
+                </UserInfoStatusConatiner>
+              )}
             </UserInformation>
-            <Button $text="Play now" $size="auto" />
+            {type == "dm" && <Button $text="Play now" $size="auto" />}
           </UserInfoWrapper>
         </>
       )}

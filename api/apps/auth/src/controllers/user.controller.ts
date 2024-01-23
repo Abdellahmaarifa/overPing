@@ -65,6 +65,11 @@ export class UserController {
     return this.userService.remove(input.id, input.password);
   }
 
+  @MessagePattern({ role: 'user', cmd: 'delete-account' })
+  async deleteUser(userId: number): Promise<boolean> {
+    return this.userService.deleteUser(userId);
+  }
+
   @MessagePattern({ role: 'user', cmd: 'update' })
   async updateUser(input : { id : number , data: UpdateUserDto}): Promise<boolean> {
     return this.userService.updateUser(input.id, input.data);
@@ -88,6 +93,11 @@ export class UserController {
   @MessagePattern({role: 'user', cmd: 'getOnlineFriends'})
   async getOnlineFriends({userId, pageNumber, limit}) : Promise<IUser[]>{
       return this.userService.getOnlineFriends(userId, pageNumber, limit);
+  }
+
+  @MessagePattern({role: 'user', cmd: 'searchUser'})
+  async searchUser({ pageNumber, limit, username}) : Promise<IUser[]>{
+      return this.userService.searchUser(pageNumber, limit, username);
   }
 
   private handleUserNotFound(user: IAuthUser, errorMessage: string): void {

@@ -1,17 +1,15 @@
+import { FriendshipStatus } from '@app/common';
+import { IVisibility } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
-import { Socket } from 'socket.io'
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
-import { FriendshipStatus } from '@app/common';
-import { GroupType } from '../interface/group.interface';
-import { IChannel, IVisibility } from '@app/common/chat';
 import { UpdateChanneldto } from '../dto';
+import { GroupType } from '../interface/group.interface';
 import { HelperService } from './helper.service';
 
 @Injectable()
@@ -68,7 +66,7 @@ export class CheckerService {
         owner_id: targetId,
       },
     });
-    if (isTargetChannelOwner) {
+    if (isTargetChannelOwner && isTargetChannelOwner.owner_id !== userId) {
       return false;
     }
     return await this.isAdmin(userId, channelId);
@@ -102,14 +100,17 @@ export class CheckerService {
     return null;
   }
 
-  async isMuted(user_id: number, channelId: number) {
+  async isMuted(user_id: number, channelId: number) : Promise<string | null> {
     const mutedMember = await this.prisma.mutedMembers.findFirst({
       where: {
         channelId,
         user_id,
       },
     });
-    if (mutedMember && mutedMember.expiry <= new Date()) {
+    if (!mutedMember) {
+      return null;
+    }
+    else if (mutedMember && mutedMember.expiry < new Date()) {
       await this.prisma.mutedMembers.deleteMany({
         where: {
           channelId,
@@ -118,9 +119,7 @@ export class CheckerService {
       });
       return;
     }
-    else if (mutedMember) {
-      this.rpcExceptionService.throwBadRequest(`failed: you are MUTED!`);
-    }
+    return mutedMember.expiry.toISOString();
   }
 
   async isBanned(userId: number, channelId: number) {
@@ -144,14 +143,20 @@ export class CheckerService {
       },
       id
     )
-    return !!!existedUser;
+    return !!existedUser;
   }
 
-  async checkForChannel(id: number) : Promise<Boolean> {
+  async checkForChannel(id: number, userId: number) : Promise<Boolean> {
     const existedChannel = await this.prisma.channel.findUnique({
-      where: { id }
+      where: {
+        id, 
+        OR: [
+          { admins: { some: { userId } } },
+          { members: { some: { userId } } },
+        ]
+      }
     });
-    return !!!existedChannel;
+    return !!existedChannel;
   }
 
   async channelVisibility(channelID: number) : Promise<string> {
@@ -185,7 +190,7 @@ export class CheckerService {
       && (data.visibility === IVisibility.PUBLIC || data.visibility === IVisibility.PRIVATE))
     {
       // PASSWORD REQUIRED TO AUTHORIZED THE UPDATE
-      if (data.password && await this.helper.isPasswordMatched(channel.password, data.password) === true) {
+      if (data.newPassword && await this.helper.isPasswordMatched(channel.password, data.newPassword) === true) {
         return null;
       } else {
         this.rpcExceptionService.throwBadRequest(`The update authorization requires a PASSWORD!`);

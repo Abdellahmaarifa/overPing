@@ -21,6 +21,9 @@ export class GQLAdminsModel {
   
   @Field({nullable: true})
   profileImgUrl?: string;
+
+  @Field({nullable: true})
+  muteStatus?: boolean;
 }
 
 @ObjectType()
@@ -42,6 +45,9 @@ export class GQLMembersModel {
   
   @Field({nullable: true})
   profileImgUrl?: string;
+
+  @Field({nullable: true})
+  muteStatus?: boolean;
 }
 
 @ObjectType()
@@ -74,6 +80,10 @@ export class GQLChannelModel {
   @Field(() => [GQLMessageModel], {nullable: true})
   @IsOptional()
   messages?: GQLMessageModel[];
+
+  @Field({nullable: true})
+  @IsOptional()
+  latestMessage_at?: string;
 
   @Field({nullable: true})
   @IsOptional()

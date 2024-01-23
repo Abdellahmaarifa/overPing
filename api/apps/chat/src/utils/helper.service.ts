@@ -1,20 +1,20 @@
+import { FriendshipStatus, IUser } from '@app/common';
+import { IAdmins, IChannel, IMembers } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
-import { Socket } from 'socket.io'
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
-import { CheckerService } from './checker.service';
-import { IAdmins, IChannel, IMembers } from '@app/common/chat';
-import { FriendshipStatus, IUser } from '@app/common';
-import { GroupType } from '../interface/group.interface';
-import { ChannelGateway } from '../chat.gateway/channel.gateway';
 import { hash, verify } from 'argon2';
+import { Socket } from 'socket.io';
+import { ChannelGateway } from '../chat.gateway/channel.gateway';
+import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
+import { CheckerService } from './checker.service';
+import * as cookie from 'cookie'
 
 // const argon2 = require('argon2');
 
@@ -86,9 +86,12 @@ export class HelperService {
   async getUserId(client: Socket) : Promise<number | null> {
     try {
       const session = client.handshake.headers.cookie;
-      const token = session?.split('=')[1];
-      if (token) {
-        const user = await this.jwtService.verifyAsync(token, {
+      
+      const cookies = cookie.parse(client.handshake.headers.cookie || '');
+      const accessToken = cookies['Access_token'];
+
+      if (accessToken) {
+        const user = await this.jwtService.verifyAsync(accessToken, {
           secret: this.configService.get('JWT_ACCESS_SECRET'),
         });
         return user.sub;
@@ -134,9 +137,9 @@ export class HelperService {
     
   async ownerLeavedChannel(channelId: number) : Promise<void> {
     const admins = await this.findAdminsById(channelId);
-    if (!admins?.length) {
+    if (admins.length === 0) {
       const members = await this.findMembersById(channelId);
-      if (!members?.length) {
+      if (members.length === 0) {
         await this.prisma.channel.delete({
           where: { id: channelId }
         });
@@ -149,10 +152,16 @@ export class HelperService {
   }
   
   async setOwner(channelId: number, newOwner: number, oldStatus: string) : Promise<void> {
-    await this.prisma.channel.update({
+    const updatedInfo = await this.prisma.channel.update({
       where: { id: channelId },
       data: {
         owner_id: newOwner
+      },
+      select: {
+        name: true,
+        owner_id: true,
+        description: true,
+        visibility: true
       }
     });
     if (oldStatus === "isMember") {
@@ -170,15 +179,13 @@ export class HelperService {
       });
     }
 
-    // await this.channelGateway.sendUpdatedChannelInfo(channelId, {
-    //   owner_id: newOwner,
-    // });
+    await this.channelGateway.sendUpdatedChannelInfo(channelId, updatedInfo);
   }
 
   
   /******* Check and Get User Information by ID *******/
 
-  async findUser(user_id: number, throwStatus: boolean) : Promise<IUser> {
+  async findUser(user_id: number) : Promise<IUser> {
     try {
       const user: IUser = await this.clientService.sendMessageWithPayload(
           this.client,
@@ -188,13 +195,9 @@ export class HelperService {
           },
           [user_id]
       );
-
       return user![0] || null;
     }
     catch {
-      if (throwStatus) {
-        this.rpcExceptionService.throwBadRequest(`Failed to find user: ${user_id}`);
-      }
       return null;
     }
   }
@@ -227,5 +230,11 @@ export class HelperService {
     return channelAdmins.map((admin) => ({
       id: admin.userId,
     }));
+  }
+
+  handleError(errorMsg: string) {
+    return {
+      error: { message: errorMsg }
+    }
   }
 }

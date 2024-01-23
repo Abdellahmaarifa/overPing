@@ -78,7 +78,7 @@ export class AuthService {
       },
       {
         secret: this.configService.get<string>('Jwt_TWOFA_SECRET'),
-        expiresIn: '15m',
+        expiresIn: '7d',
       },
     );
     return newTFactorAccess;
@@ -93,7 +93,7 @@ export class AuthService {
         },
         {
           secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-          expiresIn: '15m',
+          expiresIn: '7d',
         },
       ),
       this.jwtService.signAsync(
@@ -192,6 +192,16 @@ export class AuthService {
       this.userService.update2FA(user.id, '');
     }
     return isVerified;
+  }
+
+  async disableTwoFactor(userId: number) : Promise<boolean>{
+    const user = await this.userService.findById(userId);
+    if(!user.twoStepVerificationEnabled){
+       this.rpcExceptionService.throwBadRequest("two step Verification is all ready disable")
+    }
+    this.userService.toggle2FAStatus(userId, false);
+    this.userService.update2FA(user.id, '');
+    return true;
   }
 
   async authenticate_2fa(

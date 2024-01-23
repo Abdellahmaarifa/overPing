@@ -3,7 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IMessage } from '@app/common/chat/message.interface';
-import { ActionToMemberInput, CreateProtectedInput, CreatePublicPrivateInput, DeleteMessageInput, MemberInput, UpdateChannelInput, UpdateMessageInput } from '../graphql/input/channel.input';
+import { ActionToMemberInput, CreateChannelInput, DeleteMessageInput, MemberInput, UpdateChannelInput, UpdateMessageInput } from '../graphql/input/channel.input';
 import { IChannel, IChannelSearch, IMembersWithInfo } from '@app/common/chat';
 
 @Injectable()
@@ -64,7 +64,7 @@ export class GwChannelService {
   /***************** CHANNEL ACTIONS ****************/
   /******* create ******* update ***** delete *******/
 
-  async createChannel(payload: CreatePublicPrivateInput | CreateProtectedInput) : Promise<IChannel> {
+  async createChannel(payload: CreateChannelInput) : Promise<IChannel> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {
@@ -86,7 +86,7 @@ export class GwChannelService {
     );
   }
 
-  async deleteChannel(payload: UpdateChannelInput) : Promise<Boolean> {
+  async deleteChannel(payload: MemberInput) : Promise<Boolean> {
     return await this.clientService.sendMessageWithPayload(
         this.client,
         {

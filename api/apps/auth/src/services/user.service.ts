@@ -24,7 +24,7 @@ export class UserService {
     private readonly clientService: RabbitMqService,
     private readonly rpcExceptionService: RpcExceptionService,
     private prisma: PrismaService,
-  ) {}
+  ) { }
 
   async validateUser(
     userCredentials: SignInCredentialsDto,
@@ -41,11 +41,6 @@ export class UserService {
     );
     if (!isPasswordValid)
       this.rpcExceptionService.throwForbidden('Invalid username or password.');
-
-    if (userFound.twoStepVerificationEnabled) {
-      return null;
-      // this.rpcExceptionService.throwUnauthorised("Two-factor authentication is required. Please provide the 2FA code.")
-    }
     return userFound;
   }
 
@@ -94,8 +89,29 @@ export class UserService {
       this.handlePrismaError(error);
     }
   }
+  async searchUser(pageNumber =1, limit, username): Promise<IUser[]>{
+      const skip = (pageNumber - 1) * limit;
+      const users = await this.prisma.user.findMany({
+        where : {
+            username: {
+              startsWith : username
+            }
+          },
+          select: {
+            id: true,
+            username: true,
+            profileImgUrl: true,
+            email: true,
+            lastSeen: true,
+          },
+          skip,
+          take: limit,
+        })
+      return users;
+  }
 
-  async findUserByUsername(username: string): Promise<User> {
+
+  async findUserByUsername(username: string){
     try {
       const user = await this.prisma.user.findUnique({
         where: { username },
@@ -241,6 +257,37 @@ export class UserService {
     }
   }
 
+  async deleteUser(userId: number): Promise<boolean> {
+    try {
+      const userToDelete = await this.prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+
+      if (!userToDelete) {
+        this.rpcExceptionService.throwBadRequest(
+          `User with ID ${userId} not found.`,
+        );
+      }
+
+      // Delete the user if it exists
+
+      await this.prisma.user.delete({
+        where: {
+          id: userToDelete.id,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      console.log('error', error);
+
+      this.handlePrismaError(error);
+    }
+  }
+
+
   async updateRefreshToken(userId: number, refreshToken: string) {
     return this.prisma.user.update({
       data: {
@@ -331,6 +378,7 @@ export class UserService {
         id: true,
         username: true,
         profileImgUrl: true,
+        email: true,
       },
     });
     console.log('friends: ', friends);
@@ -414,6 +462,9 @@ export class UserService {
   }
 
   async getUsersInfo(users: number[]): Promise<IUser[]> {
+    if (users.length === 0) {
+      return [];
+    }
     const usersInfo: IUser[] = await this.prisma.user.findMany({
       where: {
         id: { in: users },
@@ -426,15 +477,20 @@ export class UserService {
         lastSeen: true,
         profileImgUrl: true,
       },
-    });
-    
+    })
+    if (usersInfo.length === 0) {
+      this.rpcExceptionService.throwBadRequest(
+        `User(s) not found`,
+      );
+    }
+
     const usersIds = usersInfo.map((user) => user.id);
     const usersNickname = (await this.clientService.sendMessageWithPayload(
       this.client,
       { role: 'profile', cmd: 'get-users-nickname' },
       usersIds,
-      ));
-    
+    ));
+
     usersInfo.forEach((user) => {
       const nickname = usersNickname.find((u) => u.user_id === user.id);
       user.nickname = nickname.nickname;

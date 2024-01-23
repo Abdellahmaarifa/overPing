@@ -1,26 +1,25 @@
 #!/bin/bash
 
-docker exec auth rm -rf /usr/app/apps/auth/prisma/migrations && echo "the migrations dir is deleted"
-docker exec auth sh -c 'cd /usr/src/app/apps/auth/prisma &&  yes | prisma migrate dev'
-docker exec auth sh -c 'npx prisma generate --schema=/usr/src/app/apps/auth/prisma/schema.prisma'
+docker exec -it -w /usr/src/app/apps/auth/prisma auth npx prisma migrate dev --name my_migration_auth 
+docker exec -i -w /usr/src/app/apps/auth/prisma auth npx prisma migrate reset --force
 docker restart auth
+docker exec -w /usr/src/app/apps/auth/prisma auth npx prisma studio &
 
 
-
-docker exec profile rm -rf /usr/app/apps/profile/prisma/migrations && echo "the migrations dir is deleted"
-docker exec profile sh -c 'cd /usr/src/app/apps/profile/prisma &&  yes | prisma migrate dev'
-docker exec profile sh -c 'npx prisma generate --schema=/usr/src/app/apps/profile/prisma/schema.prisma'
+docker exec -it -w /usr/src/app/apps/profile/prisma profile npx prisma migrate dev --name my_migration_profile
+docker exec -i -w /usr/src/app/apps/profile/prisma profile npx prisma migrate reset --force
 docker restart profile
+docker exec -w /usr/src/app/apps/auth/prisma profile npx prisma studio &
 
 
-docker exec chat rm -rf /usr/app/apps/chat/prisma/migrations && echo "the migrations dir is deleted"
-docker exec chat sh -c 'cd /usr/src/app/apps/chat/prisma &&  yes | prisma migrate dev'
-docker exec chat sh -c 'npx prisma generate --schema=/usr/src/app/apps/chat/prisma/schema.prisma'
+docker exec -it -w /usr/src/app/apps/chat/prisma chat npx prisma migrate dev --name my_migration_chat
+docker exec -i -w /usr/src/app/apps/chat/prisma chat npx prisma migrate reset --force
 docker restart chat
+docker exec -w /usr/src/app/apps/chat/prisma chat npx prisma studio &
 
 
-docker exec theGame rm -rf /usr/app/apps/theGame/prisma/migrations && echo "the migrations dir is deleted"
-docker exec theGame sh -c 'cd /usr/src/app/apps/theGame/prisma &&  yes | prisma migrate dev'
-docker exec theGame sh -c 'npx prisma generate --schema=/usr/src/app/apps/theGame/prisma/schema.prisma'
+docker exec -it -w /usr/src/app/apps/game/prisma theGame npx prisma migrate dev --name my_migration_game
+docker exec -i -w /usr/src/app/apps/game/prisma theGame npx prisma migrate reset --force
 docker restart theGame
+docker exec -w /usr/src/app/apps/game/prisma theGame npx prisma studio &
 

@@ -85,4 +85,9 @@ export class AuthController {
     async authenticate_2fa(twoFActorAuthInput: TwoFActorAuthDto) : Promise<AuthResponseDto>{
         return this.authService.authenticate_2fa(twoFActorAuthInput);
     }
+
+    @MessagePattern({ role: 'auth', cmd: 'disableTwoFactor'})
+    async disableTwoFactor(userId: number) : Promise<boolean>{
+        return this.authService.disableTwoFactor(userId);
+    }
 }

@@ -12,7 +12,7 @@ const Input = (
     });
   }, []);
   if (props.$type === "text-area")
-    return <Textarea placeholder={props.placeholder} />;
+    return <Textarea placeholder={props.placeholder} {...props}/>;
   return (
     <div tw="relative w-full flex items-center justify-center">
       <InputBox {...props} />

@@ -12,12 +12,14 @@ import { DirectMessageGateway } from './chat.gateway/directMessage.gateway';
 import { NotificationsGateway } from './chat.gateway/notifications.gateway';
 import { ChannelGateway } from './chat.gateway/channel.gateway';
 import { PrismaService } from '../prisma/prisma.service';
-import { ClientAccessAuthorizationGuard } from './guards/client.guard';
 import { JwtService } from '@nestjs/jwt';
 import { HelperService } from './utils/helper.service';
+import { TasksService } from './services/tasks.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     CommonModule,
     RabbitMqModule,
     RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
@@ -27,6 +29,7 @@ import { HelperService } from './utils/helper.service';
     ChannelController,
   ],
   providers: [
+    TasksService,
     JwtService,
     PrismaService,
     RpcExceptionService,
@@ -37,7 +40,6 @@ import { HelperService } from './utils/helper.service';
     DirectMessageGateway,
     ChannelGateway,
     // NotificationsGateway,
-    ClientAccessAuthorizationGuard,
   ],
 })
 export class ChatModule {}

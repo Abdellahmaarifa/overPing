@@ -140,14 +140,17 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
         console.log("====================> : ", subscriptionData)
         if (subscriptionData === undefined || ( subscriptionData && subscriptionData.matchWaitingList.matchKey === "null"))
         {
-            setTimeout(() => {
-            plyTwoImg?.setAttribute('src', "/images/question-mark.jpeg");
-            setTimeout(() => 
+            console.log("====================> : ", subscriptionData)
+            if (subscriptionData === undefined || ( subscriptionData && subscriptionData.matchWaitingList.matchKey === "null"))
             {
-                if (PlayWithRobot)
-                    PlayWithRobot.style.display = 'inline-block';
-                }, 100);
-            }, 1000);
+                setTimeout(() => {
+                plyTwoImg?.setAttribute('src', "/images/question-mark.jpeg");
+                setTimeout(() => 
+                {
+                    if (PlayWithRobot)
+                        PlayWithRobot.style.display = 'inline-block';
+                    }, 100);
+                }, 1000);
 
         }
         else if (subscriptionData )
@@ -180,20 +183,20 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
                 if (subscriptionData.matchWaitingList.user2?.matchType == "lastPong")
                     ply2ModePlaying = 3;
             }
-            else
+            else if (subscriptionData )
             {
                 ply2MatchWager = subscriptionData.matchWaitingList.user1?.bet as number;
                 if (subscriptionData.matchWaitingList.user1?.id)
                     ply2UserId =  Number(subscriptionData.matchWaitingList.user1?.id);
 
-                if (subscriptionData.matchWaitingList.user1?.matchType == "classic")
-                    ply2ModePlaying = 1;
-                if (subscriptionData.matchWaitingList.user1?.matchType == "standstorm")
-                    ply2ModePlaying = 2;
-                if (subscriptionData.matchWaitingList.user1?.matchType == "lastPong")
-                    ply2ModePlaying = 3;
+                    if (subscriptionData.matchWaitingList.user1?.matchType == "classic")
+                        ply2ModePlaying = 1;
+                    if (subscriptionData.matchWaitingList.user1?.matchType == "standstorm")
+                        ply2ModePlaying = 2;
+                    if (subscriptionData.matchWaitingList.user1?.matchType == "lastPong")
+                        ply2ModePlaying = 3;
 
-            }
+                }
 
 
             setTimeout(() => {

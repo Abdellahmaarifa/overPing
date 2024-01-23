@@ -26,8 +26,8 @@ export class AuthQueryResolver {
     }
 
     @UseGuards(GqlJwtAuthGuard)
-    @Query(() => GQLUserModel)
-    async findUserById(@Context() cxt ,@Args('id') id: number): Promise<GQLUserModel> {
+    @Query(() => GQLIUserModel)
+    async findUserById(@Context() cxt ,@Args('id') id: number): Promise<GQLIUserModel> {
         const userId = cxt.req.user.id;
         const user = await this.userService.findUserById(userId, id);
         return (user);
@@ -58,7 +58,7 @@ export class AuthQueryResolver {
     }
 
     @UseGuards(GqlJwtAuthGuard)
-    @Query(() => [GQLUserModel])
+    @Query(() => [GQLIUserModel])
     async getOnlineUsers(
         @Context() { req },
          @Args('pageNumber') pageNumber : number,
@@ -69,7 +69,7 @@ export class AuthQueryResolver {
     }
 
     @UseGuards(GqlJwtAuthGuard)
-    @Query(() => [GQLUserModel])
+    @Query(() => [GQLIUserModel])
     async getOnlineFriends(
         @Context() { req },
          @Args('pageNumber') pageNumber: number,
@@ -77,6 +77,19 @@ export class AuthQueryResolver {
     ): Promise<IUser[]> {
         const userId = req.user.id;
         return await this.userStatusService.getOnlineFriends(userId, pageNumber, limit)
+
+    }
+
+    @UseGuards(GqlJwtAuthGuard)
+    @Query(() => [GQLIUserModel])
+    async searchUser(
+        @Context() { req },
+         @Args('pageNumber') pageNumber: number,
+          @Args('limit') limit: number,
+          @Args('username') username: string,
+    ): Promise<IUser[]> {
+        const userId = req.user.id;
+        return await this.userService.searchUser(userId, pageNumber, limit, username);
 
     }
 
