@@ -11,6 +11,7 @@ import Switcher from "../Switcher/Switcher";
 import BackIcon from "assets/common/back-icon.svg?react";
 import { useUserContext } from "context/user.context";
 import {
+  useDisableTwoFactorMutation,
   useEnableTwoFactorAuthMutation,
   useVerifyTwoFactorAuthMutation,
 } from "gql/index";
@@ -27,7 +28,7 @@ const SetPasswordModel = () => {
   const [QRcode, setQRcode] = useState<string | null>(null);
   const [enableTwoFactor] = useEnableTwoFactorAuthMutation();
   const [verifyTwoFactorAuth] = useVerifyTwoFactorAuthMutation();
-
+  const [disableTwoFacMutation] = useDisableTwoFactorMutation();
   const {
     SETTINGS_LINKS,
     resetSettings,
@@ -42,7 +43,16 @@ const SetPasswordModel = () => {
   const setTwoFactorAuth = async () => {
     if (enable) {
       // should disable the 2FA
-      setEnable(false);
+      try {
+        const res = disableTwoFacMutation();
+        console.log(res, "hello //// ", res);
+        setEnable(false);
+        updateUser({ ...user!, twoStepVerificationEnabled: false });
+      } catch (err: any) {
+        toast.error(
+          err?.message ? err.message : "can't disable two factor auth"
+        );
+      }
     } else {
       await toast.promise(
         enableTwoFactor({

@@ -10,13 +10,9 @@ import useChatContextProvider, { useChatContext } from "context/chat.context";
 import useSettingsContextProvider from "context/settings.context";
 import { useUserContext } from "context/user.context";
 import {
-  FindProfileByUserIdDocument,
   useAcceptMatchToPlayMutation,
-  useFindProfileByUserIdQuery,
-  useMatchWaitingListSubscription,
   useMatchWaitingDircSubscription,
   useNotificationSubscription,
-  UserDocument,
   AccountDocument,
 } from "gql/index";
 import { useEffect, useState } from "react";
@@ -25,7 +21,7 @@ import tw from "twin.macro";
 import Button from "../Button/Button";
 import ConfirmModel from "../ConfirmModel/ConfirmModel";
 import Settings from "../Settings/Settings";
-import './Layout.css'
+import "./Layout.css";
 
 import { useApolloClient } from "@apollo/client";
 import { Notification } from "domain/model/notification";
@@ -160,8 +156,8 @@ const Layout = () => {
   }, [data]);
 
   useEffect(() => {
-    if (dataM ) {
-      console.log("this i sit: ", dataM)
+    if (dataM) {
+      console.log("this i sit: ", dataM);
       navigate(
         `/game?type="friend"&user1=${dataM.matchWaitingDirc.user1?.id}&user2=${dataM.matchWaitingDirc.user2?.id}&game-type="classic"&key=${dataM.matchWaitingDirc.matchKey}`
       );

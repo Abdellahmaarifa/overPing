@@ -1,5 +1,8 @@
 import { Context } from "context/user.context";
-import { UserQueryHookResult } from "gql/index";
+import {
+  GetOnlineUsersLazyQueryHookResult,
+  GetUserQueryHookResult,
+} from "gql/index";
 export interface TopNavBarModelType {
   id: string;
   username: string;
@@ -7,6 +10,6 @@ export interface TopNavBarModelType {
 }
 
 export interface TopNavBarViewModelType {
-  userQuery: UserQueryHookResult;
+  userQuery: GetUserQueryHookResult;
   userContext: Context;
 }

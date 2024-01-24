@@ -1078,6 +1078,11 @@ export type Authenticate_2faMutationVariables = Exact<{
 
 export type Authenticate_2faMutation = { __typename?: 'Mutation', authenticate_2fa: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean } };
 
+export type DisableTwoFactorMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DisableTwoFactorMutation = { __typename?: 'Mutation', disableTwoFactor: boolean };
+
 export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3053,6 +3058,36 @@ export function useAuthenticate_2faMutation(baseOptions?: Apollo.MutationHookOpt
 export type Authenticate_2faMutationHookResult = ReturnType<typeof useAuthenticate_2faMutation>;
 export type Authenticate_2faMutationResult = Apollo.MutationResult<Authenticate_2faMutation>;
 export type Authenticate_2faMutationOptions = Apollo.BaseMutationOptions<Authenticate_2faMutation, Authenticate_2faMutationVariables>;
+export const DisableTwoFactorDocument = gql`
+    mutation disableTwoFactor {
+  disableTwoFactor
+}
+    `;
+export type DisableTwoFactorMutationFn = Apollo.MutationFunction<DisableTwoFactorMutation, DisableTwoFactorMutationVariables>;
+
+/**
+ * __useDisableTwoFactorMutation__
+ *
+ * To run a mutation, you first call `useDisableTwoFactorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDisableTwoFactorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [disableTwoFactorMutation, { data, loading, error }] = useDisableTwoFactorMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDisableTwoFactorMutation(baseOptions?: Apollo.MutationHookOptions<DisableTwoFactorMutation, DisableTwoFactorMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DisableTwoFactorMutation, DisableTwoFactorMutationVariables>(DisableTwoFactorDocument, options);
+      }
+export type DisableTwoFactorMutationHookResult = ReturnType<typeof useDisableTwoFactorMutation>;
+export type DisableTwoFactorMutationResult = Apollo.MutationResult<DisableTwoFactorMutation>;
+export type DisableTwoFactorMutationOptions = Apollo.BaseMutationOptions<DisableTwoFactorMutation, DisableTwoFactorMutationVariables>;
 export const GetUserDocument = gql`
     query GetUser {
   getUser {

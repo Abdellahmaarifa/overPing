@@ -73,7 +73,7 @@ export const ChannelMember = tw.div`
     gap-[8px]
     relative
 `;
-export const ChannelMemberName = styled.h3(({ muted }) => [
+export const ChannelMemberName = styled.h3<any>(({ muted }) => [
   tw`
     font-inter
     text-[14px]
@@ -82,7 +82,7 @@ export const ChannelMemberName = styled.h3(({ muted }) => [
 `,
   muted && tw`text-[#3a454f]`,
 ]);
-export const ChannelMemberPhoto = styled.img(({ muted }) => [
+export const ChannelMemberPhoto = styled.img<any>(({ muted }) => [
   tw`
     w-[48px]
     h-[48px]

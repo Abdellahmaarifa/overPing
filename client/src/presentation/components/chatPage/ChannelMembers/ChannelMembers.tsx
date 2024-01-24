@@ -32,6 +32,7 @@ import UnmuteIcon from "assets/chat/unmute.svg?react";
 import toast from "react-hot-toast";
 import { useChatContext } from "context/chat.context";
 import { ChannelSampleMember } from "domain/model/chat.type";
+import Button from "components/common/Button/Button";
 interface MemberType {
   profileImgUrl: string;
   id: number;
@@ -65,14 +66,14 @@ const ActioneMemeber = ({ e }: { e: any }) => {
     }
   };
 
-  const muteUser = async (targetId, name) => {
+  const muteForTime = async (time: number, targetId: string, name: string) => {
     try {
       console.log("muting this user");
       const res = await muteMemberMutation({
         variables: {
           data: {
             channelId: Number(id),
-            muteTimeLimit: 1,
+            muteTimeLimit: time,
             userId: Number(user?.id),
             targetId: Number(targetId),
           },
@@ -84,6 +85,37 @@ const ActioneMemeber = ({ e }: { e: any }) => {
       console.log("error!");
       toast.error(err.message ? err.message : "something went wrong!");
     }
+  };
+
+  const muteUser = async (targetId, name) => {
+    toast((t) => (
+      <span tw="flex items-center justify-center flex-col gap-[10px]">
+        <p>how much do you want to mute the user</p>
+        <div tw="flex gap-[10px]">
+          <Button
+            $text="5 minutes"
+            onClick={() => {
+              muteForTime(5, targetId, name);
+              toast.dismiss(t.id);
+            }}
+          />
+          <Button
+            $text="1 hour"
+            onClick={() => {
+              muteForTime(60, targetId, name);
+              toast.dismiss(t.id);
+            }}
+          />
+          <Button
+            $text="1 day"
+            onClick={() => {
+              muteForTime(24 * 60, targetId, name);
+              toast.dismiss(t.id);
+            }}
+          />
+        </div>
+      </span>
+    ));
   };
 
   const unmuteUser = async (targetId, name) => {
