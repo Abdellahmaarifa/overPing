@@ -187,11 +187,11 @@ export class ChannelService {
   /******* create ******* update ***** delete *******/
 
   async create(data: CreateChanneldto) : Promise<IChannel> {
-    
+
     await this.helper.findUser(data.userId);
 
     await this.helper.channelNameValidation(data.channelName);
-  
+
     let hashedPassword: string = null;
     if (data.visibility === IVisibility.PROTECTED) {
       if (!data.password) {
@@ -524,6 +524,7 @@ export class ChannelService {
       await this.helper.ownerLeavedChannel(channelID);
     }
 
+    await this.channelGateway.leavchannel(userID, channelID);
     await this.channelGateway.sendUpdatedListOfMembers(channelID, await this.getMembers(channelID));
     await this.channelGateway.sendUpdatedListOfChannels(userID, await this.getUserChannels(userID));
 
@@ -626,6 +627,7 @@ export class ChannelService {
       },
     });
 
+    await this.channelGateway.leavchannel(data.targetId, data.channelId);
     await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
     await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
 
@@ -672,6 +674,8 @@ export class ChannelService {
       }
     });
 
+
+    await this.channelGateway.leavchannel(data.targetId, data.channelId);
     await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
     await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
 

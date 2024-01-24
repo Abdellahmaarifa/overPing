@@ -1,10 +1,9 @@
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Mutation, Args, Context } from '@nestjs/graphql';
-import { GwDirectMessageService } from '../../services';
+import { GwDirectMessageService, UserCheckService } from '../../services';
 import { DeletionInput, UpdateInput } from '../input/directMessage.input';
 import { GQLDirectMessageModel, GQLMessageModel } from '../models';
 import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
-import { UserCheckService } from '../../services/userCheck.service';
 
 @Resolver()
 @UseGuards(GqlJwtAuthGuard)

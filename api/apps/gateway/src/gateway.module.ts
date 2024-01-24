@@ -41,6 +41,9 @@ import { directMessageResolver } from "./microservices/chat/graphql/mutations/gw
 import { ChatQueriesResolver } from "./microservices/chat/graphql/queries/gw.chat.query";
 import { formatError } from "./global-filter/gqlFilter";
 import { UserCheckService } from "./microservices/chat/services/userCheck.service";
+import { GwGameService } from "./microservices/game/services/gw.game.service";
+import { GameQueriesResolver } from "./microservices/game/graphql/queries/gw.game.guery";
+
 @Module({
   imports: [
     PassportModule,
@@ -69,6 +72,7 @@ import { UserCheckService } from "./microservices/chat/services/userCheck.servic
   RabbitMqModule.forClientProxy(IRmqSeverName.CHAT),
   RabbitMqModule.forClientProxy(IRmqSeverName.MEDIA),
   RabbitMqModule.forClientProxy(IRmqSeverName.FRIEND),
+  RabbitMqModule.forClientProxy(IRmqSeverName.GAME),
 ],
   providers: [{
     provide: 'PUB_SUB',
@@ -114,6 +118,10 @@ import { UserCheckService } from "./microservices/chat/services/userCheck.servic
     JwtRefreshTokenStrategy,
     LoggerService,
     UserAccessAuthorizationGuard,
+    // game status service
+    GameQueriesResolver,
+    GwGameService,
+    // end of game
   ],
   controllers:[
     MeidaController,

@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { GwChannelService } from '../../services';
+import { GwChannelService, UserCheckService } from '../../services';
 import {
   ActionToMemberInput,
   CreateChannelInput,
@@ -13,7 +13,6 @@ import {
 import { GQLChannelModel, GQLMessageModel } from '../models';
 import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
 import { Context } from '@nestjs/graphql'
-import { UserCheckService } from '../../services/userCheck.service';
 
 
 @Resolver()

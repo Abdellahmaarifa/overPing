@@ -11,6 +11,11 @@ async function bootstrap() {
   const app = await NestFactory.create(ChatModule);
   const rmqService = app.get<RabbitMqService>(RabbitMqService);
 
+  app.enableCors({
+    origin: `${process.env.CHAT_FRONT_URL}`,
+    credentials: true,
+  });
+
   // app.useGlobalFilters(new ChatExceptionFilter());
   app.connectMicroservice(rmqService.getOptions(RABBIT_SERVICES[IRmqSeverName.CHAT].queue))
 

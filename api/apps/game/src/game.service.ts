@@ -1,10 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { IGameData } from './Interfaces/game.interface';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+import { ClientProxy } from '@nestjs/microservices';
+import { RabbitMqService } from '@app/rabbit-mq';
+import { IUser } from '@app/common';
 
 @Injectable()
 export class GameService {
   constructor(
+    @Inject(IRmqSeverName.FRIEND)
+    private readonly client: ClientProxy,
+    private readonly clientService: RabbitMqService,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -43,7 +50,15 @@ export class GameService {
     });
   }
 
-  async getFriendshipMatches(userId: number, friendIds: number[], page: number, limit: number) : Promise<IGameData[]> {
+  async getFriendshipMatches(userId: number, page: number, limit: number) : Promise<IGameData[]> {
+    const friends: IUser[] = await this.clientService.sendMessageWithPayload(
+      this.client,
+      { role: 'user', cmd: 'getUserFriends'},
+      userId,
+    );
+
+    const friendIds = friends.forEach((friend) => friend.id);
+
     return await this.prisma.game.findMany({
       where: {
         OR: [

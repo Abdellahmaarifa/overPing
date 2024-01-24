@@ -97,6 +97,13 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     client.join(channelName);
   }
 
+  async leavchannel(userId: number, channelId: number) {
+    const channelName = 'channel_' + channelId;
+    const client = connectedChannelUsers.get(userId);
+
+    client.leave(channelName);
+  }
+  
   @SubscribeMessage(CHANNEL.sendMessageInchannel)
   async sendMessageInChannel(client: Socket, data: AddMessageInChanneldto) {
     const userId = await this.helper.getUserId(client);
