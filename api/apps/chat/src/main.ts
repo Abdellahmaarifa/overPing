@@ -13,6 +13,13 @@ async function bootstrap() {
   // app.useGlobalFilters(new ChatExceptionFilter());
   app.connectMicroservice(rmqService.getOptions(RABBIT_SERVICES[IRmqSeverName.CHAT].queue))
 
+  
+  app.enableCors({
+    origin: true,
+    // origin: ["http://localhost:5173"],
+    credentials: true,
+  });
+
   await app.startAllMicroservices();
   await app.init();
   app.useGlobalPipes(

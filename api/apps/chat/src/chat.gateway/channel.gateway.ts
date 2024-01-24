@@ -22,7 +22,7 @@ let connectedChannelUsers: Map<number, any> = new Map();
 
 @WebSocketGateway({
   cors: {
-    origin: `${process.env.CHAT_FRONT_URL}`,
+    origin: true,
     credentials: true
   },
   namespace: CHANNEL.namespace,
@@ -51,6 +51,11 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     if (userId) {
       this.logger.log(`User connected: ${userId} [${client.id}`);
       connectedChannelUsers.set(userId, client);
+
+      const userChannels = await this.channelService.getUserChannels(userId);
+      userChannels.forEach((channel) => {
+        client.join('channel_' + channel.id);
+      })
     }
     else {
       this.logger.log(`User authentication failed: ${userId} [${client.id}`);
@@ -90,6 +95,13 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     }
     const channelName = `channel_` + data.channelId;
     client.join(channelName);
+  }
+
+  async leavchannel(userId: number, channelId: number) {
+    const channelName = 'channel_' + channelId;
+    const client = connectedChannelUsers.get(userId);
+    
+    client.leave(channelName);
   }
 
   @SubscribeMessage(CHANNEL.sendMessageInchannel)
@@ -224,10 +236,3 @@ console.log(`>>>>> updatedInfo sent !!!!\n`, updatedInfo);
     }
   }
 }
-
-
-// mute check // DONE
-// return all messages when 0 is sent as page number // DONE
-// updated channel/dm list // DONE
-// inputs validation
-// {error: {message:""}}

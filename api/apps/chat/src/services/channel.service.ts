@@ -484,6 +484,7 @@ export class ChannelService {
       await this.helper.ownerLeavedChannel(channelID);
     }
 
+    await this.channelGateway.leavchannel(userID, channelID);
     await this.channelGateway.sendUpdatedListOfMembers(channelID, await this.getMembers(channelID));
     await this.channelGateway.sendUpdatedListOfChannels(userID, await this.getUserChannels(userID));
 
@@ -570,6 +571,7 @@ export class ChannelService {
       },
     });
 
+    await this.channelGateway.leavchannel(data.targetId, data.channelId);
     await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
     await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
 
@@ -603,6 +605,7 @@ export class ChannelService {
       }
     });
 
+    await this.channelGateway.leavchannel(data.targetId, data.channelId);
     await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
     await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
 
