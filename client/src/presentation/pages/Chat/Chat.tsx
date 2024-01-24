@@ -65,6 +65,7 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
     // };
     viewModel.initChat();
     socket.on(CHANNEL_CMD.recUpdatedChannelsList, (data) => {
+      console.error("NEw LIST IS COMMING>>>>>>>>>>>>>>>>>>>");
       if (data) setChannels(data);
       //console.log("looks like the list is updated: ", data);
     });
