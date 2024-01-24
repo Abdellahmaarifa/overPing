@@ -55,6 +55,7 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
   constructor (
     @Inject(IRmqSeverName.PROFILE)
     private readonly profileClient: ClientProxy,
+    private readonly gameService: GameService,
     private readonly clientService: RabbitMqService,
   ) {}
 
@@ -194,8 +195,7 @@ handleAchievements(client: Socket, gameAchievement: any) {
 @SubscribeMessage('customResult') // Listen for the 'customEventDataRequest' event
 handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : string) 
 {
-  const gameService = new GameService(new PrismaService());
-  gameService.addResult(obj);
+  this.gameService.addResult(obj);
   console.log("data his : ", obj)
 }
 
