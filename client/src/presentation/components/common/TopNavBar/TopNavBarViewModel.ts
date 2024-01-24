@@ -2,23 +2,23 @@ import {
   TopNavBarModelType,
   TopNavBarViewModelType,
 } from "domain/model/TopNavBar.type";
-import { useUserQuery, UserQueryHookResult, UserQuery } from "gql/index";
+import {
+  useGetUserQuery,
+  GetUserQueryHookResult,
+  GetUserQuery,
+} from "gql/index";
 import { useUserContext, Context } from "context/user.context";
 import { useLogoutMutation } from "gql/index";
 import { useNavigate } from "react-router-dom";
 
 class TopNavBarViewModel implements TopNavBarViewModelType {
-  userQuery: UserQueryHookResult;
+  userQuery: GetUserQueryHookResult;
   userContext: Context;
   logoutMutation: any;
   navigate: any;
 
   constructor() {
-    this.userQuery = useUserQuery({
-      variables: {
-        id: 1,
-      },
-    });
+    this.userQuery = useGetUserQuery();
     this.userContext = useUserContext();
     [this.logoutMutation] = useLogoutMutation();
     this.navigate = useNavigate();

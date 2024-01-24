@@ -796,7 +796,7 @@ export type FindChanneMemebersQueryVariables = Exact<{
 }>;
 
 
-export type FindChanneMemebersQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, visibility: string, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, profileImgUrl?: string | null }> | null, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, profileImgUrl?: string | null }> | null } | null };
+export type FindChanneMemebersQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, visibility: string, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, profileImgUrl?: string | null, muteStatus?: boolean | null }> | null, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, profileImgUrl?: string | null, muteStatus?: boolean | null }> | null } | null };
 
 export type AddAdminMutationVariables = Exact<{
   data: ActionToMemberInput;
@@ -840,6 +840,41 @@ export type FindChannelByIdQueryVariables = Exact<{
 
 
 export type FindChannelByIdQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null } | null };
+
+export type MuteMemberMutationVariables = Exact<{
+  data: ActionToMemberInput;
+}>;
+
+
+export type MuteMemberMutation = { __typename?: 'Mutation', muteMember: boolean };
+
+export type UnmuteMemberMutationVariables = Exact<{
+  data: ActionToMemberInput;
+}>;
+
+
+export type UnmuteMemberMutation = { __typename?: 'Mutation', unmuteMember: boolean };
+
+export type KickMemberMutationVariables = Exact<{
+  data: ActionToMemberInput;
+}>;
+
+
+export type KickMemberMutation = { __typename?: 'Mutation', kickMember: boolean };
+
+export type BanMemberMutationVariables = Exact<{
+  data: ActionToMemberInput;
+}>;
+
+
+export type BanMemberMutation = { __typename?: 'Mutation', banMember: boolean };
+
+export type UnbanMemberMutationVariables = Exact<{
+  data: ActionToMemberInput;
+}>;
+
+
+export type UnbanMemberMutation = { __typename?: 'Mutation', unbanMember: boolean };
 
 export type GetBlockedUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1043,12 +1078,10 @@ export type Authenticate_2faMutationVariables = Exact<{
 
 export type Authenticate_2faMutation = { __typename?: 'Mutation', authenticate_2fa: { __typename?: 'GQLUserModel', id: string, email: string, username: string, twoStepVerificationEnabled: boolean } };
 
-export type UserQueryVariables = Exact<{
-  id: Scalars['Float']['input'];
-}>;
+export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLIUserModel', id: number, email: string, username: string, profileImgUrl: string } };
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'GQLUserModel', id: string, username: string, email: string, profileImgUrl: string, googleId?: string | null, fortyTwoId?: string | null, twoStepVerificationEnabled: boolean, showUpdateWin?: boolean | null } };
 
 export type DeleteAccountMutationVariables = Exact<{
   id: Scalars['Float']['input'];
@@ -1519,11 +1552,13 @@ export const FindChanneMemebersDocument = gql`
       id
       username
       profileImgUrl
+      muteStatus
     }
     admins {
       id
       username
       profileImgUrl
+      muteStatus
     }
     visibility
   }
@@ -1792,6 +1827,161 @@ export type FindChannelByIdQueryHookResult = ReturnType<typeof useFindChannelByI
 export type FindChannelByIdLazyQueryHookResult = ReturnType<typeof useFindChannelByIdLazyQuery>;
 export type FindChannelByIdSuspenseQueryHookResult = ReturnType<typeof useFindChannelByIdSuspenseQuery>;
 export type FindChannelByIdQueryResult = Apollo.QueryResult<FindChannelByIdQuery, FindChannelByIdQueryVariables>;
+export const MuteMemberDocument = gql`
+    mutation muteMember($data: ActionToMemberInput!) {
+  muteMember(data: $data)
+}
+    `;
+export type MuteMemberMutationFn = Apollo.MutationFunction<MuteMemberMutation, MuteMemberMutationVariables>;
+
+/**
+ * __useMuteMemberMutation__
+ *
+ * To run a mutation, you first call `useMuteMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMuteMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [muteMemberMutation, { data, loading, error }] = useMuteMemberMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useMuteMemberMutation(baseOptions?: Apollo.MutationHookOptions<MuteMemberMutation, MuteMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MuteMemberMutation, MuteMemberMutationVariables>(MuteMemberDocument, options);
+      }
+export type MuteMemberMutationHookResult = ReturnType<typeof useMuteMemberMutation>;
+export type MuteMemberMutationResult = Apollo.MutationResult<MuteMemberMutation>;
+export type MuteMemberMutationOptions = Apollo.BaseMutationOptions<MuteMemberMutation, MuteMemberMutationVariables>;
+export const UnmuteMemberDocument = gql`
+    mutation UnmuteMember($data: ActionToMemberInput!) {
+  unmuteMember(data: $data)
+}
+    `;
+export type UnmuteMemberMutationFn = Apollo.MutationFunction<UnmuteMemberMutation, UnmuteMemberMutationVariables>;
+
+/**
+ * __useUnmuteMemberMutation__
+ *
+ * To run a mutation, you first call `useUnmuteMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnmuteMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unmuteMemberMutation, { data, loading, error }] = useUnmuteMemberMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUnmuteMemberMutation(baseOptions?: Apollo.MutationHookOptions<UnmuteMemberMutation, UnmuteMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnmuteMemberMutation, UnmuteMemberMutationVariables>(UnmuteMemberDocument, options);
+      }
+export type UnmuteMemberMutationHookResult = ReturnType<typeof useUnmuteMemberMutation>;
+export type UnmuteMemberMutationResult = Apollo.MutationResult<UnmuteMemberMutation>;
+export type UnmuteMemberMutationOptions = Apollo.BaseMutationOptions<UnmuteMemberMutation, UnmuteMemberMutationVariables>;
+export const KickMemberDocument = gql`
+    mutation KickMember($data: ActionToMemberInput!) {
+  kickMember(data: $data)
+}
+    `;
+export type KickMemberMutationFn = Apollo.MutationFunction<KickMemberMutation, KickMemberMutationVariables>;
+
+/**
+ * __useKickMemberMutation__
+ *
+ * To run a mutation, you first call `useKickMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useKickMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [kickMemberMutation, { data, loading, error }] = useKickMemberMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useKickMemberMutation(baseOptions?: Apollo.MutationHookOptions<KickMemberMutation, KickMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<KickMemberMutation, KickMemberMutationVariables>(KickMemberDocument, options);
+      }
+export type KickMemberMutationHookResult = ReturnType<typeof useKickMemberMutation>;
+export type KickMemberMutationResult = Apollo.MutationResult<KickMemberMutation>;
+export type KickMemberMutationOptions = Apollo.BaseMutationOptions<KickMemberMutation, KickMemberMutationVariables>;
+export const BanMemberDocument = gql`
+    mutation BanMember($data: ActionToMemberInput!) {
+  banMember(data: $data)
+}
+    `;
+export type BanMemberMutationFn = Apollo.MutationFunction<BanMemberMutation, BanMemberMutationVariables>;
+
+/**
+ * __useBanMemberMutation__
+ *
+ * To run a mutation, you first call `useBanMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBanMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [banMemberMutation, { data, loading, error }] = useBanMemberMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useBanMemberMutation(baseOptions?: Apollo.MutationHookOptions<BanMemberMutation, BanMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BanMemberMutation, BanMemberMutationVariables>(BanMemberDocument, options);
+      }
+export type BanMemberMutationHookResult = ReturnType<typeof useBanMemberMutation>;
+export type BanMemberMutationResult = Apollo.MutationResult<BanMemberMutation>;
+export type BanMemberMutationOptions = Apollo.BaseMutationOptions<BanMemberMutation, BanMemberMutationVariables>;
+export const UnbanMemberDocument = gql`
+    mutation UnbanMember($data: ActionToMemberInput!) {
+  unbanMember(data: $data)
+}
+    `;
+export type UnbanMemberMutationFn = Apollo.MutationFunction<UnbanMemberMutation, UnbanMemberMutationVariables>;
+
+/**
+ * __useUnbanMemberMutation__
+ *
+ * To run a mutation, you first call `useUnbanMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnbanMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unbanMemberMutation, { data, loading, error }] = useUnbanMemberMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUnbanMemberMutation(baseOptions?: Apollo.MutationHookOptions<UnbanMemberMutation, UnbanMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnbanMemberMutation, UnbanMemberMutationVariables>(UnbanMemberDocument, options);
+      }
+export type UnbanMemberMutationHookResult = ReturnType<typeof useUnbanMemberMutation>;
+export type UnbanMemberMutationResult = Apollo.MutationResult<UnbanMemberMutation>;
+export type UnbanMemberMutationOptions = Apollo.BaseMutationOptions<UnbanMemberMutation, UnbanMemberMutationVariables>;
 export const GetBlockedUsersDocument = gql`
     query getBlockedUsers {
   getBlockedUsers {
@@ -2863,49 +3053,52 @@ export function useAuthenticate_2faMutation(baseOptions?: Apollo.MutationHookOpt
 export type Authenticate_2faMutationHookResult = ReturnType<typeof useAuthenticate_2faMutation>;
 export type Authenticate_2faMutationResult = Apollo.MutationResult<Authenticate_2faMutation>;
 export type Authenticate_2faMutationOptions = Apollo.BaseMutationOptions<Authenticate_2faMutation, Authenticate_2faMutationVariables>;
-export const UserDocument = gql`
-    query User($id: Float!) {
-  findUserById(id: $id) {
+export const GetUserDocument = gql`
+    query GetUser {
+  getUser {
     id
-    email
     username
+    email
     profileImgUrl
+    googleId
+    fortyTwoId
+    twoStepVerificationEnabled
+    showUpdateWin
   }
 }
     `;
 
 /**
- * __useUserQuery__
+ * __useGetUserQuery__
  *
- * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useUserQuery({
+ * const { data, loading, error } = useGetUserQuery({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
-export function useUserQuery(baseOptions: Apollo.QueryHookOptions<UserQuery, UserQueryVariables>) {
+export function useGetUserQuery(baseOptions?: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
       }
-export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
         }
-export function useUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<UserQuery, UserQueryVariables>) {
+export function useGetUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+          return Apollo.useSuspenseQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
         }
-export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
-export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
-export type UserSuspenseQueryHookResult = ReturnType<typeof useUserSuspenseQuery>;
-export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
+export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
+export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
+export type GetUserSuspenseQueryHookResult = ReturnType<typeof useGetUserSuspenseQuery>;
+export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
 export const DeleteAccountDocument = gql`
     mutation deleteAccount($id: Float!, $password: String!) {
   deleteAccount(id: $id, password: $password)

@@ -1,4 +1,4 @@
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 export const ChannelMembersContainer = tw.div`
     w-full
@@ -71,18 +71,25 @@ export const ChannelMember = tw.div`
     [padding: 8px 12px]
     flex
     gap-[8px]
+    relative
 `;
-export const ChannelMemberName = tw.h3`
+export const ChannelMemberName = styled.h3(({ muted }) => [
+  tw`
     font-inter
     text-[14px]
     text-[#B4B5CF]
     [font-weight: 500]
-`;
-export const ChannelMemberPhoto = tw.img`
+`,
+  muted && tw`text-[#3a454f]`,
+]);
+export const ChannelMemberPhoto = styled.img(({ muted }) => [
+  tw`
     w-[48px]
     h-[48px]
     rounded-[16px]
     border-[3px]
     border-solid
     border-[#4C4C57]
-`;
+`,
+  muted && tw`opacity-[.2]`,
+]);

@@ -7,14 +7,13 @@ import LeaderboardIcon from "assets/common/leaderboard.svg?react";
 import LogoutIcon from "assets/common/logoutmenu.svg?react";
 import SettingsIcon from "assets/common/settings.svg?react";
 import TournamentIcon from "assets/common/tournament.svg?react";
-import { Notification } from "domain/model/notification";
 
 import { useChatContext } from "context/chat.context";
 import { useLayoutContext } from "context/layout.context";
 import { useSettingsContext } from "context/settings.context";
 import { useUserContext } from "context/user.context";
-import { AccountDocument, useAcceptMatchToPlayMutation, useLogoutMutation, useMatchWaitingDircSubscription, useNotificationSubscription } from "gql/index";
-import { useEffect, useState } from "react";
+import { useLogoutMutation } from "gql/index";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   ExitIcon,
@@ -23,18 +22,11 @@ import {
   NavbarContainer,
   Seperator,
 } from "./LeftNavBar.style";
-import toast from "react-hot-toast";
-import Button from "../Button/Button";
-import { useApolloClient } from "@apollo/client";
-
-
 const Navbar = () => {
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
   const { signOut, user } = useUserContext();
   const location = useLocation();
-
-
 
   const {
     userMenuState: [_openUserMenu, setOpenUserMenu],
@@ -54,7 +46,6 @@ const Navbar = () => {
   useEffect(() => {
     setOpenMobileMenu(false);
   }, [location.pathname]);
-  console.log("left nav bar: ? ?? ? ??")
   return (
     <NavbarContainer
       onClick={() => {

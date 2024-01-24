@@ -14,7 +14,7 @@ import {
   MatchTableHeaderCell,
 } from "./MatchHistories.style";
 import { MatchResaultType } from "domain/model/home.type";
-import { useUserQuery } from "gql/index";
+import { useGetUserQuery } from "gql/index";
 import tw from "twin.macro";
 import { useEffect, useRef, useState } from "react";
 import Button from "components/common/Button/Button";
@@ -22,11 +22,7 @@ import { sleep } from "helpers/index";
 import StepLink from "components/common/StepLink/StepLink";
 
 const MatchHistories = ({ active }: { active: boolean }) => {
-  const { data, loading, error } = useUserQuery({
-    variables: {
-      id: 1,
-    },
-  });
+  const { data, loading, error } = useGetUserQuery();
   const [matchList, setMatchList] = useState<MatchResaultType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const seemoreRef = useRef<HTMLDivElement>(null);

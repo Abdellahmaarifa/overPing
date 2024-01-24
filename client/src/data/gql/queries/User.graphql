@@ -1,11 +1,24 @@
 # GET THE User
-query User($id: Float!) {
-  findUserById(id: $id) {
+#query User($id: Float!) {
+# findUserById(id: $id) {
+#  id
+# email
+#username
+#twoStepVerificationEnabled
+#profileImgUrl
+#}
+#}
+
+query GetUser {
+  getUser {
     id
-    email
     username
-    # twoStepVerificationEnabled
+    email
     profileImgUrl
+    googleId
+    fortyTwoId
+    twoStepVerificationEnabled
+    showUpdateWin
   }
 }
 
