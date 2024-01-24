@@ -1,4 +1,4 @@
-import { IChannel, IChannelSearch, IMembersWithInfo, IMessage, IVisibility } from '@app/common/chat';
+import { IChannel, IChannelSearch, IMembers, IMembersWithInfo, IMessage, IVisibility } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { AddMessageInChanneldto, CreateChanneldto,
@@ -169,18 +169,35 @@ export class ChannelService {
       return {owner: null, admins: null, members: null};
     }
 
-    const list = {
-      owner: await this.clientService.sendMessageWithPayload(
-              this.client, { role: 'user', cmd: 'getUsersInfo' }, [users.owner_id]
-            ),
-      admins: await this.clientService.sendMessageWithPayload(
-              this.client, { role: 'user', cmd: 'getUsersInfo' }, users.admins.map((admin) => admin.userId)
-            ),
-      members: await this.clientService.sendMessageWithPayload(
-              this.client, { role: 'user', cmd: 'getUsersInfo' }, users.members.map((member) => member.userId)
-            ),
+    // set Information + muteStatus for owner
+    const owner = {
+      ...await this.clientService.sendMessageWithPayload(
+        this.client, { role: 'user', cmd: 'getUsersInfo' }, [users.owner_id]
+      ),
+      muteStatus: users.admins[0].muteStatus,
+    };
+
+    // set Information + muteStatus for admins
+    const admins = await this.clientService.sendMessageWithPayload(
+      this.client, { role: 'user', cmd: 'getUsersInfo' }, users.admins.map((admin) => admin.userId)
+    );
+    admins.forEach((admin, index) => {
+      admin.muteStatus = users.admins[index].muteStatus;
+    });
+
+    // set Information + muteStatus for members
+    const members = await this.clientService.sendMessageWithPayload(
+      this.client, { role: 'user', cmd: 'getUsersInfo' }, users.members.map((member) => member.userId)
+    );
+    members.forEach((member, index) => {
+      member.muteStatus = users.members[index].muteStatus;
+    });
+
+    return {
+      owner,
+      admins,
+      members,
     }
-    return list;
   }
 
   /***************** CHANNEL ACTIONS ****************/

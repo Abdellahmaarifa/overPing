@@ -8,7 +8,7 @@ export class TasksService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  @Interval(60000) // Run every 1 minute
+  @Interval(30000) // Run every 30 seconds
   async handleMutedMembers() {
     try {
       this.logger.log('Updating muted members status...');
