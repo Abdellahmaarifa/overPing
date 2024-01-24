@@ -126,6 +126,10 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       this.server.to(channelName).emit(CHANNEL.recMessageFromChannel, message);
 
       blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).join(channelName) });
+    
+      const updatedList = await this.channelService.getUserChannels(userId);
+      console.log(updatedList)
+      this.server.to(channelName).emit(CHANNEL.recUpdatedChannelsList, updatedList);
     }
   }
 

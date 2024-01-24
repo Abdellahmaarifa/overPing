@@ -1,19 +1,21 @@
+import { FriendshipStatus } from '@app/common';
 import { IChannel, IChannelSearch, IMembersWithInfo, IMessage, IVisibility } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
+import { RabbitMqService } from '@app/rabbit-mq';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { AddMessageInChanneldto, CreateChanneldto,
-         DeleteMessageInChanneldto, MemberOfChanneldto,
-         UpdateChanneldto, UpdateMessageInChanneldto } from '../dto';
+import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
+import { ChannelGateway } from '../chat.gateway/channel.gateway';
+import {
+  AddMessageInChanneldto, CreateChanneldto,
+  DeleteMessageInChanneldto, MemberOfChanneldto,
+  UpdateChanneldto, UpdateMessageInChanneldto
+} from '../dto';
+import { DESCRIPTION } from '../interface';
+import { GroupType } from '../interface/group.interface';
 import { CheckerService } from '../utils/checker.service';
 import { HelperService } from '../utils/helper.service';
-import { FriendshipStatus, IUser } from '@app/common';
-import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
-import { ClientProxy } from '@nestjs/microservices';
-import { RabbitMqService } from '@app/rabbit-mq';
-import { GroupType } from '../interface/group.interface';
-import { ChannelGateway } from '../chat.gateway/channel.gateway';
-import { DESCRIPTION } from '../interface';
 
 @Injectable()
 export class ChannelService {
@@ -554,7 +556,14 @@ export class ChannelService {
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
     }
-    await this.prisma.members.deleteMany({
+    const userTable = await this.prisma.channel.findFirst({
+        where: {
+          id: data.channelId,
+          admins: { some: { userId: data.targetId }, }
+        }
+      }) ? 'Admins' : 'Members';
+
+      await this.prisma[userTable].deleteMany({
       where: {
         userId: data.targetId,
         channelId: data.channelId,
@@ -573,7 +582,15 @@ export class ChannelService {
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
     }
-    await this.prisma.members.deleteMany({
+    
+    const userTable = await this.prisma.channel.findFirst({
+        where: {
+          id: data.channelId,
+          admins: { some: { userId: data.targetId }, }
+        }
+      }) ? 'Admins' : 'Members';
+
+      await this.prisma[userTable].deleteMany({
       where: {
         userId: data.targetId,
         channelId: data.channelId,
