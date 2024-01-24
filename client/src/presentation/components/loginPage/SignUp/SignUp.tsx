@@ -34,6 +34,10 @@ const SignUpFormStepOne = (_: FormStepProps) => {
           $Icon={GoogleIcon}
           $transparent={true}
           $border={true}
+          onClick={() => {
+            window.location.href = "http://localhost:5500/auth/google";
+            _.viewModel.closeModel()
+         }}
         />
         <Button
           $text="Create With Intra"
@@ -41,6 +45,11 @@ const SignUpFormStepOne = (_: FormStepProps) => {
           $Icon={IntraGoogle}
           $transparent={true}
           $border={true}
+          onClick={() => {
+            window.location.href = "http://localhost:5500/auth/42";
+            _.viewModel.closeModel()
+
+         }}
         />
       </SignUpGroup>
       <Seprator text="or" />
