@@ -1,10 +1,30 @@
+import { Field } from "@nestjs/graphql"
+import { IsNumber, IsPositive, IsString, MaxLength, MinLength } from "class-validator"
 
 // ADD MESSAGE IN DM
 export class AddMessageInDMdto {
-  userId:      number
+  @Field()
+  @IsNumber()
+  @IsPositive()
+  userId: number
+
+  @Field()
+  @IsNumber()
+  @IsPositive()
   recipientId: number
+
+  @Field()
+  @IsNumber()
+  @IsPositive()
   groupChatId: number
-  text:        string
+
+  @Field()
+  @IsString()
+  @MinLength(0)
+  @MaxLength(500)
+  text: string
+
+  @Field()
   created_at?: Date | null
 }
 

@@ -18,6 +18,7 @@ export enum CHANNEL {
   recUpdatedChannelInfo = 'rec_updated_channel_info',
   recUpdatedListOfMembers = 'rec_updated_list_of_members',
   recUpdatedChannelsList = 'rec_updated_channels_list',
+  recPullUpChannel = 'rec_pull_up_channel',
 }
 
 // DIRECT MESSAGE SOCKETS ENVIRONMENT

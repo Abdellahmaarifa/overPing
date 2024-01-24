@@ -51,6 +51,11 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     if (userId) {
       this.logger.log(`User connected: ${userId} [${client.id}`);
       connectedChannelUsers.set(userId, client);
+
+      const userChannels = await this.channelService.getUserChannels(userId);
+      userChannels.forEach((channel) => {
+        client.join('channel_' + channel.id)
+      });
     }
     else {
       this.logger.log(`User authentication failed: ${userId} [${client.id}`);
@@ -122,10 +127,13 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       )) as number[];
 
       blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
-
       this.server.to(channelName).emit(CHANNEL.recMessageFromChannel, message);
-
       blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).join(channelName) });
+
+      this.sendPullUpChannel(
+        data.channelId,
+        await this.helper.getChannelInfo(data.channelId)
+      );
     }
   }
 
@@ -169,7 +177,6 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       return { error : {
         message: `Failed to find channel: ${data.channelId}`
       }};
-      this.rpcExceptionService.throwNotFound()
     }
     return channel.messages || [];
   }
@@ -196,7 +203,6 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async sendUpdatedChannelInfo(channelId: number, updatedInfo: IChannelInfo) {
     const channelName = `channel_` + channelId;
   
-console.log(`>>>>> updatedInfo sent !!!!\n`, updatedInfo);
     this.server.to(channelName).emit(CHANNEL.recUpdatedChannelInfo, {
       channelId,
       updatedInfo
@@ -215,15 +221,16 @@ console.log(`>>>>> updatedInfo sent !!!!\n`, updatedInfo);
   async sendUpdatedListOfChannels(userId: number, updatedList: IChannel[]) {
     const client = connectedChannelUsers.get(userId);
     if (client) {
-      console.log(`(${userId}) updated list:`, updatedList, "\nclient:");
       client.emit(CHANNEL.recUpdatedChannelsList, updatedList);
     }
   }
+
+  async sendPullUpChannel(channelId: number, channelInfo: IChannelInfo) {
+    const channelName = `channel_` + channelId;
+
+    this.server.to(channelName).emit(CHANNEL.recPullUpChannel, {
+      channelId,
+      channelInfo
+    });
+  }
 }
-
-
-// mute check // DONE
-// return all messages when 0 is sent as page number // DONE
-// updated channel/dm list // DONE
-// inputs validation
-// {error: {message:""}}

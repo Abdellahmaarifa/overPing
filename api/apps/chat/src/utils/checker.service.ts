@@ -86,9 +86,15 @@ export class CheckerService {
         )
     if (group === GroupType.DM && users?.includes(targetId)) {
       if (status === FriendshipStatus.BlockedBy) {
-        this.rpcExceptionService.throwBadRequest(`Failed: The user has blocked you!`);
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `Failed: The user has blocked you!`,
+        });
       } else if (status === FriendshipStatus.Blocked) {
-        this.rpcExceptionService.throwBadRequest(`Failed: you blocked the user!`);
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `Failed: you blocked the user!`,
+        });
       }
     }
     else if (group === GroupType.CHANNEL && users) {
@@ -122,7 +128,7 @@ export class CheckerService {
     return mutedMember.expiry.toISOString();
   }
 
-  async isBanned(userId: number, channelId: number) {
+  async isBanned(userId: number, channelId: number, throwEx: boolean = true) : Promise<boolean> {
     const bannedMember = await this.prisma.bannedMembers.findFirst({
       where: {
         channelId,
@@ -130,8 +136,15 @@ export class CheckerService {
       },
     });
     if (bannedMember) {
-    this.rpcExceptionService.throwBadRequest(`failed: You are BANNED!`);
+      if (throwEx) {
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `failed: You are BANNED!`,
+        });
+      }
+      return true;
     }
+    return false;
   }
 
   async checkForUser(id: number) : Promise<Boolean> {
@@ -183,7 +196,10 @@ export class CheckerService {
       if (data.newPassword) {
         return await this.helper.hashPassword(data.newPassword);
       } else {
-        this.rpcExceptionService.throwBadRequest(`The update authorization requires a PASSWORD!`);
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `The update authorization requires a PASSWORD!`,
+        });
       }
     }
     else if (channel.visibility === IVisibility.PROTECTED
@@ -193,7 +209,10 @@ export class CheckerService {
       if (data.newPassword && await this.helper.isPasswordMatched(channel.password, data.newPassword) === true) {
         return null;
       } else {
-        this.rpcExceptionService.throwBadRequest(`The update authorization requires a PASSWORD!`);
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `The update authorization requires a PASSWORD!`,
+        });
       }
     }
     else if (channel.visibility === IVisibility.PROTECTED && data.visibility === IVisibility.PROTECTED && data.newPassword)
@@ -202,7 +221,10 @@ export class CheckerService {
       if (data.oldPassword && await this.helper.isPasswordMatched(channel.password, data.oldPassword) === true) {
         return await this.helper.hashPassword(data.newPassword);
       } else {
-        this.rpcExceptionService.throwBadRequest(`The update authorization requires the OLD PASSWORD!`);
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `The update authorization requires the OLD PASSWORD!`,
+        });
       }
     }
 

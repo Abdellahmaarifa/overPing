@@ -84,7 +84,10 @@ export class ChannelController {
     const visibility = await this.checker.channelVisibility(channelId);
     
     if (!visibility) {
-      this.rpcExceptionService.throwNotFound(`Failed to find channel ${channelId}`)
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed to find channel`,
+      });
     }
 
     switch (visibility) {
@@ -92,14 +95,20 @@ export class ChannelController {
         if (password) {
           return await this.channelService.joinProtectedChannel(userId, channelId, password);
         } else {
-          this.rpcExceptionService.throwBadRequest('Failed to join Protected Channel: password required')
+          this.rpcExceptionService.throwCatchedException({
+            code: 200,
+            message: `Failed to join Protected Channel: password required`,
+          });
         }
       }
       case IVisibility.PUBLIC: {
         return await this.channelService.joinPublicChannel(userId, channelId);
       }
       default: {
-        this.rpcExceptionService.throwUnauthorised(`You're not allowed to join the channel !!! PRIVATE !!!`);
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `You're not allowed to join the channel !!! PRIVATE !!!`,
+        });
       }
     }
   }

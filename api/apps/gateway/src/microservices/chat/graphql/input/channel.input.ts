@@ -1,6 +1,6 @@
 import { IVisibility } from "@app/common/chat";
 import { Field, InputType } from "@nestjs/graphql";
-import { IsAlphanumeric, IsDate, IsIn, IsNumber, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsAlphanumeric, IsDate, IsIn, IsNumber, IsOptional, IsPositive, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 @InputType()
 export class CreateChannelInput {
@@ -62,6 +62,8 @@ export class UpdateChannelInput {
 
   @Field({nullable: true})
   @IsString()
+  @MinLength(4)
+  @MaxLength(30)
   oldPassword?: string;
 
   @Field({nullable: true})
@@ -84,6 +86,8 @@ export class DeleteChannelInput {
 
   @Field()
   @IsString()
+  @MinLength(4)
+  @MaxLength(30)
   password: string;
 }
 
@@ -134,6 +138,9 @@ export class MemberInput {
   channelId: number;
   
   @Field({nullable: true})
+  @IsString()
+  @MinLength(4)
+  @MaxLength(30)
   password?: string;
 }
 
@@ -144,6 +151,7 @@ export class ActionToMemberInput extends MemberInput {
   targetId: number;  
   
   @Field({nullable: true})
-  @IsDate()
+  @IsNumber()
+  @IsPositive()
   muteTimeLimit?: number;
 }

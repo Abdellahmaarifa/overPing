@@ -45,10 +45,7 @@ export class HelperService {
       return hashedPassword;
     }
     catch (error) {
-      this.rpcExceptionService.throwCatchedException({
-        code: 500,
-        message: `Internal failure0`,
-      });
+      this.rpcExceptionService.throwInternalError(`Internal failure`);
     }
   }
   
@@ -64,12 +61,12 @@ export class HelperService {
     }
     catch (error) {
       if (error === 'Invalid password') {
-        this.rpcExceptionService.throwUnauthorised('Invalid password');
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `Invalid password`,
+        });
       }
-      this.rpcExceptionService.throwCatchedException({
-        code: 500,
-        message: `Internal failure1`,
-      });
+      this.rpcExceptionService.throwInternalError(`Internal failure`);
     }
   }
 
@@ -78,7 +75,10 @@ export class HelperService {
       where: { name: channelName }
     });
     if (existingChannel) {
-      this.rpcExceptionService.throwBadRequest(`Channel name already exist: ${channelName}`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Channel name already exist`,
+      });
     }
     return true
   }
@@ -98,9 +98,10 @@ export class HelperService {
       }
     } catch (error) {
       if (error.expiredAt) {
-        this.rpcExceptionService.throwUnauthorised(
-          'Token has expired, please sign in',
-        );
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `Token has expired, please sign in`,
+        });
       }
       return null;
     }
@@ -124,7 +125,10 @@ export class HelperService {
     });
   
     if (!channel) {
-      this.rpcExceptionService.throwNotFound(`Failed to find channel: ${id}`)
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed to find channel`,
+      });
     }
     
     const members = await this.channelService.getMembers(id);
@@ -134,7 +138,22 @@ export class HelperService {
       members: members.members
     };
   }
-    
+
+  async getChannelInfo(channelId: number) : Promise<IChannel> {
+    const channel = await this.prisma.channel.findUnique({
+      where: { id: channelId },
+      select: {
+        id: true,
+        owner_id: true,
+        name: true,
+        visibility: true,
+        latestMessage_at: true,
+      }
+    });
+
+    return channel;
+  }
+
   async ownerLeavedChannel(channelId: number) : Promise<void> {
     const admins = await this.findAdminsById(channelId);
     if (admins.length === 0) {
@@ -161,7 +180,8 @@ export class HelperService {
         name: true,
         owner_id: true,
         description: true,
-        visibility: true
+        visibility: true,
+        latestMessage_at: true,
       }
     });
     if (oldStatus === "isMember") {

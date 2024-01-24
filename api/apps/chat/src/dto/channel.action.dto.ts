@@ -1,6 +1,6 @@
 import { IVisibility } from "@app/common/chat"
 import { Field, InputType, Int } from "@nestjs/graphql"
-import { IsAlphanumeric, IsIn, IsNumber, IsString, Matches, Max, MaxLength, Min, MinLength } from "class-validator"
+import { IsAlphanumeric, IsIn, IsNumber, IsPositive, IsString, Matches, Max, MaxLength, Min, MinLength } from "class-validator"
 
 // CREATE CHANNEL DTO
 @InputType()
@@ -78,13 +78,17 @@ export class UpdateChanneldto {
 export class DeleteChannelInput {
   @Field()
   @IsNumber()
+  @IsPositive()
   userId: number;
 
   @Field()
   @IsNumber()
+  @IsPositive()
   channelId: number;
 
   @Field()
   @IsString()
+  @MinLength(4)
+  @MaxLength(30)
   password: string;
 }

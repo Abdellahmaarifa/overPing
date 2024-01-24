@@ -60,16 +60,16 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   @SubscribeMessage(DIRECTMESSAGE.sendMessageToUser)
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
-    // this.logger.log(`User connected: ${userId} [${client.id}]`);
-    console.log(`******* data *******\n`, data);
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
       return;
     }
     const existedRecipient = await this.checker.checkForUser(data.recipientId);
     if (!existedRecipient) {
-      console.log(`Recipient doesn't exist!`);
-      return;
+      return {
+        code: 200,
+        message: `Failed to find user`,
+      };
     }
 
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.Blocked, GroupType.DM);
@@ -92,39 +92,41 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     //     }
     //   });
     // }
+
+    this.sendUpdatedListOfDMs(
+      data.userId,
+      data.recipientId,
+      await this.directMessageService.getUserDirectMessages(data.userId),
+      await this.directMessageService.getUserDirectMessages(data.recipientId)
+    );
   }
 
   @SubscribeMessage(DIRECTMESSAGE.getDMMessages)
   async getMessages(client: Socket, data: DMMessagesdto) {
-    try {
-      const userId = await this.helper.getUserId(client);
-      if (!userId || userId !== data.userId) {
-        return;
-      }
-      await this.helper.findUser(data.userId);
-  
-      return await this.prisma.directMessage.findUnique({
-        where: {
-          id: data.groupChatId,
-          OR: [
-            { user1_id: data.userId },
-            { user2_id: data.userId }
-          ]
+    const userId = await this.helper.getUserId(client);
+    if (!userId || userId !== data.userId) {
+      return;
+    }
+    await this.helper.findUser(data.userId);
+
+    return await this.prisma.directMessage.findUnique({
+      where: {
+        id: data.groupChatId,
+        OR: [
+          { user1_id: data.userId },
+          { user2_id: data.userId }
+        ]
+      },
+      select: {
+        messages: {
+          orderBy: { created_at: 'desc' },
+          ...(data.page !== 0) ? {
+            skip: ( data.page - 1 ) * 30,
+            take: 30,
+          } : {},
         },
-        select: {
-          messages: {
-            orderBy: { created_at: 'desc' },
-            ...(data.page !== 0) ? {
-              skip: ( data.page - 1 ) * 30,
-              take: 30,
-            } : {},
-          },
-        }
-      });
-    }
-    catch (error) {
-      console.log(error);
-    }
+      }
+    });
   }
 
   async sendUpdatedListOfDMs(user1: number, user2: number, updatedList1: IDirectMessage[], updatedList2: IDirectMessage[]) {

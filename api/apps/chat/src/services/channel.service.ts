@@ -69,7 +69,10 @@ export class ChannelService {
     });
 
     if (!channel) {
-      this.rpcExceptionService.throwNotFound(`Failed to find channel: ${id}`)
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed to find channel`,
+      });
     }
 
     const members = await this.getMembers(id);
@@ -177,7 +180,6 @@ export class ChannelService {
               this.client, { role: 'user', cmd: 'getUsersInfo' }, users.members.map((member) => member.userId)
             ),
     }
-    console.log('**************list*************\n', list, '\n**************************');
     return list;
   }
 
@@ -193,7 +195,10 @@ export class ChannelService {
     let hashedPassword: string = null;
     if (data.visibility === IVisibility.PROTECTED) {
       if (!data.password) {
-        this.rpcExceptionService.throwBadRequest(`Failure: password not provided`);
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `Failure: password not provided`,
+        });
       }
       hashedPassword = await this.helper.hashPassword(data.password);
     }
@@ -215,7 +220,10 @@ export class ChannelService {
     });
 
     if (!createdChannel) {
-      this.rpcExceptionService.throwNotFound(`Failed to create channel: [${data.channelName}]`)
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed to create channel`,
+      });
     }
 
     const members = await this.getMembers(createdChannel.id);
@@ -237,7 +245,10 @@ export class ChannelService {
       },
     });
     if (!channel) {
-      this.rpcExceptionService.throwNotFound(`Failed to find channel: ${data.channelId}`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed to find channel`,
+      });
     }
 
     const hashedPassword = await this.checker.checkPasswordAndChannelVisibility(channel, data);
@@ -260,7 +271,10 @@ export class ChannelService {
     });
 
     if (!updatedChannel) {
-      this.rpcExceptionService.throwNotFound(`Failed to update channel ${data.channelId}`)
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed to update channel`,
+      });
     }
 
     await this.channelGateway.sendUpdatedChannelInfo(data.channelId, {
@@ -281,7 +295,10 @@ export class ChannelService {
     await this.helper.findUser(data.userId);
 
     if (await this.checker.isOwner(data.userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You're not allowed to make this action!`,
+      });
     }
 
     const channel = await this.prisma.channel.findUnique({
@@ -291,10 +308,16 @@ export class ChannelService {
       },
     });
     if (!channel) {
-      this.rpcExceptionService.throwNotFound(`Failed to find channel: ${data.channelId}`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed to find channel`,
+      });
     }
     else if (channel.visibility === IVisibility.PROTECTED && !data.newPassword) {
-      this.rpcExceptionService.throwUnauthorised(`This action requires a PASSWORD!`)
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `This action requires a PASSWORD!`,
+      });
     }
     else if (channel.visibility === IVisibility.PROTECTED && data.newPassword) {
       await this.helper.isPasswordMatched(channel.password, data.newPassword);
@@ -327,6 +350,7 @@ export class ChannelService {
         latestMessage_at: new Date()
       }
     });
+
     return message;
   }
 
@@ -384,7 +408,10 @@ export class ChannelService {
     await this.checker.isBanned(userID, channelID);
 
     if (await this.checker.isMember(userID, channelID)) {
-      this.rpcExceptionService.throwBadRequest(`You are already a Member`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You are already a Member`,
+      });
     }
 
     const channel = await this.prisma.channel.findFirst({
@@ -409,7 +436,10 @@ export class ChannelService {
     await this.checker.isBanned(userID, channelID);
 
     if (await this.checker.isMember(userID, channelID)) {
-      this.rpcExceptionService.throwBadRequest(`You are already a Member`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You are already a Member`,
+      });
     }
 
     const channel = await this.prisma.channel.findFirst({
@@ -440,15 +470,24 @@ export class ChannelService {
     await this.checker.isBanned(data.targetId, data.channelId);
 
     if (await this.checker.isMember(data.targetId, data.channelId)) {
-      this.rpcExceptionService.throwBadRequest(`The user is already a Member`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `The user is already a Member`,
+      });
     }
 
     if (await this.checker.isMember(data.userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You're not allowed to make this action!`,
+      });
     }
     if (await this.checker.channelVisibility(data.channelId) === IVisibility.PRIVATE
      && await this.checker.isAdmin(data.userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You're not allowed to make this action!`,
+      });
     }
 
     await this.prisma.members.create({
@@ -499,10 +538,16 @@ export class ChannelService {
     await this.helper.findUser(data.targetId);
 
     if (await this.checker.isOwner(data.userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You're not allowed to make this action!`,
+      });
     }
-    else if (await this.checker.isAdmin(data.targetId, data.channelId)) {
-      this.rpcExceptionService.throwBadRequest(`The user is already an Admin`);
+    if (await this.checker.isAdmin(data.targetId, data.channelId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `The user is already an Admin`,
+      });
     }
 
     
@@ -527,7 +572,10 @@ export class ChannelService {
   
   async removeAdmin(data: MemberOfChanneldto) : Promise<Boolean> {
     if (await this.checker.isOwner(data.userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You're not allowed to make this action!`,
+      });
     }
     await this.prisma.admins.deleteMany({
       where: {
@@ -555,12 +603,26 @@ export class ChannelService {
     await this.helper.findUser(data.userId);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You're not allowed to make this action!`,
+      });
     }
-    await this.prisma.members.deleteMany({
+
+    const userTable = await this.prisma.channel.findFirst({
       where: {
-        userId: data.targetId,
-        channelId: data.channelId,
+        id: data.channelId,
+        admins: { some: { userId: data.targetId }, }
+      }
+    }) ? 'Admins' : 'Members';
+
+    const user = await this.prisma[userTable].deleteMany({
+      where: {
+          userId: data.targetId,
+          channelId: data.channelId,
+        },
+      data: {
+        muteStatus: true,
       },
     });
 
@@ -574,14 +636,35 @@ export class ChannelService {
     await this.helper.findUser(data.userId);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You're not allowed to make this action!`,
+      });
     }
-    await this.prisma.members.deleteMany({
+    if (await this.checker.isBanned(data.targetId, data.channelId, false) === true) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `The user is already Banned`,
+      });
+    }
+
+    const userTable = await this.prisma.channel.findFirst({
       where: {
-        userId: data.targetId,
-        channelId: data.channelId,
+        id: data.channelId,
+        admins: { some: { userId: data.targetId }, }
+      }
+    }) ? 'Admins' : 'Members';
+
+    const user = await this.prisma[userTable].deleteMany({
+      where: {
+          userId: data.targetId,
+          channelId: data.channelId,
+        },
+      data: {
+        muteStatus: true,
       },
     });
+
     await this.prisma.bannedMembers.create({
       data: {
         userId: data.targetId,
@@ -599,7 +682,10 @@ export class ChannelService {
     await this.helper.findUser(data.userId);
 
     if (await this.checker.isAdmin(data.userId, data.channelId) === false) {
-      this.rpcExceptionService.throwUnauthorised(`You're not allowed to make this action!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You're not allowed to make this action!`,
+      });
     }
     await this.prisma.bannedMembers.deleteMany({
       where: {
@@ -614,10 +700,16 @@ export class ChannelService {
     await this.helper.findUser(data.userId);
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
-      this.rpcExceptionService.throwBadRequest(`You're not allowed to make this action!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `You're not allowed to make this action!`,
+      });
     }
     else if (await this.checker.isMember(data.targetId, data.channelId) === false) {
-      this.rpcExceptionService.throwBadRequest(`The user is not a Member`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `The user is not a Member`,
+      });
     }
 
     const muteDuration = (data.muteTimeLimit || 5) * 60000; // default: 5 minute

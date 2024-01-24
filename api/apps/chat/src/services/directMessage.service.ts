@@ -45,7 +45,10 @@ export class DirectMessageService {
       } 
     });
     if (!directMessage) {
-      this.rpcExceptionService.throwNotFound(`Failed to find direct message: ${id}`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed to find direct message`,
+      });
     }
 
     const user1 = await this.helper.findUser(user_id);
@@ -147,8 +150,12 @@ export class DirectMessageService {
 
   async create(userID: number, targetID: number) : Promise<any> {
     if (userID === targetID) {
-      this.rpcExceptionService.throwBadRequest(`Failed: You can't create a direct message with yourself!`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed: You can't create a direct message with yourself!`,
+      });
     }
+
     await this.helper.findUser(userID);
     await this.helper.findUser(targetID);
 
@@ -175,7 +182,10 @@ export class DirectMessageService {
     });
 
     if (!createdDirectMessage) {
-      this.rpcExceptionService.throwBadRequest(`Failed to create direct message`);
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: `Failed to create direct message`,
+      });
     }
 
     const user1 = await this.helper.findUser(userID);
@@ -213,7 +223,6 @@ export class DirectMessageService {
         sender_id: data.userId,
         text: data.text ?? null,
         dm: { connect: { id: data.groupChatId } },
-        created_at: data.created_at || new Date(),
       }
     });
     if (!message) {

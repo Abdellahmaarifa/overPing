@@ -53,6 +53,7 @@ export class IChannelInfo {
   owner_id?:      number
   description?:   string
   visibility?:    string
+  latestMessage_at?: any
 }
 
 export class IUpdatedChannel {
