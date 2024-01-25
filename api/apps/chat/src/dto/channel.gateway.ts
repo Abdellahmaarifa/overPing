@@ -99,9 +99,12 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   async leavchannel(userId: number, channelId: number) {
     const channelName = 'channel_' + channelId;
+  
     const client = connectedChannelUsers.get(userId);
 
-    client.leave(channelName);
+    if (client) {
+      client.leave(channelName);
+    }
   }
   
   @SubscribeMessage(CHANNEL.sendMessageInchannel)
@@ -132,7 +135,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
         FriendshipStatus.BlockedBy, 
         GroupType.CHANNEL
       )) as number[];
-
+      
       blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
       this.server.to(channelName).emit(CHANNEL.recMessageFromChannel, message);
       blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).join(channelName) });

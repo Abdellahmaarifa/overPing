@@ -260,7 +260,7 @@ targetId: Float!
               >
                 {(role == "owner" || role == "admin") && (
                   <ExtraMenuLink
-                    onClick={() => {
+                    onClick={(e) => {
                       setIncludeChannelInSearch(false);
                       setShowSearchModel(true);
                       setUserHandlerCallBack(addAdmin);

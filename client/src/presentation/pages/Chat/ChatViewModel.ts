@@ -101,6 +101,7 @@ export class ChatViewModel {
       });
       const channel = res?.data?.findChannelById;
       if (channel) {
+        console.log("From findchannelbyid: ", channel);
         setCurrentChannel(channel);
       }
       return channel;
@@ -185,6 +186,9 @@ export class ChatViewModel {
       // get the data about the current channel
       // if (currentChannel?.id == id) return;
       const channel = await this.fetchCurrentChannel();
+      if (!channel) {
+        this.hooks.navigate("/error");
+      }
       const isJoined: boolean = channels.find((e) => e.id == channel.id);
 
       if (!isJoined) {

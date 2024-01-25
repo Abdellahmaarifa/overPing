@@ -6,6 +6,7 @@ export const MessageContainer = tw.div`
     w-full
     flex
     gap-[8px]
+    z-0
 `;
 export const MessageProfile = tw.img`
     w-[48px]
@@ -30,6 +31,7 @@ export const MessageSenderName = tw.div`
     text-[14px]
     font-inter
     [font-weight: 500]
+
 `;
 export const MessageSenderDate = tw.div`
     font-inter
