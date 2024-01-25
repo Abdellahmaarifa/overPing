@@ -51,14 +51,13 @@ export class UserService {
     fortyTwoId,
     email,
   }: UserCreationDto): Promise<IAuthUser> {
+    const exists = await this.isUserExist(username);
+    if (exists) {
+      throw this.rpcExceptionService.throwBadRequest(
+        `Resource already exists`,
+      );
+    }
     try {
-      const exists = await this.isUserExist(username);
-      if (exists) {
-        throw this.rpcExceptionService.throwBadRequest(
-          `Resource already exists`,
-        );
-      }
-      console.log('the error: ', password, username);
       const hashedPassword = password ? await argon2.hash(password) : undefined;
 
       return this.prisma.user.create({
@@ -331,7 +330,6 @@ export class UserService {
   }
 
   private async isUserExist(username: string): Promise<boolean> {
-    console.log('check if user');
     const exists = !!(await this.prisma.user.findFirst({
       where: {
         username: username,

@@ -17,7 +17,6 @@ export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly rpcExceptionService: RpcExceptionService,
-        private readonly logger: LoggerService,
     ) {}
 
     @MessagePattern({ role: 'auth', cmd: 'login' })
@@ -27,7 +26,6 @@ export class AuthController {
     
     @MessagePattern({ role: 'auth', cmd: 'signUp' })
     async signUp(userCredentials: SignUpCredentialsDto): Promise<AuthResponseDto> {
-        this.logger.actionLog("auth", "signUp()", "sing UP", userCredentials);
         return this.authService.signUp(userCredentials);
     }
 
@@ -73,21 +71,21 @@ export class AuthController {
 
     @MessagePattern({ role: 'auth', cmd: 'enableTwoFactorAuth'})
     async enableTwoFactorAuth(id: number): Promise<string>{
-        return this.authService.enableTwoFactorAuth(id);
+        return await this.authService.enableTwoFactorAuth(id);
     }
 
     @MessagePattern({ role: 'auth', cmd: 'verifyTwoFactorAuth'})
     async verifyTwoFactorAuth(twoFActorAuthInput: TwoFActorAuthDto) : Promise<boolean>{
-        return this.authService.verifyTwoFactorAuth(twoFActorAuthInput);
+        return await this.authService.verifyTwoFactorAuth(twoFActorAuthInput);
     }
 
     @MessagePattern({ role: 'auth', cmd: 'authenticate_2fa'})
     async authenticate_2fa(twoFActorAuthInput: TwoFActorAuthDto) : Promise<AuthResponseDto>{
-        return this.authService.authenticate_2fa(twoFActorAuthInput);
+        return await this.authService.authenticate_2fa(twoFActorAuthInput);
     }
 
     @MessagePattern({ role: 'auth', cmd: 'disableTwoFactor'})
     async disableTwoFactor(userId: number) : Promise<boolean>{
-        return this.authService.disableTwoFactor(userId);
+        return await this.authService.disableTwoFactor(userId);
     }
 }

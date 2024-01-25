@@ -137,26 +137,38 @@ export class ProfileService {
   }
 
   async remove(userId: number): Promise<boolean> {
+    const existingProfile = await this.prisma.userProfile.findUnique({
+      where: { user_id: userId },
+    });
+    console.log("profile to delete : ",existingProfile);
+    if (!existingProfile) {
+      this.rpcExceptionService.throwNotFound(`Profile of User ID ${userId} not found`);
+    }
     try {
-      const existingProfile = await this.prisma.userProfile.findUnique({
-        where: { user_id: userId },
-      });
-      console.log(existingProfile);
-      if (!existingProfile) {
-        this.rpcExceptionService.throwNotFound(`Profile of User ID ${userId} not found`);
-      }
 
-      await this.prisma.userProfile.delete({
-        where: {
-          user_id: userId
-        },
-      });
+      await this.prisma.$transaction([
+        this.prisma.wallet.delete({
+          where: { user_id: userId },
+        }),
+        this.prisma.statistics.delete({
+          where: { user_id: userId}
+        }),
+        this.prisma.gameStatus.delete({
+          where: { user_id: userId },
+        }),
+        this.prisma.userProfile.delete({
+          where: { user_id: userId },
+        }),
+        this.prisma.userProfileToAchievement.deleteMany({
+          where: { userProfileId: userId },
+        }),
+      ]);
       return true;
     }
     catch (error) {
       this.rpcExceptionService.throwCatchedException({
         code: 500,
-        message: ("Failed to delete profile: Unknown error") + error
+        message: ("Failed to delete profile: Unknown error")
       });
     }
   }

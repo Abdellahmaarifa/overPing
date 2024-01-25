@@ -45,7 +45,7 @@ export class AuthService {
       id: user.id,
       username: user.username,
     });
-    this.updateRefreshToken(user.id, refreshAndAccessToken.refreshToken);
+    await this.updateRefreshToken(user.id, refreshAndAccessToken.refreshToken);
     return {
       accessToken: refreshAndAccessToken.accessToken,
       refreshToken: refreshAndAccessToken.refreshToken,
@@ -61,8 +61,7 @@ export class AuthService {
       id: usercreated.id,
       username: usercreated.username,
     });
-    console.log('the user to update : ', usercreated, refreshAndAccessToken);
-    this.updateRefreshToken(usercreated.id, refreshAndAccessToken.refreshToken);
+    await this.updateRefreshToken(usercreated.id, refreshAndAccessToken.refreshToken);
     return {
       accessToken: refreshAndAccessToken.accessToken,
       refreshToken: refreshAndAccessToken.refreshToken,
@@ -122,7 +121,7 @@ export class AuthService {
   }
 
   async logOut(id: number): Promise<boolean> {
-    this.updateRefreshToken(id, '');
+    await this.updateRefreshToken(id, '');
     return true;
   }
 
@@ -168,6 +167,9 @@ export class AuthService {
     const user = await this.userService.findById(id);
     if (!user) {
       this.rpcExceptionService.throwUnauthorised('User not found');
+    }
+    if (user.twoStepVerificationEnabled){
+      this.rpcExceptionService.throwForbidden('two stop verification all ready enabled');
     }
     let secret = speakeasy.generateSecret({
       name: user.username,

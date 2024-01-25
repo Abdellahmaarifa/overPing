@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject,HttpException,HttpStatus } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from '@app/rabbit-mq';
@@ -36,27 +36,34 @@ export class GatewayService {
 	}
 
 	async signUp(userInput: UserCreationInput, file: FileUpload): Promise<AuthResponseDto> {
-		const respond = await this.clientService.sendMessageWithPayload(
-			this.client,
-			{ role: 'auth', cmd: 'signUp' },
-			userInput,
-		);
+		let respond: AuthResponseDto;
 		try {
-			const profile = this.profileService.createUserProfile({
-				userId: respond.user.id,
-				username: respond.user.username
-			})
-		} catch (error) {
-			this.userService.removeAccount(respond.user.id);
-		}
-		try {
-			const imgUrl = await this.mediaService.updateAvatarImg(respond.user.id, file);
-		} catch (error) {
-			this.userService.removeAccount(respond.user.id);
-			this.profileService.removeProfile(respond.user.id);
-		}
-
-		return (respond);
+			respond = await this.clientService.sendMessageWithPayload(
+			  this.client,
+			  { role: 'auth', cmd: 'signUp' },
+			  userInput,
+			);
+		
+			const { id, username } = respond.user;
+		
+			await this.profileService.createUserProfile({ userId: id, username });
+			await this.mediaService.updateAvatarImg(id, file);
+		
+			return respond;
+		  } catch (error) {
+			if (respond && respond.user && respond.user.id) {
+			  this.userService.removeAccount(respond.user.id);
+		
+			  if (respond.user.id) {
+				this.profileService.removeProfile(respond.user.id);
+			  }
+			}
+		
+			throw new HttpException(
+			  error.message || 'An internal server error occurred',
+			  error.statusCode
+			);
+		  }
 	}
 
 	async logOut(id: number): Promise<boolean> {
