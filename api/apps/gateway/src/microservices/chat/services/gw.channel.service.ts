@@ -1,10 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
-import { RabbitMqService } from '@app/rabbit-mq';
-import { IMessage } from '@app/common/chat/message.interface';
-import { ActionToMemberInput, CreateChannelInput, DeleteMessageInput, MemberInput, UpdateChannelInput, UpdateMessageInput } from '../graphql/input/channel.input';
 import { IChannel, IChannelSearch, IMembersWithInfo } from '@app/common/chat';
+import { IMessage } from '@app/common/chat/message.interface';
+import { RabbitMqService } from '@app/rabbit-mq';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { ActionToMemberInput, CreateChannelInput, DeleteMessageInput, MemberInput, UpdateChannelInput, UpdateMessageInput } from '../graphql/input/channel.input';
 
 @Injectable()
 export class GwChannelService {

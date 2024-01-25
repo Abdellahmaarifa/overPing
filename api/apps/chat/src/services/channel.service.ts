@@ -1,19 +1,21 @@
-import { IChannel, IChannelSearch, IMembers, IMembersWithInfo, IMessage, IVisibility } from '@app/common/chat';
+import { FriendshipStatus } from '@app/common';
+import { IChannel, IChannelSearch, IMembersWithInfo, IMessage, IVisibility } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
+import { RabbitMqService } from '@app/rabbit-mq';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { AddMessageInChanneldto, CreateChanneldto,
-         DeleteMessageInChanneldto, MemberOfChanneldto,
-         UpdateChanneldto, UpdateMessageInChanneldto } from '../dto';
+import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
+import {
+  AddMessageInChanneldto, CreateChanneldto,
+  DeleteMessageInChanneldto, MemberOfChanneldto,
+  UpdateChanneldto, UpdateMessageInChanneldto
+} from '../dto';
+import { ChannelGateway } from '../dto/channel.gateway';
+import { DESCRIPTION } from '../interface';
+import { GroupType } from '../interface/group.interface';
 import { CheckerService } from '../utils/checker.service';
 import { HelperService } from '../utils/helper.service';
-import { FriendshipStatus, IUser } from '@app/common';
-import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
-import { ClientProxy } from '@nestjs/microservices';
-import { RabbitMqService } from '@app/rabbit-mq';
-import { GroupType } from '../interface/group.interface';
-import { ChannelGateway } from '../chat.gateway/channel.gateway';
-import { DESCRIPTION } from '../interface';
 
 @Injectable()
 export class ChannelService {
@@ -44,7 +46,7 @@ export class ChannelService {
           owner_id: true,
           name: true,
           visibility: true,
-          },
+        },
       });
     }
 
@@ -445,6 +447,10 @@ export class ChannelService {
         channel: { connect: { id: channelID } },
       }
     });
+
+    this.channelGateway.sendUpdatedListOfChannels(userID, await this.getUserChannels(userID));
+    this.channelGateway.sendUpdatedListOfMembers(channelID, await this.getMembers(channelID));
+
     return await this.helper.getChannelById(channelID, userID);
   }
 
@@ -476,7 +482,8 @@ export class ChannelService {
       }
     });
   
-    await this.channelGateway.sendUpdatedListOfMembers(channelID, await this.getMembers(channelID));
+    this.channelGateway.sendUpdatedListOfChannels(userID, await this.getUserChannels(userID));
+    this.channelGateway.sendUpdatedListOfMembers(channelID, await this.getMembers(channelID));
   
     return await this.helper.getChannelById(channelID, userID);
   }
@@ -514,8 +521,8 @@ export class ChannelService {
       }
     });
 
-    await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
-    await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
+    this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
+    this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
 
     return true;
   }
@@ -541,9 +548,9 @@ export class ChannelService {
       await this.helper.ownerLeavedChannel(channelID);
     }
 
-    await this.channelGateway.leavchannel(userID, channelID);
-    await this.channelGateway.sendUpdatedListOfMembers(channelID, await this.getMembers(channelID));
-    await this.channelGateway.sendUpdatedListOfChannels(userID, await this.getUserChannels(userID));
+    this.channelGateway.leavchannel(userID, channelID);
+    this.channelGateway.sendUpdatedListOfMembers(channelID, await this.getMembers(channelID));
+    this.channelGateway.sendUpdatedListOfChannels(userID, await this.getUserChannels(userID));
 
     return true;
   }
@@ -582,8 +589,8 @@ export class ChannelService {
       },
     });
     
-    await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
-    await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
+    this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
+    this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
 
     return true;
   }
@@ -608,7 +615,7 @@ export class ChannelService {
       }
     });
 
-    await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
+    this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
 
     return true;
   }
@@ -638,15 +645,12 @@ export class ChannelService {
       where: {
           userId: data.targetId,
           channelId: data.channelId,
-        },
-      data: {
-        muteStatus: true,
-      },
+        }
     });
 
-    await this.channelGateway.leavchannel(data.targetId, data.channelId);
-    await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
-    await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
+    this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
+    this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
+    this.channelGateway.leavchannel(data.targetId, data.channelId);
 
     return true;
   }
@@ -679,9 +683,6 @@ export class ChannelService {
           userId: data.targetId,
           channelId: data.channelId,
         },
-      data: {
-        muteStatus: true,
-      },
     });
 
     await this.prisma.bannedMembers.create({
@@ -692,10 +693,10 @@ export class ChannelService {
     });
 
 
-    await this.channelGateway.leavchannel(data.targetId, data.channelId);
-    await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
-    await this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
-
+    this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
+    this.channelGateway.sendUpdatedListOfChannels(data.targetId, await this.getUserChannels(data.targetId));
+    this.channelGateway.leavchannel(data.targetId, data.channelId);
+    
     return true;
   }
 
@@ -773,7 +774,7 @@ export class ChannelService {
       });
     }
 
-    await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
+    this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
 
     return true;
   }
@@ -784,6 +785,7 @@ export class ChannelService {
     if (!this.checker.isAdmin(data.userId, data.channelId)) {
       return false;
     }
+
     await this.prisma.mutedMembers.deleteMany({
       where: {
         channelId: data.channelId,
@@ -791,7 +793,24 @@ export class ChannelService {
       }
     });
 
-    await this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
+    const userTable = await this.prisma.channel.findFirst({
+      where: {
+        id: data.channelId,
+        admins: { some: { userId: data.targetId }, }
+      }
+    }) ? 'Admins' : 'Members';
+
+    const user = await this.prisma[userTable].updateMany({
+      where: {
+          userId: data.targetId,
+          channelId: data.channelId,
+        },
+      data: {
+        muteStatus: false,
+      },
+    });
+
+    this.channelGateway.sendUpdatedListOfMembers(data.channelId, await this.getMembers(data.channelId));
 
     return true;
   }

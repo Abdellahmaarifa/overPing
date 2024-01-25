@@ -15,7 +15,7 @@ import {
 import SearchIcon from "assets/common/search.svg?react";
 import { memo, useContext, useEffect, useState } from "react";
 import { useApolloClient } from "@apollo/client";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useUserContext } from "context/user.context";
 import {
   FindChanneMemebersDocument,
@@ -199,9 +199,14 @@ const ChannelMembers = () => {
   const {
     currentChannel: [currentChannel, setCurrentChannel],
   } = useChatContext();
+  const navigate = useNavigate();
   const [role, setRole] = useState<"owner" | "admin" | "member">("member");
   const getMembers = async () => {
     if (currentChannel) {
+      if (!currentChannel.admins || !currentChannel.members) {
+        toast.error("You are out of this channel!");
+        navigate("/chat");
+      }
       setOwner([
         currentChannel.admins.find(
           (e) => Number(e.id) == currentChannel.owner_id

@@ -65,6 +65,25 @@ query getChannelVisibility($userId: Float!, $groupId: Float!) {
 mutation JoinChannel($data: MemberInput!) {
   joinChannel(data: $data) {
     id
+    owner_id
+    name
+    description
+    visibility
+    admins {
+      id
+      username
+      profileImgUrl
+      muteStatus
+    }
+    members {
+      id
+      username
+      profileImgUrl
+      muteStatus
+    }
+    latestMessage_at
+    created_at
+    updated_at
   }
 }
 
@@ -135,6 +154,7 @@ query FindChannelById($userId: Float!, $groupId: Float!) {
     name
     description
     visibility
+
     admins {
       id
       username

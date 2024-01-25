@@ -1,15 +1,16 @@
 import { ApolloClient } from "@apollo/client";
-import { NavigateFunction } from "react-router-dom";
+import { CHANNEL_CMD, socket } from "constant/constants";
 import { ChatCtxType } from "context/chat.context";
 import { User } from "domain/model/User.type";
-import { GetUserChannelsDocument } from "gql/index";
-import { GetUserDirectMessagesDocument } from "gql/index";
-import { CreateDirectMessageDocument } from "gql/index";
-import { FindChannelByIdDocument } from "gql/index";
-import { JoinChannelDocument } from "gql/index";
+import {
+  CreateDirectMessageDocument,
+  FindChannelByIdDocument,
+  GetUserChannelsDocument,
+  GetUserDirectMessagesDocument,
+  JoinChannelDocument,
+} from "gql/index";
 import toast from "react-hot-toast";
-import { tabId } from "pages/Game/components/App";
-import { CHANNEL_CMD, socket } from "constant/constants";
+import { NavigateFunction } from "react-router-dom";
 interface HooksType {
   navigate: NavigateFunction;
 }
@@ -150,8 +151,9 @@ export class ChatViewModel {
           },
         },
       });
-      console.log(joinChannelRes);
-      return joinChannelRes;
+      if (joinChannelRes.data.joinChannel) {
+        return joinChannelRes.data.joinChannel;
+      } else throw { message: "channel not found" };
     } catch (err: any) {
       if (err?.message != "You are already a Member") {
         toast.error(err?.message ? err.message : "can't join to channel");
@@ -179,6 +181,20 @@ export class ChatViewModel {
     }
     if (type == "channel") {
       // join to socket channel
+
+      // get the data about the current channel
+      // if (currentChannel?.id == id) return;
+      const channel = await this.fetchCurrentChannel();
+      const isJoined: boolean = channels.find((e) => e.id == channel.id);
+
+      if (!isJoined) {
+        const newChannel = await this.joinToChannel(
+          channel?.visibility == "protected"
+        );
+        console.log("joining to a new channel : ", newChannel);
+        setCurrentChannel(newChannel);
+      }
+
       socket.emit(
         CHANNEL_CMD.join_channel,
         {
@@ -187,15 +203,6 @@ export class ChatViewModel {
         },
         () => {}
       );
-      // get the data about the current channel
-      if (currentChannel?.id == id) return;
-      const channel = await this.fetchCurrentChannel();
-      if (channels.find((e) => e.id == channel.id)) return;
-      console.log("channels ************* ", channels);
-      const newChannel = await this.joinToChannel(
-        channel?.visibility == "protected"
-      );
-      console.log("joining to a new channel : ", newChannel);
     }
   };
 

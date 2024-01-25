@@ -1,6 +1,6 @@
 import { IDirectMessage, IMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { AddMessageInDMdto, DeleteDirectMessagedto,
          DeleteMessageInDMdto, UpdateMessageInDMdto } from '../dto';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
@@ -22,6 +22,7 @@ export class DirectMessageService {
     private readonly prisma: PrismaService,
     private readonly checker: CheckerService,
     private readonly helper: HelperService,
+    @Inject(forwardRef(() => DirectMessageGateway))
     private readonly directMessageGateway: DirectMessageGateway,
     private readonly rpcExceptionService: RpcExceptionService,
   ) {}
