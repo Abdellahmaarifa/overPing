@@ -250,8 +250,6 @@ export class UserService {
 
       return true;
     } catch (error) {
-      console.log('error', error);
-
       this.handlePrismaError(error);
     }
   }
@@ -280,8 +278,6 @@ export class UserService {
 
       return true;
     } catch (error) {
-      console.log('error', error);
-
       this.handlePrismaError(error);
     }
   }
@@ -365,7 +361,6 @@ export class UserService {
   }
 
   async findUserByIds(friendIds: number[]): Promise<IAuthUser[]> {
-    console.log('friends id: ', friendIds);
     const friends = await this.prisma.user.findMany({
       where: {
         id: {
@@ -379,7 +374,6 @@ export class UserService {
         email: true,
       },
     });
-    console.log('friends: ', friends);
     return friends;
   }
 

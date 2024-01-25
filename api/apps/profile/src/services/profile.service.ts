@@ -140,7 +140,6 @@ export class ProfileService {
     const existingProfile = await this.prisma.userProfile.findUnique({
       where: { user_id: userId },
     });
-    console.log("profile to delete : ",existingProfile);
     if (!existingProfile) {
       this.rpcExceptionService.throwNotFound(`Profile of User ID ${userId} not found`);
     }

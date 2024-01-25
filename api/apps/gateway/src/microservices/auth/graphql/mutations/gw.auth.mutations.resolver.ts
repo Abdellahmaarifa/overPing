@@ -143,7 +143,6 @@ export class AuthMutationsResolver {
       id: req.user.userId,
       code,
     }
-    console.log("the data of auth2: ", twoFActorAuthInput);
     const response =  await this.authService.authenticate_2fa(twoFActorAuthInput);
     const { res } = context;
     res.cookie('Refresh_token', response.refreshToken, {

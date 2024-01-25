@@ -20,7 +20,6 @@ export class UserService {
     async findOrCreateUser(profile: any): Promise<IAuthUser> {
         try {
             const user = await this.findUserByUsername(profile.username);
-            console.log("user is not found in this (createUser)", user);
             return user;
         } catch (error) {
             return  await this.createAccount(profile);
