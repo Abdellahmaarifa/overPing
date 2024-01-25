@@ -314,7 +314,6 @@ export class UserService {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       const prismaError = new PrismaError(
         error,
-        'An unexpected error occurred',
         this.rpcExceptionService,
       );
       prismaError.handlePrismaError();

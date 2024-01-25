@@ -194,7 +194,7 @@ export class ProfileService {
 
   private handlePrismaError(error: any): void {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      const prismaError = new PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
+      const prismaError = new PrismaError(error,  this.rpcExceptionService);
       prismaError.handlePrismaError();
     } else {
       throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
