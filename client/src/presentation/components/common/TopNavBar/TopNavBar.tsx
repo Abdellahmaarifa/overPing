@@ -33,7 +33,12 @@ import { useSettingsContext } from "context/settings.context";
 import { useChatContext } from "context/chat.context";
 import Button from "../Button/Button";
 import { Notification } from "domain/model/notification";
-import { AccountDocument, useAcceptMatchToPlayMutation, useMatchWaitingDircSubscription, useNotificationSubscription } from "gql/index";
+import {
+  AccountDocument,
+  useAcceptMatchToPlayMutation,
+  useMatchWaitingDircSubscription,
+  useNotificationSubscription,
+} from "gql/index";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useApolloClient } from "@apollo/client";
@@ -87,8 +92,6 @@ const NotificationList = ({
   active: boolean;
   data: Notification[];
 }) => {
-  console.log("from notification ", data);
-
   return (
     <div
       tw="w-[310px]  flex-col gap-[10px] p-[10px] h-[600px] overflow-scroll  bg-[rgb(195 196 217 / 0.9)] top-[80px] right-[15px] absolute rounded-[5px]"
@@ -147,7 +150,6 @@ const TopNavBar = () => {
   const [notifications, setNotifications] = useState<Notification[] | []>([]);
   const client = useApolloClient();
 
-  
   const { data, loading, error } = useNotificationSubscription({
     variables: { userId: Number(user?.id) },
   });
@@ -157,7 +159,6 @@ const TopNavBar = () => {
   const [acceptMatchRequest] = useAcceptMatchToPlayMutation();
 
   const acceptHandler = (data, t) => async () => {
-    console.log("going to accept invitaion!");
     const res = await acceptMatchRequest({
       variables: {
         AcceptRequestInput: {
@@ -166,17 +167,13 @@ const TopNavBar = () => {
         },
       },
     });
-    console.log("after accepting the notification:", res);
     if (res.data?.acceptMatchToPlay) {
-      // accept the invitation
-      console.log("this is what in the notification ");
       //navigate(`/game?id=${data.notification.playerId}`);
       toast.dismiss(t.id);
     }
   };
 
   useEffect(() => {
-    console.log("I got new Data and i should notify the user!!");
     if (data) {
       toast(
         (t) => (
@@ -201,7 +198,6 @@ const TopNavBar = () => {
           },
         })
         .then((res) => {
-          console.log("**for user id :", data.notification.playerId, res.data);
           const newNotifications = [...notifications];
           const newNoti: Notification = {
             name: res.data.findUserById.username,
@@ -222,19 +218,16 @@ const TopNavBar = () => {
         });
 
       //navigate("/game");
-      console.log(data);
     }
   }, [data]);
 
   useEffect(() => {
     if (dataM) {
-      console.log("this i sit: ", dataM);
       navigate(
         `/game?type="friend"&user1=${dataM.matchWaitingDirc.user1?.id}&user2=${dataM.matchWaitingDirc.user2?.id}&game-type="classic"&key=${dataM.matchWaitingDirc.matchKey}`
       );
     }
   }, [dataM]);
-
 
   //if (error) console.log(error);
   return (
@@ -261,7 +254,9 @@ const TopNavBar = () => {
 
           {notifications.length != 0 && (
             <div tw="w-[15px] h-[15px] bg-red-500 absolute  top-[8px] left-[8px] rounded-[10px] flex justify-center items-center">
-              <span tw="font-inter font-bold text-[10px]">{notifications.length}</span>
+              <span tw="font-inter font-bold text-[10px]">
+                {notifications.length}
+              </span>
             </div>
           )}
         </NavLink>

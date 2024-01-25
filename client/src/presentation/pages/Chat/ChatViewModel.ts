@@ -170,10 +170,9 @@ export class ChatViewModel {
       dms: [_dms, setDms],
     } = this.context;
     const channels = await this.fetchUserChannels();
-    console.log("****** channels: ", channels);
-    const dms = await this.fetchUserDms();
+    //const dms = await this.fetchUserDms();
     if (type == "dm") {
-      if (dms.find((e) => e.user2.id == id)) return;
+      //    if (dms.find((e) => e.user2.id == id)) return;
       const dm = await this.createNewDm();
       console.log("we just create new dm : ", dm);
       // update dms

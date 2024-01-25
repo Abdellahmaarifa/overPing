@@ -89,14 +89,12 @@ const ChatSearch = () => {
   const { user } = useUserContext();
   useEffect(() => {
     if (includeChannelInSearch) {
-      console.log("here i should get both users and channels");
     }
     client
       .query({
         query: FindAllUsersDocument,
       })
       .then((data) => {
-        console.log("these all the users in db: ", data);
         if (data.data.findAllUsers) setUsersRepo(data.data.findAllUsers);
       })
       .then((err) => {
@@ -105,7 +103,6 @@ const ChatSearch = () => {
   }, []);
 
   useEffect(() => {
-    console.log("sreaching for .. ", value);
     const newUsersList = value
       ? usersRepo.filter((user) => user.username.includes(value))
       : [];
@@ -121,7 +118,6 @@ const ChatSearch = () => {
           },
         })
         .then((data) => {
-          console.log("searching for channel with your request: ", data);
           if (data.data.searchForChannel) {
             setChannes(data.data.searchForChannel);
           }
@@ -138,7 +134,6 @@ const ChatSearch = () => {
   return (
     <ChatSearchContainer
       onClick={() => {
-        console.log("lol");
         setShowSearchModel(false);
       }}
     >

@@ -18,6 +18,7 @@ import Button from "components/common/Button/Button";
 import { useUserContext } from "context/user.context";
 import { useParams } from "react-router-dom";
 import { useUpdateChannelMutation } from "gql/index";
+import toast from "react-hot-toast";
 
 const EditChannelModel = () => {
   const {
@@ -55,7 +56,6 @@ const EditChannelModel = () => {
         data: data,
       },
     });
-    console.log("uddate ... ", res);
     return res;
   };
   const updateChannel = async () => {
@@ -64,7 +64,7 @@ const EditChannelModel = () => {
       // public &&  private => protected : protected
       // protected : protected
       // protected => public &&  private : public &&  private
-      const tes = await updatePublic({
+      const res = await updatePublic({
         userId: Number(user?.id),
         channelId: Number(id),
         channelName: name,
@@ -73,21 +73,23 @@ const EditChannelModel = () => {
         oldPassword: oldPass,
         newPassword: pass,
       });
-      console.log("updated ** ", tes);
+      if (res.data?.updateChannel) {
+        toast.success("channel updated successfully!");
+      }
+
       if (
         currentChannel?.visibility == "public" ||
         currentChannel?.visibility == "private"
       ) {
       }
     } catch (err) {
-      console.log("this is err: ", err);
+      toast.error("failed to update the channel!");
     }
   };
 
   return (
     <ChannelModelConatiner
       onClick={() => {
-        console.log("hello");
         setShowEditChannelModel(false);
         setShowChannelModel(false);
       }}
@@ -191,12 +193,22 @@ const EditChannelModel = () => {
           </>
         )}
         <CreateChannelModelAction>
-          <Button $text="Done" $size="auto" onClick={(e) => updateChannel()} />
+          <Button
+            $text="Done"
+            $size="auto"
+            onClick={(e) => {
+              updateChannel();
+              setShowEditChannelModel(false);
+            }}
+          />
           <Button
             $text="Cancel"
             $size="auto"
             $transparent={true}
             $border={true}
+            onClick={() => {
+              setShowEditChannelModel(false);
+            }}
           />
         </CreateChannelModelAction>
       </CreateChannelModel>

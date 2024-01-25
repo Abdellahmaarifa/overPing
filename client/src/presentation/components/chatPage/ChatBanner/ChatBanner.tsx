@@ -30,7 +30,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { set } from "mobx";
 import Button from "components/common/Button/Button";
 import tw from "twin.macro";
-const ChatBanner = () => {
+const ChatBanner = ({ type }: { type: string }) => {
   const { mobileMenuState } = useLayoutContext();
   const [mobileMenu, setMobileMenu] = mobileMenuState;
   const location = useLocation();
@@ -67,11 +67,12 @@ const ChatBanner = () => {
       currentChannel.admins.find((e) => e.id == user?.id)
     )
       setRole("admin");
-    if (currentChannel && currentChannel.owner_id == Number(user?.id))
+    else if (currentChannel && currentChannel.owner_id == Number(user?.id))
       setRole("owner");
+    else setRole("member");
     if (currentChannel?.visibility) setVisibility(currentChannel?.visibility);
-  }, [currentChannel]);
-  console.log("my role is : ", role, currentChannel);
+    console.log("set ROLE", role);
+  }, [currentChannel, id, location.pathname]);
 
   /*
   userId: Float!
@@ -100,7 +101,6 @@ targetId: Float!
       if (!resault) throw { message: "can't add this user as an admin" };
       toast.success("admin added successfuly");
     } catch (err: any) {
-      console.log(err);
       toast.error(err.message ? err.message : "something went wrong");
     }
     setShowSearchModel(false);
@@ -220,85 +220,87 @@ targetId: Float!
           />
         </ChatBannerIcon>
       </ChatBannerLeft>
-      <ChatBannerRight>
-        {currentChannel && (
+      {(type == "channel" || type == "dm") && (
+        <ChatBannerRight>
+          {currentChannel && (
+            <ChatBannerIcon>
+              <FreindsIcon
+                onClick={(e: MouseEvent) => {
+                  e.stopPropagation();
+                  setShowFriends(true);
+                  setMobileMenu(false);
+                  setShowChatMenu(false);
+                }}
+              />
+            </ChatBannerIcon>
+          )}
           <ChatBannerIcon>
-            <FreindsIcon
+            <SideIcon
               onClick={(e: MouseEvent) => {
                 e.stopPropagation();
-                setShowFriends(true);
                 setMobileMenu(false);
+                setShowChatAbout(true);
                 setShowChatMenu(false);
+                setShowFriends(false);
               }}
             />
           </ChatBannerIcon>
-        )}
-        <ChatBannerIcon>
-          <SideIcon
-            onClick={(e: MouseEvent) => {
-              e.stopPropagation();
-              setMobileMenu(false);
-              setShowChatAbout(true);
-              setShowChatMenu(false);
-              setShowFriends(false);
-            }}
-          />
-        </ChatBannerIcon>
-        {currentChannel && (
-          <ChatBannerIcon>
-            <DotsIcon
-              onClick={(e: MouseEvent) => {
-                e.stopPropagation();
-                setShowChannelMenu(!showChannelMenu);
-              }}
-            />
-            <ExtraMenu
-              style={{
-                display: showChannelMenu ? "flex" : "none",
-              }}
-            >
-              {(role == "owner" || role == "admin") && (
-                <ExtraMenuLink
-                  onClick={() => {
-                    setIncludeChannelInSearch(false);
-                    setShowSearchModel(true);
-                    setUserHandlerCallBack(addAdmin);
-                  }}
-                >
-                  Add Admin
-                </ExtraMenuLink>
-              )}
-              <ExtraMenuLink
-                onClick={() => {
-                  setShowSearchModel(true);
-                  setIncludeChannelInSearch(false);
-
-                  setUserHandlerCallBack(addMember);
+          {currentChannel && (
+            <ChatBannerIcon>
+              <DotsIcon
+                onClick={(e: MouseEvent) => {
+                  e.stopPropagation();
+                  setShowChannelMenu(!showChannelMenu);
+                }}
+              />
+              <ExtraMenu
+                style={{
+                  display: showChannelMenu ? "flex" : "none",
                 }}
               >
-                Add Member
-              </ExtraMenuLink>
-              {(role == "owner" || role == "admin") && (
+                {(role == "owner" || role == "admin") && (
+                  <ExtraMenuLink
+                    onClick={() => {
+                      setIncludeChannelInSearch(false);
+                      setShowSearchModel(true);
+                      setUserHandlerCallBack(addAdmin);
+                    }}
+                  >
+                    Add Admin
+                  </ExtraMenuLink>
+                )}
                 <ExtraMenuLink
                   onClick={() => {
-                    setShowEditChannelModel(true);
+                    setShowSearchModel(true);
+                    setIncludeChannelInSearch(false);
+
+                    setUserHandlerCallBack(addMember);
                   }}
                 >
-                  Edit Channel
+                  Add Member
                 </ExtraMenuLink>
-              )}
-              {role === "owner" && (
-                <ExtraMenuLinkDanger onClick={() => deleteChannel()}>
-                  Delete Channel
+                {(role == "owner" || role == "admin") && (
+                  <ExtraMenuLink
+                    onClick={() => {
+                      setShowEditChannelModel(true);
+                    }}
+                  >
+                    Edit Channel
+                  </ExtraMenuLink>
+                )}
+                {role === "owner" && (
+                  <ExtraMenuLinkDanger onClick={() => deleteChannel()}>
+                    Delete Channel
+                  </ExtraMenuLinkDanger>
+                )}
+                <ExtraMenuLinkDanger onClick={() => leaveChannel()}>
+                  Leave Channel
                 </ExtraMenuLinkDanger>
-              )}
-              <ExtraMenuLinkDanger onClick={() => leaveChannel()}>
-                Leave Channel
-              </ExtraMenuLinkDanger>
-            </ExtraMenu>
-          </ChatBannerIcon>
-        )}
-      </ChatBannerRight>
+              </ExtraMenu>
+            </ChatBannerIcon>
+          )}
+        </ChatBannerRight>
+      )}
       <Toaster position="top-center" />
     </ChatBannerContainer>
   );

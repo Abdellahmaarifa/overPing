@@ -1,5 +1,5 @@
 import tw, { styled } from "twin.macro";
-export const DMContainer = styled.div<any>(({ active }) => [
+export const DMContainer = styled.div<any>(({ $active }) => [
   tw`
     p-[12px]
     flex
@@ -9,7 +9,7 @@ export const DMContainer = styled.div<any>(({ active }) => [
     w-full
     items-center
 `,
-  active && tw`[border: 1px solid aliceblue]`,
+  $active && tw`[border: 1px solid aliceblue]`,
 ]);
 export const DMProfile = tw.img`
     w-[48px]
