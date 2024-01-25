@@ -12,7 +12,9 @@ import { RabbitMqService } from '@app/rabbit-mq';
   imports: [
     CommonModule,
     RabbitMqModule,
-    RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),],
+    RabbitMqModule.forClientProxy(IRmqSeverName.AUTH),
+    RabbitMqModule.forClientProxy(IRmqSeverName.PROFILE),
+  ],
   controllers: [
     GameController,
   ],

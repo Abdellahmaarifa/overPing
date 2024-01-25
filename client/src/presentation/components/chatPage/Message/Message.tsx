@@ -47,7 +47,6 @@ const Message = ({
           },
         })
         .then((data) => {
-          console.log(data);
           setUser({
             name: data.data.findUserById.username,
             image: data.data.findUserById.profileImgUrl,
@@ -56,7 +55,6 @@ const Message = ({
         .catch((error) => console.log(error));
     }
   }, []);
-  console.log("id  >> : ", id);
   return (
     <MessageContainer
       // onMouseLeave={() => setIsShown(false)}

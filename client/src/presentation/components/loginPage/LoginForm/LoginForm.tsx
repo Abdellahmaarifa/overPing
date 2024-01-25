@@ -42,7 +42,7 @@ const LoginForm = () => {
             }}
           />
           <Button
-            $text="log in with Google"
+            $text="log in with Intra"
             $border={true}
             $transparent={true}
             $size="xl"

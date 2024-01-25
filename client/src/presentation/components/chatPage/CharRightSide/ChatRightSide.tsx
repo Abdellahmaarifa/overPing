@@ -21,6 +21,7 @@ import { useChatContext } from "context/chat.context";
 import { ChannelMember } from "../ChannelMembers/ChannelMembers.style";
 import ChannelMembers from "../ChannelMembers/ChannelMembers";
 import { useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 
 const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
   const {
@@ -28,9 +29,9 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
     showFriends: [showFriends, setShowFriends],
     currentChannel: [currentChannel, setCurrentChannel],
   } = useChatContext();
-  useEffect(() => {
-    console.log("----********--take data frm : ", currentChannel);
-  }, [currentChannel]);
+  const { id } = useParams();
+  const location = useLocation();
+  useEffect(() => {}, [currentChannel, id, location.pathname]);
   return (
     <ChatRightSideContainer
       style={

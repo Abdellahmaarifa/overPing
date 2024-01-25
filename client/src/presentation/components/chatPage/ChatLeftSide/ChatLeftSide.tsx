@@ -1,10 +1,14 @@
-import { da, faker } from "@faker-js/faker";
 import Button from "components/common/Button/Button";
 
+import { useApolloClient } from "@apollo/client";
 import CloseIcon from "assets/common/close.svg?react";
 import HashTagIcon from "assets/common/hashtag.svg?react";
 import PlusIcon from "assets/common/plus.svg?react";
 import SearchIcon from "assets/common/search.svg?react";
+import { useChatContext } from "context/chat.context";
+import { useUserContext } from "context/user.context";
+import { ChannelType, DMType } from "domain/model/chat.type";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   ChannelConatiner,
   ChannelIcon,
@@ -23,26 +27,6 @@ import {
   MessagesHeaderIcon,
   MessagesSearch,
 } from "./ChatLeftSide.style";
-import { useChatContext } from "context/chat.context";
-import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { useApolloClient } from "@apollo/client";
-import {
-  DeleteDirectMessageDocument,
-  GetUserChannelsDocument,
-  GetUserDirectMessagesDocument,
-  useCreateDirectMessageMutation,
-} from "gql/index";
-import { useUserContext } from "context/user.context";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { ChannelType, DMType } from "domain/model/chat.type";
-import tw from "twin.macro";
-import toast from "react-hot-toast";
 const ChatLeftSide = () => {
   const {
     showChatMenu: [showChatMenu, setShowChatMenu],
@@ -63,37 +47,30 @@ const ChatLeftSide = () => {
 
   const deleteDm = async (id: number) => {
     try {
-      // const data = await client.mutate({
-      //   mutation: DeleteDirectMessageDocument,
-      //   variables: {
-      //     data: {
-      //       userId: Number(user?.id),
-      //       groupChatId: id,
-      //       messageId: 1,
-      //     },
-      //   },
-      // });
-      // console.log("deleted!! ", data);
       const newDms = dms.filter((e) => Number(e.id) != id);
-      console.log(newDms);
       setDms(newDms);
-    } catch (err) {
-      console.log("in dele dm: ", err);
-    }
+    } catch (err) {}
   };
 
   const searchUserAndChannelsHandler = () => {
     setIncludeChannelInSearch(true);
-    setChannelHandlerCallBack(
-      () => (id: string) => navigate(`/chat/channel/${id}`)
-    );
-    setUserHandlerCallBack(() => (id: string) => navigate(`/chat/dm/${id}`));
+    setChannelHandlerCallBack(() => (id: string) => {
+      navigate(`/chat/channel/${id}`);
+      setShowSearchModel(false);
+    });
+    setUserHandlerCallBack(() => (id: string) => {
+      navigate(`/chat/dm/${id}`);
+      setShowSearchModel(false);
+    });
     setShowSearchModel(true);
   };
 
   const searchUserHandler = () => {
     setIncludeChannelInSearch(false);
-    setUserHandlerCallBack(() => (id: string) => navigate(`/chat/dm/${id}`));
+    setUserHandlerCallBack(() => (id: string) => {
+      navigate(`/chat/dm/${id}`);
+      setShowSearchModel(false);
+    });
     setShowSearchModel(true);
   };
 
@@ -154,9 +131,12 @@ const ChatLeftSide = () => {
           {dms.map((e: DMType) => {
             return (
               <DMContainer
-                active={!currentChannel && e.user2.id == id}
+                $active={!currentChannel && e.user2.id == id}
                 key={e.id}
-                onClick={() => navigate(`/chat/dm/${e.user2.id}`)}
+                onClick={() => {
+                  navigate(`/chat/dm/${e.user2.id}`);
+                  setCurrentChannel(null);
+                }}
               >
                 <DMProfile src={e.user2.profileImgUrl} />
                 <DMNameContainer>

@@ -9,8 +9,8 @@ import { IUser } from '@app/common';
 @Injectable()
 export class GameService {
   constructor(
-    @Inject(IRmqSeverName.FRIEND)
-    private readonly client: ClientProxy,
+    @Inject(IRmqSeverName.AUTH)
+    private readonly userClient: ClientProxy,
     private readonly clientService: RabbitMqService,
     private readonly prisma: PrismaService,
   ) {}
@@ -52,12 +52,12 @@ export class GameService {
 
   async getFriendshipMatches(userId: number, page: number, limit: number) : Promise<IGameData[]> {
     const friends: IUser[] = await this.clientService.sendMessageWithPayload(
-      this.client,
+      this.userClient,
       { role: 'user', cmd: 'getUserFriends'},
       userId,
     );
 
-    const friendIds = friends.forEach((friend) => friend.id);
+    const friendIds = friends.map(friend => friend.id);
 
     return await this.prisma.game.findMany({
       where: {

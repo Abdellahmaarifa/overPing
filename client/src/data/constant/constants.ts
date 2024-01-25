@@ -27,11 +27,30 @@ export const CHANNEL_CMD = {
   recUpdatedListOfMembers: "rec_updated_list_of_members",
   recUpdatedChannelsList: "rec_updated_channels_list",
 };
-const URL = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
+
+export enum DIRECTMESSAGE {
+  namespace = "chat-directMessages",
+
+  // THE LISTENERS IN THE BACK-END
+  sendMessageToUser = "send_message_to_user",
+  getDMMessages = "get_directMessage_messages",
+
+  // THE EMITTERS IN THE BACK-END
+  recMessageFromUser = "rec_message_from_user",
+  recUpdatedDMsList = "rec_updated_directMessages_list",
+}
+
+const URL_CHANNEL = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
   CHANNEL_CMD.namespace
 }`;
-console.log("..*****---", URL);
-export const socket = io(URL, { withCredentials: true });
+
+const URL_DM = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
+  DIRECTMESSAGE.namespace
+}`;
+
+export const socket = io(URL_CHANNEL, { withCredentials: true });
+export const socket_dm = io(URL_DM, { withCredentials: true });
+
 // export const socket = io(
 //   `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${CHANNEL_CMD.namespace}`
 // );

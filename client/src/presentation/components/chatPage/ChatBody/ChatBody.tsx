@@ -11,7 +11,7 @@ import {
 } from "./ChatBody.style";
 import ChatBanner from "../ChatBanner/ChatBanner";
 import tw from "twin.macro";
-import { CHANNEL_CMD, socket } from "constant/constants";
+import { CHANNEL_CMD, DIRECTMESSAGE, socket } from "constant/constants";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
 
@@ -36,7 +36,7 @@ interface MessageType {
   channelId: number;
 }
 
-const ChatBody = () => {
+const ChatBody = ({ type }: { type: string }) => {
   const {
     showChatAbout: [showChatAbout, setShowChatAbout],
   } = useChatContext();
@@ -56,7 +56,6 @@ const ChatBody = () => {
   > | null>(null);
 
   const sendMessage = () => {
-    console.log("send!!!!!");
     socket.emit(
       CHANNEL_CMD.sendMessageInchannel,
       {
@@ -65,7 +64,6 @@ const ChatBody = () => {
         text: msg,
       },
       (data) => {
-        console.log("****************** get // ", data);
         if (data.error.message) {
           const time = new Date(data.error.message.split(" ").at(-1));
           const now = new Date();
@@ -88,16 +86,13 @@ const ChatBody = () => {
     socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
       if (data && data.channelId == Number(id))
         setMessages((old) => [data, ...old]);
-      // addToMessages(data);
-      //console.log("I get this ************ ", messages, num);
     });
     return () => {
-      //socket.off(CHANNEL_CMD.getChannelMessages);
       socket.off(CHANNEL_CMD.recMessageFromChannel);
     };
-  }, []);
+  }, [id, location.pathname]);
   useEffect(() => {
-    if (currentChannel) {
+    if (currentChannel && type == "channel") {
       const newMap = new Map<number, { name: string; image: string }>();
       let newAdmin = currentChannel.admins ? [...currentChannel.admins] : [];
       let newMems = currentChannel.members ? [...currentChannel.members] : [];
@@ -109,24 +104,24 @@ const ChatBody = () => {
       });
       setMembersMap(newMap);
     }
-  }, [currentChannel]);
+  }, [currentChannel, location.pathname, id]);
 
   useEffect(() => {
-    socket.emit(
-      CHANNEL_CMD.getChannelMessages,
-      {
-        userId: Number(user?.id),
-        channelId: Number(id),
-        page: 0,
-      },
-      (data) => {
-        console.log("This should return all msgs but, ", data);
-        setMessages(data);
-      }
-    );
-  }, []);
-
-  console.log(">> ** current channel : ", currentChannel);
+    if (type == "channel") {
+      socket.emit(
+        CHANNEL_CMD.getChannelMessages,
+        {
+          userId: Number(user?.id),
+          channelId: Number(id),
+          page: 0,
+        },
+        (data) => {
+          setMessages(data);
+        }
+      );
+    } else if (type == "dm") {
+    }
+  }, [location.pathname, id]);
 
   return (
     <ChatBodyContainer
@@ -137,43 +132,43 @@ const ChatBody = () => {
         setShowChannelMenu(false);
       }}
     >
-      <ChatBanner />
-      <ChatMessages>
-        {messages.length &&
-          messages.map((e: MessageType) => {
-            //const a = membersMap!.get("0");
-            //console.log("sender: ", membersMap, e.sender_id, a);
-            // if (membersMap?.has("3")) console.log("there is@!");
-            console.log("**** ----- --- -- - -- -", membersMap, e);
-
-            return (
-              <Message
-                name={membersMap?.get(e.sender_id)?.name!}
-                image={membersMap?.get(e.sender_id)?.image!}
-                message={e.text}
-                date={e.created_at}
-                key={e.id}
-                id={e.sender_id}
+      <ChatBanner type={type} />
+      {(type == "channel" || type == "dm") && (
+        <>
+          {" "}
+          <ChatMessages>
+            {messages.length > 0 &&
+              messages.map((e: MessageType) => {
+                return (
+                  <Message
+                    name={membersMap?.get(e.sender_id)?.name!}
+                    image={membersMap?.get(e.sender_id)?.image!}
+                    message={e.text}
+                    date={e.created_at}
+                    key={e.id}
+                    id={e.sender_id}
+                  />
+                );
+              })}
+          </ChatMessages>
+          <SendMessageFeild>
+            <form
+              tw="w-full"
+              onSubmit={(e) => {
+                e.preventDefault();
+                console.log("send messgae!!");
+                sendMessage();
+              }}
+            >
+              <SendMessageInput
+                placeholder="Message"
+                onChange={(e) => setMsg(e.target.value)}
+                value={msg}
               />
-            );
-          })}
-      </ChatMessages>
-      <SendMessageFeild>
-        <form
-          tw="w-full"
-          onSubmit={(e) => {
-            e.preventDefault();
-            console.log("send messgae!!");
-            sendMessage();
-          }}
-        >
-          <SendMessageInput
-            placeholder="Message"
-            onChange={(e) => setMsg(e.target.value)}
-            value={msg}
-          />
-        </form>
-      </SendMessageFeild>
+            </form>
+          </SendMessageFeild>{" "}
+        </>
+      )}
     </ChatBodyContainer>
   );
 };
