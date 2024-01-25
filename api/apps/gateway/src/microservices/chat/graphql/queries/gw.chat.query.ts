@@ -1,9 +1,9 @@
+import { IChannel, IMembersWithInfo } from '@app/common/chat';
 import { UseGuards } from '@nestjs/common';
-import { Resolver,Query, Args, Context} from '@nestjs/graphql';
+import { Args, Context, Query, Resolver } from '@nestjs/graphql';
+import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
 import { GwChannelService, GwDirectMessageService, UserCheckService } from '../../services';
 import { GQLChannelModel, GQLChannelSearchModel, GQLDirectMessageModel } from '../models';
-import { IChannel, IMembersWithInfo } from '@app/common/chat';
-import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
 
 @Resolver()
 @UseGuards(GqlJwtAuthGuard)

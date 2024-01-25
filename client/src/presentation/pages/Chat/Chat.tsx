@@ -49,8 +49,16 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
     });
 
     socket.on(CHANNEL_CMD.recUpdatedListOfMembers, (data) => {
+      console.log("THIS IS THE NEW CHANNEL >> ", data);
       if (type == "channel" && data && data.channelId == Number(id)) {
         viewModel.fetchCurrentChannel();
+        if (
+          !currentChannel?.admins.find((e) => e.id == user?.id) &&
+          !currentChannel?.members.find((e) => e.id == user?.id)
+        ) {
+          console.log("THIS USER NOT HERE ANT MORE!!");
+          navigate("/chat");
+        }
       }
     });
 

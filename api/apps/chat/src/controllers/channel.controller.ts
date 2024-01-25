@@ -1,12 +1,14 @@
-import { IChannel, IChannelSearch, IMessage, IVisibility, IMembersWithInfo } from '@app/common/chat';
+import { IChannel, IChannelSearch, IMessage, IVisibility } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { CreateChanneldto,
+import {
+  CreateChanneldto,
   DeleteMessageInChanneldto,
   MemberOfChanneldto,
   UpdateChanneldto,
-  UpdateMessageInChanneldto } from '../dto';
+  UpdateMessageInChanneldto
+} from '../dto';
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from '../utils/checker.service';
 

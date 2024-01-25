@@ -11,7 +11,7 @@ import {
 } from '@nestjs/websockets';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
 import { Server, Socket } from 'socket.io';
-import { AddMessageInChanneldto, ChannelMessagesdto, MemberOfChanneldto } from '../dto';
+import { AddMessageInChanneldto, ChannelMessagesdto, MemberOfChanneldto } from '.';
 import { CHANNEL } from '../interface';
 import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
@@ -219,6 +219,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async sendUpdatedListOfMembers(channelId: number, updatedList: IMembersWithInfo) {
     const channelName = `channel_` + channelId;
 
+    console.log(`updatedList:`, updatedList);
     this.server.to(channelName).emit(CHANNEL.recUpdatedListOfMembers, {
       channelId,
       updatedList

@@ -129,6 +129,22 @@ export type GqlFriendshipStatusModel = {
   status: Scalars['String']['output'];
 };
 
+export type GqlGameHistory = {
+  __typename?: 'GQLGameHistory';
+  level: Scalars['Float']['output'];
+  playerOneId: Scalars['Float']['output'];
+  playerOneImageURL?: Maybe<Scalars['String']['output']>;
+  playerOneName?: Maybe<Scalars['String']['output']>;
+  playerOneScore: Scalars['Float']['output'];
+  playerOneStatus: Scalars['Float']['output'];
+  playerTwoId: Scalars['Float']['output'];
+  playerTwoImageURL?: Maybe<Scalars['String']['output']>;
+  playerTwoName?: Maybe<Scalars['String']['output']>;
+  playerTwoScore: Scalars['Float']['output'];
+  playerTwoStatus: Scalars['Float']['output'];
+  points: Scalars['Float']['output'];
+};
+
 export type GqlGameStatusModel = {
   __typename?: 'GQLGameStatusModel';
   best_win_streak: Scalars['Float']['output'];
@@ -209,6 +225,12 @@ export type GqlWalletModel = {
   betAmount: Scalars['Float']['output'];
   id: Scalars['ID']['output'];
   user_id: Scalars['Float']['output'];
+};
+
+export type GameHistoryInput = {
+  limit: Scalars['Float']['input'];
+  page: Scalars['Float']['input'];
+  userId: Scalars['Float']['input'];
 };
 
 export type JoinMatchmakingInput = {
@@ -541,6 +563,7 @@ export type Query = {
   getAllAchievements?: Maybe<Array<GqlAchievement>>;
   getBlockedUsers: Array<GqliUserModel>;
   getFriendsRequests: Array<GqliUserModel>;
+  getFriendshipMatches?: Maybe<GqlGameHistory>;
   getFriendshipStatus: GqlFriendshipStatusModel;
   getOnlineFriends: Array<GqliUserModel>;
   getOnlineUsers: Array<GqliUserModel>;
@@ -550,6 +573,7 @@ export type Query = {
   getUserChannels?: Maybe<Array<GqlChannelModel>>;
   getUserDirectMessages?: Maybe<Array<GqlDirectMessageModel>>;
   getUserFriends: Array<GqliUserModel>;
+  getUserMatchHistory?: Maybe<GqlGameHistory>;
   hello: Scalars['String']['output'];
   helloT: Scalars['String']['output'];
   searchForChannel?: Maybe<Array<GqlChannelSearchModel>>;
@@ -582,6 +606,11 @@ export type QueryFindProfileByUserIdArgs = {
 
 export type QueryFindUserByIdArgs = {
   id: Scalars['Float']['input'];
+};
+
+
+export type QueryGetFriendshipMatchesArgs = {
+  userId: GameHistoryInput;
 };
 
 
@@ -619,6 +648,11 @@ export type QueryGetUserChannelsArgs = {
 
 export type QueryGetUserDirectMessagesArgs = {
   id: Scalars['Float']['input'];
+};
+
+
+export type QueryGetUserMatchHistoryArgs = {
+  userId: GameHistoryInput;
 };
 
 
@@ -781,7 +815,7 @@ export type JoinChannelMutationVariables = Exact<{
 }>;
 
 
-export type JoinChannelMutation = { __typename?: 'Mutation', joinChannel: { __typename?: 'GQLChannelModel', id: string } };
+export type JoinChannelMutation = { __typename?: 'Mutation', joinChannel: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, latestMessage_at?: string | null, created_at?: string | null, updated_at?: string | null, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, profileImgUrl?: string | null, muteStatus?: boolean | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, profileImgUrl?: string | null, muteStatus?: boolean | null }> | null } };
 
 export type DeleteDirectMessageMutationVariables = Exact<{
   data: DeletionInput;
@@ -1488,6 +1522,25 @@ export const JoinChannelDocument = gql`
     mutation JoinChannel($data: MemberInput!) {
   joinChannel(data: $data) {
     id
+    owner_id
+    name
+    description
+    visibility
+    admins {
+      id
+      username
+      profileImgUrl
+      muteStatus
+    }
+    members {
+      id
+      username
+      profileImgUrl
+      muteStatus
+    }
+    latestMessage_at
+    created_at
+    updated_at
   }
 }
     `;
