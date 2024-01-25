@@ -11,7 +11,7 @@ import { PrismaService } from 'apps/chat/prisma/prisma.service';
 import { hash, verify } from 'argon2';
 import * as cookie from 'cookie';
 import { Socket } from 'socket.io';
-import { ChannelGateway } from '../dto/channel.gateway';
+import { ChannelGateway } from '../chat.gateway/channel.gateway';
 import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from './checker.service';

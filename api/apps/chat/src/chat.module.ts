@@ -9,7 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { DirectMessageGateway } from './chat.gateway/directMessage.gateway';
 import { ChannelController } from './controllers/channel.controller';
 import { DirectMessageController } from './controllers/directMessage.controller';
-import { ChannelGateway } from './dto/channel.gateway';
+import { ChannelGateway } from './chat.gateway/channel.gateway';
 import { ChannelService } from './services/channel.service';
 import { DirectMessageService } from './services/directMessage.service';
 import { TasksService } from './services/tasks.service';

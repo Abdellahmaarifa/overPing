@@ -81,8 +81,8 @@ export class ChatViewModel {
       return dms;
     } catch (err) {
       toast.error("can't fetch user DMs");
-      this.hooks.navigate("/chat");
       console.log("err in fetch user dms ", err);
+      this.hooks.navigate("/chat");
     }
   };
 
@@ -178,6 +178,8 @@ export class ChatViewModel {
       const curr = dms.find((e) => e.user2.id == id);
          if (curr) 
          {
+          console.log("************---**we just create new dm : ", curr); 
+
             setCurrentDm(curr);
             return;
          }

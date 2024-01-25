@@ -60,6 +60,7 @@ const ChatBody = ({ type }: { type: string }) => {
   const { id } = useParams();
   const [msg, setMsg] = useState<string | undefined>(undefined);
   const [messages, setMessages] = useState<MessageType[] | []>([]);
+  const [messagesDM, setMessagesDM] = useState<MessageDMType[] | []>([]);
   const [membersMap, setMembersMap] = useState<Map<
     number,
     { name: string; image: string }
@@ -104,7 +105,6 @@ const ChatBody = ({ type }: { type: string }) => {
       },
       (data) => {
         if (data.error.message) {
-
             toast.error('error in send messsage IN DM', data.error.message);
         }
       }
@@ -113,27 +113,30 @@ const ChatBody = ({ type }: { type: string }) => {
   };
 ////////////////////////////////////////////////////////
   useEffect(() => {
-    if(type == "dm")
-    {
-      socket_dm.on(DIRECTMESSAGE.recMessageFromUser, (data: MessageType) => {
-        if (data && data.sender_id == Number(id))
-        setMessages((old) => [data, ...old]);
-      });
-      return () => {
-        socket.off(DIRECTMESSAGE.recMessageFromUser);
-      };
-    }
-    else if(type == "channel")
+    if(type == "channel")
     {
 
       socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
-        if (data && data.channelId == Number(id))
-        setMessages((old) => [data, ...old]);
+        // console.log("THIS IS FROM BACKEND!!! ", data)
+        if (data && data.channelId == Number(id)) /// need to check data.channeId not returned from backend
+          setMessages((old) => [data, ...old]);
       });
-      return () => {
-        socket.off(CHANNEL_CMD.recMessageFromChannel);
-      };
     }
+    else if(type == "dm")
+    {
+      socket_dm.on(DIRECTMESSAGE.recMessageFromUser, (data: MessageDMType) => {
+        console.log("THIS IS FROM BACKEND!!! ", data)
+        if (data && (data.sender_id == Number(id) || data.sender_id == Number(user?.id))) //  need to check for this client
+          setMessagesDM((old) => [data, ...old]);
+      });
+    }
+      return () => {
+        if (type == "channel")
+          socket.off(CHANNEL_CMD.recMessageFromChannel);
+        if (type == "dm")
+          socket_dm.off(DIRECTMESSAGE.recMessageFromUser);
+      };
+    
   }, [id, location.pathname]);
 
 ////////////////////////////////////////////////////////
@@ -152,6 +155,7 @@ const ChatBody = ({ type }: { type: string }) => {
       setMembersMap(newMap);
     }
   }, [currentChannel, location.pathname, id]);
+
 ////////////////////////////////////////////////////////
 
   useEffect(() => {
@@ -173,16 +177,19 @@ const ChatBody = ({ type }: { type: string }) => {
         DIRECTMESSAGE.getDMMessages,
         {
           userId: Number(user?.id),
-          groupChatId: Number(id),
+          groupChatId: Number(currentDm?.id),
           page: 0,
         },
         (data) => {
-          setMessages(data);
+          if (!data?.error) setMessagesDM(data.messages);
         }
       );
     }
   }, [location.pathname, id]);
 
+
+
+  console.log("#######################DMS ", messagesDM)
   return (
     <ChatBodyContainer
       onClick={() => {
@@ -193,41 +200,67 @@ const ChatBody = ({ type }: { type: string }) => {
       }}
     >
       <ChatBanner type={type} />
-      {(type == "channel" || type == "dm") && (
+      {(type == "channel") && (
+          <>
+            <ChatMessages>
+              {messages.length > 0 &&
+                messages.map((e: MessageType) => {
+                  return (
+                    <Message
+                      name={membersMap?.get(e.sender_id)?.name!}
+                      image={membersMap?.get(e.sender_id)?.image!}
+                      message={e.text}
+                      date={e.created_at}
+                      key={e.id}
+                      id={e.sender_id}
+                    />
+                  );
+                })}
+            </ChatMessages>
+          </>
+        )}
+      {(type == "dm") && (
         <>
-          {" "}
           <ChatMessages>
-            {messages.length > 0 &&
-              messages.map((e: MessageType) => {
+            {messagesDM.length > 0 &&
+              messagesDM.map((e: MessageDMType) => {
+                let u = currentDm?.user2;
+                if(u && u.id != id)
+                  u = currentDm?.user1;
+                if(!u)
+                  return("");
+
                 return (
                   <Message
-                    name={membersMap?.get(e.sender_id)?.name!}
-                    image={membersMap?.get(e.sender_id)?.image!}
+                    name={String(u?.username)}
+                    image={String(u?.profileImgUrl)}
                     message={e.text}
                     date={e.created_at}
-                    key={e.id}
-                    id={e.sender_id}
+                    key={Number(currentDm?.id)}
+                    id={Number(u?.id)}
                   />
                 );
               })}
           </ChatMessages>
-          <SendMessageFeild>
-            <form
-              tw="w-full"
-              onSubmit={(e) => {
-                e.preventDefault();
-                console.log("send messgae!!");
-                sendMessage();
-              }}
-            >
-              <SendMessageInput
-                placeholder="Message"
-                onChange={(e) => setMsg(e.target.value)}
-                value={msg}
-              />
-            </form>
-          </SendMessageFeild>{" "}
         </>
+      )}
+      {(type != "none")&&(
+        <SendMessageFeild>
+          <form
+            tw="w-full"
+            onSubmit={(e) => {
+              e.preventDefault();
+              console.log("send message!!");
+              (type == "dm" ?sendMessage_dm() :sendMessage())
+            }}
+            >
+            <SendMessageInput
+              placeholder="Message"
+              onChange={(e) => setMsg(e.target.value)}
+              value={msg}
+              />
+          </form>
+        </SendMessageFeild>
       )}
     </ChatBodyContainer>
   );
