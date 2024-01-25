@@ -139,11 +139,13 @@ mutation UpdateChannel($data: UpdateChannelInput!) {
       username
       email
       profileImgUrl
+      muteStatus
     }
     members {
       id
       username
       profileImgUrl
+      muteStatus
     }
   }
 }
@@ -160,12 +162,14 @@ query FindChannelById($userId: Float!, $groupId: Float!) {
       username
       email
       profileImgUrl
+      muteStatus
     }
     members {
       id
       username
       email
       profileImgUrl
+      muteStatus
     }
   }
 }

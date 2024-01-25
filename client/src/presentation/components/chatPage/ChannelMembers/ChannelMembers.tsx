@@ -40,6 +40,7 @@ interface MemberType {
 }
 
 const ActioneMemeber = ({ e }: { e: any }) => {
+  console.log("THIS S MEM: ", e);
   const { id } = useParams();
   const { user } = useUserContext();
   const [KickUserMutation] = useKickMemberMutation();
@@ -100,16 +101,16 @@ const ActioneMemeber = ({ e }: { e: any }) => {
             }}
           />
           <Button
-            $text="1 hour"
+            $text="15 minutes"
             onClick={() => {
-              muteForTime(60, targetId, name);
+              muteForTime(15, targetId, name);
               toast.dismiss(t.id);
             }}
           />
           <Button
-            $text="1 day"
+            $text="45 minutes"
             onClick={() => {
-              muteForTime(24 * 60, targetId, name);
+              muteForTime(45, targetId, name);
               toast.dismiss(t.id);
             }}
           />
@@ -202,6 +203,7 @@ const ChannelMembers = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState<"owner" | "admin" | "member">("member");
   const getMembers = async () => {
+    console.log("THSI IS CURRENTL ", currentChannel);
     if (currentChannel) {
       if (!currentChannel.admins || !currentChannel.members) {
         toast.error("You are out of this channel!");

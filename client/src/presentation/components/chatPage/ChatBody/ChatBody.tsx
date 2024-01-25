@@ -84,8 +84,13 @@ const ChatBody = ({ type }: { type: string }) => {
 
   useEffect(() => {
     socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
+      console.log("SENDING>>>>", data, messages);
       if (data && data.channelId == Number(id))
-        setMessages((old) => [data, ...old]);
+        setMessages((old) => {
+          console.log("from useState: ", old);
+
+          return [data, ...old];
+        });
     });
     return () => {
       socket.off(CHANNEL_CMD.recMessageFromChannel);
@@ -116,7 +121,8 @@ const ChatBody = ({ type }: { type: string }) => {
           page: 0,
         },
         (data) => {
-          setMessages(data);
+          //console.log("YOU SENT: ", data);
+          if (!data?.error) setMessages(data);
         }
       );
     } else if (type == "dm") {

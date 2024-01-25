@@ -1,17 +1,21 @@
-import { Inject, Logger, UseGuards, forwardRef } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer,
-  OnGatewayInit, OnGatewayConnection,
-  OnGatewayDisconnect, SubscribeMessage } from '@nestjs/websockets';
+import { FriendshipStatus } from '@app/common';
+import { IDirectMessage } from '@app/common/chat';
+import { Inject, Logger, forwardRef } from '@nestjs/common';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
+  SubscribeMessage,
+  WebSocketGateway, WebSocketServer
+} from '@nestjs/websockets';
+import { PrismaService } from 'apps/chat/prisma/prisma.service';
 import { Server, Socket } from 'socket.io';
 import { AddMessageInDMdto, DMMessagesdto } from '../dto';
+import { DIRECTMESSAGE } from '../interface';
+import { GroupType } from '../interface/group.interface';
 import { DirectMessageService } from '../services/directMessage.service';
 import { CheckerService } from '../utils/checker.service';
-import { PrismaService } from 'apps/chat/prisma/prisma.service';
 import { HelperService } from '../utils/helper.service';
-import { FriendshipStatus } from '@app/common';
-import { GroupType } from '../interface/group.interface';
-import { DIRECTMESSAGE } from '../interface';
-import { IDirectMessage } from '@app/common/chat';
 
 let connectedUsers: Map<number, any> = new Map();
 
@@ -80,6 +84,13 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     if (recSocket && message) {
       recSocket.emit(DIRECTMESSAGE.recMessageFromUser , message);
       client.emit(DIRECTMESSAGE.recMessageFromUser , message);
+
+      this.sendUpdatedListOfDMs(
+        data.userId,
+        data.recipientId,
+        await this.directMessageService.getUserDirectMessages(data.userId),
+        await this.directMessageService.getUserDirectMessages(data.recipientId)
+      );
     }
     // else {
     //   // const truncText = data.text?.length > 30 ? data.text?.substring(0, 30) + '...' : data.text;
@@ -93,12 +104,6 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     //   });
     // }
 
-    this.sendUpdatedListOfDMs(
-      data.userId,
-      data.recipientId,
-      await this.directMessageService.getUserDirectMessages(data.userId),
-      await this.directMessageService.getUserDirectMessages(data.recipientId)
-    );
   }
 
   @SubscribeMessage(DIRECTMESSAGE.getDMMessages)
@@ -130,15 +135,13 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   }
 
   async sendUpdatedListOfDMs(user1: number, user2: number, updatedList1: IDirectMessage[], updatedList2: IDirectMessage[]) {
-    const client1_id = connectedUsers.get(user1);
-    const client2_id = connectedUsers.get(user2);
+    const client1 = connectedUsers.get(user1);
+    const client2 = connectedUsers.get(user2);
 
-    if (client1_id) {
-      const client1 = this.server.sockets.sockets[client1_id];
+    if (client1) {
       client1.emit(DIRECTMESSAGE.recUpdatedDMsList, updatedList1);
     }
-    if (client2_id) {
-      const client2 = this.server.sockets.sockets[client2_id];
+    if (client2) {
       client2.emit(DIRECTMESSAGE.recUpdatedDMsList, updatedList2);
     }
   }

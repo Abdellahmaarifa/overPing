@@ -865,7 +865,7 @@ export type UpdateChannelMutationVariables = Exact<{
 }>;
 
 
-export type UpdateChannelMutation = { __typename?: 'Mutation', updateChannel: { __typename?: 'GQLChannelModel', id: string, name: string, owner_id: number, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, profileImgUrl?: string | null }> | null } };
+export type UpdateChannelMutation = { __typename?: 'Mutation', updateChannel: { __typename?: 'GQLChannelModel', id: string, name: string, owner_id: number, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null, muteStatus?: boolean | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, profileImgUrl?: string | null, muteStatus?: boolean | null }> | null } };
 
 export type FindChannelByIdQueryVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -873,7 +873,7 @@ export type FindChannelByIdQueryVariables = Exact<{
 }>;
 
 
-export type FindChannelByIdQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null }> | null } | null };
+export type FindChannelByIdQuery = { __typename?: 'Query', findChannelById?: { __typename?: 'GQLChannelModel', id: string, owner_id: number, name: string, description?: string | null, visibility: string, admins?: Array<{ __typename?: 'GQLAdminsModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null, muteStatus?: boolean | null }> | null, members?: Array<{ __typename?: 'GQLMembersModel', id: number, username?: string | null, email?: string | null, profileImgUrl?: string | null, muteStatus?: boolean | null }> | null } | null };
 
 export type MuteMemberMutationVariables = Exact<{
   data: ActionToMemberInput;
@@ -1793,11 +1793,13 @@ export const UpdateChannelDocument = gql`
       username
       email
       profileImgUrl
+      muteStatus
     }
     members {
       id
       username
       profileImgUrl
+      muteStatus
     }
   }
 }
@@ -1841,12 +1843,14 @@ export const FindChannelByIdDocument = gql`
       username
       email
       profileImgUrl
+      muteStatus
     }
     members {
       id
       username
       email
       profileImgUrl
+      muteStatus
     }
   }
 }
