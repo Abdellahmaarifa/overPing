@@ -11,7 +11,7 @@ import {
 } from "./ChatBody.style";
 import ChatBanner from "../ChatBanner/ChatBanner";
 import tw from "twin.macro";
-import { CHANNEL_CMD, DIRECTMESSAGE, socket } from "constant/constants";
+import { CHANNEL_CMD, DIRECTMESSAGE, socket, socket_dm } from "constant/constants";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
 
@@ -36,6 +36,15 @@ interface MessageType {
   channelId: number;
 }
 
+interface MessageDMType {
+  id: number;
+  sender_id: number;
+  text: string;
+  updated: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 const ChatBody = ({ type }: { type: string }) => {
   const {
     showChatAbout: [showChatAbout, setShowChatAbout],
@@ -45,6 +54,7 @@ const ChatBody = ({ type }: { type: string }) => {
     showFriends: [showFriends, setShowFriends],
     showChannelMenu: [showChannelMenu, setShowChannelMenu],
     currentChannel: [currentChannel, setCurrentChannel],
+    currentDm : [currentDm, setCurrentDm],
   } = useChatContext();
   const { user } = useUserContext();
   const { id } = useParams();
@@ -82,15 +92,52 @@ const ChatBody = ({ type }: { type: string }) => {
     setMsg("");
   };
 
+
+  const sendMessage_dm = () => {
+    socket_dm.emit(
+      DIRECTMESSAGE.sendMessageToUser,
+      {
+        userId : Number(user?.id),
+        recipientId : Number(id),
+        groupChatId : Number(currentDm?.id),
+        text : msg,
+      },
+      (data) => {
+        if (data.error.message) {
+
+            toast.error('error in send messsage IN DM', data.error.message);
+        }
+      }
+    );
+    setMsg("");
+  };
+////////////////////////////////////////////////////////
   useEffect(() => {
-    socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
-      if (data && data.channelId == Number(id))
+    if(type == "dm")
+    {
+      socket_dm.on(DIRECTMESSAGE.recMessageFromUser, (data: MessageType) => {
+        if (data && data.sender_id == Number(id))
         setMessages((old) => [data, ...old]);
-    });
-    return () => {
-      socket.off(CHANNEL_CMD.recMessageFromChannel);
-    };
+      });
+      return () => {
+        socket.off(DIRECTMESSAGE.recMessageFromUser);
+      };
+    }
+    else if(type == "channel")
+    {
+
+      socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
+        if (data && data.channelId == Number(id))
+        setMessages((old) => [data, ...old]);
+      });
+      return () => {
+        socket.off(CHANNEL_CMD.recMessageFromChannel);
+      };
+    }
   }, [id, location.pathname]);
+
+////////////////////////////////////////////////////////
+
   useEffect(() => {
     if (currentChannel && type == "channel") {
       const newMap = new Map<number, { name: string; image: string }>();
@@ -105,6 +152,7 @@ const ChatBody = ({ type }: { type: string }) => {
       setMembersMap(newMap);
     }
   }, [currentChannel, location.pathname, id]);
+////////////////////////////////////////////////////////
 
   useEffect(() => {
     if (type == "channel") {
@@ -120,6 +168,17 @@ const ChatBody = ({ type }: { type: string }) => {
         }
       );
     } else if (type == "dm") {
+      socket_dm.emit(
+        DIRECTMESSAGE.getDMMessages,
+        {
+          userId: Number(user?.id),
+          groupChatId: Number(id),
+          page: 0,
+        },
+        (data) => {
+          setMessages(data);
+        }
+      );
     }
   }, [location.pathname, id]);
 
