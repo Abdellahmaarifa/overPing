@@ -53,8 +53,9 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
       if (type == "channel" && data && data.channelId == Number(id)) {
         viewModel.fetchCurrentChannel();
         if (
-          !currentChannel?.admins.find((e) => e.id == user?.id) &&
-          !currentChannel?.members.find((e) => e.id == user?.id)
+          !data?.updatedList?.admins.find((e) => e.id == user?.id) &&
+          !data?.updatedList?.members?.find((e) => e.id == user?.id) &&
+          data?.updatedList?.owner.id != Number(user?.id)
         ) {
           console.log("THIS USER NOT HERE ANT MORE!!");
           navigate("/chat");

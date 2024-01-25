@@ -164,7 +164,8 @@ const ChatBody = ({ type }: { type: string }) => {
           page: 0,
         },
         (data) => {
-          setMessages(data);
+          //console.log("YOU SENT: ", data);
+          if (!data?.error) setMessages(data);
         }
       );
     } else if (type == "dm") {

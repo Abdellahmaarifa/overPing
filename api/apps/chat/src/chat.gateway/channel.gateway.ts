@@ -11,7 +11,7 @@ import {
 } from '@nestjs/websockets';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
 import { Server, Socket } from 'socket.io';
-import { AddMessageInChanneldto, ChannelMessagesdto, MemberOfChanneldto } from '.';
+import { AddMessageInChanneldto, ChannelMessagesdto, MemberOfChanneldto } from '../dto';
 import { CHANNEL } from '../interface';
 import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';

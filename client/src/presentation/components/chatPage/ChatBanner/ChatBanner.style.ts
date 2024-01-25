@@ -12,6 +12,7 @@ export const ChatBannerContainer = tw.div`
     justify-between
     items-center
     lg:p-[8px]
+    z-[100]
 `;
 
 export const ChatBannerLeft = tw.div`
