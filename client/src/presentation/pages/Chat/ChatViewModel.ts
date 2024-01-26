@@ -81,8 +81,8 @@ export class ChatViewModel {
       return dms;
     } catch (err) {
       toast.error("can't fetch user DMs");
-      this.hooks.navigate("/chat");
       console.log("err in fetch user dms ", err);
+      this.hooks.navigate("/chat");
     }
   };
 
@@ -170,14 +170,25 @@ export class ChatViewModel {
     const {
       currentChannel: [currentChannel, setCurrentChannel],
       channels: [_channels, setChannels],
-      dms: [_dms, setDms],
+      currentDm: [_currentDm , setCurrentDm],
     } = this.context;
     const channels = await this.fetchUserChannels();
-    //const dms = await this.fetchUserDms();
+    const dms = await this.fetchUserDms();
     if (type == "dm") {
-      //    if (dms.find((e) => e.user2.id == id)) return;
+      const curr = dms.find((e) => e.user2.id == id);
+         if (curr) 
+         {
+          console.log("************---**we just create new dm : ", curr); 
+
+            setCurrentDm(curr);
+            return;
+         }
       const dm = await this.createNewDm();
-      console.log("we just create new dm : ", dm);
+      if(dm?.data?.createDirectMessage)
+      {
+        console.log("**************we just create new dm : ", dm.data.createDirectMessage);
+        setCurrentDm(dm.data.createDirectMessage);
+      }
       // update dms
     }
     if (type == "channel") {

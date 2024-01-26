@@ -11,7 +11,7 @@ import {
   DeleteMessageInChanneldto, MemberOfChanneldto,
   UpdateChanneldto, UpdateMessageInChanneldto
 } from '../dto';
-import { ChannelGateway } from '../dto/channel.gateway';
+import { ChannelGateway } from '../chat.gateway/channel.gateway';
 import { DESCRIPTION } from '../interface';
 import { GroupType } from '../interface/group.interface';
 import { CheckerService } from '../utils/checker.service';

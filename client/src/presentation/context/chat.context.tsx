@@ -16,6 +16,7 @@ export type ChatCtxType = {
   channelHandlerCallBack: UseStateType<(id: string) => void>;
   currentChannel: UseStateType<ChannelSample | null>;
   channels: UseStateType<ChannelType[] | []>;
+  currentDm: UseStateType<DMType | null>;
   dms: UseStateType<DMType[] | []>;
 };
 
@@ -32,6 +33,7 @@ export class ChatContextValue implements ChatCtxType {
   channelHandlerCallBack: UseStateType<(id: string) => void>;
   currentChannel: UseStateType<ChannelSample | null>;
   channels: UseStateType<ChannelType[] | []>;
+  currentDm: UseStateType<DMType | null>;
   dms: UseStateType<DMType[] | []>;
   constructor() {
     this.showChatMenu = useState<Boolean>(false);
@@ -50,6 +52,7 @@ export class ChatContextValue implements ChatCtxType {
     );
     this.currentChannel = useState<ChannelSample | null>(null);
     this.channels = useState<ChannelType[] | []>([]);
+    this.currentDm = useState<DMType | null>(null);
     this.dms = useState<DMType[] | []>([]);
   }
 }
@@ -67,6 +70,7 @@ const ChatContext = createContext<ChatCtxType>({
   channelHandlerCallBack: [(id: string) => {}, () => () => {}],
   currentChannel: [null, () => {}],
   channels: [[], () => {}],
+  currentDm: [null, () => {}],
   dms: [[], () => {}],
 });
 
