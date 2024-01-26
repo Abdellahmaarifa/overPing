@@ -70,7 +70,7 @@ export class ChatViewModel {
       dms: [_dms, setDms],
     } = this.context;
     try {
-      console.log("///////////// data ",this.data);
+      console.log("///////////// data ", this.data);
       const userDM = await this.client.query({
         query: GetUserDirectMessagesDocument,
         variables: {
@@ -79,12 +79,9 @@ export class ChatViewModel {
         fetchPolicy: "no-cache",
       });
 
-
-      // const dms = userDM?.data?.getUserDirectMessages;
-      // if (dms) setDms(dms);
-      // return dms;
-
-
+      const dms = userDM?.data?.getUserDirectMessages;
+      if (dms) setDms(dms);
+      return dms;
     } catch (err) {
       console.log("err in fetch user dms ", err);
       toast.error("can't fetch user DMs");
@@ -176,23 +173,24 @@ export class ChatViewModel {
     const {
       currentChannel: [currentChannel, setCurrentChannel],
       channels: [_channels, setChannels],
-      currentDm: [_currentDm , setCurrentDm],
+      currentDm: [_currentDm, setCurrentDm],
     } = this.context;
     const channels = await this.fetchUserChannels();
     const dms = await this.fetchUserDms();
     if (type == "dm") {
       // setCurrentDm(null);
-      const curr = dms.find((e) => (e.user1 && e.user2 && e.user2.id == id));
-         if (curr) 
-         {
-            console.log("************---**we just create new dm : ", curr); 
-            setCurrentDm(curr);
-            return;
-         }
+      const curr = dms.find((e) => e.user1 && e.user2 && e.user2.id == id);
+      if (curr) {
+        console.log("************---**we just create new dm : ", curr);
+        setCurrentDm(curr);
+        return;
+      }
       const dm = await this.createNewDm();
-      if(dm?.data?.createDirectMessage)
-      {
-        console.log("**************we just create new dm : ", dm.data.createDirectMessage);
+      if (dm?.data?.createDirectMessage) {
+        console.log(
+          "**************we just create new dm : ",
+          dm.data.createDirectMessage
+        );
         setCurrentDm(dm.data.createDirectMessage);
       }
       // update dms

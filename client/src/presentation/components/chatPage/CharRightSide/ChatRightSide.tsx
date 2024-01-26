@@ -20,12 +20,17 @@ import {
 import { useChatContext } from "context/chat.context";
 import { ChannelMember } from "../ChannelMembers/ChannelMembers.style";
 import ChannelMembers from "../ChannelMembers/ChannelMembers";
-import { useEffect } from "react";
-import { useAccountQuery, useSendRequestToPlayMutation } from 'gql/index';
+import { useEffect, useState } from "react";
+import {
+  AccountDocument,
+  useAccountQuery,
+  useSendRequestToPlayMutation,
+} from "gql/index";
 import { useLocation, useParams } from "react-router-dom";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import { playWithUser } from "helpers/index";
 import toast from "react-hot-toast";
+import { useApolloClient } from "@apollo/client";
 
 const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
   const {
@@ -36,27 +41,35 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
   } = useChatContext();
   const { id } = useParams();
   const location = useLocation();
-
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [sendGameInvitaion] = useSendRequestToPlayMutation();
-  useEffect(() => {}, [ currentDm , currentChannel, id, location.pathname]);
+  const client = useApolloClient();
+  useEffect(() => {
+    if (type === "dm") {
+      client
+        .query({
+          query: AccountDocument,
+          variables: {
+            userId: Number(currentDm?.user2.id),
+          },
+          fetchPolicy: "no-cache",
+        })
+        .then((data) => {
+          console.warn("FROM DM", data);
+          if (data.data) {
+            setData(data.data);
+            setLoading(false);
+          }
+        })
+        .catch((err) => {
+          toast.error(err.message ? err.message : "something went wrong");
+        });
+    }
+  }, [currentDm, currentChannel, id, location.pathname]);
 
-  const { data, loading, error } = useAccountQuery({
-    variables: {
-      userId: Number(currentDm?.user2.id)
-    },
-  });
-  if(error)
-  {
-    console.log("error in get data using useAccountQuery", error);
-    return (<p>error ...</p>);
-  }
-  if(loading)
-  {
-    return (<p>loading ...</p>);
-  }
-  if(data)
-  {
-    console.log( "data of chat right side ===>", data);
+  if (loading && type == "dm") {
+    return <p>loading ...</p>;
   }
 
   const sendGameInvitaionHandler = async () => {
@@ -95,10 +108,14 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
             <UserInformation>
               <UserInfoFeild>
                 <UserInfoName>
-                  {type == "channel" ? currentChannel?.name : data?.findProfileByUserId?.nickname}
+                  {type == "channel"
+                    ? currentChannel?.name
+                    : data?.findProfileByUserId?.nickname}
                 </UserInfoName>
                 <UserInfoUserName>
-                  {type == "channel" ? `@${currentChannel?.name}` : `@${data?.findUserById.username}`}
+                  {type == "channel"
+                    ? `@${currentChannel?.name}`
+                    : `@${data?.findUserById.username}`}
                 </UserInfoUserName>
               </UserInfoFeild>
               <UserInfoFeild>
@@ -113,16 +130,26 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
                 <UserInfoStatusConatiner>
                   <UserInfoStatus>
                     <UserInfoStatusHeading>Games Won</UserInfoStatusHeading>
-                    <UserInfoStatusRank>{data?.findProfileByUserId?.gameStatus.matchesWon}</UserInfoStatusRank>
+                    <UserInfoStatusRank>
+                      {data?.findProfileByUserId?.gameStatus.matchesWon}
+                    </UserInfoStatusRank>
                   </UserInfoStatus>
                   <UserInfoStatus>
                     <UserInfoStatusHeading>Games loss</UserInfoStatusHeading>
-                    <UserInfoStatusRank>{data?.findProfileByUserId?.gameStatus.matchesLoss}</UserInfoStatusRank>
+                    <UserInfoStatusRank>
+                      {data?.findProfileByUserId?.gameStatus.matchesLoss}
+                    </UserInfoStatusRank>
                   </UserInfoStatus>
                 </UserInfoStatusConatiner>
               )}
             </UserInformation>
-            {type == "dm" && <Button $text="Play now" $size="auto" onClick={() => sendGameInvitaionHandler()}/>}
+            {type == "dm" && (
+              <Button
+                $text="Play now"
+                $size="auto"
+                onClick={() => sendGameInvitaionHandler()}
+              />
+            )}
           </UserInfoWrapper>
         </>
       )}
