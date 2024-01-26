@@ -60,6 +60,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
           limit: 5,
         },
       },
+      fetchPolicy: "no-cache",
     });
     console.log("from server: ", data);
     if (!data.data.getUserMatchHistory)
@@ -146,7 +147,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
           </MatchTableBody>
         </MatchTable>
         <div ref={seemoreRef}>
-          {!end && (
+          {!end && matchList.length == 5 && (
             <Button
               $text="see more"
               $transparent={true}
