@@ -454,6 +454,7 @@ export class UserService {
     if (users.length === 0) {
       return [];
     }
+    console.log("======> ", users);
     const usersInfo: IUser[] = await this.prisma.user.findMany({
       where: {
         id: { in: users },
@@ -472,19 +473,22 @@ export class UserService {
         `User(s) not found`,
       );
     }
-
     const usersIds = usersInfo.map((user) => user.id);
+    console.log(',.,.,.,.usersIds:', usersIds);
     const usersNickname = (await this.clientService.sendMessageWithPayload(
       this.client,
       { role: 'profile', cmd: 'get-users-nickname' },
       usersIds,
-    ));
-
-    usersInfo.forEach((user) => {
-      const nickname = usersNickname.find((u) => u.user_id === user.id);
-      user.nickname = nickname.nickname;
-    });
-
-    return usersInfo;
+      ));
+      
+      usersInfo.forEach((user) => {
+        const nickname = usersNickname.find((u) => u.user_id === user.id);
+        user.nickname = nickname.nickname;
+      });
+      
+      const sortedUsersInfo = usersInfo.sort((a, b) => users.indexOf(a.id) - users.indexOf(b.id));
+      
+      console.log("----------------", sortedUsersInfo);
+    return sortedUsersInfo;
   }
 } 

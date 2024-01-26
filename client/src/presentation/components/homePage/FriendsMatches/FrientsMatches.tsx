@@ -21,6 +21,7 @@ import { useApolloClient } from "@apollo/client";
 import { GetFriendshipStatusDocument } from "gql";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
+import { GetFriendshipMatchesDocument } from "gql";
 const test = tw.a``;
 interface PlayerType {
   id: number;
@@ -46,37 +47,38 @@ const FriendshipMatches = ({ active }: { active: boolean }) => {
   const client = useApolloClient();
   const { user } = useUserContext();
   const [end, setEnd] = useState(false);
+
+  const GetFreshData = async (page: number, callback: any) => {
+    try {
+      setLoading(true);
+      const res = await client.query({
+        query: GetFriendshipMatchesDocument,
+        variables: {
+          data: {
+            userId: Number(user?.id),
+            page: page,
+            limit: 5,
+          },
+        },
+        fetchPolicy: "no-cache",
+      });
+      console.log("friends matches: ", res);
+
+      if (res.data.getFriendshipMatches) {
+        if (res.data.getFriendshipMatches.length == 0) setEnd(true);
+        setMatchList(res.data.getFriendshipMatches);
+        callback();
+      }
+      setLoading(false);
+    } catch (err: any) {
+      toast.error(err.message ? err.message : "can't get the firend's matches");
+    }
+  };
   useEffect(() => {
     // similiting getting data by page [ex: 19 resault]
-    (async () => {
-      //let data = await getMatchList(page);
-      try {
-        setLoading(true);
-        const res = await client.query({
-          query: GetFriendshipStatusDocument,
-          variables: {
-            data: {
-              userId: Number(user?.id),
-              page: page,
-              limit: 5,
-            },
-          },
-        });
-        console.log("friends matches: ", res);
-
-        if (res.data.getFriendshipStatus) {
-          if (res.data.getFriendshipStatus.length == 0) setEnd(true);
-          setMatchList(res.data.getFriendshipStatus);
-        }
-        setLoading(false);
-      } catch (err: any) {
-        toast.error(
-          err.message ? err.message : "can't get the firend's matches"
-        );
-      }
-    })();
+    GetFreshData(1, () => {});
     //console.log("getting more data", page);
-  }, [page]);
+  }, []);
   return (
     <FriendsMatchesConatiner style={active ? { display: "flex" } : undefined}>
       <FriendsMatchesTitle>Friendship Matches</FriendsMatchesTitle>
@@ -84,7 +86,7 @@ const FriendshipMatches = ({ active }: { active: boolean }) => {
         {matchList.length ? (
           matchList.map((match: MatchType, id) => {
             const winner = match.player1.status ? match.player1 : match.player2;
-            const loser = match.player2.status ? match.player2 : match.player1;
+            const loser = match.player1.status ? match.player2 : match.player1;
             return loading ? (
               <Skeleton
                 style={{
@@ -118,34 +120,37 @@ const FriendshipMatches = ({ active }: { active: boolean }) => {
           </EmptyResaultConatiner>
         )}
       </Resault>
-      {page === 1 && !end ? (
+      {page === 1 && !end && matchList.length == 5 ? (
         <Button
           $text="see more"
           $transparent={true}
-          onClick={() => setPage(page + 1)}
+          onClick={() =>
+            GetFreshData(page + 1, () => setPage((old) => old + 1))
+          }
         />
-      ) : (
+      ) : matchList.length == 5 ? (
         <SeeMoreConatiner>
           <DownArrowIcon
             tw="rotate-90 cursor-pointer w-[16px]"
             onClick={() => {
-              setPage(page - 1);
+              setEnd(false);
+              GetFreshData(page - 1, () => setPage((old) => old - 1));
             }}
           />
 
           {matchList.length ? (
             <>
-              <SeeMorePageNumber>{page + 1}</SeeMorePageNumber>
+              <SeeMorePageNumber>{page}</SeeMorePageNumber>
               <DownArrowIcon
                 tw="-rotate-90 cursor-pointer w-[16px]"
                 onClick={() => {
-                  setPage(page + 1);
+                  GetFreshData(page + 1, () => setPage((old) => old + 1));
                 }}
               />
             </>
           ) : null}
         </SeeMoreConatiner>
-      )}
+      ) : null}
     </FriendsMatchesConatiner>
   );
 };

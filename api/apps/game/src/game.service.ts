@@ -38,7 +38,8 @@ export class GameService {
           { playerTwoId: userId }
         ],
         NOT: [
-          { playerOneId: 0, playerTwoId: 0 }
+          { playerOneId: 0 },
+          { playerTwoId: 0 }
         ]
       },
       orderBy: {
@@ -48,29 +49,19 @@ export class GameService {
       take: limit,
     });
 
-    // console.log(games, userId);
-
-    const playerOneInfo = await this.clientService.sendMessageWithPayload(
-      this.client, { role: 'user', cmd: 'getUsersInfo' }, games.map(game => game.playerOneId)
-    );
-    const playerTwoInfo = await this.clientService.sendMessageWithPayload(
-      this.client, { role: 'user', cmd: 'getUsersInfo' }, games.map(game => game.playerTwoId)
-    );
-
-    // console.log('***** player1 *****\n', playerOneInfo, '\n**********');
-    // console.log('***** player2 *****\n', playerTwoInfo, '\n***********');
-
-    let i = 0;
     const result = Promise.all(games.map(async (game) => {
+      const playerInfo = await this.clientService.sendMessageWithPayload(
+        this.client, { role: 'user', cmd: 'getUsersInfo' }, [game.playerOneId, game.playerTwoId]
+      );
       return {
         id: game.id,
         player1: {
-          ...playerOneInfo[i],
+          ...playerInfo[0],
           score: game.playerOneScore,
           status: !!game.playerOneStatus,
         },
         player2: {
-          ...playerTwoInfo[i++],
+          ...playerInfo[1],
           score: game.playerTwoScore,
           status: !!game.playerTwoStatus,
         },
@@ -80,7 +71,7 @@ export class GameService {
       };
     }));
     console.log('result:', await result);
-    return result
+    return result;
   }
 
   async getFriendshipMatches(userId: number, page: number, limit: number) : Promise<IGameResult[]> {
@@ -112,27 +103,19 @@ export class GameService {
       take: limit,
     });
 
-    const playerOneInfo = await this.clientService.sendMessageWithPayload(
-      this.client, { role: 'user', cmd: 'getUsersInfo' }, games.map(game => game.playerOneId)
-    );
-    const playerTwoInfo = await this.clientService.sendMessageWithPayload(
-      this.client, { role: 'user', cmd: 'getUsersInfo' }, games.map(game => game.playerTwoId)
-    );
-
-    // console.log('***** player1 *****\n', playerOneInfo, '\n**********');
-    // console.log('***** player2 *****\n', playerTwoInfo, '\n***********');
-
-    let i = 0;
     const result = Promise.all(games.map(async (game) => {
+      const playerInfo = await this.clientService.sendMessageWithPayload(
+        this.client, { role: 'user', cmd: 'getUsersInfo' }, [game.playerOneId, game.playerTwoId]
+      );
       return {
         id: game.id,
         player1: {
-          ...playerOneInfo[i],
+          ...playerInfo[0],
           score: game.playerOneScore,
           status: !!game.playerOneStatus,
         },
         player2: {
-          ...playerTwoInfo[i++],
+          ...playerInfo[1],
           score: game.playerTwoScore,
           status: !!game.playerTwoStatus,
         },
@@ -142,6 +125,6 @@ export class GameService {
       };
     }));
     console.log('result:', await result);
-    return result
+    return result;
   }
 }
