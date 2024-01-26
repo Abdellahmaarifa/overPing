@@ -24,7 +24,7 @@ import { ApolloQueryResult, useApolloClient } from "@apollo/client";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
 
-interface PlayerType {
+export interface PlayerType {
   id: number;
   username: string;
   profileImgUrl: string;
@@ -32,7 +32,7 @@ interface PlayerType {
   status: boolean;
 }
 
-interface MatchType {
+export interface MatchType {
   id: number;
   player1: PlayerType;
   player2: PlayerType;
@@ -50,6 +50,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
   const [end, setEnd] = useState(false);
   const client = useApolloClient();
   const { user } = useUserContext();
+
   const getMatchesHistories = async (page: number): Promise<any> => {
     const data: any = await client.query({
       query: GetUserMatchHistoryDocument,
