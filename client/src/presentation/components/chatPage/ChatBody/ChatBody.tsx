@@ -14,6 +14,7 @@ import tw from "twin.macro";
 import { CHANNEL_CMD, DIRECTMESSAGE, socket, socket_dm } from "constant/constants";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
+import { connect } from "formik";
 
 // const ob = {
 //   id: 12,
@@ -159,7 +160,7 @@ const ChatBody = ({ type }: { type: string }) => {
 ////////////////////////////////////////////////////////
 
   useEffect(() => {
-    if (type == "channel") {
+    if (currentChannel && type == "channel") {
       socket.emit(
         CHANNEL_CMD.getChannelMessages,
         {
@@ -168,11 +169,14 @@ const ChatBody = ({ type }: { type: string }) => {
           page: 0,
         },
         (data) => {
-          //console.log("YOU SENT: ", data);
+          // console.log("YOU SENT: ", data);
           if (!data?.error) setMessages(data);
         }
       );
-    } else if (type == "dm") {
+    }
+    // if (currentDm && type == "dm") {
+    if (currentDm && type == "dm") {
+      console.log("++++++++++++++ data", currentDm)
       socket_dm.emit(
         DIRECTMESSAGE.getDMMessages,
         {
@@ -181,6 +185,7 @@ const ChatBody = ({ type }: { type: string }) => {
           page: 0,
         },
         (data) => {
+          console.log("YOU SENT data: ", data);
           if (!data?.error) setMessagesDM(data.messages);
         }
       );
@@ -224,8 +229,10 @@ const ChatBody = ({ type }: { type: string }) => {
           <ChatMessages>
             {messagesDM.length > 0 &&
               messagesDM.map((e: MessageDMType) => {
+                console.log("-----------44444444444----");
+               
                 let u = currentDm?.user2;
-                if(u && u.id != id)
+                if(u && e.sender_id != Number(id))
                   u = currentDm?.user1;
                 if(!u)
                   return("");

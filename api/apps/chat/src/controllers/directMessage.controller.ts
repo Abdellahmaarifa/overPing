@@ -20,7 +20,7 @@ export class DirectMessageController {
   }
 
   @MessagePattern({role: 'direct-message', cmd: 'get-all'})
-  async getUserDirectMessages(user_id: any) : Promise<IDirectMessage[]> {
+  async getUserDirectMessages(user_id: any) : Promise<IDirectMessage[] | {}> {
     return await this.directMessageService.getUserDirectMessages(user_id);
   }
 

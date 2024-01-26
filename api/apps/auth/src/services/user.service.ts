@@ -467,10 +467,11 @@ export class UserService {
         profileImgUrl: true,
       },
     })
-    if (usersInfo.length === 0) {
-      this.rpcExceptionService.throwBadRequest(
-        `User(s) not found`,
-      );
+    if (!usersInfo || usersInfo.length === 0) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: 'User(s) not found'
+      });
     }
 
     const usersIds = usersInfo.map((user) => user.id);

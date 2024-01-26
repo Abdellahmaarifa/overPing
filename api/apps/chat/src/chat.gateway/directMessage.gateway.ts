@@ -108,8 +108,9 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   @SubscribeMessage(DIRECTMESSAGE.getDMMessages)
   async getMessages(client: Socket, data: DMMessagesdto) {
+    console.log('data', data)
     const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
+    if (!userId || userId !== data.userId ) {
       return;
     }
     await this.helper.findUser(data.userId);
@@ -134,7 +135,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     });
   }
 
-  async sendUpdatedListOfDMs(user1: number, user2: number, updatedList1: IDirectMessage[], updatedList2: IDirectMessage[]) {
+  async sendUpdatedListOfDMs(user1: number, user2: number, updatedList1: IDirectMessage[] | {}, updatedList2: IDirectMessage[] | {}) {
     const client1 = connectedUsers.get(user1);
     const client2 = connectedUsers.get(user2);
 

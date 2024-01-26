@@ -87,7 +87,7 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
 
       socket_dm.on(DIRECTMESSAGE.recUpdatedDMsList, (data) => {
         if (data) setDms(data);
-        //console.log("looks like the list is updated: ", data);
+        console.log("looks like the list is updated: ", data);
       });
 
       return () => {
@@ -118,11 +118,15 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   }, [currentChannel]);
 
   console.log("the current channel: ", currentChannel);
+  console.log("the current direct: ", currentDm);
+  console.log("the current channel: ", channels);
+  console.log("the current channel: ", dms);
+
   return (
     <ChatConatiner>
       <ChatLeftSide />
       <ChatBody type={type} />
-      {(type == "channel" || type == "dm") && <ChatRightSide type={type} />}
+      {((currentChannel && type == "channel") || ( currentDm && type == "dm")) && <ChatRightSide type={type} />}
       {showSearchModel && <ChatSearch />}
       {showChannelModel && <ChannelModel />}
       {showEditChannelModel && <EditChannelModel />}
