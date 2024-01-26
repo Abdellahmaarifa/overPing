@@ -1,0 +1,45 @@
+query GetUserMatchHistory($data: GameHistoryInput!) {
+  getUserMatchHistory(data: $data) {
+    id
+    player1 {
+      id
+      username
+      profileImgUrl
+      score
+      status
+    }
+    player2 {
+      id
+      username
+      profileImgUrl
+      score
+      status
+    }
+    points
+    level
+    createdAt
+  }
+}
+
+query GetFriendshipMatches($data: GameHistoryInput!) {
+  getFriendshipMatches(data: $data) {
+    id
+    player1 {
+      id
+      username
+      profileImgUrl
+      score
+      status
+    }
+    player2 {
+      id
+      username
+      profileImgUrl
+      score
+      status
+    }
+    points
+    level
+    createdAt
+  }
+}

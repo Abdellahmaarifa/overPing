@@ -1,11 +1,10 @@
-import { Resolver, Query, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+import { Args, Context, Query, Resolver } from '@nestjs/graphql';
 import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
-import { Context } from '@nestjs/graphql'
-import { GwGameService } from '../../services/gw.game.service';
-import { GQLGameHistory } from '../models/graphqlGameModel';
-import { GameHistoryInput } from '../input/game.input';
 import { UserCheckService } from '../../../chat/services';
+import { GwGameService } from '../../services/gw.game.service';
+import { GameHistoryInput } from '../input/game.input';
+import { GQLGameHistory } from '../models/graphqlGameModel';
 
 @Resolver()
 @UseGuards(GqlJwtAuthGuard)
@@ -15,19 +14,21 @@ export class GameQueriesResolver {
     private readonly userCheck: UserCheckService,
   ) {}
 
-  @Query(() => GQLGameHistory, {nullable: true})
+  @Query(() => [GQLGameHistory])
   async getUserMatchHistory(@Context() ctx,
-  @Args('userId') data: GameHistoryInput) : Promise<GQLGameHistory[]>
+  @Args('data') data: GameHistoryInput) : Promise<GQLGameHistory[]>
   {
     await this.userCheck.validationId(data.userId, ctx.req.user.id);
-    return this.gameService.getUserMatchHistory(data);
+    const history = await this.gameService.getUserMatchHistory(data);
+    console.log('***-*** History:', history);
+    return history;
   }
 
-  @Query(() => GQLGameHistory, {nullable: true})
+  @Query(() => [GQLGameHistory])
   async getFriendshipMatches(@Context() ctx,
-  @Args('userId') data: GameHistoryInput) : Promise<GQLGameHistory[]>
+  @Args('data') data: GameHistoryInput) : Promise<GQLGameHistory[]>
   {
     await this.userCheck.validationId(data.userId, ctx.req.user.id);
-    return this.gameService.getFriendshipMatches(data);
+    return await this.gameService.getFriendshipMatches(data);
   }
 }

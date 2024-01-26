@@ -1,20 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
 import {
   IAuthUser,
   IUser,
 } from '@app/common/auth/interface/auth.user.interface';
-import { UserCreationDto } from '../dto';
-import { PrismaService } from 'apps/auth/prisma/prisma.service';
-import * as argon2 from 'argon2';
-import { SignInCredentialsDto } from '../dto';
-import { RpcExceptionService } from '@app/common/exception-handling';
-import { UpdateProfileDto } from '../dto/user.updateProfileId.dto';
-import { User, Prisma } from '@prisma/client';
-import { PrismaError } from '@app/common/exception-handling';
-import { UpdateUserDto } from '../dto/user.update.dto';
+import { PrismaError, RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from 'apps/auth/prisma/prisma.service';
+import * as argon2 from 'argon2';
+import { SignInCredentialsDto, UserCreationDto } from '../dto';
+import { UpdateUserDto } from '../dto/user.update.dto';
 
 @Injectable()
 export class UserService {
