@@ -116,12 +116,12 @@ export type GqlChannelSearchModel = {
 
 export type GqlDirectMessageModel = {
   __typename?: 'GQLDirectMessageModel';
-  created_at: Scalars['String']['output'];
+  created_at?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   latestMessage_at?: Maybe<Scalars['String']['output']>;
   messages?: Maybe<Array<GqlMessageModel>>;
-  user1: GqlUser;
-  user2: GqlUser;
+  user1?: Maybe<GqlUser>;
+  user2?: Maybe<GqlUser>;
 };
 
 export type GqlFriendshipStatusModel = {
@@ -131,18 +131,12 @@ export type GqlFriendshipStatusModel = {
 
 export type GqlGameHistory = {
   __typename?: 'GQLGameHistory';
-  level: Scalars['Float']['output'];
-  playerOneId: Scalars['Float']['output'];
-  playerOneImageURL?: Maybe<Scalars['String']['output']>;
-  playerOneName?: Maybe<Scalars['String']['output']>;
-  playerOneScore: Scalars['Float']['output'];
-  playerOneStatus: Scalars['Float']['output'];
-  playerTwoId: Scalars['Float']['output'];
-  playerTwoImageURL?: Maybe<Scalars['String']['output']>;
-  playerTwoName?: Maybe<Scalars['String']['output']>;
-  playerTwoScore: Scalars['Float']['output'];
-  playerTwoStatus: Scalars['Float']['output'];
-  points: Scalars['Float']['output'];
+  createdAt?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  level?: Maybe<Scalars['Float']['output']>;
+  player1?: Maybe<GqlUserInfo>;
+  player2?: Maybe<GqlUserInfo>;
+  points?: Maybe<Scalars['Float']['output']>;
 };
 
 export type GqlGameStatusModel = {
@@ -191,6 +185,15 @@ export type GqlUser = {
   nickname?: Maybe<Scalars['String']['output']>;
   profileImgUrl: Scalars['String']['output'];
   username: Scalars['String']['output'];
+};
+
+export type GqlUserInfo = {
+  __typename?: 'GQLUserInfo';
+  id?: Maybe<Scalars['Float']['output']>;
+  profileImgUrl?: Maybe<Scalars['String']['output']>;
+  score?: Maybe<Scalars['Float']['output']>;
+  status: Scalars['Boolean']['output'];
+  username?: Maybe<Scalars['String']['output']>;
 };
 
 export type GqlUserModel = {
@@ -563,7 +566,7 @@ export type Query = {
   getAllAchievements?: Maybe<Array<GqlAchievement>>;
   getBlockedUsers: Array<GqliUserModel>;
   getFriendsRequests: Array<GqliUserModel>;
-  getFriendshipMatches?: Maybe<GqlGameHistory>;
+  getFriendshipMatches: Array<GqlGameHistory>;
   getFriendshipStatus: GqlFriendshipStatusModel;
   getOnlineFriends: Array<GqliUserModel>;
   getOnlineUsers: Array<GqliUserModel>;
@@ -573,7 +576,7 @@ export type Query = {
   getUserChannels?: Maybe<Array<GqlChannelModel>>;
   getUserDirectMessages?: Maybe<Array<GqlDirectMessageModel>>;
   getUserFriends: Array<GqliUserModel>;
-  getUserMatchHistory?: Maybe<GqlGameHistory>;
+  getUserMatchHistory: Array<GqlGameHistory>;
   hello: Scalars['String']['output'];
   helloT: Scalars['String']['output'];
   searchForChannel?: Maybe<Array<GqlChannelSearchModel>>;
@@ -610,7 +613,7 @@ export type QueryFindUserByIdArgs = {
 
 
 export type QueryGetFriendshipMatchesArgs = {
-  userId: GameHistoryInput;
+  data: GameHistoryInput;
 };
 
 
@@ -652,7 +655,7 @@ export type QueryGetUserDirectMessagesArgs = {
 
 
 export type QueryGetUserMatchHistoryArgs = {
-  userId: GameHistoryInput;
+  data: GameHistoryInput;
 };
 
 
@@ -777,7 +780,7 @@ export type GetUserDirectMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetUserDirectMessagesQuery = { __typename?: 'Query', getUserDirectMessages?: Array<{ __typename?: 'GQLDirectMessageModel', id: string, user2: { __typename?: 'GQLUser', username: string, profileImgUrl: string, id: string }, user1: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } }> | null };
+export type GetUserDirectMessagesQuery = { __typename?: 'Query', getUserDirectMessages?: Array<{ __typename?: 'GQLDirectMessageModel', id: string, user2?: { __typename?: 'GQLUser', username: string, profileImgUrl: string, id: string } | null, user1?: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } | null }> | null };
 
 export type CreateChannelMutationVariables = Exact<{
   data: CreateChannelInput;
@@ -800,7 +803,7 @@ export type CreateDirectMessageMutationVariables = Exact<{
 }>;
 
 
-export type CreateDirectMessageMutation = { __typename?: 'Mutation', createDirectMessage: { __typename?: 'GQLDirectMessageModel', id: string, user1: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string }, user2: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } } };
+export type CreateDirectMessageMutation = { __typename?: 'Mutation', createDirectMessage: { __typename?: 'GQLDirectMessageModel', id: string, user1?: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } | null, user2?: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } | null } };
 
 export type GetChannelVisibilityQueryVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -1009,6 +1012,20 @@ export type CancelFriendRequestMutationVariables = Exact<{
 
 
 export type CancelFriendRequestMutation = { __typename?: 'Mutation', cancelFriendRequest: boolean };
+
+export type GetUserMatchHistoryQueryVariables = Exact<{
+  data: GameHistoryInput;
+}>;
+
+
+export type GetUserMatchHistoryQuery = { __typename?: 'Query', getUserMatchHistory: Array<{ __typename?: 'GQLGameHistory', id?: number | null, points?: number | null, level?: number | null, createdAt?: string | null, player1?: { __typename?: 'GQLUserInfo', id?: number | null, username?: string | null, profileImgUrl?: string | null, score?: number | null, status: boolean } | null, player2?: { __typename?: 'GQLUserInfo', id?: number | null, username?: string | null, profileImgUrl?: string | null, score?: number | null, status: boolean } | null }> };
+
+export type GetFriendshipMatchesQueryVariables = Exact<{
+  data: GameHistoryInput;
+}>;
+
+
+export type GetFriendshipMatchesQuery = { __typename?: 'Query', getFriendshipMatches: Array<{ __typename?: 'GQLGameHistory', id?: number | null, points?: number | null, level?: number | null, createdAt?: string | null, player1?: { __typename?: 'GQLUserInfo', id?: number | null, username?: string | null, profileImgUrl?: string | null, score?: number | null, status: boolean } | null, player2?: { __typename?: 'GQLUserInfo', id?: number | null, username?: string | null, profileImgUrl?: string | null, score?: number | null, status: boolean } | null }> };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2605,6 +2622,120 @@ export function useCancelFriendRequestMutation(baseOptions?: Apollo.MutationHook
 export type CancelFriendRequestMutationHookResult = ReturnType<typeof useCancelFriendRequestMutation>;
 export type CancelFriendRequestMutationResult = Apollo.MutationResult<CancelFriendRequestMutation>;
 export type CancelFriendRequestMutationOptions = Apollo.BaseMutationOptions<CancelFriendRequestMutation, CancelFriendRequestMutationVariables>;
+export const GetUserMatchHistoryDocument = gql`
+    query GetUserMatchHistory($data: GameHistoryInput!) {
+  getUserMatchHistory(data: $data) {
+    id
+    player1 {
+      id
+      username
+      profileImgUrl
+      score
+      status
+    }
+    player2 {
+      id
+      username
+      profileImgUrl
+      score
+      status
+    }
+    points
+    level
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetUserMatchHistoryQuery__
+ *
+ * To run a query within a React component, call `useGetUserMatchHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserMatchHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserMatchHistoryQuery({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useGetUserMatchHistoryQuery(baseOptions: Apollo.QueryHookOptions<GetUserMatchHistoryQuery, GetUserMatchHistoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserMatchHistoryQuery, GetUserMatchHistoryQueryVariables>(GetUserMatchHistoryDocument, options);
+      }
+export function useGetUserMatchHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserMatchHistoryQuery, GetUserMatchHistoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserMatchHistoryQuery, GetUserMatchHistoryQueryVariables>(GetUserMatchHistoryDocument, options);
+        }
+export function useGetUserMatchHistorySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserMatchHistoryQuery, GetUserMatchHistoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserMatchHistoryQuery, GetUserMatchHistoryQueryVariables>(GetUserMatchHistoryDocument, options);
+        }
+export type GetUserMatchHistoryQueryHookResult = ReturnType<typeof useGetUserMatchHistoryQuery>;
+export type GetUserMatchHistoryLazyQueryHookResult = ReturnType<typeof useGetUserMatchHistoryLazyQuery>;
+export type GetUserMatchHistorySuspenseQueryHookResult = ReturnType<typeof useGetUserMatchHistorySuspenseQuery>;
+export type GetUserMatchHistoryQueryResult = Apollo.QueryResult<GetUserMatchHistoryQuery, GetUserMatchHistoryQueryVariables>;
+export const GetFriendshipMatchesDocument = gql`
+    query GetFriendshipMatches($data: GameHistoryInput!) {
+  getFriendshipMatches(data: $data) {
+    id
+    player1 {
+      id
+      username
+      profileImgUrl
+      score
+      status
+    }
+    player2 {
+      id
+      username
+      profileImgUrl
+      score
+      status
+    }
+    points
+    level
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetFriendshipMatchesQuery__
+ *
+ * To run a query within a React component, call `useGetFriendshipMatchesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendshipMatchesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendshipMatchesQuery({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useGetFriendshipMatchesQuery(baseOptions: Apollo.QueryHookOptions<GetFriendshipMatchesQuery, GetFriendshipMatchesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFriendshipMatchesQuery, GetFriendshipMatchesQueryVariables>(GetFriendshipMatchesDocument, options);
+      }
+export function useGetFriendshipMatchesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFriendshipMatchesQuery, GetFriendshipMatchesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFriendshipMatchesQuery, GetFriendshipMatchesQueryVariables>(GetFriendshipMatchesDocument, options);
+        }
+export function useGetFriendshipMatchesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetFriendshipMatchesQuery, GetFriendshipMatchesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetFriendshipMatchesQuery, GetFriendshipMatchesQueryVariables>(GetFriendshipMatchesDocument, options);
+        }
+export type GetFriendshipMatchesQueryHookResult = ReturnType<typeof useGetFriendshipMatchesQuery>;
+export type GetFriendshipMatchesLazyQueryHookResult = ReturnType<typeof useGetFriendshipMatchesLazyQuery>;
+export type GetFriendshipMatchesSuspenseQueryHookResult = ReturnType<typeof useGetFriendshipMatchesSuspenseQuery>;
+export type GetFriendshipMatchesQueryResult = Apollo.QueryResult<GetFriendshipMatchesQuery, GetFriendshipMatchesQueryVariables>;
 export const HelloDocument = gql`
     query hello {
   helloT

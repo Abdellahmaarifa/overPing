@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
-import { GameService } from './game.service';
 import { MessagePattern } from '@nestjs/microservices';
-import { IGameData } from './Interfaces/game.interface';
+import { IGameData, IGameResult } from './Interfaces/game.interface';
+import { GameService } from './game.service';
 
 
 @Controller()
@@ -11,14 +11,14 @@ export class GameController {
   ) {}
 
   @MessagePattern({role: 'game', cmd: 'get-user-match-history'})
-  async getUserMatchHistory(payload: any) : Promise<IGameData[]> {
+  async getUserMatchHistory(payload: any) : Promise<IGameResult[]> {
     const {userId, page, limit} = payload;
-    return this.gameService.getUserMatchHistory(userId, page, limit);
+    return await this.gameService.getUserMatchHistory(userId, page, limit);
   }
 
   @MessagePattern({role: 'game', cmd: 'get-friendship-matches'})
-  async getFriendshipMatches(payload: any) : Promise<IGameData[]> {
+  async getFriendshipMatches(payload: any) : Promise<IGameResult[]> {
     const {userId, page, limit} = payload;
-    return this.gameService.getFriendshipMatches(userId, page, limit);
+    return await this.gameService.getFriendshipMatches(userId, page, limit);
   }
 }

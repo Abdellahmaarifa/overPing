@@ -37,6 +37,7 @@ const ChatLeftSide = () => {
     channelHandlerCallBack: [channelHandlerCallBack, setChannelHandlerCallBack],
     currentChannel: [currentChannel, setCurrentChannel],
     channels: [channels, setChannels],
+    currentDm : [currentDm, setCurrentDm],
     dms: [dms, setDms],
   } = useChatContext();
 
@@ -129,9 +130,13 @@ const ChatLeftSide = () => {
         </MessagesHeaderContainer>
         <MessagesContent>
           {dms.map((e: DMType) => {
+            // if (!e.user2 || !e.user1)
+            // {
+            //   return;
+            // }
             return (
               <DMContainer
-                $active={!currentChannel && e.user2.id == id}
+                $active={currentDm && e.user2.id == id}
                 key={e.id}
                 onClick={() => {
                   navigate(`/chat/dm/${e.user2.id}`);

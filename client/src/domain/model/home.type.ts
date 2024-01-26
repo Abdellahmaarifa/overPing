@@ -1,7 +1,7 @@
 import { AnyObject } from "yup";
 
 export interface MatchResaultType {
-  id: string;
+  id: number;
   userImage: string;
   opponentIamge: string;
   userScore: number;
@@ -10,4 +10,5 @@ export interface MatchResaultType {
   points: number;
   level: number;
   key?: any;
+  isWin: boolean;
 }

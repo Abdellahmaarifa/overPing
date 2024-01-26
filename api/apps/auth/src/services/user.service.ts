@@ -1,20 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
 import {
   IAuthUser,
   IUser,
 } from '@app/common/auth/interface/auth.user.interface';
-import { UserCreationDto } from '../dto';
-import { PrismaService } from 'apps/auth/prisma/prisma.service';
-import * as argon2 from 'argon2';
-import { SignInCredentialsDto } from '../dto';
-import { RpcExceptionService } from '@app/common/exception-handling';
-import { UpdateProfileDto } from '../dto/user.updateProfileId.dto';
-import { User, Prisma } from '@prisma/client';
-import { PrismaError } from '@app/common/exception-handling';
-import { UpdateUserDto } from '../dto/user.update.dto';
+import { PrismaError, RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from 'apps/auth/prisma/prisma.service';
+import * as argon2 from 'argon2';
+import { SignInCredentialsDto, UserCreationDto } from '../dto';
+import { UpdateUserDto } from '../dto/user.update.dto';
 
 @Injectable()
 export class UserService {
@@ -456,6 +453,7 @@ export class UserService {
     if (users.length === 0) {
       return [];
     }
+    
     const usersInfo: IUser[] = await this.prisma.user.findMany({
       where: {
         id: { in: users },
@@ -469,24 +467,27 @@ export class UserService {
         profileImgUrl: true,
       },
     })
-    if (usersInfo.length === 0) {
-      this.rpcExceptionService.throwBadRequest(
-        `User(s) not found`,
-      );
+    if (!usersInfo || usersInfo.length === 0) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 200,
+        message: 'User(s) not found'
+      });
     }
-
     const usersIds = usersInfo.map((user) => user.id);
+    
     const usersNickname = (await this.clientService.sendMessageWithPayload(
       this.client,
       { role: 'profile', cmd: 'get-users-nickname' },
       usersIds,
     ));
-
+      
     usersInfo.forEach((user) => {
       const nickname = usersNickname.find((u) => u.user_id === user.id);
       user.nickname = nickname.nickname;
     });
-
-    return usersInfo;
+      
+    const sortedUsersInfo = usersInfo.sort((a, b) => users.indexOf(a.id) - users.indexOf(b.id));
+    
+    return sortedUsersInfo;
   }
 } 

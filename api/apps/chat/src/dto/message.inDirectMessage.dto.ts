@@ -30,23 +30,65 @@ export class AddMessageInDMdto {
 
 // UPDATE MESSAGE IN DM
 export class UpdateMessageInDMdto {
-  userId:      number
+  @Field()
+  @IsNumber()
+  @IsPositive()
+  userId: number
+
+  @Field()
+  @IsNumber()
+  @IsPositive()
   recipientId: number
+
+  @Field()
+  @IsNumber()
+  @IsPositive()
   groupChatId: number
-  messageId:   number
-  text:        string
+
+  @Field()
+  @IsNumber()
+  @IsPositive()
+  messageId: number
+
+  @Field()
+  @IsString()
+  @MinLength(0)
+  @MaxLength(500)
+  text: string
 }
 
 // DELETE MESSAGE IN DM
 export class DeleteMessageInDMdto {
-  userId:      number
+  @Field()
+  @IsNumber()
+  @IsPositive()
+  userId: number
+
+  @Field()
+  @IsNumber()
+  @IsPositive()
   groupChatId: number
-  messageId:   number
+
+  @Field()
+  @IsNumber()
+  @IsPositive()
+  messageId: number
 }
 
 // MESSAGES IN DM
 export class DMMessagesdto {
-  userId:      number
+  @Field()
+  @IsNumber()
+  @IsPositive()
+  userId: number
+
+  @Field()
+  @IsNumber()
+  @IsPositive()
   groupChatId: number
-  page:        number
+
+  @Field()
+  @IsNumber()
+  @IsPositive()
+  page: number
 }

@@ -8,10 +8,10 @@ export class GQLDirectMessageModel {
   @Field(() => ID)
   id: number;
 
-  @Field(() => GQLUser)
+  @Field(() => GQLUser, {nullable: true})
   user1: GQLUser;
 
-  @Field(() => GQLUser)
+  @Field(() => GQLUser, {nullable: true})
   user2: GQLUser;
 
   @Field(() => [GQLMessageModel], { nullable: true })
@@ -22,6 +22,6 @@ export class GQLDirectMessageModel {
   @IsOptional()
   latestMessage_at?: string;
 
-  @Field()
+  @Field({nullable: true})
   created_at: string;
 }
