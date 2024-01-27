@@ -11,24 +11,15 @@ import { GQLGameHistory } from '../models/graphqlGameModel';
 export class GameQueriesResolver {
   constructor(
     private readonly gameService: GwGameService,
-    private readonly userCheck: UserCheckService,
   ) {}
 
   @Query(() => [GQLGameHistory])
-  async getUserMatchHistory(@Context() ctx,
-  @Args('data') data: GameHistoryInput) : Promise<GQLGameHistory[]>
-  {
-    await this.userCheck.validationId(data.userId, ctx.req.user.id);
-    const history = await this.gameService.getUserMatchHistory(data);
-    console.log('***-*** History:', history);
-    return history;
+  async getUserMatchHistory(@Args('data') data: GameHistoryInput) : Promise<GQLGameHistory[]> {
+    return await this.gameService.getUserMatchHistory(data);
   }
 
   @Query(() => [GQLGameHistory])
-  async getFriendshipMatches(@Context() ctx,
-  @Args('data') data: GameHistoryInput) : Promise<GQLGameHistory[]>
-  {
-    await this.userCheck.validationId(data.userId, ctx.req.user.id);
+  async getFriendshipMatches(@Args('data') data: GameHistoryInput) : Promise<GQLGameHistory[]> {
     return await this.gameService.getFriendshipMatches(data);
   }
 }
