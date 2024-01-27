@@ -6,10 +6,9 @@ export class PrismaError extends Error {
 
   constructor(
     error: Prisma.PrismaClientKnownRequestError,
-    customMessage: string,
     private readonly rpcExceptionService: RpcExceptionService
   ) {
-    super(customMessage);
+    super();
     Object.setPrototypeOf(this, PrismaError.prototype);
 
 
