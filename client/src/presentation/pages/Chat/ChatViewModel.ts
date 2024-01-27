@@ -1,5 +1,6 @@
 import { ApolloClient } from "@apollo/client";
-import { CHANNEL_CMD, socket } from "constant/constants";
+import { socket } from "components/chatPage/ChatBody/ChatBody";
+import { CHANNEL_CMD } from "constant/constants";
 import { ChatCtxType } from "context/chat.context";
 import { User } from "domain/model/User.type";
 import {

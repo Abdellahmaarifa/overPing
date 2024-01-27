@@ -23,14 +23,16 @@ import ChannelMembers from "../ChannelMembers/ChannelMembers";
 import { useEffect, useState } from "react";
 import {
   AccountDocument,
+  AccountQuery,
   useAccountQuery,
   useSendRequestToPlayMutation,
 } from "gql/index";
 import { useLocation, useParams } from "react-router-dom";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
-import { playWithUser } from "helpers/index";
+import { GetUserProfile, playWithUser } from "helpers/index";
 import toast from "react-hot-toast";
 import { useApolloClient } from "@apollo/client";
+import { ProfileType } from "domain/model/Profile.type";
 
 const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
   const {
@@ -41,13 +43,13 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
   } = useChatContext();
   const { id } = useParams();
   const location = useLocation();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(true);
   const [sendGameInvitaion] = useSendRequestToPlayMutation();
   const client = useApolloClient();
   useEffect(() => {
     if (type === "dm") {
-      console.log("GET THE ACCOUNT OF ID : ",  Number(id))
+      console.log("GET THE ACCOUNT OF ID : ", Number(id));
       client
         .query({
           query: AccountDocument,
@@ -59,7 +61,7 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
         .then((data) => {
           // console.warn("FROM DM", data);
           if (data.data) {
-            setData(data.data);
+            setData(GetUserProfile(data.data));
             setLoading(false);
           }
         })
@@ -101,52 +103,52 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
             <UserProfile>
               <UserCover
                 style={{
-                  background: `center/cover url(${data?.findProfileByUserId?.bgImageUrl})`,
+                  background: `center/cover url(${data?.cover})`,
                 }}
               ></UserCover>
-              <UserImage src={data?.findUserById.profileImgUrl} />
+              <UserImage src={data?.avatar} />
             </UserProfile>
           )}
           <UserInfoWrapper>
-         {  data && <UserInformation>
-              <UserInfoFeild>
-                <UserInfoName>
-                  {type == "channel"
-                    ? currentChannel?.name
-                    : data?.findProfileByUserId?.nickname}
-                </UserInfoName>
-                <UserInfoUserName>
-                  {type == "channel"
-                    ? `@${currentChannel?.name}`
-                    : `@${data?.findUserById.username}`}
-                </UserInfoUserName>
-              </UserInfoFeild>
-              <UserInfoFeild>
-                <UserInfoAboutHeader>About</UserInfoAboutHeader>
-                <UserInfoAbout>
-                  {type == "channel"
-                    ? currentChannel?.description
-                    : data?.findProfileByUserId?.about}
-                </UserInfoAbout>
-              </UserInfoFeild>
-              {type == "dm" && data && (
-                <UserInfoStatusConatiner>
-                  <UserInfoStatus>
-                    <UserInfoStatusHeading>Games Won</UserInfoStatusHeading>
-                    <UserInfoStatusRank>
-                      {data?.findProfileByUserId?.gameStatus.matchesWon}
-                    </UserInfoStatusRank>
-                  </UserInfoStatus>
-                  <UserInfoStatus>
-                    <UserInfoStatusHeading>Games loss</UserInfoStatusHeading>
-                    <UserInfoStatusRank>
-                      {data?.findProfileByUserId?.gameStatus.matchesLoss}
-                    </UserInfoStatusRank>
-                  </UserInfoStatus>
-                </UserInfoStatusConatiner>
-              )}
-            </UserInformation>}
-            {type == "dm" && data&& (
+            {data && (
+              <UserInformation>
+                <UserInfoFeild>
+                  <UserInfoName>
+                    {type == "channel" ? currentChannel?.name : data?.nickname}
+                  </UserInfoName>
+                  <UserInfoUserName>
+                    {type == "channel"
+                      ? `@${currentChannel?.name}`
+                      : `@${data?.nickname}`}
+                  </UserInfoUserName>
+                </UserInfoFeild>
+                <UserInfoFeild>
+                  <UserInfoAboutHeader>About</UserInfoAboutHeader>
+                  <UserInfoAbout>
+                    {type == "channel"
+                      ? currentChannel?.description
+                      : data?.about}
+                  </UserInfoAbout>
+                </UserInfoFeild>
+                {type == "dm" && data && (
+                  <UserInfoStatusConatiner>
+                    <UserInfoStatus>
+                      <UserInfoStatusHeading>Games Won</UserInfoStatusHeading>
+                      <UserInfoStatusRank>
+                        {data?.status.matchesWon}
+                      </UserInfoStatusRank>
+                    </UserInfoStatus>
+                    <UserInfoStatus>
+                      <UserInfoStatusHeading>Games loss</UserInfoStatusHeading>
+                      <UserInfoStatusRank>
+                        {data?.status.matchesLoss}
+                      </UserInfoStatusRank>
+                    </UserInfoStatus>
+                  </UserInfoStatusConatiner>
+                )}
+              </UserInformation>
+            )}
+            {type == "dm" && data && (
               <Button
                 $text="Play now"
                 $size="auto"
