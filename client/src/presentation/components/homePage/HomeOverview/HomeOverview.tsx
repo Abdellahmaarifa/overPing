@@ -33,7 +33,7 @@ const HomeOverview = () => {
   }, []);
   return (
     <OverViewContainer>
-      <TabContainer>
+      {/* <TabContainer>
         <Tab
           style={{
             background: matchTabState ? "#4C4C57" : "transparent",
@@ -60,7 +60,7 @@ const HomeOverview = () => {
             Friendship matches
           </TabHeading>
         </Tab>
-      </TabContainer>
+      </TabContainer> */}
       <MatchHistories active={true} />
       <RightSideConatiner>
         <FriendsMatches active={true} />
