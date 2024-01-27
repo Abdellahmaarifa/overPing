@@ -183,7 +183,7 @@ const ChatBody = ({ type }: { type: string }) => {
         DIRECTMESSAGE.getDMMessages,
         {
           userId: Number(user?.id),
-          groupChatId: Number(currentDm?.id),
+          groupChatId: Number(id),
           page: 0,
         },
         (data) => {

@@ -54,9 +54,9 @@ export class DirectMessageService {
     const user1 = await this.helper.findUser(user_id);
     let user2: IUser;
     if (user1.id === directMessage.user1_id) {
-      user2 = await this.helper.findUser(directMessage.user2_id);
+      user2 = await this.helper.findUser(directMessage.user2_id, false);
     } else {
-      user2 = await this.helper.findUser(directMessage.user1_id);
+      user2 = await this.helper.findUser(directMessage.user1_id, false);
     }
     return {
       id: directMessage.id,
@@ -89,9 +89,9 @@ export class DirectMessageService {
     const user1 = await this.helper.findUser(id1);
     let user2: IUser;
     if (user1.id === directMessage.user1_id) {
-      user2 = await this.helper.findUser(directMessage.user2_id);
+      user2 = await this.helper.findUser(directMessage.user2_id, false);
     } else {
-      user2 = await this.helper.findUser(directMessage.user1_id);
+      user2 = await this.helper.findUser(directMessage.user1_id, false);
     }
 
     return {

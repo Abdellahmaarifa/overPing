@@ -10,6 +10,15 @@ import { Request, Response } from "express";
 import { GqlArgumentsHost, GqlExceptionFilter } from "@nestjs/graphql";
 import { GraphQLResolveInfo } from "graphql";
 
+export interface errorFormat{
+  statusCode: number,
+  timestamp: string,
+  error: string,
+  path: string,
+  method?: string,
+  type?: any
+}
+
 @Catch(HttpException)
 export class ChatExceptionFilter implements ExceptionFilter, GqlExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
@@ -55,9 +64,11 @@ export class ChatExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
       Logger.error(
         `${request.method} ${request.url}`,
         JSON.stringify(error),
-        "ChatExceptionFilter",
+        "ExceptionFilter",
       );
-
+      console.log('\n\n\n\n\n\n\n\n')
+      console.log('>>>> type:', typeof exception)
+      console.log('\n\n\n\n\n\n\n\n')
       response.status(status).json(errorResponse);
     } else {
       // This is for gql error log
@@ -70,7 +81,7 @@ export class ChatExceptionFilter implements ExceptionFilter, GqlExceptionFilter 
       Logger.error(
         `${info.parentType} ${info.fieldName}`,
         JSON.stringify(error),
-        "ChatExceptionFilter",
+        "ExceptionFilter",
       );
       throw new GraphqlException(error.error, error.statusCode);
 

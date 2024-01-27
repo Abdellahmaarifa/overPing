@@ -5,7 +5,7 @@ import { IsOptional } from "class-validator";
 
 @ObjectType()
 export class GQLDirectMessageModel {
-  @Field(() => ID)
+  @Field(() => ID, {nullable: true})
   id: number;
 
   @Field(() => GQLUser, {nullable: true})

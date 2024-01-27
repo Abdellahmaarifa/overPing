@@ -205,7 +205,7 @@ export class HelperService {
   
   /******* Check and Get User Information by ID *******/
 
-  async findUser(user_id: number) : Promise<IUser> {
+  async findUser(user_id: number, throwExc: boolean = true) : Promise<IUser> {
     try {
       const user: IUser = await this.clientService.sendMessageWithPayload(
           this.client,
@@ -218,6 +218,12 @@ export class HelperService {
       return user![0] || null;
     }
     catch {
+      if (throwExc) {
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: `Failed to find user`,
+        });
+      }
       return null;
     }
   }
