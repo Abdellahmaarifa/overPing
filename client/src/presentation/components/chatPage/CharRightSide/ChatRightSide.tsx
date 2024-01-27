@@ -47,11 +47,12 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
   const client = useApolloClient();
   useEffect(() => {
     if (type === "dm") {
+      console.log("GET THE ACCOUNT OF ID : ",  Number(id))
       client
         .query({
           query: AccountDocument,
           variables: {
-            userId: Number(currentDm?.user2.id),
+            userId: Number(id),
           },
           fetchPolicy: "no-cache",
         })
@@ -63,10 +64,12 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
           }
         })
         .catch((err) => {
+          setData(null);
+          setLoading(false);
           toast.error(err.message ? err.message : "something went wrong");
         });
     }
-  }, [currentDm, currentChannel, id, location.pathname]);
+  }, [currentChannel, id, location.pathname]);
 
   if (loading && type == "dm") {
     return <p>loading ...</p>;
@@ -94,7 +97,7 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
         <ChannelMembers />
       ) : (
         <>
-          {type == "dm" && (
+          {type == "dm" && data && (
             <UserProfile>
               <UserCover
                 style={{
@@ -105,7 +108,7 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
             </UserProfile>
           )}
           <UserInfoWrapper>
-            <UserInformation>
+         {  data && <UserInformation>
               <UserInfoFeild>
                 <UserInfoName>
                   {type == "channel"
@@ -126,7 +129,7 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
                     : data?.findProfileByUserId?.about}
                 </UserInfoAbout>
               </UserInfoFeild>
-              {type == "dm" && (
+              {type == "dm" && data && (
                 <UserInfoStatusConatiner>
                   <UserInfoStatus>
                     <UserInfoStatusHeading>Games Won</UserInfoStatusHeading>
@@ -142,8 +145,8 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
                   </UserInfoStatus>
                 </UserInfoStatusConatiner>
               )}
-            </UserInformation>
-            {type == "dm" && (
+            </UserInformation>}
+            {type == "dm" && data&& (
               <Button
                 $text="Play now"
                 $size="auto"

@@ -1,10 +1,10 @@
 import {InputType, Field } from '@nestjs/graphql';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 
 @InputType()
 export class JoinMatchmakingInput {
   @Field()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
   readonly userId: number
 
@@ -17,13 +17,13 @@ export class JoinMatchmakingInput {
 @InputType()
 export class RequestToPlayInput {
   @Field()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
   readonly recipientId: number
 
   
   @Field()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
   readonly matchType: string
 }

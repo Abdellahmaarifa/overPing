@@ -38,10 +38,10 @@ export class MatchmakingService {
         playerPoolType = PoolType.Classic;
         break;
       case "sandstorm":
-        playerPoolType = PoolType.Classic;
+        playerPoolType = PoolType.Sandstorm;
         break;
       case "lastPong":
-        playerPoolType = PoolType.Classic;
+        playerPoolType = PoolType.LastPong;
     }
 
     const player: Player = {
@@ -55,7 +55,7 @@ export class MatchmakingService {
     }
 
     this.PoolService.addPlayer(player);
-    this.findAndStartMatch(PoolType.Classic);
+    this.findAndStartMatch(player.type);
   }
 
 

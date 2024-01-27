@@ -6,6 +6,7 @@ query findProfileByUserId($userId: Float!) {
     title
     xp
     rank
+    displayRank
     about
     bgImageUrl
     wallet {

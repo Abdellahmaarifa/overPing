@@ -1,7 +1,7 @@
 import { FriendshipStatus } from '@app/common';
 import { IChannel, IChannelInfo, IMembersWithInfo, IMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { Inject, Logger, forwardRef } from '@nestjs/common';
+import { Inject, Logger, UseFilters, forwardRef } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -17,9 +17,11 @@ import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from '../utils/checker.service';
 import { HelperService } from '../utils/helper.service';
+import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
 let connectedChannelUsers: Map<number, any> = new Map();
 
+@UseFilters(new ChatExceptionFilter())
 @WebSocketGateway({
   cors: {
     origin: `${process.env.CHAT_FRONT_URL}`,

@@ -1,6 +1,6 @@
 import { IChannel, IChannelSearch, IMessage, IVisibility } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { Controller } from '@nestjs/common';
+import { Controller, UseFilters, UseInterceptors } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import {
   CreateChanneldto,
@@ -11,7 +11,11 @@ import {
 } from '../dto';
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from '../utils/checker.service';
+import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
+import { FormatResponseInterceptor } from '../chat-global-filter/interceptor';
 
+@UseFilters(new ChatExceptionFilter())
+// @UseInterceptors(FormatResponseInterceptor)
 @Controller()
 export class ChannelController {
   constructor(

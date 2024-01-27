@@ -18,15 +18,13 @@ export class MatchmakingJob {
     this.handleMatchmaking(PoolType.Classic);
   }
 
-  // @Cron(CronExpression.EVERY_SECOND) // Adjust the cron expression as needed
+  @Cron(CronExpression.EVERY_SECOND) // Adjust the cron expression as needed
   handleSandStormMatchmaking(): void {
-    console.log('[Scheduler]: SandStorm matchmaking every second');
     this.handleMatchmaking(PoolType.Sandstorm);
   }
 
-  // @Cron(CronExpression.EVERY_SECOND) // Adjust the cron expression as needed
+  @Cron(CronExpression.EVERY_SECOND) // Adjust the cron expression as needed
   handleLastPongMatchmaking(): void {
-    console.log('[Scheduler]: LastPong matchmaking every second');
     this.handleMatchmaking(PoolType.LastPong);
   }
 

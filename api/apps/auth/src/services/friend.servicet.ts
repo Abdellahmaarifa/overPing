@@ -270,7 +270,6 @@ export class FriendshipService {
       throw this.rpcExceptionService.throwBadRequest('User not found.');
     }
     const allFriends = user.friends.concat(user.friendOf);
-    console.log(allFriends);
     return allFriends;
   }
 

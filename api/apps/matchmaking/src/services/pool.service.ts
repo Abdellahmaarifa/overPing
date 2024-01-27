@@ -72,7 +72,7 @@ export class PoolService {
     // Calculate dynamic gapThreshold based on average skill
     const averageSkill = weightedSkills.reduce((sum, player) => sum + player.weightedSkill, 0) / weightedSkills.length;
     const gapThreshold = this.calculateDynamicThreshold(averageSkill);
-    const playerTimeOut = 10 * 1000; // 1 minute in milliseconds
+    const playerTimeOut = 40 * 1000; // 1 minute in milliseconds
 
     // console.log(`===================================\nPlayers in pool ${type}:`, weightedSkills.map(entry => entry.player));
 
@@ -91,6 +91,7 @@ export class PoolService {
           }
         }
       }
+      console.log("diff of the calucation: ", minDiff, " ", gapThreshold);
       if (bestMatch != undefined && minDiff <= gapThreshold) {
         console.log(`Match found based on skill proximity: ${current.player.id} vs ${bestMatch.player.id}`);
         this.removePlayer(current.player.id , current.player.type);
@@ -106,6 +107,7 @@ export class PoolService {
         return [current.player, bestMatch.player];
       }
       if (bestMatch == undefined && currentTime - playerTime >= playerTimeOut){
+        console.log(`Match not found due to player timeout: ${current.player.id} vs null type ${current.player.type}`);
         this.removePlayer(current.player.id , current.player.type);
         return [current.player, null];
       }
@@ -118,7 +120,7 @@ export class PoolService {
 
   private calculateDynamicThreshold(averageSkill: number): number {
     // multiplier can adjust  based on  game's requirements
-    const multiplier = 0.5;
+    const multiplier = 3.5;
     return averageSkill * multiplier;
   }
 

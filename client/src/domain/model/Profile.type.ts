@@ -13,6 +13,7 @@ export type ProfileType = {
   cover: string;
   nickname: string;
   rank: number;
+  displayRank: number;
   avatar: string;
   level: number;
   status: Status;
@@ -41,6 +42,7 @@ export type AccountType = {
     title: string;
     xp: number;
     rank: number;
+    displayRank: number;
     about: string;
     bgImageUrl: string;
     wallet?: WalletType;
