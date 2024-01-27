@@ -29,6 +29,7 @@ export const GetUserProfile = (data: AccountQuery): ProfileType => {
     cover: encodeURI(data?.findProfileByUserId?.bgImageUrl as string),
     nickname: data.findProfileByUserId?.nickname!,
     rank: data?.findProfileByUserId?.rank!,
+    displayRank: data?.findProfileByUserId?.displayRank!,
     avatar: encodeURI(data?.findUserById?.profileImgUrl as string),
     level: data?.findProfileByUserId?.rank!, // this should calculated
     status: {

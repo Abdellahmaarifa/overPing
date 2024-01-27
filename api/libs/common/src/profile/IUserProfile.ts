@@ -7,6 +7,7 @@ export class IUserProfile {
     title: string
     xp: number
     rank: number
+    displayRank: number
     about: string
     bgImageUrl: string
     wallet: IWallet

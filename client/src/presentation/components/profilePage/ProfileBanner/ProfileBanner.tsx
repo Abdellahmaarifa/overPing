@@ -99,7 +99,7 @@ const ProfileBanner = ({
         <BannerBadgeImage>
           <img src={Badge} />
         </BannerBadgeImage>
-        <BannerBadgeGrade>#{profile?.rank}</BannerBadgeGrade>
+        <BannerBadgeGrade>#{profile?.displayRank}</BannerBadgeGrade>
       </BannerBadge>
       <BannerMenuConatiner>
         <BannerMenuMask id="mask"></BannerMenuMask>
