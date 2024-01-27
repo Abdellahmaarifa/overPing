@@ -56,7 +56,7 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
           fetchPolicy: "no-cache",
         })
         .then((data) => {
-          console.warn("FROM DM", data);
+          // console.warn("FROM DM", data);
           if (data.data) {
             setData(data.data);
             setLoading(false);

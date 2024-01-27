@@ -9,33 +9,12 @@ services:
     networks:
       - webapp
     ports:
-      - 80:80
+      - 8080:8080
     restart: always
     container_name: client
     profiles:
       - production
-  # # CLIENT SERVICE FOR DEVELOPMENT #
-  # client-dev:
-  #   build:
-  #     context: ./client
-  #     dockerfile: Dockerfile
-  #     target: development
-  #   # env_file:
-  #     # - ./client/.env
-  #   volumes:
-  #     - ./client/node_modules:/app/node_modules
-  #     - ./client/src:/app/src
-  #     - ./client/public:/app/public
-  #   networks:
-  #     - webapp
-  #   ports:
-  #     - 5173:5173
-  #   command: npm run dev
-  #   stdin_open: true
-  #   restart: always
-  #   container_name: client
-  #   profiles:
-  #     - development
+      - development
 
   # DATABASE SERVICE FOR PRODUCTION & DEVELOPMENT #
   postgres_auth_db:
@@ -49,6 +28,8 @@ services:
       - "${POSTGRES_DB_PROT}:5432"
     volumes:
       - ./database/data/auth:/var/lib/postgresql/data/
+    env_file:
+      - .env
     restart: always
     networks:
       - webapp
@@ -73,6 +54,8 @@ services:
       - webapp
     volumes:
       - ./database/data/profile:/var/lib/postgresql/data/
+    env_file:
+      - .env
     restart: always
     profiles:
       - production
@@ -83,7 +66,7 @@ services:
     image: postgres
     container_name: postgres_chat_db
     env_file:
-      - ./api/.env
+      - .env
     environment:
       - POSTGRES_DB=${CHAT_DB_NAME}
       - POSTGRES_USER=${CHAT_DB_USER}
@@ -120,7 +103,7 @@ services:
       target: development
     command: yarn start:dev gateway
     env_file:
-      - ./api/.env
+      - .env
     networks:
       - webapp
     ports:
@@ -155,7 +138,7 @@ services:
       target: development
     command: yarn start:dev auth
     env_file:
-      - ./api/.env
+      - .env
     networks:
       - webapp
     ports:
@@ -165,6 +148,7 @@ services:
     volumes:
       - ./api/apps/auth:/usr/src/app/apps/auth
       - ./api/libs:/usr/src/app/libs
+      - ./api/apps/auth/prisma/migrations:/usr/src/app/apps/auth/prisma/migrations
     depends_on:
       postgres_auth_db:
         condition: service_started
@@ -184,7 +168,7 @@ services:
       target: development
     command: yarn start:dev profile
     env_file:
-      - ./api/.env
+      - .env
     networks:
       - webapp
     ports:
@@ -193,6 +177,8 @@ services:
     volumes:
       - ./api/apps/profile:/usr/src/app/apps/profile
       - ./api/libs:/usr/src/app/libs
+      - ./api/apps/profile/prisma/migrations:/usr/src/app/apps/profile/prisma/migrations
+
     depends_on:
       postgress_profile_db:
         condition: service_started
@@ -213,7 +199,7 @@ services:
     command: yarn start:dev matchmaking
     container_name: matchmaking
     env_file:
-      - ./api/.env
+      - .env
     networks:
       - webapp
     volumes:
@@ -237,7 +223,7 @@ services:
     command: yarn start:dev media
     container_name: media
     env_file:
-      - ./api/.env
+      - .env
     ports:
       - ${PRISMA_STUDIO_MEDIA_PORT}:5555
     networks:
@@ -262,7 +248,7 @@ services:
       target: development
     command: yarn start:dev chat
     env_file:
-      - ./api/.env
+      - .env
     networks:
       - webapp
     ports:
@@ -272,6 +258,7 @@ services:
     volumes:
       - ./api/apps/chat:/usr/src/app/apps/chat
       - ./api/libs:/usr/src/app/libs
+      - ./api/apps/chat/prisma/migrations:/usr/src/app/apps/chat/prisma/migrations
     depends_on:
       postgres_chat_db:
         condition: service_started
@@ -293,7 +280,7 @@ services:
       - MESSAGE_BUS=amqp://rabbitmq
     restart: always
     env_file:
-      - ./api/.env
+      - .env
     networks:
       - webapp
     ports:
@@ -319,6 +306,8 @@ services:
       - POSTGRES_HOST=${POSTGRES_H_HOST}
     volumes:
       - ./database/data/game:/var/lib/postgresql/data/
+    env_file:
+      - .env
     networks:
       - webapp
     ports:
@@ -333,13 +322,15 @@ services:
       target: development
     command: yarn start:dev game
     env_file:
-      - ./api/.env
+      - .env
     ports:
       - "4055:4055"
-      - ${PRISMA_STUDIO_HISTORY_PORT}:5555 
+      - ${PRISMA_STUDIO_HISTORY_PORT}:5555
     volumes:
       - ./api/apps/game:/usr/src/app/apps/game
       - ./api/libs:/usr/src/app/libs
+      - ./api/apps/game/prisma/migrations:/usr/src/app/apps/game/prisma/migrations
+
     depends_on:
       - game_history_db
     networks:
@@ -353,7 +344,7 @@ services:
     image: dpage/pgadmin4
     container_name: pgAdminConsole
     env_file:
-      - ./api/.env
+      - .env
     ports:
       - "5050:80"
     networks:
