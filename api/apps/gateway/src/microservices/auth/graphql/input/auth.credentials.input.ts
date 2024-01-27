@@ -18,6 +18,6 @@ export class AuthCredentialsInput {
   @Field()
   @IsString()
   @MinLength(8)
-  @MaxLength(30)
+  @MaxLength(20)
   password: string;
 }

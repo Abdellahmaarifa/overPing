@@ -18,10 +18,10 @@ import {
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 import { useApolloClient } from "@apollo/client";
-import { GetFriendshipStatusDocument } from "gql";
+import { GetFriendshipStatusDocument } from "gql/index";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
-import { GetFriendshipMatchesDocument } from "gql";
+import { GetFriendshipMatchesDocument } from "gql/index";
 const test = tw.a``;
 interface PlayerType {
   id: number;

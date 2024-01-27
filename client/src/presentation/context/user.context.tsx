@@ -97,6 +97,7 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
 
       // set the profile
       if (!profile && userRes?.data?.getUser?.id) {
+        console.log("SERVER: ", SERVER_END_POINT);
         const profileData = await fetch(SERVER_END_POINT, {
           method: "POST",
           headers: {
@@ -112,6 +113,7 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
           }),
           credentials: "include",
         });
+        console.log("RES SERVER: ", SERVER_END_POINT);
         const profileRes = await profileData.json();
         // console.log(
         //   "resualt of the query: ",

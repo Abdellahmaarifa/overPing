@@ -13,7 +13,7 @@ export class UserCreationInput {
   @Field()
   @IsString()
   @MinLength(8)
-  @MaxLength(30)
+  @MaxLength(20)
   username: string;
 
   @Field()
