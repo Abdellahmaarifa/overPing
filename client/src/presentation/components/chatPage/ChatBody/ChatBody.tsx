@@ -14,6 +14,8 @@ import ChatBanner from "../ChatBanner/ChatBanner";
 import { CHANNEL_CMD, DIRECTMESSAGE, SERVER_CHAT} from "constant/constants";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
+import { format } from 'date-fns';
+
 // import { connect } from "formik";
 import { io } from "socket.io-client";
 
@@ -257,7 +259,7 @@ const ChatBody = ({ type }: { type: string }) => {
                     name={String(u?.username)}
                     image={String(u?.profileImgUrl)}
                     message={e.text}
-                    date={e.created_at}
+                    date={format(e.created_at, "dd-MM-yyy/HH:mm")}
                     key={Number(currentDm?.id)}
                     id={Number(u?.id)}
                   />

@@ -17,7 +17,10 @@ export class GWMediaService {
   ) {}
 
   //======================update image======================
-  async updateAvatarImg(userId, file: FileUpload): Promise<string> {
+  async 
+  
+  
+  updateAvatarImg(userId, file: FileUpload): Promise<string> {
     const { filename, mimetype, encoding } = file;
 
     const resolvedBuffer = await this.convertStreamToBuffer(file);

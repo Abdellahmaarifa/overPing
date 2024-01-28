@@ -212,6 +212,7 @@ export class UserService {
   }
 
   async remove(id: number, password: string): Promise<boolean> {
+    console.log("\n\ntrying to delete user from remove function\n")
     try {
       const userToDelete = await this.prisma.user.findUnique({
         where: {
@@ -252,6 +253,7 @@ export class UserService {
   }
 
   async deleteUser(userId: number): Promise<boolean> {
+    console.log("\n\ntrying to delete user from deleteUser function\n\n");
     try {
       const userToDelete = await this.prisma.user.findUnique({
         where: {
