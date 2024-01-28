@@ -9,18 +9,55 @@ import {
   ProfileSeeMore,
 } from "./ProfileMatchResault.style";
 import DownIcon from "assets/common/down-arrow.svg?react";
-const ProfileMatchResault = () => {
-  const [resault, setResault] = useState<MatchResaultType[]>([]);
+import toast from "react-hot-toast";
+import { useApolloClient } from "@apollo/client";
+import { useParams } from "react-router-dom";
+import { GetUserMatchHistoryDocument } from "gql/index";
+import { MatchType } from "components/homePage/MatchHistories/MatchHistories";
+import { useUserContext } from "context/user.context";
 
+const ProfileMatchResault = () => {
+  const [resault, setResault] = useState<MatchType[] | []>([]);
+  const client = useApolloClient();
+  const { id } = useParams();
+  const { user } = useUserContext();
+  const getMatchesResault = async () => {
+    try {
+      const res = await client.query({
+        query: GetUserMatchHistoryDocument,
+        variables: {
+          data: {
+            userId: Number(id),
+            page: 1,
+            limit: 5,
+          },
+        },
+        fetchPolicy: "no-cache",
+      });
+      console.log("DATA >>>> : ", res);
+      if (res.data.getUserMatchHistoryDocument) {
+        setResault(res.data.getUserMatchHistoryDocument);
+      }
+    } catch (err: any) {
+      toast.error(
+        err.message ? err.message : "can't get the user match histories"
+      );
+    }
+  };
   useEffect(() => {
-    setResault(getMatchesResault());
+    getMatchesResault();
   }, []);
 
   return (
     <ProfileMatchResaultContainer>
-      <ProfileMatchResaultHeading>Match Histories</ProfileMatchResaultHeading>
-      {resault.map((resault) => {
-        const win = resault.userScore >= resault.opponentScore;
+      {resault.length > 0 && (
+        <ProfileMatchResaultHeading>Match Histories</ProfileMatchResaultHeading>
+      )}
+      {resault.map((resault: MatchType) => {
+        const win =
+          Number(user?.id) == resault.player1.id
+            ? resault.player1.status
+            : resault.player2.status;
         return (
           <ProfileResalut
             style={{
@@ -29,51 +66,22 @@ const ProfileMatchResault = () => {
                 : "linear-gradient(90deg, rgba(31, 112, 183, 0.01) 0%, rgba(219, 107, 107, 0.08) 48.21%, rgba(31, 112, 183, 0.01) 100%)",
             }}
           >
-            <ProfileMatchResalutImage
-              src={win ? resault.userImage : resault.opponentImage}
-            />
+            <ProfileMatchResalutImage src={resault.player1.profileImgUrl} />
             <MatchResault>
-              <span>
-                {win
-                  ? resault.userScore.toString().padStart(2, "0")
-                  : resault.opponentScore.toString().padStart(2, "0")}
-              </span>
+              <span>{resault.player1.score.toString().padStart(2, "0")}</span>
               <span>:</span>
-              <span>
-                {!win
-                  ? resault.userScore.toString().padStart(2, "0")
-                  : resault.opponentScore.toString().padStart(2, "0")}
-              </span>
+              <span>{resault.player2.score.toString().padStart(2, "0")}</span>
             </MatchResault>
-            <ProfileMatchResalutImage
-              src={win ? resault.opponentImage : resault.userImage}
-            />
+            <ProfileMatchResalutImage src={resault.player2.profileImgUrl} />
           </ProfileResalut>
         );
       })}
-      <ProfileSeeMore>
+      {/* <ProfileSeeMore>
         <DownIcon />
         <span>load more</span>
-      </ProfileSeeMore>
+      </ProfileSeeMore> */}
     </ProfileMatchResaultContainer>
   );
 };
 
-interface MatchResaultType {
-  userImage: string;
-  opponentImage: string;
-  userScore: number;
-  opponentScore: number;
-}
-const createRandomMatchResault = (): MatchResaultType => {
-  return {
-    userImage: faker.image.avatar(),
-    opponentImage: faker.image.avatar(),
-    userScore: faker.number.int() % 100,
-    opponentScore: faker.number.int() % 100,
-  };
-};
-
-const getMatchesResault = () =>
-  faker.helpers.multiple(createRandomMatchResault, { count: 5 });
 export default ProfileMatchResault;

@@ -29,7 +29,6 @@ export class DirectMessageService {
 
   async findById(id: number, user_id: number) : Promise<IDirectMessage> {
     await this.helper.findUser(user_id);
-
     const directMessage = await this.prisma.directMessage.findUnique({
       where: {
         id,
@@ -55,11 +54,10 @@ export class DirectMessageService {
     const user1 = await this.helper.findUser(user_id);
     let user2: IUser;
     if (user1.id === directMessage.user1_id) {
-      user2 = await this.helper.findUser(directMessage.user2_id);
+      user2 = await this.helper.findUser(directMessage.user2_id, false);
     } else {
-      user2 = await this.helper.findUser(directMessage.user1_id);
+      user2 = await this.helper.findUser(directMessage.user1_id, false);
     }
-
     return {
       id: directMessage.id,
       user1,
@@ -91,9 +89,9 @@ export class DirectMessageService {
     const user1 = await this.helper.findUser(id1);
     let user2: IUser;
     if (user1.id === directMessage.user1_id) {
-      user2 = await this.helper.findUser(directMessage.user2_id);
+      user2 = await this.helper.findUser(directMessage.user2_id, false);
     } else {
-      user2 = await this.helper.findUser(directMessage.user1_id);
+      user2 = await this.helper.findUser(directMessage.user1_id, false);
     }
 
     return {
@@ -105,7 +103,8 @@ export class DirectMessageService {
     };
   }
 
-  async getUserDirectMessages(user_id: number) : Promise<IDirectMessage[]> {
+  async getUserDirectMessages(user_id: number) : Promise<IDirectMessage[] | {}> {
+
     await this.helper.findUser(user_id);
 
     const directMessages = await this.prisma.directMessage.findMany({
@@ -126,7 +125,6 @@ export class DirectMessageService {
     if (!directMessages || directMessages.length === 0) {
       return [];
     }
-
     const user1: IUser = await this.helper.findUser(user_id);
     const user2: IUser[] = await this.clientService.sendMessageWithPayload(
       this.client, { role: 'user', cmd: 'getUsersInfo' }, directMessages.map((dm) => {
@@ -136,16 +134,22 @@ export class DirectMessageService {
           return dm.user1_id;
         }
       })
-    );
+      );
+
     let i = 0;
-    return Promise.all(directMessages.map(async (dm) => {
-      return {
-        id: dm.id,
-        user1,
-        user2: user2[i++],
-        // messages: dm.messages,
-        created_at: dm.created_at,
-      };
+    return await Promise.all(directMessages.map(async (dm) => {
+      if (user2[i]) {
+        return {
+          id: dm.id,
+          user1,
+          user2: user2[i++],
+          // messages: dm.messages,
+          created_at: dm.created_at,
+        };
+      } else {
+        i++;
+        return {};
+      }
     }));
   }
 

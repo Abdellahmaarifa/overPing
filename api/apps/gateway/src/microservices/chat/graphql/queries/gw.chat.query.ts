@@ -20,8 +20,11 @@ export class ChatQueriesResolver {
   async getUserDirectMessages(@Context() ctx,
   @Args('id') id: number): Promise<GQLDirectMessageModel[]> 
   {
+    console.log('data sending....');
     await this.userCheck.validationId(id, ctx.req.user.id);
-    return await this.directMessageService.getUserDirectMessages(id);
+    const dms = await this.directMessageService.getUserDirectMessages(id);
+    console.log('dms::::::::', dms);
+    return dms;
   }
 
   @Query(() => [GQLChannelModel], { nullable: true })

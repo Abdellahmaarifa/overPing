@@ -1,6 +1,6 @@
 import { FriendshipStatus } from '@app/common';
 import { IDirectMessage } from '@app/common/chat';
-import { Inject, Logger, forwardRef } from '@nestjs/common';
+import { Inject, Logger, UseFilters, UsePipes, ValidationPipe, forwardRef } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -16,9 +16,11 @@ import { GroupType } from '../interface/group.interface';
 import { DirectMessageService } from '../services/directMessage.service';
 import { CheckerService } from '../utils/checker.service';
 import { HelperService } from '../utils/helper.service';
+import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
 let connectedUsers: Map<number, any> = new Map();
 
+@UseFilters(new ChatExceptionFilter())
 @WebSocketGateway({
   cors: {
     origin: `${process.env.CHAT_FRONT_URL}`,
@@ -62,6 +64,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     }
   }
 
+  @UsePipes(new ValidationPipe())
   @SubscribeMessage(DIRECTMESSAGE.sendMessageToUser)
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
     const userId = await this.helper.getUserId(client);
@@ -109,12 +112,13 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   @SubscribeMessage(DIRECTMESSAGE.getDMMessages)
   async getMessages(client: Socket, data: DMMessagesdto) {
     const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
+    if (!userId || userId !== data.userId ) {
       return;
     }
     await this.helper.findUser(data.userId);
-
-    return await this.prisma.directMessage.findUnique({
+    console.log('data', data)
+    
+    const messages = await this.prisma.directMessage.findUnique({
       where: {
         id: data.groupChatId,
         OR: [
@@ -132,9 +136,11 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
         },
       }
     });
+    console.log('messages:', messages)
+    return messages;
   }
 
-  async sendUpdatedListOfDMs(user1: number, user2: number, updatedList1: IDirectMessage[], updatedList2: IDirectMessage[]) {
+  async sendUpdatedListOfDMs(user1: number, user2: number, updatedList1: IDirectMessage[] | {}, updatedList2: IDirectMessage[] | {}) {
     const client1 = connectedUsers.get(user1);
     const client2 = connectedUsers.get(user2);
 

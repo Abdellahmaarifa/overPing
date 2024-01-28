@@ -15,13 +15,9 @@ model Game {
   id Int @id @default(autoincrement())
 
   playerOneId       Int
-  playerOneName     String
-  playerOneImageURL String
   playerOneScore    Int
   playerOneStatus   Int
   playerTwoId       Int
-  playerTwoName     String
-  playerTwoImageURL String
   playerTwoScore    Int
   playerTwoStatus   Int
   points            Int

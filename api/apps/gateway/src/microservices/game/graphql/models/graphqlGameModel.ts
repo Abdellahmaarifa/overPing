@@ -1,40 +1,40 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
+export class GQLUserInfo {
+  @Field({nullable: true})
+  id: number;
+
+  @Field({nullable: true})
+  username?: string;
+
+  @Field({nullable: true})
+  profileImgUrl?: string;
+
+  @Field({nullable: true})
+  score: number;
+
+  @Field()
+  status: boolean;
+}
+
+@ObjectType()
 export class GQLGameHistory {
-  @Field()
-  playerOneId: number;
+  @Field({nullable: true})
+  id: number
+
+  @Field({nullable: true})
+  player1?: GQLUserInfo;
   
   @Field({nullable: true})
-  playerOneName: string;
+  player2?: GQLUserInfo;
   
   @Field({nullable: true})
-  playerOneImageURL: string;
-  
-  @Field()
-  playerOneScore: number;
-  
-  @Field()
-  playerOneStatus: number;
-  
-  @Field()
-  playerTwoId: number;
-  
-  @Field({nullable: true})
-  playerTwoName: string;
-  
-  @Field({nullable: true})
-  playerTwoImageURL: string;
-  
-  @Field()
-  playerTwoScore: number;
-  
-  @Field()
-  playerTwoStatus: number;
-  
-  @Field()
   points: number;
   
-  @Field()
+  @Field({nullable: true})
   level: number;
+
+  @Field({nullable: true})
+  createdAt: string;
 }

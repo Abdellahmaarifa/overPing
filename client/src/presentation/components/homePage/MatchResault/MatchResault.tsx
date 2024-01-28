@@ -28,35 +28,35 @@ const MatchResault = ({
   matchDate,
   points,
   level,
+  isWin,
 }: MatchResaultType) => {
-  const isWinner = userScore >= opponentScore;
   return (
-    <MatchTableRow $success={isWinner} key={id}>
+    <MatchTableRow $success={isWin} key={id}>
       <MatchTableCell>
         <ResaultContainer>
           <UserRofile>
-            <img src={isWinner ? userImage : opponentIamge} alt="" />
+            <img src={userImage} alt="" />
           </UserRofile>
           <Resault>
-            <span>{withPad(isWinner ? userScore : opponentScore)}</span>
+            <span>{withPad(userScore)}</span>
             <span>:</span>
-            <span>{withPad(isWinner ? opponentScore : userScore)}</span>
+            <span>{withPad(opponentScore)}</span>
           </Resault>
           <UserRofile>
-            <img src={isWinner ? opponentIamge : userImage} alt="" />
+            <img src={opponentIamge} alt="" />
           </UserRofile>
         </ResaultContainer>
         <ScoreConatiner>
           <Score>
             Level : <ScoreLevel>{withPad(level)}</ScoreLevel>{" "}
             <ScoreSeperator></ScoreSeperator>, points :{" "}
-            <ScorePoints $success={isWinner}>{withPad(points)}</ScorePoints>
+            <ScorePoints $success={isWin}>{withPad(points)}</ScorePoints>
           </Score>
           <ScoreDate>{matchDate.toDateString()}</ScoreDate>
         </ScoreConatiner>
       </MatchTableCell>
       <MatchTableDateCell>{matchDate.toDateString()}</MatchTableDateCell>
-      <MatchTablePointsCell $success={isWinner}>
+      <MatchTablePointsCell $success={isWin}>
         {withPad(points)}
       </MatchTablePointsCell>
       <MatchTableLevelCell>{withPad(level)}</MatchTableLevelCell>

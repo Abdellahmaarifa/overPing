@@ -1,9 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from '@app/rabbit-mq';
-import { IGameData } from 'apps/game/src/Interfaces/game.interface';
+import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { GameHistoryInput } from '../graphql/input/game.input';
+import { GQLGameHistory } from '../graphql/models/graphqlGameModel';
 
 @Injectable()
 export class GwGameService {
@@ -13,7 +13,7 @@ export class GwGameService {
     private readonly clientService: RabbitMqService,
   ) {}
 
-  async getUserMatchHistory(payload: GameHistoryInput) : Promise<IGameData[]> {
+  async getUserMatchHistory(payload: GameHistoryInput) : Promise<GQLGameHistory[]> {
     return await this.clientService.sendMessageWithPayload(
       this.client,
       {
@@ -24,15 +24,15 @@ export class GwGameService {
     );
   }
 
-  async getFriendshipMatches(payload: GameHistoryInput) : Promise<IGameData[]> {
+  async getFriendshipMatches(payload: GameHistoryInput) : Promise<GQLGameHistory[]> {
     return await this.clientService.sendMessageWithPayload(
       this.client,
       {
           role: 'game',
-          cmd: 'get-user-match-history',
+          cmd: 'get-friendship-matches',
       },
       payload
-    );
+      );
   }
-
+  
 }

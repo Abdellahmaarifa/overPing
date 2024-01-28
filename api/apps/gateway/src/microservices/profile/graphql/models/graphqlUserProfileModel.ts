@@ -22,6 +22,9 @@ export class GQLUserProfileModel {
     rank: number
 
     @Field()
+    displayRank: number
+
+    @Field()
     about: string
 
     @Field()

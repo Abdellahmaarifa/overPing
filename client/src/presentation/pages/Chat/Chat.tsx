@@ -1,11 +1,14 @@
 import { useApolloClient } from "@apollo/client";
 import ChannelModel from "components/chatPage/ChannelModel/ChannelModel";
 import ChatRightSide from "components/chatPage/CharRightSide/ChatRightSide";
-import ChatBody from "components/chatPage/ChatBody/ChatBody";
+import ChatBody, {
+  socket,
+  socket_dm,
+} from "components/chatPage/ChatBody/ChatBody";
 import ChatLeftSide from "components/chatPage/ChatLeftSide/ChatLeftSide";
 import ChatSearch from "components/chatPage/ChatSearch/ChatSearch";
 import EditChannelModel from "components/chatPage/EditChannelModel /EditChannelModel";
-import { CHANNEL_CMD, socket } from "constant/constants";
+import { CHANNEL_CMD, DIRECTMESSAGE } from "constant/constants";
 import { useChatContext } from "context/chat.context";
 import { useUserContext } from "context/user.context";
 import { useEffect } from "react";
@@ -14,6 +17,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ChatConatiner } from "./Chat.style";
 import { ChatViewModel } from "./ChatViewModel";
 import { ChannelSample } from "domain/model/chat.type";
+import { da } from "@faker-js/faker";
+import { tuple } from "yup";
 
 const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   // call of hooks
@@ -39,10 +44,13 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
     showEditChannelModel: [showEditChannelModel, setShowEditChannelModel],
     channels: [channels, setChannels],
     currentChannel: [currentChannel, setCurrentChannel],
+    currentDm: [currentDm, setCurrentDm],
+    dms: [dms, setDms],
   } = ChatCtx;
 
   useEffect(() => {
     viewModel.initChat();
+
     socket.on(CHANNEL_CMD.recUpdatedChannelsList, (data) => {
       if (data) setChannels(data);
       //console.log("looks like the list is updated: ", data);
@@ -74,9 +82,18 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
       }
     });
 
+    //////////////////////////////////////////////////////////////////////
+
+    socket_dm.on(DIRECTMESSAGE.recUpdatedDMsList, (data) => {
+      if (data) setDms(data);
+      console.log("looks like the list is updated: ", data);
+    });
+
     return () => {
-      socket.off(CHANNEL_CMD.recMessageFromChannel);
       socket.off(CHANNEL_CMD.recUpdatedChannelsList);
+      socket.off(CHANNEL_CMD.recUpdatedListOfMembers);
+      socket.off(CHANNEL_CMD.recUpdatedChannelInfo);
+      socket_dm.off(DIRECTMESSAGE.recUpdatedDMsList);
     };
   }, [id, location.pathname]);
 
@@ -98,11 +115,16 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   }, [currentChannel]);
 
   console.log("the current channel: ", currentChannel);
+  console.log("the current direct: ", currentDm);
+  console.log("the current channel: ", channels);
+  console.log("the current channel: ", dms);
+
   return (
     <ChatConatiner>
       <ChatLeftSide />
       <ChatBody type={type} />
-      {(type == "channel" || type == "dm") && <ChatRightSide type={type} />}
+      {((currentChannel && type == "channel") ||
+        (currentDm && type == "dm")) && <ChatRightSide type={type} />}
       {showSearchModel && <ChatSearch />}
       {showChannelModel && <ChannelModel />}
       {showEditChannelModel && <EditChannelModel />}

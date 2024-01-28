@@ -10,12 +10,12 @@ export type DMUserType = {
   profileImgUrl: string;
   id: string;
 };
-export interface DMType {
-  id: string;
-  user1: DMUserType;
-  user2: DMUserType;
-  image: string;
-}
+// export interface DMType {
+//   id: string;
+//   user1: DMUserType;
+//   user2: DMUserType;
+//   image: string;
+// }
 
 export interface ChannelSampleMember {
   id: string;
@@ -33,4 +33,11 @@ export interface ChannelSample {
   visibility: "public" | "protected" | "private";
   admins: ChannelSampleMember[] | [];
   members: ChannelSampleMember[] | [];
+}
+
+export interface DMType {
+  id: string;
+  user1: DMUserType;
+  user2: DMUserType;
+  latestMessage_at: string;
 }

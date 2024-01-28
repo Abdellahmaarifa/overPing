@@ -59,7 +59,7 @@ const STATUS = [
 const ProfileBioInfo = ({ profile }: { profile: ProfileType | null }) => {
   return (
     <ProfileInfoConatiner>
-      <ProfileInfoTab>
+      {/* <ProfileInfoTab>
         <ProfileInfoTabHeader
           style={{
             background: "#4C4C57",
@@ -76,7 +76,7 @@ const ProfileBioInfo = ({ profile }: { profile: ProfileType | null }) => {
         <ProfileInfoTabHeader>
           <ProfileInfoTabHeading>About</ProfileInfoTabHeading>
         </ProfileInfoTabHeader>
-      </ProfileInfoTab>
+      </ProfileInfoTab> */}
       <ProfileInfoBody>
         <ProfileStatus>
           <Badge rank={profile?.status.matchesWon} status="Game Won">

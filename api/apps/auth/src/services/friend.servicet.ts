@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { IUser } from '@app/common/auth/interface/auth.user.interface';
-import { PrismaService } from 'apps/auth/prisma/prisma.service';
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { User, Prisma } from '@prisma/client';
-import { PrismaError } from '@app/common/exception-handling';
 import { FriendshipStatus } from '@app/common/friend/dto/friendshipStatus';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'apps/auth/prisma/prisma.service';
 
 
 

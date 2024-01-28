@@ -14,14 +14,20 @@ const Validate = {
       .min(8, "Must be at least 8 characters")
       .max(20, "Must be less  than 20 characters")
       .required("Email is required")
-      .matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
+      .matches(
+        /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+        "Passowrd Too weak"
+      ),
   passwordConfirmation: (matchField: string) =>
     Yup.string()
       .min(8, "Must be at least 8 characters")
       .max(20, "Must be less  than 20 characters")
       .oneOf([Yup.ref(matchField)], "Passwords must match")
       .required("Password Confirmation is required")
-      .matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
+      .matches(
+        /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+        "Passowrd Too weak"
+      ),
   nickname: () =>
     Yup.string()
       .min(6, "Must be at least 6 characters")
