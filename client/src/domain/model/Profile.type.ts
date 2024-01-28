@@ -7,6 +7,13 @@ export type Status = {
   xp: number;
 };
 
+export type WalletType = {
+  id: string;
+  balance: number;
+  // user_id: number;
+  betAmount: number;
+};
+
 export type ProfileType = {
   id: string;
   about: string;
@@ -17,13 +24,7 @@ export type ProfileType = {
   avatar: string;
   level: number;
   status: Status;
-};
-
-export type WalletType = {
-  id: string;
-  balance: number;
-  user_id: number;
-  betAmount: number;
+  wallet: WalletType;
 };
 
 export type GameStatusType = {
