@@ -67,10 +67,12 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
       // console.log("the usrl of refersh: " ,import.meta.env.OVER_PING_REFRECH_TOKEN)
       // console.log("user refresh ", SERVER_REFRESH_END_POINT);
       //if (user) return;
+      console.log(SERVER_REFRESH_END_POINT);
       const data = await fetch(SERVER_REFRESH_END_POINT, {
         credentials: "include",
         method: "GET",
       });
+      console.log("DATA FROM SERVER: ", data);
       const res = await data?.json();
       // console.log("the res: ", res);
       store.setToken(res?.Access_token);

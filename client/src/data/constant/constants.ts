@@ -1,5 +1,3 @@
-import { io } from "socket.io-client";
-
 export const AUTH = {
   token: "access_token",
   user: "user",
@@ -39,17 +37,6 @@ export enum DIRECTMESSAGE {
   recMessageFromUser = "rec_message_from_user",
   recUpdatedDMsList = "rec_updated_directMessages_list",
 }
-
-const URL_CHANNEL = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
-  CHANNEL_CMD.namespace
-}`;
-
-const URL_DM = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
-  DIRECTMESSAGE.namespace
-}`;
-
-export const socket = io(URL_CHANNEL, { withCredentials: true });
-export const socket_dm = io(URL_DM, { withCredentials: true });
 
 // export const socket = io(
 //   `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${CHANNEL_CMD.namespace}`

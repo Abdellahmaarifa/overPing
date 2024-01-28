@@ -25,7 +25,9 @@ const Achievement = () => {
         //console.log("ach: ", data.data.getAllAchievements);
         setAchievements(data.data.getAllAchievements);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
 
     client
       .query({
@@ -37,7 +39,9 @@ const Achievement = () => {
       .then((data) => {
         setuserAchievements(data.data.getUserAchievements);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
     //setAchievements(getAchievement());
   }, []);
 

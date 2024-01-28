@@ -11,7 +11,7 @@ RUN npm install -g vite
 
 RUN npm install 
 
-EXPOSE 5173
+EXPOSE 8080
 
 CMD ["npm","run", "dev"]
 
@@ -34,6 +34,5 @@ COPY nginx.conf /etc/nginx/conf.d/
 COPY --from=build app/dist /usr/share/nginx/html 
 
 # start nginx
-EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

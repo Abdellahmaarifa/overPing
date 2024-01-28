@@ -11,16 +11,22 @@ import {
 } from "./ChatBody.style";
 import ChatBanner from "../ChatBanner/ChatBanner";
 import tw from "twin.macro";
-import {
-  CHANNEL_CMD,
-  DIRECTMESSAGE,
-  socket,
-  socket_dm,
-} from "constant/constants";
+import { CHANNEL_CMD, DIRECTMESSAGE } from "constant/constants";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
 import { connect } from "formik";
+import { io } from "socket.io-client";
 
+const URL_CHANNEL = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
+  CHANNEL_CMD.namespace
+}`;
+
+const URL_DM = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
+  DIRECTMESSAGE.namespace
+}`;
+
+export const socket = io(URL_CHANNEL, { withCredentials: true });
+export const socket_dm = io(URL_DM, { withCredentials: true });
 // const ob = {
 //   id: 12,
 //   sender_id: 3,

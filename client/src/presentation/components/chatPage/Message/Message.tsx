@@ -52,7 +52,9 @@ const Message = ({
             image: data.data.findUserById.profileImgUrl,
           });
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }, []);
   return (

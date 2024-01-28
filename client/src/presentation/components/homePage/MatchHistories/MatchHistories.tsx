@@ -66,7 +66,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
     console.log("from server: ", data);
     if (!data.data.getUserMatchHistory)
       throw { message: "can't get history f the user" };
-    console.error("AFTER QUERY : ", data);
+    // console.error("AFTER QUERY : ", data);
     return data.data.getUserMatchHistory;
   };
 
