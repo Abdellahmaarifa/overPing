@@ -20,6 +20,7 @@ import {
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
 import { connect } from "formik";
+import { da } from "@faker-js/faker";
 
 // const ob = {
 //   id: 12,
@@ -118,6 +119,9 @@ const ChatBody = ({ type }: { type: string }) => {
   };
   ////////////////////////////////////////////////////////
   useEffect(() => {
+    socket_dm.on("error", (data)=>{
+      console.log("#####################ERROR :",data);
+  })
     if (type == "channel") {
       socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
         console.log("THIS IS FROM BACKEND!!! ", data);
@@ -126,6 +130,7 @@ const ChatBody = ({ type }: { type: string }) => {
           setMessages((old) => [data, ...old]);
       });
     } else if (type == "dm") {
+      
       socket_dm.on(DIRECTMESSAGE.recMessageFromUser, (data: MessageDMType) => {
         console.log("THIS IS FROM BACKEND!!! ", data);
         if (
@@ -183,11 +188,12 @@ const ChatBody = ({ type }: { type: string }) => {
         DIRECTMESSAGE.getDMMessages,
         {
           userId: Number(user?.id),
-          groupChatId: Number(id),
+          groupChatId: Number(currentDm.id),
           page: 0,
         },
-        (data) => {
+        (data, error) => {
           console.log("YOU SENT data: ", data);
+          console.log("YOU SENT ERROR: ", error);
           if (!data?.error) setMessagesDM(data.messages);
         }
       );

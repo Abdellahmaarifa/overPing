@@ -117,7 +117,7 @@ export type GqlChannelSearchModel = {
 export type GqlDirectMessageModel = {
   __typename?: 'GQLDirectMessageModel';
   created_at?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
+  id?: Maybe<Scalars['ID']['output']>;
   latestMessage_at?: Maybe<Scalars['String']['output']>;
   messages?: Maybe<Array<GqlMessageModel>>;
   user1?: Maybe<GqlUser>;
@@ -780,7 +780,7 @@ export type GetUserDirectMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetUserDirectMessagesQuery = { __typename?: 'Query', getUserDirectMessages?: Array<{ __typename?: 'GQLDirectMessageModel', id: string, user2?: { __typename?: 'GQLUser', username: string, profileImgUrl: string, id: string } | null, user1?: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } | null }> | null };
+export type GetUserDirectMessagesQuery = { __typename?: 'Query', getUserDirectMessages?: Array<{ __typename?: 'GQLDirectMessageModel', id?: string | null, user2?: { __typename?: 'GQLUser', username: string, profileImgUrl: string, id: string } | null, user1?: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } | null }> | null };
 
 export type CreateChannelMutationVariables = Exact<{
   data: CreateChannelInput;
@@ -803,7 +803,7 @@ export type CreateDirectMessageMutationVariables = Exact<{
 }>;
 
 
-export type CreateDirectMessageMutation = { __typename?: 'Mutation', createDirectMessage: { __typename?: 'GQLDirectMessageModel', id: string, user1?: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } | null, user2?: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } | null } };
+export type CreateDirectMessageMutation = { __typename?: 'Mutation', createDirectMessage: { __typename?: 'GQLDirectMessageModel', id?: string | null, user1?: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } | null, user2?: { __typename?: 'GQLUser', id: string, username: string, profileImgUrl: string } | null } };
 
 export type GetChannelVisibilityQueryVariables = Exact<{
   userId: Scalars['Float']['input'];
