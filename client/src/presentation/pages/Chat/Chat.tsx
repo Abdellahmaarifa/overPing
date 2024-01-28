@@ -17,8 +17,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ChatConatiner } from "./Chat.style";
 import { ChatViewModel } from "./ChatViewModel";
 import { ChannelSample } from "domain/model/chat.type";
-import { da } from "@faker-js/faker";
-import { tuple } from "yup";
+
 
 const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   // call of hooks

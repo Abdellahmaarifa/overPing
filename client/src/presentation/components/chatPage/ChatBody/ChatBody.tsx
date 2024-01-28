@@ -10,23 +10,35 @@ import {
   SendMessageInput,
 } from "./ChatBody.style";
 import ChatBanner from "../ChatBanner/ChatBanner";
-import tw from "twin.macro";
-import { CHANNEL_CMD, DIRECTMESSAGE } from "constant/constants";
+// import tw from "twin.macro";
+import { CHANNEL_CMD, DIRECTMESSAGE, SERVER_CHAT} from "constant/constants";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
-import { connect } from "formik";
+// import { connect } from "formik";
 import { io } from "socket.io-client";
 
-const URL_CHANNEL = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
+// const URL_CHANNEL = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
+//   CHANNEL_CMD.namespace
+// }`;
+
+// const URL_DM = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
+//   DIRECTMESSAGE.namespace
+// }`;
+
+
+const URL_CHANNEL = `${SERVER_CHAT}/${
   CHANNEL_CMD.namespace
 }`;
 
-const URL_DM = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
+const URL_DM = `${SERVER_CHAT}/${
   DIRECTMESSAGE.namespace
 }`;
 
+
 export const socket = io(URL_CHANNEL, { withCredentials: true });
 export const socket_dm = io(URL_DM, { withCredentials: true });
+
+
 // const ob = {
 //   id: 12,
 //   sender_id: 3,
@@ -79,6 +91,8 @@ const ChatBody = ({ type }: { type: string }) => {
   > | null>(null);
 
   const sendMessage = () => {
+    if(msg == "")
+      return;
     socket.emit(
       CHANNEL_CMD.sendMessageInchannel,
       {
@@ -106,6 +120,8 @@ const ChatBody = ({ type }: { type: string }) => {
   };
 
   const sendMessage_dm = () => {
+    if(msg == "")
+      return;
     socket_dm.emit(
       DIRECTMESSAGE.sendMessageToUser,
       {
@@ -128,7 +144,6 @@ const ChatBody = ({ type }: { type: string }) => {
       socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
         console.log("THIS IS FROM BACKEND!!! ", data);
         if (data && data.channelId == Number(id))
-          /// need to check data.channeId not returned from backend
           setMessages((old) => [data, ...old]);
       });
     } else if (type == "dm") {
@@ -138,7 +153,6 @@ const ChatBody = ({ type }: { type: string }) => {
           data &&
           (data.sender_id == Number(id) || data.sender_id == Number(user?.id))
         )
-          //  need to check for this client
           setMessagesDM((old) => [data, ...old]);
       });
     }
@@ -182,14 +196,13 @@ const ChatBody = ({ type }: { type: string }) => {
         }
       );
     }
-    // if (currentDm && type == "dm") {
     if (currentDm && type == "dm") {
       console.log("++++++++++++++ data", currentDm);
       socket_dm.emit(
         DIRECTMESSAGE.getDMMessages,
         {
           userId: Number(user?.id),
-          groupChatId: Number(id),
+          groupChatId: Number(currentDm?.id),
           page: 0,
         },
         (data) => {
@@ -211,7 +224,7 @@ const ChatBody = ({ type }: { type: string }) => {
       }}
     >
       <ChatBanner type={type} />
-      {type == "channel" && (
+      {type == "channel" && currentChannel &&(
         <>
           <ChatMessages>
             {messages.length > 0 &&
@@ -230,13 +243,11 @@ const ChatBody = ({ type }: { type: string }) => {
           </ChatMessages>
         </>
       )}
-      {type == "dm" && (
+      {type == "dm" && currentDm && (
         <>
           <ChatMessages>
             {messagesDM.length > 0 &&
               messagesDM.map((e: MessageDMType) => {
-                console.log("-----------44444444444----");
-
                 let u = currentDm?.user2;
                 if (u && e.sender_id != Number(id)) u = currentDm?.user1;
                 if (!u) return "";
@@ -255,13 +266,13 @@ const ChatBody = ({ type }: { type: string }) => {
           </ChatMessages>
         </>
       )}
-      {type != "none" && (
+      {type != "none" && (currentChannel || currentDm) && (
         <SendMessageFeild>
           <form
             tw="w-full"
             onSubmit={(e) => {
               e.preventDefault();
-              console.log("send message!!");
+              console.log("send message !!!");
               type == "dm" ? sendMessage_dm() : sendMessage();
             }}
           >

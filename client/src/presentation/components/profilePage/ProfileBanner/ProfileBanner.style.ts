@@ -38,6 +38,9 @@ font-rubik text-[12.5px] md:text-[18px] font-bold text-white capitalize
 export const ProfileLevel = tw.div`
 font-rubik text-[#BDBCC3] text-[10px] md:text-[14px] capitalize
 `;
+export const ProfileWallet = tw.div`
+font-rubik text-[#BDBCC3] text-[10px] md:text-[14px] capitalize
+`;
 
 export const BannerBadge = tw.div`
     top-[10px]

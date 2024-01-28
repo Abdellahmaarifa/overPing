@@ -29,6 +29,7 @@ import {
   ProfileConatiner,
   ProfileInfo,
   ProfileLevel,
+  ProfileWallet,
   ProfileName,
 } from "./ProfileBanner.style";
 import { playWithUser } from "helpers/index";
@@ -78,7 +79,7 @@ const ProfileBanner = ({
       }
     );
   };
-  // console.log("stsus: ", friendsStatus);
+  // console.log("TTTTTTTTTTT ", profile);
 
   const sendGameInvitaionHandler = async () => {
     toast.promise(playWithUser(Number(profile?.id), sendGameInvitaion), {
@@ -143,10 +144,12 @@ const ProfileBanner = ({
           Image={profile?.avatar}
           outline={true}
           percentage={profile?.level!}
+          // percentage={0}
         />
         <ProfileInfo>
           <ProfileName>{profile?.nickname}</ProfileName>
-          <ProfileLevel>Level : {profile?.level}</ProfileLevel>
+          <ProfileWallet>Wallet : {profile?.wallet.balance}</ProfileWallet>
+          {/* <ProfileLevel>Level : {profile?.level}</ProfileLevel> */}
         </ProfileInfo>
       </ProfileConatiner>
       <Toaster position="top-center" />
