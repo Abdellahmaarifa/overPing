@@ -9,8 +9,8 @@ import RecieveBallData from './RecieveBallData';
 import UserInfo from './UserInfo';
 import { weapon } from './mySketch';
 import WeaponTemplate from './WeaponTemplate';
-import { Sounds } from './mySketch';
-import { Howler } from 'howler';
+//import { Sounds } from './mySketch';
+//import { Howler } from 'howler';
 
 let weaponTemplate : WeaponTemplate = new WeaponTemplate();
 
@@ -69,10 +69,10 @@ function App({ gameCapsule, playerOne, playerTwo , updateMatchState , updateServ
 
     socket.on('disconnect', () => {
       //console.log(`App Disconnected from WebSocket server in tab ${tabId}`);
-      Howler.stop();
-      Sounds.mode1Music.stop();
-      Sounds.mode2Music.stop();
-      Sounds.mode3Music.stop();
+      //Howler.stop();
+      //Sounds.mode1Music.stop();
+      //Sounds.mode2Music.stop();
+      //Sounds.mode3Music.stop();
       updateServerState(true);
     });
 
@@ -149,7 +149,7 @@ function App({ gameCapsule, playerOne, playerTwo , updateMatchState , updateServ
     });
 
     socket.on('connect_error', (error) => {
-      console.error('Error connecting to the WebSocket server:', error.cause, error.message, error.name, error.stack);
+      console.error('Error connecting to the WebSocket server:');
     });
 
     socket.on('connect_timeout', (timeout) => {

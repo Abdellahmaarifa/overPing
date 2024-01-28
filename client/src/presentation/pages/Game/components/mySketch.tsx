@@ -6,7 +6,7 @@ import UserInfo from './UserInfo';
 import Weapon from './Weapon';
 import WeaponTemplate from './WeaponTemplate';
 //sound library
-import { Howler } from 'howler';
+//import { Howler } from 'howler';
 import SoundsClass from './Sound';
 // import Coins from './Coins';
 // import PlayerWeapon from './PlayerWeapon';
@@ -23,7 +23,7 @@ interface MySketchProp
 
 
 let weapon = new Weapon();
-Howler.volume(1.0);
+//Howler.volume(1.0);
 
 
 let img1 : p5Types.Element | p5Types.Image;
@@ -66,7 +66,7 @@ let resizeCanvas = (game : Game) : void =>
       canvasHeight = canvasWidth / 2
     }
     game.p5.resizeCanvas(canvasWidth, canvasHeight);
-    if (Sounds.soundButton)
+    /*if (Sounds.soundButton)
     {
       Sounds.soundButton.size(game.canvasPranetDiv.elt.clientWidth / 14)
       Sounds.soundButton.style("z-index", "6");
@@ -74,7 +74,7 @@ let resizeCanvas = (game : Game) : void =>
       Sounds.soundButton.style("color", "black");
       Sounds.soundButton.style("background-color", "white");
       Sounds.soundButton.position(game.canvasPranetDiv.elt.clientWidth / 2 - (game.canvasPranetDiv.elt.clientWidth / 28 ), 0, 'absolute')
-    }
+    }*/
 
   }
   else
@@ -97,10 +97,10 @@ interface drawProps
 
 function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTemplate , updateMatchState} : drawProps) 
 {
-  let ballX; 
-  let ballY;
-  let ballWH;
-  let ballSpeed;
+  let ballX : number; 
+  let ballY : number;
+  let ballWH : number;
+  let ballSpeed : number;
 
 
   return () => 
@@ -120,11 +120,12 @@ function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTempl
     // end
 
     //assign background image
-    if (img1)
+
+    if (playerOne.modePlaying === 1 && img1)
       game.p5.image(img1, 0, 0, game.p5.width, game.p5.height)
-    else if (img2)
+    else if (playerOne.modePlaying ===2 && img2)
       game.p5.image(img2, 0, 0, game.p5.width, game.p5.height)
-    else if (img3)
+    else if (playerOne.modePlaying ===3 && img3)
       game.p5.image(img3, 0, 0, game.p5.width, game.p5.height)
     else
       game.p5.background(0);
@@ -156,12 +157,12 @@ function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTempl
 
 
     // sound botton click event 
-    if (Sounds && Sounds.soundButton)
-      Sounds.soundButton.mousePressed(() => Sounds.changeSoundOpetion())
+    //if (Sounds && Sounds.soundButton)
+    //  Sounds.soundButton.mousePressed(() => Sounds.changeSoundOpetion())
     //end
     
     //display mode music
-    Sounds.displayModeMusic(playerOne.modePlaying) 
+    //Sounds.displayModeMusic(playerOne.modePlaying) 
     //end
 
     // get current player canvas width and height
@@ -190,7 +191,7 @@ function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTempl
       game.rightRacket.racketFreezed = false;
       // play goal sounds
       // if (gameCapsule.leftPlayerGoals < 5 && gameCapsule.rightPlayerGoals < 5)
-      if (Sounds.muteSound)
+      /*if (Sounds.muteSound)
       {
         if ((gameCapsule.playerNumber === 1 || gameCapsule.playerNumber === 3) && gameCapsule.ball.ballX < 0 + gameCapsule.ball.ballWH)
           Sounds.goalSound.play();
@@ -200,7 +201,7 @@ function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTempl
           Sounds.goalSound.play();
         else if (gameCapsule.playerNumber === 2 && gameCapsule.ball.ballX < 0 + gameCapsule.ball.ballWH)
           Sounds.opponentGoalSound.play() 
-      }
+      }*/
       //end
     } 
     //end
@@ -258,19 +259,19 @@ function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTempl
      
 
     // make racket sound
-    if (Sounds.muteSound)
+    /*if (Sounds.muteSound)
     {
       Sounds.displayRacketReboundSound(gameCapsule, game, ballX , ballY , ballWH);
-    }
+    }*/
     // end
 
 
 
     // top buttom rebound sound
-    if (Sounds.muteSound)
+    /*if (Sounds.muteSound)
     {
       Sounds.displayTopBottomRebound(game , ballY , ballWH)
-    }
+    }*/
     // end
 
 
@@ -373,7 +374,7 @@ function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTempl
     // draw the ball , oppenent racket , the game is <over> and loading
     if (gameCapsule.ball.ballX && gameCapsule.ball.ballY)
     {
-      if (gameCapsule.leftPlayerGoals < 5 && gameCapsule.rightPlayerGoals < 5 && weapon.plyOne.playerHearts > 0 && weapon.plyTwo.playerHearts > 0)
+      if (gameCapsule.leftPlayerGoals < 5 && gameCapsule.rightPlayerGoals < 5 /*&& weapon.plyOne.playerHearts > 0 && weapon.plyTwo.playerHearts > 0*/)
       {
         game.p5.circle(ballX, ballY, ballWH);
         if (playerOne.playWithRobot === false)
@@ -399,17 +400,17 @@ function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTempl
         //   }
         // }
         //end
-        Howler.stop();
+        /*Howler.stop();
         if (playerOne.modePlaying === 1)
           Sounds.mode1Music.stop()
         if (playerOne.modePlaying === 2)
           Sounds.mode2Music.stop()
         if (playerOne.modePlaying === 3)
-          Sounds.mode3Music.stop()
-        game.p5.fill('#bdebf6')
+          Sounds.mode3Music.stop()*/
+        /*game.p5.fill('#bdebf6')
         game.p5.textSize(game.p5.width / 12);
         let txtW = game.p5.textWidth('The game is <over>')
-        game.p5.text("The game is <over>", game.p5.width / 2 - txtW / 2,  game.p5.height / 2); 
+        game.p5.text("The game is <over>", game.p5.width / 2 - txtW / 2,  game.p5.height / 2); */
         game.p5.fill('white')
       }  
     }
@@ -435,20 +436,21 @@ function setup(game : Game)
       if  (game.canvasPranetDiv.elt.clientHeight <= 300)
         canvasHeight = 150;
       game.cnv = game.p5.createCanvas( canvasWidth ,  canvasHeight);
-      game.cnv.parent('layout');
+      if (game.cnv)
+        game.cnv.parent('layout');
       game.canvasResizedHeight = canvasHeight;
       game.canvasResizedWidth = canvasWidth;
-      Sounds.soundButton = game.p5.createButton('mute');
-      if (Sounds.soundButton)
+      /*Sounds.soundButton = game.p5.createButton('mute');
+      if (game.cnv && Sounds.soundButton)
       {
-        Sounds.soundButton.parent("#muteBtn")
-        Sounds.soundButton.size(game.canvasPranetDiv.elt.clientWidth / 14)
+        Sounds.soundButton.parent("#muteBtn");
+        Sounds.soundButton.size(game.canvasPranetDiv.elt.clientWidth / 14);
         Sounds.soundButton.style("z-index", "6");
         Sounds.soundButton.style("color", "black");
         Sounds.soundButton.style("font-size", "1.5vmin");
         Sounds.soundButton.style("background-color", "white");
         Sounds.soundButton.position(game.canvasPranetDiv.elt.clientWidth / 2 - (game.canvasPranetDiv.elt.clientWidth / 28 ), 0, 'absolute');
-      }
+      }*/
 
     }
     else
@@ -475,13 +477,14 @@ function MySketch({gameCapsule ,  p5 , playerOne , playerTwo , weaponTemplate , 
 
     game.p5.preload = () =>
     {
+      //console.log("sketch : ", playerOne.modePlaying)
       if (game && playerOne.modePlaying === 1)
         img1 = game.p5.loadImage('./BackgroundImages/background_image1.jpg')
       if (game && playerOne.modePlaying === 2)
         img2 = game.p5.loadImage("./BackgroundImages/background_image2.jpg")
       if (game && playerOne.modePlaying === 3)
         img3 = game.p5.loadImage("./BackgroundImages/background_image3.jpg")
-      Sounds.loadSounds();
+      //Sounds.loadSounds();
       //animation make it the game slow
       // if (playerOne.modePlaying === 2 && game && coins )
       //   coins.coinImage = game.p5.loadImage("./animationImages/coin.png")

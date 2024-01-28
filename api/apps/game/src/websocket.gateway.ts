@@ -80,8 +80,9 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
         addPlayerToWaitingList(waitingPlayers, waitingTabsId, client);
     }
     //add player to room 
-    if (matchId && matchId.length && matchId[0] !== 'r') 
+    if (matchId && matchId.length && matchId.substring(0, 5) !== 'robot') 
     {
+      console.log("Matchid : ", matchId);
       addToRoom(rooms, client, matchId, tabsId);
       let room : Rooms = getRoomByClientId(rooms, client.id);
     
@@ -167,8 +168,8 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
 handleAchievements(client: Socket, gameAchievement: any) {
   try {
     const { player1, player2 } = gameAchievement;
-    console.log("****p1************\n", player1, "\n***********************");
-    console.log("****p2************\n", player2, "\n***********************");
+    //console.log("****p1************\n", player1, "\n***********************");
+    //console.log("****p2************\n", player2, "\n***********************");
 
     this.clientService.sendMessageWithPayload(
       this.profileClient,
@@ -196,13 +197,13 @@ handleAchievements(client: Socket, gameAchievement: any) {
 handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : string) 
 {
   this.gameService.addResult(obj);
-  console.log("data his : ", obj)
+  //console.log("data his : ", obj)
 }
 
   @SubscribeMessage('customGoalsEvent') // Listen for the 'customEventDataRequest' event
   handleGoalsEvent(client: Socket, obj : infoObj )//matchId : string)//, tabsId : string) 
   {
-      //console.log("The id : ", obj. ID,obj.ID.substring(1, obj.ID.length) )
+      console.log("The id : ", obj. ID )
       let room = getRoomByMatchId(rooms, obj.ID);
      // if (room)
        // console.log("Number of clients : ---> ", room.numberOfClients);
@@ -240,7 +241,7 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
           goal.leftPlayerGoals = room.container.rightPlayerGoal;
           goal.rightPlayerGoals = room.container.leftPlayerGoal;
           goal.leftPlayerRebound = room.container.rightPlayerRebound;
-          goal.leftPlayerRebound = room.container.rightPlayerStrict;
+          goal.leftPlayerStrict = room.container.rightPlayerStrict;
           goal.rightPlayerRebound = room.container.leftPlayerRebound;
           goal.rightPlayerStrict = room.container.leftPlayerStrict;
           goal.playerNumber = 2;

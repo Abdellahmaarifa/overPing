@@ -1,16 +1,11 @@
 import './Util.css'
 import UserInfo from './UserInfo';
 import { useState, useEffect } from 'react';
-import { Howl, Howler } from 'howler';
 import { useAccountQuery} from "gql/index";
 import { useSearchParams } from "react-router-dom";
 import { useUserContext } from "context/user.context";
-import { BlockLike } from 'typescript';
-import { playerTwo } from '../Game';
-import e from 'express';
 import { MatchMode } from './Achieve';
 
-Howler.volume(1.0);
 interface UtilProps 
 {
     playerOne: UserInfo;
@@ -43,16 +38,6 @@ let Util = ({ playerOne , playerTwo, updateUserInfoUtil, updatePlayerOne, update
         userId: Number(user?.id),
       });
     
-    let selectSound : any = new Howl({
-        src: ['/Sounds/click-menu.mp3'],
-        onload: () => {
-          //console.log('Audio loaded successfully');
-        },
-        onloaderror: (error : any) => {
-          //console.error('Error loading audio:', error);
-        },
-      });
-
 
 
     const [Util, setUtil] = useState(0)
@@ -113,11 +98,11 @@ let Util = ({ playerOne , playerTwo, updateUserInfoUtil, updatePlayerOne, update
                 else
                     p1.ply2userId = Number(params.get("user1"));
                 if (data?.findProfileByUserId?.rank  as number < 100)
-                    p1.userLogo = "/public/images/badge-1.png"
+                    p1.userLogo = "/images/badge-1.png"
                 if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-                    p1.userLogo = "/public/images/badge-2.png";
+                    p1.userLogo = "/images/badge-2.png";
                 if (data?.findProfileByUserId?.rank  as number >= 200)
-                    p1.userLogo = "/public/images/badge-3.png";
+                    p1.userLogo = "/images/badge-3.png";
 
                 if (playerOne.userLogo.length === 0)
                 {
@@ -149,11 +134,11 @@ let Util = ({ playerOne , playerTwo, updateUserInfoUtil, updatePlayerOne, update
                 </div>
                 <div className="Utils">
                     <div className="UtilContainers" >
-                        <div className={`util1 ${Util === 1 ? "hoverUtil1" : ""}`} onClick={ () => { selectSound.play(); setUtil(1)}}>
+                        <div className={`util1 ${Util === 1 ? "hoverUtil1" : ""}`} onClick={ () => { setUtil(1)}}>
                             <div className='UtilImg U1'></div>
                             <div className='UtilName' ><p>Mouse</p></div>
                         </div>
-                        <div className={`util2 ${Util === 2 ? "hoverUtil2" : ""}`} onClick={ () =>{ selectSound.play(); setUtil(2)}}>
+                        <div className={`util2 ${Util === 2 ? "hoverUtil2" : ""}`} onClick={ () =>{  setUtil(2)}}>
                             <div className='UtilImg U2'></div>
                             <div className='UtilName'><p>Keyboard</p></div>
                         </div>

@@ -58,35 +58,30 @@ let ReadyFriend = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} :
         let ply2TabId : string = playerTwo.userId.toString();
         let ply1UserId : number = playerOne.ply2userId;
         let ply1MatchType : string = "friends-match";
-        if (data?.findProfileByUserId?.rank  as number < 100)
-            ply2UserLogo = "/public/images/badge-1.png"
-        if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-            ply2UserLogo = "/public/images/badge-2.png";
-        if (data?.findProfileByUserId?.rank  as number >= 200)
-            ply2UserLogo = "/public/images/badge-3.png";
         
-        let ply2MatchId : string = playerTwo.matchId;
+        let ply2MatchId : string = playerOne.matchId;
         let ply2MatchWager : number = playerOne.matchWager;
-        let ply2UserId : number  =  playerTwo.userId;
-        let ply2ModePlaying : number = playerTwo.modePlaying;
+        let ply2UserId : number  =  playerOne.ply2userId;
+        let ply2ModePlaying : number = playerOne.modePlaying;
         if (data?.findProfileByUserId?.rank  as number < 100)
-            ply2UserLogo = "/public/images/badge-1.png"
+            ply2UserLogo = "/images/badge-1.png"
         if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-            ply2UserLogo = "/public/images/badge-2.png";
+            ply2UserLogo = "/images/badge-2.png";
         if (data?.findProfileByUserId?.rank  as number >= 200)
-            ply2UserLogo = "/public/images/badge-3.png";
-    
+            ply2UserLogo = "/images/badge-3.png";
+        
+        console.log("match id and :  " , playerOne.matchId, playerTwo.matchId, playerOne.userId, playerTwo.userId, playerTwo.modePlaying)
         setTimeout( () => {
             if (playerTwo.userLogo.length === 0)
             {
                 updatePlayerTwo(false, ply2TabId, ply2MatchId, ply2MatchWager, ply2ModePlaying, ply2Username, ply2UserAvatar,
-                ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2MatchPlyed, ply2BestWinSteak,
+                ply2UserLogo, ply2MatchWon, ply2BestWinSteak, ply2MatchPlyed, ply2Level, ply2BestWinSteak,
                 ply2TournentPlayed, ply2TournenetWon, ply2UserId, false, ply1UserId, ply1MatchType);
             }
         }, 1000)
         setTimeout( () => {
             updateReadyState(false);
-        }, 5000);
+        }, 4000);
     
         return (
             <div className='ReadyContainer'>

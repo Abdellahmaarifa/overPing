@@ -5,6 +5,7 @@ import Goals from "./Goals";
 import UserInfo from "./UserInfo";
 import { Result } from "./Result";
 import { IGameData } from './game.interface';
+import { MatchMode, XpService } from "./xp";
 const serverUrl: string = 'ws://localhost:4055';
 let socket: Socket | null = null;
 
@@ -17,8 +18,7 @@ interface InfoProps
     updateGameResult : (newPlyOneId : number ,
          newPlyTwoId : number, newPlyOneGoals : number, newPlyTwoGoals : number, newLeftPlayerRebound : number,
          newLeftPlayerStrict : number, newRightPlayerRebound : number, newRightPlayerStrict : number) => void;
-    matchState : boolean | undefined;
-    
+    matchState : boolean | undefined; 
 }
 
 
@@ -27,28 +27,13 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
     const [leftGoal, setLeftGoal] = useState(0);
     const [rightGoal, setRightGoal] = useState(0);
     const [playerNumber, setPlayerNumber] = useState(0);
-    const [ID, setUsrId] = useState("A" + playerOne.matchId);
+    //const [ID, setUsrId] = useState("A" + playerOne.matchId);
 
+
+    //console.log("Data inside it is : ", playerOne, playerTwo);
+    let xp = new XpService();
 
     let TempGameResult : Result = new Result();
-    //console.log("Logo ===> : ", playerOne.userLogo);
-   // console.log("Logo ===> : ", playerTwo.userLogo);
-    
-    // useEffect(() => 
-    // {
-    //     const checkUsrId = () => {
-    //     if (ID === undefined) {
-    //         setTimeout(() => 
-    //         {
-    //             setUsrId("A" + playerOne.matchId);
-
-    //         }, 1000); // Check every second
-    //     }
-    //     };
-
-    //     checkUsrId();
-    // }, [ID]);
-
     const sendDataToServer = (ID : string, tabId : string) =>
     {
         if (socket)
@@ -59,8 +44,9 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
     };
 
     //continuously get goals data
-    const setUpSocket = useCallback((tabId : string) =>
+    const setUpSocket = (tabId : string) =>
     {
+        let ID = "A" + playerOne.matchId;
         if (ID !== undefined) 
         {
             socket = io(serverUrl, 
@@ -79,11 +65,23 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                 console.log(`info Disconnected from WebSocket server`);
             });
 
+            socket.on('connect_error', (error) => {
+                console.error('Error connecting to the WebSocket server:');
+              });
+
             socket.on('playerLeaveTheGame', () =>
             {
                 console.log("Leaving ===>")
                 if (leftGoal !== 5 && rightGoal !== 5 && matchState === undefined)
                 {
+                    let plyLevel;
+                    if (playerOne.matchType === MatchMode.VS_COMPUTER)
+                        plyLevel = xp.calculateXp(playerOne.matchWager * 2, MatchMode.VS_COMPUTER);
+                    if (playerOne.matchType === MatchMode.VS_FRIENDS)
+                        plyLevel = xp.calculateXp(playerOne.matchWager * 2, MatchMode.VS_FRIENDS);
+                    if (playerOne.matchType === MatchMode.ONLINE_RANDOM)
+                        plyLevel = xp.calculateXp(playerOne.matchWager * 2, MatchMode.ONLINE_RANDOM);
+
                     const gameData : IGameData = 
                     {
                         playerOneId       : playerOne.userId,
@@ -97,9 +95,10 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                         playerTwoScore    : 0,
                         playerTwoStatus   : 0,
                         points            : playerOne.matchWager * 2,
-                        level             : 60,
+                        level             : plyLevel,
                       };
-                    playerOne.socket?.emit('customResult', gameData);
+                    if (playerOne.playWithRobot === false)
+                        playerOne.socket?.emit('customResult', gameData);
                     TempGameResult.leftPlayerRebound = 5;
                     TempGameResult.leftPlayerStrict = 0;
                     TempGameResult.rightPlayerRebound = 0;
@@ -139,6 +138,13 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                             p1status = 0;
                             p1status = 1;
                         }
+                        let plyLevel;
+                        if (playerOne.matchType === MatchMode.VS_COMPUTER)
+                            plyLevel = xp.calculateXp(playerOne.matchWager * 2, MatchMode.VS_COMPUTER);
+                        if (playerOne.matchType === MatchMode.VS_FRIENDS)
+                            plyLevel = xp.calculateXp(playerOne.matchWager * 2, MatchMode.VS_FRIENDS);
+                        if (playerOne.matchType === MatchMode.ONLINE_RANDOM)
+                            plyLevel = xp.calculateXp(playerOne.matchWager * 2, MatchMode.ONLINE_RANDOM);
                         const gameData : IGameData = 
                         {
                             playerOneId       : playerOne.userId,
@@ -152,9 +158,10 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                             playerTwoScore    : goal.rightPlayerGoals,
                             playerTwoStatus   : p2status,
                             points            : playerOne.matchWager * 2,
-                            level             : 60,
+                            level             : plyLevel,
                           };
-                        playerOne.socket?.emit('customResult', gameData);
+                        if (gameData.playerOneStatus === 1 && playerOne.playWithRobot === false)
+                            playerOne.socket?.emit('customResult', gameData);
                         TempGameResult.leftPlayerRebound = goal.leftPlayerRebound;
                         TempGameResult.leftPlayerStrict = goal.leftPlayerStrict;
                         TempGameResult.rightPlayerRebound = goal.rightPlayerRebound;
@@ -183,22 +190,22 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                 }
             });
         }
-    },[ID, matchState, updateMatchState])
+    }
 
     useEffect(() => 
     {
-        setUpSocket(playerOne.tabId);
-        const intervalId = setInterval(() => sendDataToServer(playerOne.matchId, playerOne.tabId), 500);
-        
-        return () => {
-            clearInterval(intervalId)
-            if (socket)
-            {
-                console.log("is disco")
-                socket.disconnect();
-            }
-        };
-    }, [matchState, updateMatchState]);
+            setUpSocket(playerOne.tabId);
+            const intervalId = setInterval(() => sendDataToServer(playerOne.matchId, playerOne.tabId), 499);
+            
+            return () => {
+                clearInterval(intervalId)
+                if (socket)
+                {
+                    console.log("is disco")
+                    socket.disconnect();
+                }
+            };
+    }, []);
 
 
 

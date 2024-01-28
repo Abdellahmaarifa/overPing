@@ -1,6 +1,5 @@
 import './Congratulation.css'
 import UserInfo from './UserInfo'
-import { Howl, Howler } from 'howler';
 import { io, Socket } from 'socket.io-client';
 import { IGameData } from './game.interface';
 import { Result } from './Result';
@@ -9,7 +8,6 @@ const serverUrl: string = 'ws://localhost:4055';
 import { useEffect } from 'react'; 
 
 
-Howler.volume(1.0);
 interface CongraProps
 {
     playerOne : UserInfo;
@@ -23,20 +21,7 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
     let plyOneImg : HTMLElement | null = null;
     let plyTwoImg : HTMLElement | null = null;
     let socket: Socket | null = null;
-    let winSound : any = new Howl({
-        src: ['/Sounds/win.wav'],
-        onload: () => {
-         // console.log('Audio loaded successfully');
-        },
-        onloaderror: (error : any) => {
-          //console.error('Error loading audio:', error);
-        },
-      });
-    
-    Howler.stop();
-    setTimeout(() => {
-        winSound.play();
-    }, 1000)
+
 
     setTimeout( () => {
         plyOneImg  = document.getElementById("congAvatar2");
@@ -60,21 +45,6 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
         plyTwoGoals = gameResult.plyOneGoals;
         plyOneGoals = gameResult.plyTwoGoals;
     }
-    const gameData : IGameData = 
-    {
-        playerOneId       : playerOne.userId,
-        playerOneName     : playerOne.userName,
-        playerOneImageURL : playerOne.userAvatar,
-        playerOneScore    : plyOneGoals,
-        playerOneStatus   : 1,
-        playerTwoId       : playerTwo.userId,
-        playerTwoName     : playerTwo.userName,
-        playerTwoImageURL : playerTwo.userAvatar,
-        playerTwoScore    : plyTwoGoals,
-        playerTwoStatus   : 0,
-        points            : prise,
-        level             : 60,
-      };
     
       socket = io(serverUrl, { path: '/game-container'
       , transports: ['websocket']});
@@ -85,6 +55,9 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
   
       socket.on('disconnect', () => {
         //console.log(`App Disconnected from WebSocket server in tab `);
+      });
+      socket.on('connect_error', (error) => {
+        console.error('Error connecting to the WebSocket server:');
       });
   
       

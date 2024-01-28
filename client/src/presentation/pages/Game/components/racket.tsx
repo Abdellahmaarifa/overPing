@@ -249,15 +249,15 @@ class Racket
             {
                 this.coordinateAlreadyGot = true;
                 this.randomRebound = Math.floor(Math.random() * (this.racketH - (this.game.p5.height / 23))) + (this.game.p5.height / 23);
-                //this.getCoordinates();
+                this.getCoordinates();
             }
             else if (this.coordinateAlreadyGot)
             {
                 if (this.game.playerNumber === 1)
                     this.game.p5.fill('red');
-                else
-                    this.game.p5.fill('yellow');
-                this.game.p5.circle(this.virtualBallX , this.virtualBallY, this.virtualBallWH);
+                //else
+                //    this.game.p5.fill('yellow');
+                //this.game.p5.circle(this.virtualBallX , this.virtualBallY, this.virtualBallWH);
                 this.game.p5.fill('white');
             }
         }

@@ -2,11 +2,9 @@ import './Waiting.css'
 import UserInfo from './UserInfo';
 import { tabId as waitingTabsId } from './App'
 import { useEffect, useState } from 'react';
-import { Howl, Howler } from 'howler';
 import { useJoinMatchGameMutation } from 'gql/index';
 import { useAccountQuery, useMatchWaitingListSubscription} from "gql/index";
 
-Howler.volume(1.0);
 
 interface waitingProps 
 {
@@ -55,6 +53,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
             playerMode = 'lastPong';
     }
 
+    
     useEffect(() => 
     {
         const fetchData = async () => 
@@ -79,6 +78,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
             catch (error) 
             {
                 console.error('Error during joinMatch:', error);
+                console.log("throw ", playerOne.matchWager);
             }
         };
 
@@ -177,22 +177,24 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
                 ply2MatchWager = subscriptionData.matchWaitingList.user2?.bet as number;
                 if(subscriptionData.matchWaitingList.user2 && subscriptionData.matchWaitingList.user2.id)
                     ply2UserId =  parseInt(subscriptionData.matchWaitingList.user2?.id);
+                console.log("Data match type : ", subscriptionData.matchWaitingList.user2?.matchType)
                 if (subscriptionData.matchWaitingList.user2?.matchType == "classic")
                     ply2ModePlaying = 1;
-                if (subscriptionData.matchWaitingList.user2?.matchType == "standstorm")
+                if (subscriptionData.matchWaitingList.user2?.matchType == "sandstorm")
                     ply2ModePlaying = 2;
                 if (subscriptionData.matchWaitingList.user2?.matchType == "lastPong")
                     ply2ModePlaying = 3;
             }
             else if (subscriptionData )
             {
+                console.log("Data match type 2 : ", subscriptionData.matchWaitingList.user2?.matchType)
                 ply2MatchWager = subscriptionData.matchWaitingList.user1?.bet as number;
                 if (subscriptionData.matchWaitingList.user1?.id)
                     ply2UserId =  Number(subscriptionData.matchWaitingList.user1?.id);
 
                     if (subscriptionData.matchWaitingList.user1?.matchType == "classic")
                         ply2ModePlaying = 1;
-                    if (subscriptionData.matchWaitingList.user1?.matchType == "standstorm")
+                    if (subscriptionData.matchWaitingList.user1?.matchType == "sandstorm")
                         ply2ModePlaying = 2;
                     if (subscriptionData.matchWaitingList.user1?.matchType == "lastPong")
                         ply2ModePlaying = 3;
