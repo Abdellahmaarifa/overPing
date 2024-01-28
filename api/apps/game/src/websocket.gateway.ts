@@ -167,9 +167,7 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
 handleAchievements(client: Socket, gameAchievement: any) {
   try {
     const { player1, player2 } = gameAchievement;
-    console.log("****p1************\n", player1, "\n***********************");
-    console.log("****p2************\n", player2, "\n***********************");
-
+    
     this.clientService.sendMessageWithPayload(
       this.profileClient,
       { role: 'game', cmd: 'game-result' },

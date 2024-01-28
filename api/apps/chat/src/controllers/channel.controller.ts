@@ -12,7 +12,6 @@ import {
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from '../utils/checker.service';
 import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
-import { FormatResponseInterceptor } from '../chat-global-filter/interceptor';
 
 @UseFilters(new ChatExceptionFilter())
 // @UseInterceptors(FormatResponseInterceptor)

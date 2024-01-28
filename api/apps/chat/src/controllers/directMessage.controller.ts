@@ -7,7 +7,6 @@ import { DeleteDirectMessagedto,
   UpdateMessageInDMdto } from '../dto';
 import { DirectMessageService } from '../services/directMessage.service';
 import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
-import { FormatResponseInterceptor } from '../chat-global-filter/interceptor';
 
 @UseFilters(new ChatExceptionFilter())
 // @UseInterceptors(FormatResponseInterceptor)

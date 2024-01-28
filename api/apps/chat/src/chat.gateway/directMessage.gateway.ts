@@ -1,6 +1,6 @@
 import { FriendshipStatus } from '@app/common';
 import { IDirectMessage } from '@app/common/chat';
-import { Inject, Logger, UseFilters, UsePipes, ValidationPipe, forwardRef } from '@nestjs/common';
+import { Inject, Logger, UseFilters, UseInterceptors, UsePipes, ValidationPipe, forwardRef } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -17,10 +17,12 @@ import { DirectMessageService } from '../services/directMessage.service';
 import { CheckerService } from '../utils/checker.service';
 import { HelperService } from '../utils/helper.service';
 import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
+import { ErrorInterceptor } from '../chat-global-filter/interceptor';
+import { RpcExceptionService } from '@app/common/exception-handling';
 
 let connectedUsers: Map<number, any> = new Map();
 
-@UseFilters(new ChatExceptionFilter())
+@UseFilters(ChatExceptionFilter)
 @WebSocketGateway({
   cors: {
     origin: `${process.env.CHAT_FRONT_URL}`,
@@ -34,7 +36,8 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     private readonly directMessageService: DirectMessageService,
     private readonly prisma: PrismaService,
     private readonly checker: CheckerService,
-    private readonly helper: HelperService
+    private readonly helper: HelperService,
+    private readonly rpcExceptionService: RpcExceptionService
   ) {}
   @WebSocketServer() server: Server;
 
@@ -69,10 +72,14 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
     const userId = await this.helper.getUserId(client);
     if (!data.text || !userId || userId !== data.userId) {
-      return;
+      this.logger.error({ error : { message: `Permission denied for user [${userId}]` }});
+      return { error : {
+        message: "permission denied"
+      }};
     }
     const existedRecipient = await this.checker.checkForUser(data.recipientId);
     if (!existedRecipient) {
+      this.logger.error({ error : { message: `Failed to find user [${userId}]` }});
       return {
         code: 200,
         message: `Failed to find user`,
@@ -115,9 +122,9 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     if (!userId || userId !== data.userId ) {
       return;
     }
+
     await this.helper.findUser(data.userId);
-    console.log('data', data)
-    
+
     const messages = await this.prisma.directMessage.findUnique({
       where: {
         id: data.groupChatId,
@@ -136,7 +143,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
         },
       }
     });
-    console.log('messages:', messages)
+
     return messages;
   }
 

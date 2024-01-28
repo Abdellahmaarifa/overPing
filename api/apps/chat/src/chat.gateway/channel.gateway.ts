@@ -60,7 +60,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       });
     }
     else {
-      this.logger.log(`User authentication failed: ${userId} [${client.id}`);
+      this.logger.warn(`User authentication failed: ${userId} [${client.id}`);
       client.disconnect();
     }
   }
@@ -84,15 +84,16 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     const userId = await this.helper.getUserId(client);
 
     if (!userId || userId !== data.userId) {
-      this.logger.error({ error : {   message: `Failed to find the user id ${userId}` }});
+      this.logger.error({ error : { message: `Permission denied for user [${userId}]` }});
       return { error : {
-          message: `Failed to find the user id ${userId}`
+          message: `Permission denied`
         }};
     }
     if (await this.checker.checkForUser(data.userId) === false
      || await this.checker.checkForChannel(data.channelId, userId) === false) {
+      this.logger.error({ error : { message: `Invalid user/channel [${userId}]` }});
       return { error : {
-        message: `Invalid user/channel id`
+        message: `Invalid user/channel`
       }};
     }
     const channelName = `channel_` + data.channelId;
@@ -164,6 +165,13 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       GroupType.CHANNEL
     )) as number[];
 
+    const blockedByUsers = (await this.checker.blockStatus(
+      data.userId, 
+      0, 
+      FriendshipStatus.BlockedBy, 
+      GroupType.CHANNEL
+    )) as number[];
+
     const channel = await this.prisma.channel.findUnique({
       where: {
         id: data.channelId,
@@ -224,7 +232,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async sendUpdatedListOfMembers(channelId: number, updatedList: IMembersWithInfo) {
     const channelName = `channel_` + channelId;
 
-    console.log(`updatedList:`, updatedList);
+    // console.log(`updatedList:`, updatedList);
     this.server.to(channelName).emit(CHANNEL.recUpdatedListOfMembers, {
       channelId,
       updatedList
