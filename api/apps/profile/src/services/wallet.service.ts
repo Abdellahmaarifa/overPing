@@ -5,7 +5,7 @@ import { TransferFundsDto } from "../dto/transfer-funds.dto";
 import { PlaceBetDto } from "../dto/place-bet.dto";
 import { ResolveBetDto } from "../dto/resolve-bet.dto";
 import { RpcExceptionService, PrismaError } from "@app/common/exception-handling";
-
+import { Cron, CronExpression, } from '@nestjs/schedule';
 @Injectable()
 export class WalletService {
   constructor(
@@ -71,10 +71,30 @@ export class WalletService {
     this.handlePrismaError(error);
   }
   }
+  
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async dailyDonation(): Promise<void> {
+      const usersToUpdate = await this.prisma.wallet.findMany({
+        where: {
+          balance: {
+            lt: 100,
+          },
+        },
+      });
+  
+      for (const wallet of usersToUpdate) {
+        await this.prisma.wallet.update({
+          where: { id: wallet.id },
+          data: {
+            balance: wallet.balance + 500,
+          },
+        });
+      }
+  }
 
   private handlePrismaError(error: any): void {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      const prismaError = new PrismaError(error, 'An unexpected error occurred', this.rpcExceptionService);
+      const prismaError = new PrismaError(error, this.rpcExceptionService);
       prismaError.handlePrismaError();
     } else {
       throw this.rpcExceptionService.throwInternalError('An unexpected error occurred');
