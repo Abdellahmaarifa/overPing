@@ -116,7 +116,9 @@ const Friends = () => {
         }
         //console.log("hola >> : ", data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
 
     return () => controller.abort();
     //setFriends(getFriends());

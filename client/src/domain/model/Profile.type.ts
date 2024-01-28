@@ -7,22 +7,24 @@ export type Status = {
   xp: number;
 };
 
+export type WalletType = {
+  id: string;
+  balance: number;
+  // user_id: number;
+  betAmount: number;
+};
+
 export type ProfileType = {
   id: string;
   about: string;
   cover: string;
   nickname: string;
   rank: number;
+  displayRank: number;
   avatar: string;
   level: number;
   status: Status;
-};
-
-export type WalletType = {
-  id: string;
-  balance: number;
-  user_id: number;
-  betAmount: number;
+  wallet: WalletType;
 };
 
 export type GameStatusType = {
@@ -41,6 +43,7 @@ export type AccountType = {
     title: string;
     xp: number;
     rank: number;
+    displayRank: number;
     about: string;
     bgImageUrl: string;
     wallet?: WalletType;

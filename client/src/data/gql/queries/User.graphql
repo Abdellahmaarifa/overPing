@@ -41,6 +41,7 @@ query Account($userId: Float!) {
     title
     xp
     rank
+    displayRank
     about
     bgImageUrl
     wallet {

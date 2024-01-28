@@ -66,7 +66,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
     console.log("from server: ", data);
     if (!data.data.getUserMatchHistory)
       throw { message: "can't get history f the user" };
-    console.error("AFTER QUERY : ", data);
+    // console.error("AFTER QUERY : ", data);
     return data.data.getUserMatchHistory;
   };
 
@@ -102,10 +102,9 @@ const MatchHistories = ({ active }: { active: boolean }) => {
             <tr tw="flex justify-evenly w-full">
               <MatchTableHeaderCell tw="flex-[40%]">Match</MatchTableHeaderCell>
               <MatchTableHeaderCell tw="flex-[30%]">Date</MatchTableHeaderCell>
-              <MatchTableHeaderCell tw="flex-[15%]">
-                Points
-              </MatchTableHeaderCell>
-              <MatchTableHeaderCell tw="flex-[15%]">Level</MatchTableHeaderCell>
+              {/* <MatchTableHeaderCell tw="flex-[30%]">Points</MatchTableHeaderCell> */}
+              <MatchTableHeaderCell tw="flex-[15%]">Points</MatchTableHeaderCell>
+              <MatchTableHeaderCell tw="flex-[15%]">Rank</MatchTableHeaderCell>
             </tr>
           </MatchTableHeader>
           <MatchTableBody>

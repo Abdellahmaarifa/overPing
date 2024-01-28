@@ -212,6 +212,7 @@ export type GqlUserProfileModel = {
   __typename?: 'GQLUserProfileModel';
   about: Scalars['String']['output'];
   bgImageUrl: Scalars['String']['output'];
+  displayRank: Scalars['Float']['output'];
   gameStatus: GqlGameStatusModel;
   id: Scalars['ID']['output'];
   nickname: Scalars['String']['output'];
@@ -1095,7 +1096,7 @@ export type FindProfileByUserIdQueryVariables = Exact<{
 }>;
 
 
-export type FindProfileByUserIdQuery = { __typename?: 'Query', findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, user_id: number, nickname: string, title: string, xp: number, rank: number, about: string, bgImageUrl: string, wallet: { __typename?: 'GQLWalletModel', id: string, balance: number, user_id: number, betAmount: number }, gameStatus: { __typename?: 'GQLGameStatusModel', matchesLoss: number, matchesWon: number, totalMatches: number, win_streak: number, best_win_streak: number } } | null };
+export type FindProfileByUserIdQuery = { __typename?: 'Query', findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, user_id: number, nickname: string, title: string, xp: number, rank: number, displayRank: number, about: string, bgImageUrl: string, wallet: { __typename?: 'GQLWalletModel', id: string, balance: number, user_id: number, betAmount: number }, gameStatus: { __typename?: 'GQLGameStatusModel', matchesLoss: number, matchesWon: number, totalMatches: number, win_streak: number, best_win_streak: number } } | null };
 
 export type RegisterMutationVariables = Exact<{
   profilePhoto: Scalars['Upload']['input'];
@@ -1152,7 +1153,7 @@ export type AccountQueryVariables = Exact<{
 }>;
 
 
-export type AccountQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLIUserModel', id: number, email: string, username: string, profileImgUrl: string }, findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, nickname: string, title: string, xp: number, rank: number, about: string, bgImageUrl: string, wallet: { __typename?: 'GQLWalletModel', id: string, balance: number, betAmount: number }, gameStatus: { __typename?: 'GQLGameStatusModel', matchesLoss: number, matchesWon: number, totalMatches: number, win_streak: number, best_win_streak: number } } | null };
+export type AccountQuery = { __typename?: 'Query', findUserById: { __typename?: 'GQLIUserModel', id: number, email: string, username: string, profileImgUrl: string }, findProfileByUserId?: { __typename?: 'GQLUserProfileModel', id: string, nickname: string, title: string, xp: number, rank: number, displayRank: number, about: string, bgImageUrl: string, wallet: { __typename?: 'GQLWalletModel', id: string, balance: number, betAmount: number }, gameStatus: { __typename?: 'GQLGameStatusModel', matchesLoss: number, matchesWon: number, totalMatches: number, win_streak: number, best_win_streak: number } } | null };
 
 export type UpdateUserProfileMutationVariables = Exact<{
   userId: Scalars['Float']['input'];
@@ -3056,6 +3057,7 @@ export const FindProfileByUserIdDocument = gql`
     title
     xp
     rank
+    displayRank
     about
     bgImageUrl
     wallet {
@@ -3368,6 +3370,7 @@ export const AccountDocument = gql`
     title
     xp
     rank
+    displayRank
     about
     bgImageUrl
     wallet {

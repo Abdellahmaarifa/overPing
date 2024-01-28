@@ -54,5 +54,7 @@ const URL = `http://localhost:${PORT}`;
       Credential: true,
     },
   } as any);
-  app.listen(PORT, () => console.log(`[app] running at ${URL}`));
+  app.listen(PORT, () => {
+    console.log(`[app] running at ${URL}`);
+  });
 })();

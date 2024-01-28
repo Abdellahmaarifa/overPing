@@ -71,10 +71,10 @@ export class GameStatusService {
     private async setUserGameUpdates(input: any, userProfile: any) {
         if (input.is_winner) {
             this.handleWinnerUpdates(userProfile, input);
-            this.walletService.updateWalletBalance(input.user_id, input.bet);
+            this.walletService.resolveBet({userId: input.user_id,isWinner: true});
         } else {
             this.handleLoserUpdates(userProfile);
-            this.walletService.updateWalletBalance(input.user_id, -input.bet)
+            this.walletService.resolveBet({userId: input.user_id,isWinner: false})
         }
 
     }

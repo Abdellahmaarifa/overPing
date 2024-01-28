@@ -1,6 +1,10 @@
 import { SERVER_END_POINT } from "constant/constants";
 import { UPDATE_STATUS } from "./constantsQueries";
 
+window.onerror = () => {
+  return true;
+};
+
 export const registerGlobalEvents = () => {
   window.addEventListener(
     "alive",

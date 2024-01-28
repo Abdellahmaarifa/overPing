@@ -23,12 +23,14 @@ export const sleep = (ms: any) => new Promise((r) => setTimeout(r, ms));
 export const withPad = (n: number) => n.toString().padStart(2, "0");
 
 export const GetUserProfile = (data: AccountQuery): ProfileType => {
+  console.log("data: AccountQuery ===> " ,data);
   return {
     id: data?.findProfileByUserId?.id!,
     about: data?.findProfileByUserId?.about!,
     cover: encodeURI(data?.findProfileByUserId?.bgImageUrl as string),
     nickname: data.findProfileByUserId?.nickname!,
     rank: data?.findProfileByUserId?.rank!,
+    displayRank: data?.findProfileByUserId?.displayRank!,
     avatar: encodeURI(data?.findUserById?.profileImgUrl as string),
     level: data?.findProfileByUserId?.rank!, // this should calculated
     status: {
@@ -38,6 +40,11 @@ export const GetUserProfile = (data: AccountQuery): ProfileType => {
       win_streak: data?.findProfileByUserId?.gameStatus.win_streak!,
       xp: data?.findProfileByUserId?.xp!,
       totalMatches: data?.findProfileByUserId?.gameStatus.totalMatches!,
+    },
+    wallet:{
+      id: data?.findProfileByUserId?.wallet.id!,
+      balance : data?.findProfileByUserId?.wallet.balance!,
+      betAmount : data?.findProfileByUserId?.wallet.balance!,
     },
   };
 };

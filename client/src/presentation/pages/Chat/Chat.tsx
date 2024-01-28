@@ -1,11 +1,14 @@
 import { useApolloClient } from "@apollo/client";
 import ChannelModel from "components/chatPage/ChannelModel/ChannelModel";
 import ChatRightSide from "components/chatPage/CharRightSide/ChatRightSide";
-import ChatBody from "components/chatPage/ChatBody/ChatBody";
+import ChatBody, {
+  socket,
+  socket_dm,
+} from "components/chatPage/ChatBody/ChatBody";
 import ChatLeftSide from "components/chatPage/ChatLeftSide/ChatLeftSide";
 import ChatSearch from "components/chatPage/ChatSearch/ChatSearch";
 import EditChannelModel from "components/chatPage/EditChannelModel /EditChannelModel";
-import { CHANNEL_CMD, socket , DIRECTMESSAGE, socket_dm } from "constant/constants";
+import { CHANNEL_CMD, DIRECTMESSAGE } from "constant/constants";
 import { useChatContext } from "context/chat.context";
 import { useUserContext } from "context/user.context";
 import { useEffect } from "react";
@@ -14,8 +17,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ChatConatiner } from "./Chat.style";
 import { ChatViewModel } from "./ChatViewModel";
 import { ChannelSample } from "domain/model/chat.type";
-import { da } from "@faker-js/faker";
-import { tuple } from "yup";
+
 
 const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   // call of hooks
@@ -42,62 +44,56 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
     channels: [channels, setChannels],
     currentChannel: [currentChannel, setCurrentChannel],
     currentDm: [currentDm, setCurrentDm],
-    dms: [dms , setDms],
+    dms: [dms, setDms],
   } = ChatCtx;
 
   useEffect(() => {
-
     viewModel.initChat();
 
+    socket.on(CHANNEL_CMD.recUpdatedChannelsList, (data) => {
+      if (data) setChannels(data);
+      //console.log("looks like the list is updated: ", data);
+    });
 
-      socket.on(CHANNEL_CMD.recUpdatedChannelsList, (data) => {
-        if (data) setChannels(data);
-        //console.log("looks like the list is updated: ", data);
-      });
-      
-      socket.on(CHANNEL_CMD.recUpdatedListOfMembers, (data) => {
-        console.log("THIS IS THE NEW CHANNEL >> ", data);
-        if (type == "channel" && data && data.channelId == Number(id)) {
-          viewModel.fetchCurrentChannel();
-          if (
-            !data?.updatedList?.admins.find((e) => e.id == user?.id) &&
-            !data?.updatedList?.members?.find((e) => e.id == user?.id) &&
-            data?.updatedList?.owner.id != Number(user?.id)
-            ) {
-              console.log("THIS USER NOT HERE ANT MORE!!");
-              navigate("/chat");
-          }
-        }
-      });
-      
-      socket.on(CHANNEL_CMD.recUpdatedChannelInfo, (data) => {
+    socket.on(CHANNEL_CMD.recUpdatedListOfMembers, (data) => {
+      console.log("THIS IS THE NEW CHANNEL >> ", data);
+      if (type == "channel" && data && data.channelId == Number(id)) {
+        viewModel.fetchCurrentChannel();
         if (
-          type == "channel" &&
-          data &&
-          data.channelId == Number(id) &&
-          currentChannel
-          ) {
-            viewModel.fetchCurrentChannel();
+          !data?.updatedList?.admins.find((e) => e.id == user?.id) &&
+          !data?.updatedList?.members?.find((e) => e.id == user?.id) &&
+          data?.updatedList?.owner.id != Number(user?.id)
+        ) {
+          console.log("THIS USER NOT HERE ANT MORE!!");
+          navigate("/chat");
         }
-      });
+      }
+    });
 
+    socket.on(CHANNEL_CMD.recUpdatedChannelInfo, (data) => {
+      if (
+        type == "channel" &&
+        data &&
+        data.channelId == Number(id) &&
+        currentChannel
+      ) {
+        viewModel.fetchCurrentChannel();
+      }
+    });
 
+    //////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
+    socket_dm.on(DIRECTMESSAGE.recUpdatedDMsList, (data) => {
+      if (data) setDms(data);
+      console.log("looks like the list is updated: ", data);
+    });
 
-      socket_dm.on(DIRECTMESSAGE.recUpdatedDMsList, (data) => {
-        if (data) setDms(data);
-        console.log("looks like the list is updated: ", data);
-      });
-
-      return () => {
-        socket.off(CHANNEL_CMD.recUpdatedChannelsList);
-        socket.off(CHANNEL_CMD.recUpdatedListOfMembers);
-        socket.off(CHANNEL_CMD.recUpdatedChannelInfo);
-        socket_dm.off(DIRECTMESSAGE.recUpdatedDMsList);
-      };
-
-
+    return () => {
+      socket.off(CHANNEL_CMD.recUpdatedChannelsList);
+      socket.off(CHANNEL_CMD.recUpdatedListOfMembers);
+      socket.off(CHANNEL_CMD.recUpdatedChannelInfo);
+      socket_dm.off(DIRECTMESSAGE.recUpdatedDMsList);
+    };
   }, [id, location.pathname]);
 
   useEffect(() => {
@@ -126,7 +122,8 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
     <ChatConatiner>
       <ChatLeftSide />
       <ChatBody type={type} />
-      {((currentChannel && type == "channel") || ( currentDm && type == "dm")) && <ChatRightSide type={type} />}
+      {((currentChannel && type == "channel") ||
+        (currentDm && type == "dm")) && <ChatRightSide type={type} />}
       {showSearchModel && <ChatSearch />}
       {showChannelModel && <ChannelModel />}
       {showEditChannelModel && <EditChannelModel />}
