@@ -23,7 +23,7 @@ export class RequestToPlayInput {
 
   
   @Field()
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
   readonly matchType: string
 }

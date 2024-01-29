@@ -174,7 +174,7 @@ const TopNavBar = () => {
   };
 
   useEffect(() => {
-    if (data) {
+    if (data && location.pathname != "/game") {
       toast(
         (t) => (
           <NotificationComponent
