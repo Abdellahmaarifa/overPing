@@ -132,7 +132,7 @@ const ActioneMemeber = ({ e }: { e: any }) => {
           },
         },
       });
-      if (res) toast.success(`${name} is muted now!`);
+      if (res) toast.success(`${name} is unmuted now!`);
       console.log("done! muted: ", res);
     } catch (err: any) {
       console.log("error!");

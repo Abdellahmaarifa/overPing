@@ -10,8 +10,8 @@ export class UserService {
     constructor(
         @Inject(IRmqSeverName.AUTH)
         private readonly client: ClientProxy,
-        @Inject(IRmqSeverName.FRIEND)
-        private readonly friendClient: ClientProxy,
+        @Inject(IRmqSeverName.CHAT)
+        private readonly chatClient: ClientProxy,
         private readonly clientService: RabbitMqService,
         private readonly profileService: GwProfileService,
 
@@ -202,5 +202,14 @@ export class UserService {
         )
     }
 
-
+    async deleteChatHistory(userId: number) {
+        await this.clientService.emitMessageWithPayload(
+            this.chatClient,
+            {
+                role: 'user',
+                cmd: 'delete-chat-history'
+            },
+            userId
+        );
+    }
 }

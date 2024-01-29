@@ -179,7 +179,7 @@ export class FriendshipService {
   }
 
   async unblockUser(userId: number, unblockedUserId: number): Promise<void> {
-    console.log("=================================> unblockUer", userId, " .  ", unblockedUserId);
+    // console.log("=================================> unblockUer", userId, " .  ", unblockedUserId);
     const areBlocked = await this.areUsersBlocked(userId, unblockedUserId);
     if (!areBlocked) {
       throw this.rpcExceptionService.throwBadRequest('Users are not blocked.');

@@ -1,6 +1,6 @@
 import { FriendshipStatus } from '@app/common';
 import { IDirectMessage } from '@app/common/chat';
-import { Inject, Logger, UseFilters, UsePipes, ValidationPipe, forwardRef } from '@nestjs/common';
+import { Inject, Logger, UseFilters, UseInterceptors, UsePipes, ValidationPipe, forwardRef } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -17,10 +17,12 @@ import { DirectMessageService } from '../services/directMessage.service';
 import { CheckerService } from '../utils/checker.service';
 import { HelperService } from '../utils/helper.service';
 import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
+import { ErrorInterceptor } from '../chat-global-filter/interceptor';
+import { RpcExceptionService } from '@app/common/exception-handling';
 
 let connectedUsers: Map<number, any> = new Map();
 
-@UseFilters(new ChatExceptionFilter())
+@UseFilters(ChatExceptionFilter)
 @WebSocketGateway({
   cors: {
     origin: `${process.env.CHAT_FRONT_URL}`,
@@ -34,7 +36,8 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     private readonly directMessageService: DirectMessageService,
     private readonly prisma: PrismaService,
     private readonly checker: CheckerService,
-    private readonly helper: HelperService
+    private readonly helper: HelperService,
+    private readonly rpcExceptionService: RpcExceptionService
   ) {}
   @WebSocketServer() server: Server;
 
@@ -46,12 +49,13 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   async handleConnection(client: Socket, ...args: any[]) {
     const userId = await this.helper.getUserId(client);
-    if (userId) {
-      this.logger.log(`User connected: ${userId} [${client.id}`);
+    const id = userId ? await this.helper.findUser(userId) : 0;
+    if (userId && id) {
       connectedUsers.set(userId, client);
+      this.logger.log(`User connected: ${userId} [${client.id}`);
     }
     else {
-      this.logger.log(`User authentication failed: ${userId} [${client.id}`);
+      this.logger.warn(`User authentication failed: ${userId} [${client.id}`);
       client.disconnect();
     }
   }
@@ -59,7 +63,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   async handleDisconnect(client: Socket) {
     const userId = await this.helper.getUserId(client);
     if (userId) {
-      this.logger.log(`User disconnected: ${client.id}`);
+      this.logger.warn(`User disconnected: ${client.id}`);
       connectedUsers.delete(userId);
     }
   }
@@ -68,15 +72,16 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   @SubscribeMessage(DIRECTMESSAGE.sendMessageToUser)
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
     const userId = await this.helper.getUserId(client);
-    if (!data.text || !userId || userId !== data.userId) {
-      return;
+    if (!data.text || !userId || userId !== data.userId)
+    {
+      this.logger.error({ error : { message: `Permission denied for user [${userId}]` }});
+      return this.helper.handleError(`permission denied`);
     }
     const existedRecipient = await this.checker.checkForUser(data.recipientId);
-    if (!existedRecipient) {
-      return {
-        code: 200,
-        message: `Failed to find user`,
-      };
+    if (!existedRecipient)
+    {
+      this.logger.error({ error : { message: `Failed to find user [${userId}]` }});
+      return this.helper.handleError(`Failed to find user`);
     }
 
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.Blocked, GroupType.DM);
@@ -115,9 +120,9 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     if (!userId || userId !== data.userId ) {
       return;
     }
+
     await this.helper.findUser(data.userId);
-    console.log('data', data)
-    
+
     const messages = await this.prisma.directMessage.findUnique({
       where: {
         id: data.groupChatId,
@@ -136,7 +141,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
         },
       }
     });
-    console.log('messages:', messages)
+
     return messages;
   }
 

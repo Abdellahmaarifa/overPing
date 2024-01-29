@@ -3,7 +3,7 @@ import { IVisibility } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, UseFilters, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
@@ -11,7 +11,9 @@ import { PrismaService } from 'apps/chat/prisma/prisma.service';
 import { UpdateChanneldto } from '../dto';
 import { GroupType } from '../interface/group.interface';
 import { HelperService } from './helper.service';
+import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
+@UseFilters(ChatExceptionFilter)
 @Injectable()
 export class CheckerService {
   constructor(

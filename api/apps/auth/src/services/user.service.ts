@@ -157,27 +157,31 @@ export class UserService {
   }
 
   async findAllUsers(userId: number): Promise<IUser[]> {
-    const users = await this.prisma.user.findMany({
-      where: {
-        id: {
-          not: userId,
-        },
-        blocks: {
-          none: {
-            id: userId,
+    try {
+      const users = await this.prisma.user.findMany({
+        where: {
+          id: {
+            not: userId,
+          },
+          blocks: {
+            none: {
+              id: userId,
+            },
           },
         },
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        password: false,
-        lastSeen: true,
-        profileImgUrl: true,
-      },
-    });
-    return users;
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          password: false,
+          lastSeen: true,
+          profileImgUrl: true,
+        },
+      });
+      return users;
+    }  catch (error) {
+      this.handlePrismaError(error);
+    }
   }
 
   async findPagesOfUsers(
@@ -212,6 +216,7 @@ export class UserService {
   }
 
   async remove(id: number, password: string): Promise<boolean> {
+    console.log("\n\ntrying to delete user from remove function\n")
     try {
       const userToDelete = await this.prisma.user.findUnique({
         where: {
@@ -252,6 +257,7 @@ export class UserService {
   }
 
   async deleteUser(userId: number): Promise<boolean> {
+    console.log("\n\ntrying to delete user from deleteUser function\n\n");
     try {
       const userToDelete = await this.prisma.user.findUnique({
         where: {
@@ -453,41 +459,45 @@ export class UserService {
     if (users.length === 0) {
       return [];
     }
-    
-    const usersInfo: IUser[] = await this.prisma.user.findMany({
-      where: {
-        id: { in: users },
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        password: false,
-        lastSeen: true,
-        profileImgUrl: true,
-      },
-    })
-    if (!usersInfo || usersInfo.length === 0) {
-      this.rpcExceptionService.throwCatchedException({
-        code: 200,
-        message: 'User(s) not found'
+    try {
+      const usersInfo: IUser[] = await this.prisma.user.findMany({
+        where: {
+          id: { in: users },
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          password: false,
+          lastSeen: true,
+          profileImgUrl: true,
+        },
+      })
+      if (!usersInfo || usersInfo.length === 0) {
+        console.log("\n\n\ncached exception from user\n\n\n")
+        this.rpcExceptionService.throwCatchedException({
+          code: 200,
+          message: 'User(s) not found'
+        });
+      }
+      const usersIds = usersInfo.map((user) => user.id);
+      
+      const usersNickname = (await this.clientService.sendMessageWithPayload(
+        this.client,
+        { role: 'profile', cmd: 'get-users-nickname' },
+        usersIds,
+      ));
+        
+      usersInfo.forEach((user) => {
+        const nickname = usersNickname.find((u) => u.user_id === user.id);
+        user.nickname = nickname.nickname;
       });
+        
+      const sortedUsersInfo = usersInfo.sort((a, b) => users.indexOf(a.id) - users.indexOf(b.id));
+      
+      return sortedUsersInfo;
+    } catch (error) {
+    this.handlePrismaError(error);
     }
-    const usersIds = usersInfo.map((user) => user.id);
-    
-    const usersNickname = (await this.clientService.sendMessageWithPayload(
-      this.client,
-      { role: 'profile', cmd: 'get-users-nickname' },
-      usersIds,
-    ));
-      
-    usersInfo.forEach((user) => {
-      const nickname = usersNickname.find((u) => u.user_id === user.id);
-      user.nickname = nickname.nickname;
-    });
-      
-    const sortedUsersInfo = usersInfo.sort((a, b) => users.indexOf(a.id) - users.indexOf(b.id));
-    
-    return sortedUsersInfo;
   }
 } 

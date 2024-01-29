@@ -15,6 +15,8 @@ import { DirectMessageService } from './services/directMessage.service';
 import { TasksService } from './services/tasks.service';
 import { CheckerService } from './utils/checker.service';
 import { HelperService } from './utils/helper.service';
+import { APP_FILTER } from '@nestjs/core';
+import { ChatExceptionFilter } from './chat-global-filter/chat-global-filter';
 
 @Module({
   imports: [
@@ -28,6 +30,10 @@ import { HelperService } from './utils/helper.service';
     ChannelController,
   ],
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: ChatExceptionFilter,
+    },
     TasksService,
     JwtService,
     PrismaService,

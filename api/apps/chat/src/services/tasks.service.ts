@@ -1,7 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, UseFilters } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
+import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
+@UseFilters(ChatExceptionFilter)
 @Injectable()
 export class TasksService {
   private readonly logger = new Logger(TasksService.name);

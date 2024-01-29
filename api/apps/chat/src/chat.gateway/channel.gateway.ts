@@ -21,7 +21,7 @@ import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
 let connectedChannelUsers: Map<number, any> = new Map();
 
-@UseFilters(new ChatExceptionFilter())
+@UseFilters(ChatExceptionFilter)
 @WebSocketGateway({
   cors: {
     origin: `${process.env.CHAT_FRONT_URL}`,
@@ -50,17 +50,18 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   async handleConnection(client: Socket, ...args: any[]) {
     const userId = await this.helper.getUserId(client);
-    if (userId) {
-      this.logger.log(`User connected: ${userId} [${client.id}`);
-      connectedChannelUsers.set(userId, client);
-
+    const id = userId ? await this.helper.findUser(userId) : 0;
+    if (userId && id) {
+      
       const userChannels = await this.channelService.getUserChannels(userId);
       userChannels.forEach((channel) => {
         client.join('channel_' + channel.id)
       });
+      connectedChannelUsers.set(userId, client);
+      this.logger.log(`User connected: ${userId} [${client.id}`);
     }
     else {
-      this.logger.log(`User authentication failed: ${userId} [${client.id}`);
+      this.logger.warn(`User authentication failed: ${userId} [${client.id}`);
       client.disconnect();
     }
   }
@@ -83,17 +84,16 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     const socket = connectedChannelUsers.get(data.userId);
     const userId = await this.helper.getUserId(client);
 
-    if (!userId || userId !== data.userId) {
-      this.logger.error({ error : {   message: `Failed to find the user id ${userId}` }});
-      return { error : {
-          message: `Failed to find the user id ${userId}`
-        }};
+    if (!userId || userId !== data.userId)
+    {
+      this.logger.error({ error : { message: `Permission denied for user [${userId}]` }});
+      return this.helper.handleError('Permission denied');
     }
     if (await this.checker.checkForUser(data.userId) === false
-     || await this.checker.checkForChannel(data.channelId, userId) === false) {
-      return { error : {
-        message: `Invalid user/channel id`
-      }};
+     || await this.checker.checkForChannel(data.channelId, userId) === false)
+     {
+      this.logger.error({ error : { message: `Invalid user/channel [${userId}]` }});
+      return this.helper.handleError('Invalid user/channel');
     }
     const channelName = `channel_` + data.channelId;
     client.join(channelName);
@@ -122,9 +122,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     
     const muteExpired = await this.checker.isMuted(userId, data.channelId);
     if (!!muteExpired) {
-      return { error : {
-        message: `Failed: you're muted! go back at ${muteExpired}`
-      }};
+      return this.helper.handleError(`Failed: you're muted! go back at ${muteExpired}`);
     }
     
     const message = await this.channelService.addMessage(data);
@@ -164,6 +162,13 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       GroupType.CHANNEL
     )) as number[];
 
+    const blockedByUsers = (await this.checker.blockStatus(
+      data.userId, 
+      0, 
+      FriendshipStatus.BlockedBy, 
+      GroupType.CHANNEL
+    )) as number[];
+
     const channel = await this.prisma.channel.findUnique({
       where: {
         id: data.channelId,
@@ -186,9 +191,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       }
     });
     if (!channel) {
-      return { error : {
-        message: `Failed to find channel: ${data.channelId}`
-      }};
+      return this.helper.handleError(`Failed to find channel: ${data.channelId}`);
     }
     return channel.messages || [];
   }
@@ -203,9 +206,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     await this.helper.findUser(data.userId);
 
     if (await this.checker.isMember(userId, data.channelId) === false) {
-      return { error : {
-        message: `Failed to find channel: you're not a member`
-      }};
+      return this.helper.handleError(`Failed to find channel: you're not a member`);
     }
 
     return await this.channelService.getMembers(data.channelId);
@@ -224,7 +225,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async sendUpdatedListOfMembers(channelId: number, updatedList: IMembersWithInfo) {
     const channelName = `channel_` + channelId;
 
-    console.log(`updatedList:`, updatedList);
+    // console.log(`updatedList:`, updatedList);
     this.server.to(channelName).emit(CHANNEL.recUpdatedListOfMembers, {
       channelId,
       updatedList

@@ -3,7 +3,7 @@ import { IChannel, IChannelSearch, IMembersWithInfo, IMessage, IVisibility } fro
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, UseFilters, forwardRef } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
 import {
@@ -16,7 +16,9 @@ import { DESCRIPTION } from '../interface';
 import { GroupType } from '../interface/group.interface';
 import { CheckerService } from '../utils/checker.service';
 import { HelperService } from '../utils/helper.service';
+import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
+@UseFilters(ChatExceptionFilter)
 @Injectable()
 export class ChannelService {
   constructor(

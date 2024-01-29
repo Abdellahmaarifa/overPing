@@ -3,7 +3,7 @@ import { IAdmins, IChannel, IMembers } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, UseFilters, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
@@ -15,9 +15,12 @@ import { ChannelGateway } from '../chat.gateway/channel.gateway';
 import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from './checker.service';
+import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
+import { DirectMessageService } from '../services/directMessage.service';
 
 // const argon2 = require('argon2');
 
+@UseFilters(ChatExceptionFilter)
 @Injectable()
 export class HelperService {
   constructor(
@@ -29,6 +32,8 @@ export class HelperService {
     private readonly checker: CheckerService,
     @Inject(forwardRef(() => ChannelService))
     private readonly channelService: ChannelService,
+    @Inject(forwardRef(() => DirectMessageService))
+    private readonly directMessageService: DirectMessageService,
     private readonly channelGateway: ChannelGateway,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -86,8 +91,7 @@ export class HelperService {
   async getUserId(client: Socket) : Promise<number | null> {
     try {
       const session = client.handshake.headers.cookie;
-      
-      const cookies = cookie.parse(client.handshake.headers.cookie || '');
+      const cookies = cookie.parse(session || '');
       const accessToken = cookies['Access_token'];
 
       if (accessToken) {
@@ -219,10 +223,10 @@ export class HelperService {
     }
     catch {
       if (throwExc) {
-        this.rpcExceptionService.throwCatchedException({
-          code: 200,
-          message: `Failed to find user`,
-        });
+        // this.rpcExceptionService.throwCatchedException({
+        //   code: 200,
+        //   message: `Failed to find user`,
+        // });
       }
       return null;
     }
@@ -262,5 +266,37 @@ export class HelperService {
     return {
       error: { message: errorMsg }
     }
+  }
+
+  /******* Remove The data related to a User if Something went wrong in sign-up *******/
+  async removeUserData(userId: number) {
+    if (!userId) {
+      return;
+    }
+    const userChannels = await this.channelService.getUserChannels(userId);
+    userChannels.forEach((channel) => {
+      if (channel.id) {
+        this.channelService.leave(userId, channel.id);
+        this.prisma.messages.deleteMany({
+          where: {
+            sender_id: userId,
+            channelId: channel.id
+          }
+        });
+      }
+    });
+    const userDMs = await this.directMessageService.getUserDirectMessages(userId);
+    (userDMs as any).forEach((dm) => {
+      if (dm!.id) {
+        this.prisma.directMessage.deleteMany({
+          where: {
+            OR: [
+              {user1_id: userId},
+              {user2_id: userId}
+            ]
+          }
+        });
+      }
+    });
   }
 }

@@ -71,7 +71,7 @@ export class ChatViewModel {
       dms: [_dms, setDms],
     } = this.context;
     try {
-      console.log("///////////// data ", this.data);
+      // console.log("///////////// data ", this.data);
       const userDM = await this.client.query({
         query: GetUserDirectMessagesDocument,
         variables: {

@@ -55,7 +55,7 @@ export class ChatQueriesResolver {
     await this.userCheck.validationId(userId, ctx.req.user.id);
     const channelInfo = await this.channelService.findChannelById(userId, groupId);
 
-    console.log('**************** channel info *************\n', channelInfo, '**********************');
+    // console.log('**************** channel info *************\n', channelInfo, '**********************');
     return channelInfo;
   }
 

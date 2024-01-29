@@ -14,6 +14,8 @@ import ChatBanner from "../ChatBanner/ChatBanner";
 import { CHANNEL_CMD, DIRECTMESSAGE, SERVER_CHAT} from "constant/constants";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
+import { format } from 'date-fns';
+
 // import { connect } from "formik";
 import { io } from "socket.io-client";
 
@@ -140,6 +142,9 @@ const ChatBody = ({ type }: { type: string }) => {
   };
   ////////////////////////////////////////////////////////
   useEffect(() => {
+    socket_dm.on("error", (data)=>{
+      console.log("#####################ERROR :",data);
+  })
     if (type == "channel") {
       socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
         console.log("THIS IS FROM BACKEND!!! ", data);
@@ -147,6 +152,7 @@ const ChatBody = ({ type }: { type: string }) => {
           setMessages((old) => [data, ...old]);
       });
     } else if (type == "dm") {
+      
       socket_dm.on(DIRECTMESSAGE.recMessageFromUser, (data: MessageDMType) => {
         console.log("THIS IS FROM BACKEND!!! ", data);
         if (
@@ -205,8 +211,9 @@ const ChatBody = ({ type }: { type: string }) => {
           groupChatId: Number(currentDm?.id),
           page: 0,
         },
-        (data) => {
+        (data, error) => {
           console.log("YOU SENT data: ", data);
+          console.log("YOU SENT ERROR: ", error);
           if (!data?.error) setMessagesDM(data.messages);
         }
       );
@@ -257,7 +264,7 @@ const ChatBody = ({ type }: { type: string }) => {
                     name={String(u?.username)}
                     image={String(u?.profileImgUrl)}
                     message={e.text}
-                    date={e.created_at}
+                    date={format(e.created_at, "dd-MM-yyy/HH:mm")}
                     key={Number(currentDm?.id)}
                     id={Number(u?.id)}
                   />
