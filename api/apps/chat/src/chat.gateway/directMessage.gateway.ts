@@ -49,13 +49,13 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   async handleConnection(client: Socket, ...args: any[]) {
     const userId = await this.helper.getUserId(client);
-    const id = await this.helper.findUser(userId);
+    const id = userId ? await this.helper.findUser(userId) : 0;
     if (userId && id) {
       connectedUsers.set(userId, client);
       this.logger.log(`User connected: ${userId} [${client.id}`);
     }
     else {
-      this.logger.log(`User authentication failed: ${userId} [${client.id}`);
+      this.logger.warn(`User authentication failed: ${userId} [${client.id}`);
       client.disconnect();
     }
   }
@@ -63,7 +63,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   async handleDisconnect(client: Socket) {
     const userId = await this.helper.getUserId(client);
     if (userId) {
-      this.logger.log(`User disconnected: ${client.id}`);
+      this.logger.warn(`User disconnected: ${client.id}`);
       connectedUsers.delete(userId);
     }
   }

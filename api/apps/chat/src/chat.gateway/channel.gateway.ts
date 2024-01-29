@@ -50,7 +50,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   async handleConnection(client: Socket, ...args: any[]) {
     const userId = await this.helper.getUserId(client);
-    const id = await this.helper.findUser(userId);
+    const id = userId ? await this.helper.findUser(userId) : 0;
     if (userId && id) {
       
       const userChannels = await this.channelService.getUserChannels(userId);
