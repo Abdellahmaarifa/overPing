@@ -72,19 +72,16 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   @SubscribeMessage(DIRECTMESSAGE.sendMessageToUser)
   async sendMessageToUser(client: Socket, data: AddMessageInDMdto) {
     const userId = await this.helper.getUserId(client);
-    if (!data.text || !userId || userId !== data.userId) {
+    if (!data.text || !userId || userId !== data.userId)
+    {
       this.logger.error({ error : { message: `Permission denied for user [${userId}]` }});
-      return { error : {
-        message: "permission denied"
-      }};
+      return this.helper.handleError(`permission denied`);
     }
     const existedRecipient = await this.checker.checkForUser(data.recipientId);
-    if (!existedRecipient) {
+    if (!existedRecipient)
+    {
       this.logger.error({ error : { message: `Failed to find user [${userId}]` }});
-      return {
-        code: 200,
-        message: `Failed to find user`,
-      };
+      return this.helper.handleError(`Failed to find user`);
     }
 
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.Blocked, GroupType.DM);

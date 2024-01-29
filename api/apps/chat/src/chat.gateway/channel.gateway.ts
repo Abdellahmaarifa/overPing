@@ -84,18 +84,16 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     const socket = connectedChannelUsers.get(data.userId);
     const userId = await this.helper.getUserId(client);
 
-    if (!userId || userId !== data.userId) {
+    if (!userId || userId !== data.userId)
+    {
       this.logger.error({ error : { message: `Permission denied for user [${userId}]` }});
-      return { error : {
-          message: `Permission denied`
-        }};
+      return this.helper.handleError('Permission denied');
     }
     if (await this.checker.checkForUser(data.userId) === false
-     || await this.checker.checkForChannel(data.channelId, userId) === false) {
+     || await this.checker.checkForChannel(data.channelId, userId) === false)
+     {
       this.logger.error({ error : { message: `Invalid user/channel [${userId}]` }});
-      return { error : {
-        message: `Invalid user/channel`
-      }};
+      return this.helper.handleError('Invalid user/channel');
     }
     const channelName = `channel_` + data.channelId;
     client.join(channelName);
@@ -124,9 +122,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     
     const muteExpired = await this.checker.isMuted(userId, data.channelId);
     if (!!muteExpired) {
-      return { error : {
-        message: `Failed: you're muted! go back at ${muteExpired}`
-      }};
+      return this.helper.handleError(`Failed: you're muted! go back at ${muteExpired}`);
     }
     
     const message = await this.channelService.addMessage(data);
@@ -195,9 +191,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       }
     });
     if (!channel) {
-      return { error : {
-        message: `Failed to find channel: ${data.channelId}`
-      }};
+      return this.helper.handleError(`Failed to find channel: ${data.channelId}`);
     }
     return channel.messages || [];
   }
@@ -212,9 +206,7 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     await this.helper.findUser(data.userId);
 
     if (await this.checker.isMember(userId, data.channelId) === false) {
-      return { error : {
-        message: `Failed to find channel: you're not a member`
-      }};
+      return this.helper.handleError(`Failed to find channel: you're not a member`);
     }
 
     return await this.channelService.getMembers(data.channelId);
