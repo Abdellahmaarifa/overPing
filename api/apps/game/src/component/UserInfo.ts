@@ -1,10 +1,16 @@
 import { Socket } from "socket.io";
 
+export enum MatchMode {
+    ONLINE_RANDOM = "online-random-match",
+    VS_COMPUTER   = "match-against-computer",
+    VS_FRIENDS    = "friends-match",
+    TOURNAMENT    = "tournament-match"
+  }
 class UserInfo
 {
     constructor (tabId : string, id: string, wager: number, mode: number, name: string,
         avatar: string, logo: string, mWon: number, bestWin: number,
-        mPlayed: number, level: number, tPlayed: number, tWon: number) 
+        mPlayed: number, level: number, tPlayed: number, tWon: number, usrid : number) 
     {
         this.tabId = tabId;
         this.matchId = id;
@@ -19,6 +25,7 @@ class UserInfo
         this.level = level;
         this.tournentPlayed = tPlayed;
         this.tournentWon = tWon;
+        this.userId = usrid;
     };
 
     socket : Socket | null = null;
@@ -36,6 +43,11 @@ class UserInfo
     level : number = 0;
     tournentPlayed : number = 0;
     tournentWon : number = 0;
+    playWithMouse : number = 0;
+    userId : number = 0;
+    friend : boolean = false;
+    ply2userId : number = 0;
+    matchType : string = MatchMode.ONLINE_RANDOM;
+    wallet : number = 0;
 };
-
 export default UserInfo;

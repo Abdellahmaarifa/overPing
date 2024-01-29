@@ -8,6 +8,7 @@ import { MatchmakingJob } from './jobs/matchmaking.job';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PoolService} from './services/pool.service';
+import { RpcExceptionService } from '@app/common/exception-handling';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PoolService} from './services/pool.service';
     MatchmakingService,
     RabbitMqService,
     PoolService,
+    RpcExceptionService,
   ],
   exports: [PoolService],
 })

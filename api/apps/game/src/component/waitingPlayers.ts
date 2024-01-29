@@ -5,36 +5,33 @@ import { Socket } from "socket.io";
 interface PlayersList
 {
     playersInfo   : UserInfo;
-    playersSocket : Socket;
 }
 
 
 
-let isAlreadyWaiting = (waitingPlayers : PlayersList[], tabId : string) : boolean =>
+let isAlreadyWaiting = (waitingPlayers : PlayersList[], userId : number) : boolean =>
 {
     let i : number = 0;
     while (i < waitingPlayers.length)
     {
-        if (waitingPlayers[i].playersInfo.tabId === tabId)
+        if (waitingPlayers[i].playersInfo.userId ===  userId)
             return (true);
         i++;
     }
     return (false)
 };
 
-let addPlayerToWaitingList = (waitingPlayers: PlayersList[], tabId : string, client: Socket) : void => 
+let addPlayerToWaitingList = (waitingPlayers: PlayersList[], playerObject : UserInfo) : void => 
 {
     
     let newPlayer : PlayersList  =
     {
-        playersInfo : new UserInfo("", "", 0, 0, "", "", "", 0, 0, 0, 0, 0, 0),
-        playersSocket : client
+        playersInfo : playerObject,
     } 
-    newPlayer.playersInfo.tabId = tabId;
     waitingPlayers.push(newPlayer);
 }
 
-let removePlayerFromWaitingList = (waitingPlayers: PlayersList[], client : Socket) : PlayersList[] => 
+let removePlayerFromWaitingList = (waitingPlayers: PlayersList[], userId : number) : PlayersList[] => 
 {
     let tmpList : PlayersList[] = [];
     let i : number = 0;
@@ -42,7 +39,7 @@ let removePlayerFromWaitingList = (waitingPlayers: PlayersList[], client : Socke
     // console.log("before remove the length is ", waitingPlayers.length)
     while (i < waitingPlayers.length)
     {
-        if (waitingPlayers[i].playersSocket !== client)
+        if (waitingPlayers[i].playersInfo.userId !== userId)
         {
             tmpList.push(waitingPlayers[i]);
         }
@@ -57,16 +54,21 @@ let findMatchigPlayer = (waitingPlayers : PlayersList[], player : UserInfo) : Pl
 {
     let found : PlayersList | undefined = undefined;
     
-    found = waitingPlayers.find( (ply) => ply.playersInfo.tabId !== player.tabId && ply.playersInfo.matchWager === player.matchWager && ply.playersInfo.modePlaying === player.modePlaying )
+    found = waitingPlayers.find( (ply) => 
+    ply.playersInfo.userId !== player.userId && ply.playersInfo.matchWager === player.matchWager && ply.playersInfo.modePlaying === player.modePlaying )
     if (found === undefined)
     {
-        found = waitingPlayers.find( (ply) => ply.playersInfo.tabId !== player.tabId && ply.playersInfo.matchWager === player.matchWager)
+        setTimeout(() =>{
+            found = waitingPlayers.find( (ply) => 
+            ply.playersInfo.userId !== player.userId && ply.playersInfo.matchWager === player.matchWager && ply.playersInfo.modePlaying === player.modePlaying )
+        }, 30000);
         if (found === undefined)
         {
-            found = waitingPlayers.find( (ply) => ply.playersInfo.tabId !== player.tabId && ply.playersInfo.modePlaying === player.modePlaying) 
-            if (found === undefined)
-                found = waitingPlayers.find( (ply) => ply.playersInfo.tabId !== player.tabId);
-        }   
+            setTimeout(() =>{
+                found = waitingPlayers.find( (ply) => 
+                ply.playersInfo.userId !== player.userId && ply.playersInfo.matchWager === player.matchWager && ply.playersInfo.modePlaying === player.modePlaying )
+            }, 30000);
+        }
     }
     if (found !== undefined)
         return (found);
