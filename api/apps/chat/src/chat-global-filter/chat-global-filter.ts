@@ -11,8 +11,8 @@ import { Socket } from "socket.io";
 export class ChatExceptionFilter extends BaseWsExceptionFilter {
 
   catch(exception: WsException | HttpException, host: ArgumentsHost) {
-
-      const ctx = host.switchToWs();
+    const ctx = host.switchToWs();
+    console.log('\n\n\nctx:', ctx, '\n\n\n');
       const client = ctx.getClient() as Socket;
       const error = exception instanceof WsException ? exception.getError() : exception.getResponse();
       const details = error instanceof Object ? { ...error } : { message: error };

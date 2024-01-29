@@ -21,7 +21,7 @@ import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
 let connectedChannelUsers: Map<number, any> = new Map();
 
-@UseFilters(new ChatExceptionFilter())
+@UseFilters(ChatExceptionFilter)
 @WebSocketGateway({
   cors: {
     origin: `${process.env.CHAT_FRONT_URL}`,
@@ -50,14 +50,15 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   async handleConnection(client: Socket, ...args: any[]) {
     const userId = await this.helper.getUserId(client);
-    if (userId) {
-      this.logger.log(`User connected: ${userId} [${client.id}`);
-      connectedChannelUsers.set(userId, client);
-
+    const id = await this.helper.findUser(userId);
+    if (userId && id) {
+      
       const userChannels = await this.channelService.getUserChannels(userId);
       userChannels.forEach((channel) => {
         client.join('channel_' + channel.id)
       });
+      connectedChannelUsers.set(userId, client);
+      this.logger.log(`User connected: ${userId} [${client.id}`);
     }
     else {
       this.logger.warn(`User authentication failed: ${userId} [${client.id}`);

@@ -1,6 +1,6 @@
 import { IDirectMessage, IMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { Controller, UseFilters, UseInterceptors } from '@nestjs/common';
+import { Controller, UseFilters } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { DeleteDirectMessagedto,
   DeleteMessageInDMdto,
@@ -8,8 +8,7 @@ import { DeleteDirectMessagedto,
 import { DirectMessageService } from '../services/directMessage.service';
 import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
-@UseFilters(new ChatExceptionFilter())
-// @UseInterceptors(FormatResponseInterceptor)
+@UseFilters(ChatExceptionFilter)
 @Controller()
 export class DirectMessageController {
   constructor(

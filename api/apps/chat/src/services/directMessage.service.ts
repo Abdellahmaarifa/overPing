@@ -1,6 +1,6 @@
 import { IDirectMessage, IMessage } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, UseFilters, forwardRef } from '@nestjs/common';
 import { AddMessageInDMdto, DeleteDirectMessagedto,
          DeleteMessageInDMdto, UpdateMessageInDMdto } from '../dto';
 import { PrismaService } from 'apps/chat/prisma/prisma.service';
@@ -12,7 +12,9 @@ import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { ClientProxy } from '@nestjs/microservices';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { DirectMessageGateway } from '../chat.gateway/directMessage.gateway';
+import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
+@UseFilters(ChatExceptionFilter)
 @Injectable()
 export class DirectMessageService {
   constructor(

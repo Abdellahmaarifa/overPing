@@ -49,9 +49,10 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 
   async handleConnection(client: Socket, ...args: any[]) {
     const userId = await this.helper.getUserId(client);
-    if (userId) {
-      this.logger.log(`User connected: ${userId} [${client.id}`);
+    const id = await this.helper.findUser(userId);
+    if (userId && id) {
       connectedUsers.set(userId, client);
+      this.logger.log(`User connected: ${userId} [${client.id}`);
     }
     else {
       this.logger.log(`User authentication failed: ${userId} [${client.id}`);

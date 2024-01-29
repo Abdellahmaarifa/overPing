@@ -16,7 +16,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.useGlobalFilters(new ChatExceptionFilter());
+  app.useGlobalFilters(new ChatExceptionFilter);
   app.connectMicroservice(rmqService.getOptions(RABBIT_SERVICES[IRmqSeverName.CHAT].queue))
 
   await app.startAllMicroservices();

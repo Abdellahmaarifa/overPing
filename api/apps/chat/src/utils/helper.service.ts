@@ -3,7 +3,7 @@ import { IAdmins, IChannel, IMembers } from '@app/common/chat';
 import { RpcExceptionService } from '@app/common/exception-handling';
 import { RabbitMqService } from '@app/rabbit-mq';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, UseFilters, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
@@ -15,9 +15,11 @@ import { ChannelGateway } from '../chat.gateway/channel.gateway';
 import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from './checker.service';
+import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
 
 // const argon2 = require('argon2');
 
+@UseFilters(ChatExceptionFilter)
 @Injectable()
 export class HelperService {
   constructor(
@@ -86,8 +88,7 @@ export class HelperService {
   async getUserId(client: Socket) : Promise<number | null> {
     try {
       const session = client.handshake.headers.cookie;
-      
-      const cookies = cookie.parse(client.handshake.headers.cookie || '');
+      const cookies = cookie.parse(session || '');
       const accessToken = cookies['Access_token'];
 
       if (accessToken) {
@@ -219,10 +220,10 @@ export class HelperService {
     }
     catch {
       if (throwExc) {
-        this.rpcExceptionService.throwCatchedException({
-          code: 200,
-          message: `Failed to find user`,
-        });
+        // this.rpcExceptionService.throwCatchedException({
+        //   code: 200,
+        //   message: `Failed to find user`,
+        // });
       }
       return null;
     }
