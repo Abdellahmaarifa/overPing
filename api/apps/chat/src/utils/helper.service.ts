@@ -67,7 +67,7 @@ export class HelperService {
     catch (error) {
       if (error === 'Invalid password') {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `Invalid password`,
         });
       }
@@ -81,7 +81,7 @@ export class HelperService {
     });
     if (existingChannel) {
       this.rpcExceptionService.throwCatchedException({
-        code: 200,
+        code: 400,
         message: `Channel name already exist`,
       });
     }
@@ -103,7 +103,7 @@ export class HelperService {
     } catch (error) {
       if (error.expiredAt) {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `Token has expired, please sign in`,
         });
       }
@@ -130,7 +130,7 @@ export class HelperService {
   
     if (!channel) {
       this.rpcExceptionService.throwCatchedException({
-        code: 200,
+        code: 400,
         message: `Failed to find channel`,
       });
     }
@@ -224,7 +224,7 @@ export class HelperService {
     catch {
       if (throwExc) {
         // this.rpcExceptionService.throwCatchedException({
-        //   code: 200,
+        //   code: 400,
         //   message: `Failed to find user`,
         // });
       }
@@ -285,17 +285,12 @@ export class HelperService {
         });
       }
     });
-    const userDMs = await this.directMessageService.getUserDirectMessages(userId);
-    (userDMs as any).forEach((dm) => {
-      if (dm!.id) {
-        this.prisma.directMessage.deleteMany({
-          where: {
-            OR: [
-              {user1_id: userId},
-              {user2_id: userId}
-            ]
-          }
-        });
+    await this.prisma.directMessage.deleteMany({
+      where: {
+        OR: [
+          { user1_id: userId },
+          { user2_id: userId }
+        ]
       }
     });
   }

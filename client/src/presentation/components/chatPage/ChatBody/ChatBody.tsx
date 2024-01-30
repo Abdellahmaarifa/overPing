@@ -265,7 +265,7 @@ const ChatBody = ({ type }: { type: string }) => {
                     image={String(u?.profileImgUrl)}
                     message={e.text}
                     date={format(e.created_at, "dd-MM-yyy/HH:mm")}
-                    key={Number(currentDm?.id)}
+                    key={Number(e.id)}
                     id={Number(u?.id)}
                   />
                 );

@@ -476,7 +476,7 @@ export class UserService {
       if (!usersInfo || usersInfo.length === 0) {
         console.log("\n\n\ncached exception from user\n\n\n")
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 404,
           message: 'User(s) not found'
         });
       }

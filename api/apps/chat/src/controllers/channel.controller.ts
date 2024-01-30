@@ -91,7 +91,7 @@ export class ChannelController {
     
     if (!visibility) {
       this.rpcExceptionService.throwCatchedException({
-        code: 200,
+        code: 400,
         message: `Failed to find channel`,
       });
     }
@@ -102,7 +102,7 @@ export class ChannelController {
           return await this.channelService.joinProtectedChannel(userId, channelId, password);
         } else {
           this.rpcExceptionService.throwCatchedException({
-            code: 200,
+            code: 400,
             message: `Failed to join Protected Channel: password required`,
           });
         }
@@ -112,7 +112,7 @@ export class ChannelController {
       }
       default: {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `You're not allowed to join the channel !!! PRIVATE !!!`,
         });
       }

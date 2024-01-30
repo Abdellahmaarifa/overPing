@@ -131,6 +131,7 @@ import { GameQueriesResolver } from "./microservices/game/graphql/queries/gw.gam
 })
 export class GatewayModule {
   configure(consumer: any) {
-    consumer.apply(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 3 })).forRoutes('graphql');
+    consumer.apply(graphqlUploadExpress({ maxFileSize: 500000000000, maxFiles: 3 })).forRoutes('graphql');
+    // consumer.apply(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 3 })).forRoutes('graphql');
   }
 }

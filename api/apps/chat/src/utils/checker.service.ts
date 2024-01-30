@@ -89,12 +89,12 @@ export class CheckerService {
     if (group === GroupType.DM && users?.includes(targetId)) {
       if (status === FriendshipStatus.BlockedBy) {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `Failed: The user has blocked you!`,
         });
       } else if (status === FriendshipStatus.Blocked) {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `Failed: you blocked the user!`,
         });
       }
@@ -140,7 +140,7 @@ export class CheckerService {
     if (bannedMember) {
       if (throwEx) {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `failed: You are BANNED!`,
         });
       }
@@ -199,7 +199,7 @@ export class CheckerService {
         return await this.helper.hashPassword(data.newPassword);
       } else {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `The update authorization requires a PASSWORD!`,
         });
       }
@@ -212,7 +212,7 @@ export class CheckerService {
         return null;
       } else {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `The update authorization requires a PASSWORD!`,
         });
       }
@@ -224,7 +224,7 @@ export class CheckerService {
         return await this.helper.hashPassword(data.newPassword);
       } else {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `The update authorization requires the OLD PASSWORD!`,
         });
       }

@@ -53,11 +53,9 @@ export class GatewayService {
 		  } catch (error) {
 			if (respond && respond.user && respond.user.id) {
 			  this.userService.removeAccount(respond.user.id);
-				await this.userService.deleteChatHistory(respond.user.id);
-				
+		
 			  if (respond.user.id) {
-					this.profileService.removeProfile(respond.user.id);
-
+				this.profileService.removeProfile(respond.user.id);
 			  }
 			}
 		
