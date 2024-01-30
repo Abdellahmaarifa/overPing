@@ -172,6 +172,7 @@ export class HelperService {
     } else {
       await this.setOwner(channelId, admins[0].id, "isAdmin");
     }
+    console.log(`ownerLeavedChannel(${channelId})`);
   }
   
   async setOwner(channelId: number, newOwner: number, oldStatus: string) : Promise<void> {
@@ -273,18 +274,26 @@ export class HelperService {
     if (!userId) {
       return;
     }
-    const userChannels = await this.channelService.getUserChannels(userId);
-    userChannels.forEach((channel) => {
-      if (channel.id) {
-        this.channelService.leave(userId, channel.id);
-        this.prisma.messages.deleteMany({
-          where: {
-            sender_id: userId,
-            channelId: channel.id
-          }
-        });
-      }
+
+    const channels = await this.prisma.channel.findMany({
+      where: { owner_id: userId }
     });
+    channels.forEach(async (channel) => {
+      await this.channelService.leave(userId, channel.id);
+    });
+
+    // const userChannels = await this.channelService.getUserChannels(userId);
+    // userChannels.forEach((channel) => {
+    //   if (channel.id) {
+    //     this.channelService.leave(userId, channel.id);
+    //     this.prisma.messages.deleteMany({
+    //       where: {
+    //         sender_id: userId,
+    //         channelId: channel.id
+    //       }
+    //     });
+    //   }
+    // });
     await this.prisma.directMessage.deleteMany({
       where: {
         OR: [

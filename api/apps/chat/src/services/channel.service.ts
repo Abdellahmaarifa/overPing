@@ -549,6 +549,14 @@ export class ChannelService {
     if (isOwner === true) {
       await this.helper.ownerLeavedChannel(channelID);
     }
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        id: channelID,
+      },
+      select: {
+        owner_id: true,
+      }
+    });
 
     this.channelGateway.leavchannel(userID, channelID);
     this.channelGateway.sendUpdatedListOfMembers(channelID, await this.getMembers(channelID));

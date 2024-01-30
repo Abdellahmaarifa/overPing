@@ -28,6 +28,7 @@ export class GatewayService {
 
 
 	async signIn(authCredentials: AuthCredentialsInput): Promise<AuthResponseDto> {
+
 		return await this.clientService.sendMessageWithPayload(
 			this.client,
 			{ role: 'auth', cmd: 'login' },

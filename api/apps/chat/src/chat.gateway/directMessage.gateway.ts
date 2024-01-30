@@ -149,9 +149,6 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     const client1 = connectedUsers.get(user1);
     const client2 = connectedUsers.get(user2);
 
-    console.log(`\n\n\nuser[${user1}] (updatedDMsList)`, updatedList1, '\n\n\n')
-    console.log(`\n\n\nuser[${user2}] (updatedDMsList)`, updatedList2, '\n\n\n')
-
     if (client1) {
       client1.emit(DIRECTMESSAGE.recUpdatedDMsList, updatedList1);
     }

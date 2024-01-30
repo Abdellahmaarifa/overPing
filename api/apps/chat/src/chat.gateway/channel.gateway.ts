@@ -225,7 +225,6 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async sendUpdatedListOfMembers(channelId: number, updatedList: IMembersWithInfo) {
     const channelName = `channel_` + channelId;
 
-    // console.log(`updatedList:`, updatedList);
     this.server.to(channelName).emit(CHANNEL.recUpdatedListOfMembers, {
       channelId,
       updatedList

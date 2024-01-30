@@ -141,7 +141,6 @@ export class DirectMessageService {
     let i = 0;
     const dms = await Promise.all(directMessages.map(async (dm) => {
       if (user2[i]) {
-        console.log(`user1[${user1}], user2[${user2[i]}] (dm [${dm.id}])`, dm)
         return {
           id: dm.id,
           user1,
