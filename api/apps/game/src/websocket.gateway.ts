@@ -23,7 +23,6 @@ import { RpcExceptionService } from '@app/common/exception-handling';
 interface PlayersList
 {
     playersInfo   : UserInfo;
-    playersSocket : Socket;
 }
 
 let waitingPlayers : PlayersList[] = []
@@ -69,19 +68,21 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
     const query = client.handshake.query;
     const matchId : string  = query.ID as string ; 
     const tabsId : string  = query.tabId as string ; 
-    const waitingTabsId : string  = query.waitingTabsId as string ;
+    const waitingUserId : number  = query.waitingTabsId as number ;
+    let playerObject : UserInfo = query.playerOne
 
     // console.log("query : ", query)
     
     //add player to waiting list
-    if (waitingTabsId !== undefined && waitingTabsId.length)
-    {
-      if (isAlreadyWaiting(waitingPlayers, waitingTabsId) === false)
-        addPlayerToWaitingList(waitingPlayers, waitingTabsId, client);
-    }
+    // if (playerObject && waitingUserId !== undefined )
+    // {
+    //   if (isAlreadyWaiting(waitingPlayers, waitingUserId) === false)
+    //     addPlayerToWaitingList(waitingPlayers, playerObject);
+    // }
     //add player to room 
-    if (matchId && matchId.length && matchId[0] !== 'r') 
+    if (matchId && matchId.length && matchId.substring(0, 5) !== 'robot') 
     {
+      console.log("Matchid : ", matchId);
       addToRoom(rooms, client, matchId, tabsId);
       let room : Rooms = getRoomByClientId(rooms, client.id);
     
@@ -120,11 +121,11 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
     updatePlayerObject(waitingPlayers, obj)
   }
 
-  @SubscribeMessage('matchingRequest')
-  handleMatchingRequest(client : Socket, id : number)
+  /*@SubscribeMessage('matchingRequest')
+  handleMatchingRequest(client : Socket)
   {
-    
-  }
+      client.emit("aMatchingHappen"); 
+  }*/
   // @SubscribeMessage('matchingRequest')
   // handleMatchingRequest(client : Socket, obj : UserInfo)
   // {
@@ -138,16 +139,14 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
   //     matchId = (Math.floor(Math.random() * 10000) + 1).toString() + Date.now().toString();
   //     findPlayer.playersInfo.matchId = matchId;
   //     obj.matchId = matchId;
-  //     findPlayer.playersInfo.socket = null;
   //     if (client)
   //       client.emit('machingResponse', findPlayer.playersInfo);
-  //     obj.socket = null;
-  //     if (findPlayer.playersSocket)
-  //       findPlayer.playersSocket.emit('machingResponse', obj);
-  //     waitingPlayers = removePlayerFromWaitingList(waitingPlayers, findPlayer.playersSocket);
-  //     waitingPlayers = removePlayerFromWaitingList(waitingPlayers, client);
+  //     if (findPlayer.playersInfo.socket)
+  //       findPlayer.playersInfo.socket.emit('machingResponse', obj);
+  //     waitingPlayers = removePlayerFromWaitingList(waitingPlayers, findPlayer.playersInfo.userId);
+  //     waitingPlayers = removePlayerFromWaitingList(waitingPlayers, obj.userId);
   //     client.disconnect();
-  //     findPlayer.playersSocket.disconnect();
+  //     findPlayer.playersInfo.socket.disconnect();
   //   }
   //   else if (client)
   //     client.emit('machingResponse', findPlayer);
@@ -194,13 +193,13 @@ handleAchievements(client: Socket, gameAchievement: any) {
 handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : string) 
 {
   this.gameService.addResult(obj);
-  console.log("data his : ", obj)
+  //console.log("data his : ", obj)
 }
 
   @SubscribeMessage('customGoalsEvent') // Listen for the 'customEventDataRequest' event
   handleGoalsEvent(client: Socket, obj : infoObj )//matchId : string)//, tabsId : string) 
   {
-      //console.log("The id : ", obj. ID,obj.ID.substring(1, obj.ID.length) )
+      console.log("The id : ", obj. ID )
       let room = getRoomByMatchId(rooms, obj.ID);
      // if (room)
        // console.log("Number of clients : ---> ", room.numberOfClients);
@@ -238,7 +237,7 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
           goal.leftPlayerGoals = room.container.rightPlayerGoal;
           goal.rightPlayerGoals = room.container.leftPlayerGoal;
           goal.leftPlayerRebound = room.container.rightPlayerRebound;
-          goal.leftPlayerRebound = room.container.rightPlayerStrict;
+          goal.leftPlayerStrict = room.container.rightPlayerStrict;
           goal.rightPlayerRebound = room.container.leftPlayerRebound;
           goal.rightPlayerStrict = room.container.leftPlayerStrict;
           goal.playerNumber = 2;
@@ -396,11 +395,6 @@ handleWeaponrandomNumber(client: Socket)
   {
     let room : Rooms = getRoomByClientId(rooms, client.id);
 
-    // App player disconnected
-    if (room) 
-    {
-      clearRoom(rooms, room, client);
-    }
 
     // info player disconnected
     room = getRoomByClientInfoSocket(rooms, client)
@@ -418,32 +412,37 @@ handleWeaponrandomNumber(client: Socket)
       }
     }
 
+    // App player disconnected
+    if (room) 
+    {
+      clearRoom(rooms, room, client);
+    }
 
 
     //romeve player from waiting list
-    if (waitingPlayers.find( (ply) => ply.playersSocket === client))
-    {
-      let tmpList : PlayersList[] = [];
-      let i : number = 0;
-      let size : number = 0;
+    // if (waitingPlayers.find( (ply) => ply.playersInfo.userId === ))
+    // {
+    //   let tmpList : PlayersList[] = [];
+    //   let i : number = 0;
+    //   let size : number = 0;
 
-      while (i < waitingPlayers.length)
-      {
-          if (waitingPlayers[i].playersSocket !== client)
-              tmpList.push(waitingPlayers[i]);
-          i++;
-      }
+    //   while (i < waitingPlayers.length)
+    //   {
+    //       if (waitingPlayers[i].playersSocket !== client)
+    //           tmpList.push(waitingPlayers[i]);
+    //       i++;
+    //   }
       
-      i = -1
-      size = waitingPlayers.length;
-      while (++i < size)
-        waitingPlayers.pop();
+    //   i = -1
+    //   size = waitingPlayers.length;
+    //   while (++i < size)
+    //     waitingPlayers.pop();
       
-      i = -1;
-      while (++i < tmpList.length)
-        waitingPlayers.push(tmpList[i]);
+    //   i = -1;
+    //   while (++i < tmpList.length)
+    //     waitingPlayers.push(tmpList[i]);
 
-    }
+    // }
 
 
     // Handle WebSocket disconnections here

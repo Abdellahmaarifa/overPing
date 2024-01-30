@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject,HttpException } from '@nestjs/common';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { ClientProxy } from '@nestjs/microservices';
 import { RabbitMqService } from '@app/rabbit-mq';
@@ -18,6 +18,15 @@ export class GWMediaService {
 
   //======================update image======================
   async updateAvatarImg(userId, file: FileUpload): Promise<string> {
+    let imgUrl = await this.uploadAvatarImg(file);
+    this.userService.updateUser(userId, {
+      profileImgUrl: imgUrl,
+    });
+
+    return imgUrl;
+  }
+
+  async uploadAvatarImg(file: FileUpload): Promise<string> {
     const { filename, mimetype, encoding } = file;
 
     const resolvedBuffer = await this.convertStreamToBuffer(file);
@@ -28,17 +37,18 @@ export class GWMediaService {
         cmd: 'update-avatar-img',
       },
       {
-        userId,
         filename,
         mimetype,
         encoding,
         buffer: resolvedBuffer,
       },
     );
-    this.userService.updateUser(userId, {
-      profileImgUrl: imgUrl,
-    });
-
+     if (!imgUrl){
+      throw new HttpException(
+			  'An internal server error occurred',
+			  500,
+			); 
+     }
     return imgUrl;
   }
 

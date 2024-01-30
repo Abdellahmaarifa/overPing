@@ -97,7 +97,7 @@ function addToRoom(rooms : Rooms[],  client: Socket, matchID : string, tabsId : 
     room.numberOfClients = 3
 
   }
-  else if (room.numberOfClients === 0) 
+  else if (room.numberOfClients === 0 && matchID.length && matchID[0] !== 'A') 
   {
     room.clientOneId = client.id;
     room.clientOneTabId = tabsId;
@@ -105,7 +105,7 @@ function addToRoom(rooms : Rooms[],  client: Socket, matchID : string, tabsId : 
     room.numberOfClients = 1;
     room.startTime = Date.now();
   } 
-  else if (room.numberOfClients === 1) 
+  else if (room.numberOfClients === 1 && matchID.length && matchID[0] !== 'A') 
   {
     room.clientTwoId = client.id;
     room.clientTwoTabId = tabsId;

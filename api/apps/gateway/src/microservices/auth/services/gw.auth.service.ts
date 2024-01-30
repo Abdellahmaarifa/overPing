@@ -35,28 +35,27 @@ export class GatewayService {
 		);
 	}
 
-	async signUp(userInput: UserCreationInput, file: FileUpload): Promise<AuthResponseDto> {
+	async signUp(userCredentials: UserCreationInput, file: FileUpload): Promise<AuthResponseDto> {
 		let respond: AuthResponseDto;
-		try {
-			respond = await this.clientService.sendMessageWithPayload(
-			  this.client,
-			  { role: 'auth', cmd: 'signUp' },
-			  userInput,
+		let imgUrl = await this.mediaService.uploadAvatarImg(file);
+		respond = await this.clientService.sendMessageWithPayload(
+			this.client,
+			{ role: 'auth', cmd: 'signUp' },
+			{
+				userCredentials,
+				imgUrl,
+			}
 			);
-		
+			
 			const { id, username } = respond.user;
-		
+			
+		try {
 			await this.profileService.createUserProfile({ userId: id, username });
-			await this.mediaService.updateAvatarImg(id, file);
-		
 			return respond;
 		  } catch (error) {
 			if (respond && respond.user && respond.user.id) {
 			  this.userService.removeAccount(respond.user.id);
-		
-			  if (respond.user.id) {
-				this.profileService.removeProfile(respond.user.id);
-			  }
+				await this.userService.deleteChatHistory(respond.user.id);
 			}
 		
 			throw new HttpException(

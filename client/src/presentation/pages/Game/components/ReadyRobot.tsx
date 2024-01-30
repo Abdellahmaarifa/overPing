@@ -71,7 +71,7 @@ let ReadyRobot = ( {playerOne, playerTwo, robot, updateReadyState , updateUserIn
 
     setTimeout( () => {
         updateReadyState(false);
-    }, 5000);
+    }, 4000);
 
     return (
         <div className='ReadyContainer'>

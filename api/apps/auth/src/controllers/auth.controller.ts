@@ -25,8 +25,9 @@ export class AuthController {
     }
     
     @MessagePattern({ role: 'auth', cmd: 'signUp' })
-    async signUp(userCredentials: SignUpCredentialsDto): Promise<AuthResponseDto> {
-        return this.authService.signUp(userCredentials);
+    async signUp(input: {userCredentials: SignUpCredentialsDto, imgUrl: string}): Promise<AuthResponseDto> {
+        input.userCredentials.imgUrl = input.imgUrl;
+        return this.authService.signUp(input.userCredentials);
     }
 
     @MessagePattern({ role: 'auth', cmd: 'OnRefreshTokenMatch' })

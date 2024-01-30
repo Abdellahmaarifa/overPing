@@ -11,7 +11,7 @@ export class WalletService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly rpcExceptionService: RpcExceptionService
-  ) {}
+  ) { }
 
   async transferFunds(data: TransferFundsDto): Promise<boolean> {
     await this.prisma.$transaction(async () => {
@@ -28,68 +28,72 @@ export class WalletService {
         data: { balance: { increment: amount } },
       });
     } catch (error) {
-        this.handlePrismaError(error);
+      this.handlePrismaError(error);
     }
   }
 
   async placeBet(placeBetData: PlaceBetDto): Promise<boolean> {
-    try{
-      const wallet = await this.prisma.wallet.findUnique({
+    const wallet = await this.prisma.wallet.findUnique({
+      where: { user_id: placeBetData.userId },
+    });
+    if (!wallet) {
+      this.rpcExceptionService.throwBadRequest('wallet not found');
+    }
+    if (!wallet || wallet.balance < placeBetData.betAmount) {
+      await this.prisma.wallet.update({
         where: { user_id: placeBetData.userId },
+        data: { betAmount: 0},
       });
-      if (!wallet || wallet.balance < placeBetData.betAmount){
-        this.rpcExceptionService.throwBadRequest('is not enough balace to bet with');
-      }
+      this.rpcExceptionService.throwBadRequest('is not enough balace to bet with');
+    }
     await this.prisma.wallet.update({
       where: { user_id: placeBetData.userId },
-      data: { betAmount:  placeBetData.betAmount  },
+      data: { betAmount: placeBetData.betAmount },
     });
     return true;
-  }catch(error){
-    this.handlePrismaError(error);
-  }
+
   }
 
   async resolveBet(resolveBetData: ResolveBetDto): Promise<boolean> {
-    try{
-    const wallet = await this.prisma.wallet.findUnique({
-      where: { user_id: resolveBetData.userId },
-    });
-
-    if (wallet?.betAmount && wallet.betAmount > 0) {
-      const amountWonOrLost = resolveBetData.isWinner ? wallet.betAmount : -wallet.betAmount;
-
-      await this.prisma.$transaction(async (prisma) => {
-        await prisma.wallet.update({
-          where: { user_id: resolveBetData.userId },
-          data: { balance: { increment: amountWonOrLost }, betAmount: 0 },
-        });
+    try {
+      const wallet = await this.prisma.wallet.findUnique({
+        where: { user_id: resolveBetData.userId },
       });
-      return (true);
+
+      if (wallet?.betAmount && wallet.betAmount > 0) {
+        const amountWonOrLost = resolveBetData.isWinner ? wallet.betAmount : -wallet.betAmount;
+
+        await this.prisma.$transaction(async (prisma) => {
+          await prisma.wallet.update({
+            where: { user_id: resolveBetData.userId },
+            data: { balance: { increment: amountWonOrLost }, betAmount: 0 },
+          });
+        });
+        return (true);
+      }
+    } catch (error) {
+      this.handlePrismaError(error);
     }
-  }catch(error){
-    this.handlePrismaError(error);
   }
-  }
-  
+
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async dailyDonation(): Promise<void> {
-      const usersToUpdate = await this.prisma.wallet.findMany({
-        where: {
-          balance: {
-            lt: 100,
-          },
+    const usersToUpdate = await this.prisma.wallet.findMany({
+      where: {
+        balance: {
+          lt: 100,
+        },
+      },
+    });
+
+    for (const wallet of usersToUpdate) {
+      await this.prisma.wallet.update({
+        where: { id: wallet.id },
+        data: {
+          balance: wallet.balance + 500,
         },
       });
-  
-      for (const wallet of usersToUpdate) {
-        await this.prisma.wallet.update({
-          where: { id: wallet.id },
-          data: {
-            balance: wallet.balance + 500,
-          },
-        });
-      }
+    }
   }
 
   private handlePrismaError(error: any): void {

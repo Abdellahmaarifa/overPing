@@ -21,6 +21,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google'){
         refreshToken: string,
         profile: any,
         ){  
+            const profilePicture = profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null;
             const email = profile.emails[0].value;
             const username =  email.split('@')[0];
             const userAccount = {
@@ -28,6 +29,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google'){
                     username:  username,
                     email: email,
                     displayName: profile.displayName,
+                    imgUrl: profilePicture
             }
             const account = await this.userService.findOrCreateUser(userAccount);
            return (account);

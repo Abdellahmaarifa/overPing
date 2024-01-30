@@ -39,6 +39,7 @@ export class MatchMakingMutationsResolver {
 
       @Mutation((returns) =>  Boolean, { nullable: true })
       async joinMatchmakingQueue(@Args('JoinMatchmakingInput') joinMatchData: JoinMatchmakingInput) {
+        console.log("input of join:", joinMatchData);
         this.gwMatchMakingService.joinMatchmakingQueue(joinMatchData);
       }
 

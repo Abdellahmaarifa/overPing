@@ -18,6 +18,7 @@ export class WalletController {
 
   @MessagePattern({ role: 'wallet', cmd: 'placeBet'})
   async placeBet(placeBetData: PlaceBetDto):Promise<boolean>{
+   console.log("place bet ", placeBetData);
      return this.walletService.placeBet(placeBetData);
   }
 
