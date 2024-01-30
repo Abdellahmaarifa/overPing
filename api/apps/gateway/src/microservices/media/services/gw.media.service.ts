@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject,HttpException } from '@nestjs/common';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { ClientProxy } from '@nestjs/microservices';
 import { RabbitMqService } from '@app/rabbit-mq';
@@ -43,6 +43,12 @@ export class GWMediaService {
         buffer: resolvedBuffer,
       },
     );
+     if (!imgUrl){
+      throw new HttpException(
+			  'An internal server error occurred',
+			  500,
+			); 
+     }
     return imgUrl;
   }
 
