@@ -35,19 +35,22 @@ export class GatewayService {
 		);
 	}
 
-	async signUp(userInput: UserCreationInput, file: FileUpload): Promise<AuthResponseDto> {
+	async signUp(userCredentials: UserCreationInput, file: FileUpload): Promise<AuthResponseDto> {
 		let respond: AuthResponseDto;
 		try {
+			let imgUrl = await this.mediaService.uploadAvatarImg(file);
 			respond = await this.clientService.sendMessageWithPayload(
 			  this.client,
 			  { role: 'auth', cmd: 'signUp' },
-			  userInput,
+			  {
+				userCredentials,
+				imgUrl,
+			  }
 			);
 		
 			const { id, username } = respond.user;
 		
 			await this.profileService.createUserProfile({ userId: id, username });
-			await this.mediaService.updateAvatarImg(id, file);
 		
 			return respond;
 		  } catch (error) {

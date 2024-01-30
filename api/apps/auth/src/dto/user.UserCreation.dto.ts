@@ -4,5 +4,6 @@ export class UserCreationDto {
     password?: string;
     googleId?: string;
     fortyTwoId?: string;
+    imgUrl?: string;
 }
   

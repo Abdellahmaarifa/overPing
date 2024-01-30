@@ -12,7 +12,7 @@ import { PrismaService } from 'apps/auth/prisma/prisma.service';
 import * as argon2 from 'argon2';
 import { SignInCredentialsDto, UserCreationDto } from '../dto';
 import { UpdateUserDto } from '../dto/user.update.dto';
-
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class UserService {
   constructor(
@@ -21,6 +21,7 @@ export class UserService {
     private readonly clientService: RabbitMqService,
     private readonly rpcExceptionService: RpcExceptionService,
     private prisma: PrismaService,
+    private configService: ConfigService,
   ) { }
 
   async validateUser(
@@ -47,6 +48,7 @@ export class UserService {
     googleId,
     fortyTwoId,
     email,
+    imgUrl,
   }: UserCreationDto): Promise<IAuthUser> {
     const exists = await this.isUserExist(username);
     if (exists) {
@@ -56,7 +58,7 @@ export class UserService {
     }
     try {
       const hashedPassword = password ? await argon2.hash(password) : undefined;
-
+      let img = imgUrl ? imgUrl : this.configService.get<string>('DEFAULT_AVATAR_IMG_URL');//http://localhost:5500/image/avatar/defaultAvatar.jpg";
       return this.prisma.user.create({
         data: {
           username,
@@ -64,6 +66,7 @@ export class UserService {
           password: hashedPassword,
           googleId,
           fortyTwoId,
+          profileImgUrl: img,
           twoFactorSecret: '',
           twoStepVerificationEnabled: false,
         },

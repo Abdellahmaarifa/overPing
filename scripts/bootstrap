@@ -9,7 +9,7 @@ docker exec -w /usr/src/app/apps/auth/prisma auth npx prisma studio &
 docker exec -it -w /usr/src/app/apps/profile/prisma profile npx prisma migrate dev --name my_migration_profile
 docker exec -i -w /usr/src/app/apps/profile/prisma profile npx prisma migrate reset --force
 docker restart profile
-docker exec -w /usr/src/app/apps/auth/prisma profile npx prisma studio &
+docker exec -w /usr/src/app/apps/profile/prisma profile npx prisma studio &
 
 
 docker exec -it -w /usr/src/app/apps/chat/prisma chat npx prisma migrate dev --name my_migration_chat

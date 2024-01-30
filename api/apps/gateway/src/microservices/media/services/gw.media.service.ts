@@ -18,6 +18,15 @@ export class GWMediaService {
 
   //======================update image======================
   async updateAvatarImg(userId, file: FileUpload): Promise<string> {
+    let imgUrl = await this.uploadAvatarImg(file);
+    this.userService.updateUser(userId, {
+      profileImgUrl: imgUrl,
+    });
+
+    return imgUrl;
+  }
+
+  async uploadAvatarImg(file: FileUpload): Promise<string> {
     const { filename, mimetype, encoding } = file;
 
     const resolvedBuffer = await this.convertStreamToBuffer(file);
@@ -28,17 +37,12 @@ export class GWMediaService {
         cmd: 'update-avatar-img',
       },
       {
-        userId,
         filename,
         mimetype,
         encoding,
         buffer: resolvedBuffer,
       },
     );
-    this.userService.updateUser(userId, {
-      profileImgUrl: imgUrl,
-    });
-
     return imgUrl;
   }
 
