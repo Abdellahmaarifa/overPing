@@ -153,7 +153,8 @@ function App({
   }, []); // Use an empty dependency array to run this effect only once
 
   return (
-    <ReactP5Wrapper
+   
+    <ReactP5Wrapper id="adbel"
       sketch={(p5) =>
         MySketch({
           gameCapsule,
@@ -164,7 +165,10 @@ function App({
           updateMatchState,
         })
       }
-    />
+    >
+ <div id="test"></div>
+    </ReactP5Wrapper>
+ 
   );
 }
 

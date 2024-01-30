@@ -437,7 +437,7 @@ function setup(game : Game)
         canvasHeight = 150;
       game.cnv = game.p5.createCanvas( canvasWidth ,  canvasHeight);
       if (game.cnv)
-        game.cnv.parent('layout');
+        game.cnv.parent('test');
       game.canvasResizedHeight = canvasHeight;
       game.canvasResizedWidth = canvasWidth;
       /*Sounds.soundButton = game.p5.createButton('mute');
