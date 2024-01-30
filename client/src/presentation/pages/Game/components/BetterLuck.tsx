@@ -1,6 +1,5 @@
 import './BetterLuck.css'
 import UserInfo from './UserInfo';
-import { Howl, Howler } from 'howler';
 
 interface BetterProps
 {
@@ -12,30 +11,23 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
 {
     let plyOneImg : HTMLElement | null = null;
     let plyTwoImg : HTMLElement | null = null;
+    let canvas : HTMLElement | null = null;
 
-    let loseSound : any = new Howl({
-        src: ['/Sounds/lose.wav'],
-        onload: () => {
-          //console.log('Audio loaded successfully');
-        },
-        onloaderror: (error : any ) => {
-          //console.error('Error loading audio:', error);
-        },
-      });
-
-    Howler.stop();
-    setTimeout(() => {
-          loseSound.play();
-    }, 1000)
 
     setTimeout( () => {
         plyOneImg  = document.getElementById("betterAvatar2");
         plyTwoImg  = document.getElementById("betterAvatar1");
+        canvas = document.getElementById("defaultCanvas0");
         plyOneImg?.setAttribute('src', playerOne.userAvatar);
         plyTwoImg?.setAttribute('src', playerTwo.userAvatar);
 
     }, 200)
 
+    if (canvas)
+    {
+        canvas.style.width = "0";
+        canvas.style.height = "0";
+    }
     let wager : number = playerTwo.matchWager * 2;
     return (
         <div className='betterContainer'>

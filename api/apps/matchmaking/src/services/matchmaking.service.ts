@@ -8,7 +8,7 @@ import { PoolService } from './pool.service';
 import { Player, PlayerRequestDto, PoolType, acceptMatchToPlayDto } from '../dto/PlayerInterface';
 import { RequestToPlayDto,  } from '../dto/join-matchmaking.dto';
 import { RespondToPlayDto } from '../dto/join-matchmaking.dto';
-
+import { RpcExceptionService } from '@app/common/exception-handling';
 @Injectable()
 export class MatchmakingService {
   constructor(
@@ -20,6 +20,7 @@ export class MatchmakingService {
     private gatewayClient: ClientProxy,
     private readonly clientService: RabbitMqService,
     private readonly PoolService: PoolService,
+    private readonly rpcExceptionService: RpcExceptionService,
   ) {
   }
   async joinMatchmakingQueue(joinMatchData: JoinMatchmakingDto) {
@@ -44,6 +45,10 @@ export class MatchmakingService {
         playerPoolType = PoolType.LastPong;
     }
 
+    if (profile.wallet.betAmount <= 0){
+      console.log("need more bets");
+      return
+    };
     const player: Player = {
       id: joinMatchData.userId,
       rank: profile.rank,
@@ -53,7 +58,7 @@ export class MatchmakingService {
       matched: false,
       timePlayerJoin: new Date()
     }
-
+    console.log("\n\n player:", player);
     this.PoolService.addPlayer(player);
     this.findAndStartMatch(player.type);
   }

@@ -12,12 +12,14 @@ import {
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from '../utils/checker.service';
 import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
+import { HelperService } from '../utils/helper.service';
 
 @UseFilters(ChatExceptionFilter)
 @Controller()
 export class ChannelController {
   constructor(
     private readonly channelService : ChannelService,
+    private readonly helper: HelperService,
     private readonly checker: CheckerService,
     private readonly rpcExceptionService: RpcExceptionService
   ) {}
@@ -169,5 +171,10 @@ export class ChannelController {
   @MessagePattern({role: 'channel', cmd: 'unmute-member'})
   async unmuteMember(payload: MemberOfChanneldto) : Promise<Boolean> {
     return await this.channelService.unmuteMember(payload);
+  }
+
+  @MessagePattern({role: 'user', cmd: 'delete-chat-history'})
+  async deleteChatHistory(userId: any) : Promise<void> {
+    await this.helper.removeUserData(userId);
   }
 }

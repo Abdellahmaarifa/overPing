@@ -1,18 +1,18 @@
 import "./App.css";
 import React, { useEffect } from "react";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
-import { io, Socket } from "socket.io-client";
-import MySketch from "./mySketch";
-import GameContainer from "./gamecontainer";
-import SentRacketData from "./SentRacketData";
-import RecieveBallData from "./RecieveBallData";
-import UserInfo from "./UserInfo";
-import { weapon } from "./mySketch";
-import WeaponTemplate from "./WeaponTemplate";
-import { Sounds } from "./mySketch";
-import { Howler } from "howler";
+import { io, Socket } from 'socket.io-client';
+import MySketch from './mySketch';
+import GameContainer from './gamecontainer';
+import SentRacketData from './SentRacketData';
+import RecieveBallData from './RecieveBallData';
+import UserInfo from './UserInfo';
+import { weapon } from './mySketch';
+import WeaponTemplate from './WeaponTemplate';
+//import { Sounds } from './mySketch';
+//import { Howler } from 'howler';
 
-let weaponTemplate: WeaponTemplate = new WeaponTemplate();
+let weaponTemplate : WeaponTemplate = new WeaponTemplate();
 
 // Function to generate a unique tab identifier
 function generateUniqueTabId(): string {
@@ -69,10 +69,10 @@ function App({
 
     socket.on("disconnect", () => {
       //console.log(`App Disconnected from WebSocket server in tab ${tabId}`);
-      Howler.stop();
-      Sounds.mode1Music.stop();
-      Sounds.mode2Music.stop();
-      Sounds.mode3Music.stop();
+      //Howler.stop();
+      //Sounds.mode1Music.stop();
+      //Sounds.mode2Music.stop();
+      //Sounds.mode3Music.stop();
       updateServerState(true);
     });
 
@@ -131,8 +131,8 @@ function App({
       // console.log("player Number is : ", gameCapsule.playerNumber);
     });
 
-    socket.on("connect_error", (error) => {
-      // console.error('Error connecting to the WebSocket server:', error.cause, error.message, error.name, error.stack);
+    socket.on('connect_error', (error) => {
+      console.error('Error connecting to the WebSocket server:');
     });
 
     socket.on("connect_timeout", (timeout) => {
@@ -153,7 +153,8 @@ function App({
   }, []); // Use an empty dependency array to run this effect only once
 
   return (
-    <ReactP5Wrapper
+   
+    <ReactP5Wrapper id="adbel"
       sketch={(p5) =>
         MySketch({
           gameCapsule,
@@ -164,7 +165,10 @@ function App({
           updateMatchState,
         })
       }
-    />
+    >
+ <div id="test"></div>
+    </ReactP5Wrapper>
+ 
   );
 }
 

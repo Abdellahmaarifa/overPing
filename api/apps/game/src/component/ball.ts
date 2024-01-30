@@ -102,7 +102,9 @@ class Ball
                         data.rightPlayerRebound++;
                     else
                         data.rightPlayerStrict++;
-                    // console.log("right player goal : " , data.rightPlayerGoal);
+                    console.log("right player goal : " , data.rightPlayerGoal);
+                    console.log("right player goal rebound : " , data.rightPlayerRebound);
+                    console.log("right player goal strict : " , data.rightPlayerStrict);
                 }
                 else
                 {
@@ -111,7 +113,9 @@ class Ball
                         data.leftPlayerRebound++;
                     else
                         data.leftPlayerStrict++;
-                    // console.log("left player goal : " , data.leftPlayerGoal);
+                    console.log("left player goal : " , data.leftPlayerGoal);
+                    console.log("left player goal rebound : " , data.leftPlayerRebound);
+                    console.log("left player goal strict : " , data.leftPlayerStrict);
                 }
                 this.goalRestart = true;
                 this.ballFirstMove = true;

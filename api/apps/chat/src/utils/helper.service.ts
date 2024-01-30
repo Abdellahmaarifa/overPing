@@ -16,6 +16,7 @@ import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from './checker.service';
 import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
+import { DirectMessageService } from '../services/directMessage.service';
 
 // const argon2 = require('argon2');
 
@@ -31,6 +32,8 @@ export class HelperService {
     private readonly checker: CheckerService,
     @Inject(forwardRef(() => ChannelService))
     private readonly channelService: ChannelService,
+    @Inject(forwardRef(() => DirectMessageService))
+    private readonly directMessageService: DirectMessageService,
     private readonly channelGateway: ChannelGateway,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -263,5 +266,37 @@ export class HelperService {
     return {
       error: { message: errorMsg }
     }
+  }
+
+  /******* Remove The data related to a User if Something went wrong in sign-up *******/
+  async removeUserData(userId: number) {
+    if (!userId) {
+      return;
+    }
+    const userChannels = await this.channelService.getUserChannels(userId);
+    userChannels.forEach((channel) => {
+      if (channel.id) {
+        this.channelService.leave(userId, channel.id);
+        this.prisma.messages.deleteMany({
+          where: {
+            sender_id: userId,
+            channelId: channel.id
+          }
+        });
+      }
+    });
+    const userDMs = await this.directMessageService.getUserDirectMessages(userId);
+    (userDMs as any).forEach((dm) => {
+      if (dm!.id) {
+        this.prisma.directMessage.deleteMany({
+          where: {
+            OR: [
+              {user1_id: userId},
+              {user2_id: userId}
+            ]
+          }
+        });
+      }
+    });
   }
 }
