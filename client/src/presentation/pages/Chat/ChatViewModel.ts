@@ -1,5 +1,4 @@
 import { ApolloClient } from "@apollo/client";
-import { socket } from "components/chatPage/ChatBody/ChatBody";
 import { CHANNEL_CMD } from "constant/constants";
 import { ChatCtxType } from "context/chat.context";
 import { User } from "domain/model/User.type";
@@ -28,6 +27,7 @@ export class ChatViewModel {
   private hooks: HooksType;
   private data: ChatViewData;
   private context: ChatCtxType;
+  private socket: any;
 
   constructor(params: {
     client: ApolloClient<object>;
@@ -35,12 +35,14 @@ export class ChatViewModel {
     data: ChatViewData;
     state: any;
     context: ChatCtxType;
+    socket:any;
   }) {
     this.data = params.data;
     this.state = params.state;
     this.hooks = params.hooks;
     this.client = params.client;
     this.context = params.context;
+    this.socket = params.socket;
   }
 
   fetchUserChannels = async () => {
@@ -215,7 +217,7 @@ export class ChatViewModel {
         setCurrentChannel(newChannel);
       }
 
-      socket.emit(
+      this.socket.emit(
         CHANNEL_CMD.join_channel,
         {
           userId: Number(this.data.user?.id),

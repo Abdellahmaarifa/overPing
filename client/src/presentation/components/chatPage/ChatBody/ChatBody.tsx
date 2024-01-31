@@ -10,47 +10,13 @@ import {
   SendMessageInput,
 } from "./ChatBody.style";
 import ChatBanner from "../ChatBanner/ChatBanner";
-// import tw from "twin.macro";
+import tw from "twin.macro";
 import { CHANNEL_CMD, DIRECTMESSAGE, SERVER_CHAT} from "constant/constants";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
 import { format } from 'date-fns';
-
-// import { connect } from "formik";
 import { io } from "socket.io-client";
 
-// const URL_CHANNEL = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
-//   CHANNEL_CMD.namespace
-// }`;
-
-// const URL_DM = `${import.meta.env.OVER_PING_SERVER_CHAT_DEV}/${
-//   DIRECTMESSAGE.namespace
-// }`;
-
-
-const URL_CHANNEL = `${SERVER_CHAT}/${
-  CHANNEL_CMD.namespace
-}`;
-
-const URL_DM = `${SERVER_CHAT}/${
-  DIRECTMESSAGE.namespace
-}`;
-
-
-export const socket = io(URL_CHANNEL, { withCredentials: true });
-export const socket_dm = io(URL_DM, { withCredentials: true });
-
-
-// const ob = {
-//   id: 12,
-//   sender_id: 3,
-//   text: "hfg",
-//   updated: false,
-//   created_at: "2024-01-21T03:56:49.959Z",
-//   updated_at: "2024-01-21T03:56:49.959Z",
-//   dmId: null,
-//   channelId: 45,
-// };
 
 interface MessageType {
   id: number;
@@ -72,7 +38,7 @@ interface MessageDMType {
 }
 
 
-const ChatBody = ({ type }: { type: string }) => {
+const ChatBody = ({ type, socket, socket_dm }: { type: string, socket:any, socket_dm: any }) => {
   const {
     showChatAbout: [showChatAbout, setShowChatAbout],
   } = useChatContext();
@@ -247,7 +213,7 @@ const ChatBody = ({ type }: { type: string }) => {
         setShowChannelMenu(false);
       }}
     >
-      {type != "none" && <ChatBanner type={type} />}
+      { <ChatBanner type={type} />}
       {type == "channel" && currentChannel &&(
         <>
           <ChatMessages>

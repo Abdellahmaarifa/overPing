@@ -1,6 +1,6 @@
 import tw from "twin.macro";
 export const ChatBodyContainer = tw.div`
-
+z-[0]
 relative
 w-[50%] h-full 
 flex-1 overflow-scroll

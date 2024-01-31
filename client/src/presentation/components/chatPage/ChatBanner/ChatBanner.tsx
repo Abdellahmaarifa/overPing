@@ -229,7 +229,7 @@ targetId: Float!
           />
         </ChatBannerIcon>
       </ChatBannerLeft>
-      {(
+      {type != "none" && (
         <ChatBannerRight>
           {currentChannel && (
             <ChatBannerIcon>

@@ -1,6 +1,7 @@
 import tw from "twin.macro";
 
 export const ChatBannerContainer = tw.div`
+    z-[1]
     w-full
     h-[40px]
     lg:border-b-[#1C232A]

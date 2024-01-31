@@ -75,6 +75,9 @@ const ChatLeftSide = () => {
     setShowSearchModel(true);
   };
 
+  console.warn("left side >>>>>>>>>> currentchannel", currentChannel);
+  console.warn("left side >>>>>>>>>> currentDm", currentDm);
+
   return (
     <ChatLeftSideContainer
       style={

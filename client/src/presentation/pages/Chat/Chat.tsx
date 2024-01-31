@@ -1,14 +1,11 @@
 import { useApolloClient } from "@apollo/client";
 import ChannelModel from "components/chatPage/ChannelModel/ChannelModel";
 import ChatRightSide from "components/chatPage/CharRightSide/ChatRightSide";
-import ChatBody, {
-  socket,
-  socket_dm,
-} from "components/chatPage/ChatBody/ChatBody";
+
 import ChatLeftSide from "components/chatPage/ChatLeftSide/ChatLeftSide";
 import ChatSearch from "components/chatPage/ChatSearch/ChatSearch";
 import EditChannelModel from "components/chatPage/EditChannelModel /EditChannelModel";
-import { CHANNEL_CMD, DIRECTMESSAGE } from "constant/constants";
+import { CHANNEL_CMD, DIRECTMESSAGE, SERVER_CHAT} from "constant/constants";
 import { useChatContext } from "context/chat.context";
 import { useUserContext } from "context/user.context";
 import { useEffect } from "react";
@@ -17,9 +14,47 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ChatConatiner } from "./Chat.style";
 import { ChatViewModel } from "./ChatViewModel";
 import { ChannelSample } from "domain/model/chat.type";
+import { io } from "socket.io-client";
+import ChatBody from "components/chatPage/ChatBody/ChatBody";
+
+
+class Socket_init {
+  socket : any = null;
+  socket_dm : any = null;
+
+  init = () => {
+    if (this.socket === null)
+    {
+      this.socket = io(URL_CHANNEL, { withCredentials: true });
+    }
+    if (this.socket_dm === null) {
+      this.socket_dm = io(URL_DM, { withCredentials: true });
+    }
+    return {socket: this.socket, socket_dm: this.socket_dm}
+  }
+}
+
+const SocketObj = new Socket_init();
+
+const URL_CHANNEL = `${SERVER_CHAT}/${
+  CHANNEL_CMD.namespace
+}`;
+
+const URL_DM = `${SERVER_CHAT}/${
+  DIRECTMESSAGE.namespace
+}`;
+
+
+// const socket = io(URL_CHANNEL, { withCredentials: true });
+// const socket_dm = io(URL_DM, { withCredentials: true });
+
+
 
 
 const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
+
+  const {socket, socket_dm} = SocketObj.init();
+
   // call of hooks
   const { id } = useParams();
   const location = useLocation();
@@ -34,6 +69,7 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
     hooks: { navigate },
     state: {},
     context: ChatCtx,
+    socket:socket,
   });
 
   // get context values
@@ -132,9 +168,9 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   return (
     <ChatConatiner>
       <ChatLeftSide />
-      <ChatBody type={type} />
+      <ChatBody   socket={socket} socket_dm={socket_dm} type={type} />
       {((currentChannel && type == "channel") ||
-        (currentDm && type == "dm")) && <ChatRightSide type={type} />}
+        (currentDm && type == "dm")) && <ChatRightSide  type={type} />}
       {showSearchModel && <ChatSearch />}
       {showChannelModel && <ChannelModel />}
       {showEditChannelModel && <EditChannelModel />}
