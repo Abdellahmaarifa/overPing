@@ -11,3 +11,6 @@ mutation joinMatchGame(
 
 }
 
+mutation RemovePlayerFromQueue($matchType: String!) {
+  removePlayerFromQueue(matchType: $matchType)
+}

@@ -84,4 +84,18 @@ export class GwMatchMakingService{
             }
         );
     }
+    
+    async removePlayerFromQueue(userId: number, matchType: string){
+       return await this.clientService.emitMessageWithPayload(
+            this.client,
+            {
+                role: 'matchMaking',
+                cmd: 'removePlayerFromQueue',
+            },
+            {
+                userId,
+                matchType
+            }
+        );
+    }
 }

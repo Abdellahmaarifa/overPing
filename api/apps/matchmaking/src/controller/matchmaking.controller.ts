@@ -30,4 +30,10 @@ export class MatchmakingController {
      return this.matchmakingService.cancelRequestToPlay(joinMatchData);
   }
   
+  @MessagePattern({role: 'matchMaking', cmd: 'removePlayerFromQueue'})
+  async removePlayerFromQueue(input: {userId: number, matchType: string}):  Promise<boolean>{
+     console.log("try to remove player");
+    return this.matchmakingService.removePlayerFromQueue(input.userId, input.matchType);
+  }
+
 }

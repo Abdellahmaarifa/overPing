@@ -62,7 +62,7 @@ const FriendshipMatches = ({ active }: { active: boolean }) => {
         },
         fetchPolicy: "no-cache",
       });
-      console.log("friends matches: ", res);
+      //console.log("friends matches: ", res);
 
       if (res.data.getFriendshipMatches) {
         if (res.data.getFriendshipMatches.length == 0) setEnd(true);

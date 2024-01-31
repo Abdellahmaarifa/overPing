@@ -8,7 +8,6 @@ import { PoolService } from './pool.service';
 import { Player, PlayerRequestDto, PoolType, acceptMatchToPlayDto } from '../dto/PlayerInterface';
 import { RequestToPlayDto,  } from '../dto/join-matchmaking.dto';
 import { RespondToPlayDto } from '../dto/join-matchmaking.dto';
-import { RpcExceptionService } from '@app/common/exception-handling';
 @Injectable()
 export class MatchmakingService {
   constructor(
@@ -20,7 +19,6 @@ export class MatchmakingService {
     private gatewayClient: ClientProxy,
     private readonly clientService: RabbitMqService,
     private readonly PoolService: PoolService,
-    private readonly rpcExceptionService: RpcExceptionService,
   ) {
   }
   async joinMatchmakingQueue(joinMatchData: JoinMatchmakingDto) {
@@ -186,6 +184,17 @@ export class MatchmakingService {
        ????,
     );
     */
+    return true;
+  }
+
+
+  async removePlayerFromQueue(userId: number, type: string):  Promise<boolean>{
+    console.log("user remove from the queue00");
+    const player = await this.PoolService.getPlayerFromQueue(userId, this.stringToEnum(type));
+    if (!player){
+      return false;
+    }
+    this.PoolService.removePlayer(userId, this.stringToEnum(type));
     return true;
   }
 

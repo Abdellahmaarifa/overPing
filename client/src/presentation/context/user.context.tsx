@@ -72,7 +72,7 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
         credentials: "include",
         method: "GET",
       });
-      console.log("DATA FROM SERVER: ", data);
+      //console.log("DATA FROM SERVER: ", data);
       const res = await data?.json();
       // console.log("the res: ", res);
       store.setToken(res?.Access_token);

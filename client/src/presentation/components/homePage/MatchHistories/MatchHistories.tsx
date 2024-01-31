@@ -63,7 +63,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
       },
       fetchPolicy: "no-cache",
     });
-    console.log("from server: ", data);
+    //console.log("from server: ", data);
     if (!data.data.getUserMatchHistory)
       throw { message: "can't get history f the user" };
     // console.error("AFTER QUERY : ", data);
@@ -73,7 +73,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
   const setMatches = async () => {
     try {
       const res: MatchType[] = (await getMatchesHistories(page)) as MatchType[];
-      console.log("data:", res);
+      //console.log("data:", res);
       if (res?.length > 0) {
         setMatchList([...matchList, ...res]);
         setPage(page + 1);

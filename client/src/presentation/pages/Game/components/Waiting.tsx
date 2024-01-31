@@ -2,10 +2,10 @@ import './Waiting.css'
 import UserInfo from './UserInfo';
 import { tabId as waitingTabsId } from './App'
 import { useEffect, useState } from 'react';
-import { useJoinMatchGameMutation } from 'gql/index';
+import { useJoinMatchGameMutation, useRemovePlayerFromQueueMutation } from 'gql/index';
 import { useAccountQuery, useMatchWaitingListSubscription} from "gql/index";
 import { Socket, io } from 'socket.io-client';
-
+const serverUrl: string = 'ws://localhost:4055';
 
 interface waitingProps 
 {
@@ -28,6 +28,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
     let PlayWithRobot: HTMLElement | null = null;
     let playerMode : string;
     let joinGame;
+    let socket : Socket;
 
     plyOneImg = document.getElementById("WaitingAvatarR1");
     plyTwoImg = document.getElementById("WaitingAvatarR2");
@@ -38,6 +39,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
 
     let [TheSwitch, setSwitchValue] = useState(false);
     const [joinMatch] = useJoinMatchGameMutation();
+    const [quitMatch] = useRemovePlayerFromQueueMutation();
     //Use the subscription hook
     const { data: subscriptionData, loading, error } = useMatchWaitingListSubscription({
         variables: {
@@ -141,7 +143,68 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
     },[subscriptionData])
     
 
+    const setUpSocket = () =>
+    {
+        socket = io(serverUrl, 
+        {
+            path: '/game-container',
+            transports: ['websocket'],
+        });
 
+        socket.on('connect', () => {
+            console.log(`quit Connected to WebSocket server`);
+        });
+
+        socket.on('disconnect', () => 
+        {
+            console.log(`quit Disconnected from WebSocket server`);
+            try 
+            {
+                console.log("is quitlllllllll")
+                const camcelData = async () => 
+                {
+                    console.log("is try ")
+                    try 
+                    {
+                        console.log("is trying ")
+                        let quitGame = await quitMatch(
+                        {
+                            variables: {
+                                matchType : playerMode 
+                            },
+                        });
+                        console.log('player quit:', quitGame, playerMode);
+                    }
+                    catch (error) 
+                    {
+                    }
+                };
+                camcelData();
+            }
+            catch (error)
+            {
+               console.log("is there an errr : ", error)
+            }
+
+        });
+
+        socket.on('connect_error', (error) => 
+        {
+            console.error('Error connecting to the WebSocket server:');
+        });
+
+    }
+    useEffect(() => 
+    {
+            setUpSocket();
+            
+            return () => {
+                if (socket)
+                {
+                    socket.disconnect();
+                }
+            };
+    }, []);
 
     if (error && TheSwitch === false) 
     {
@@ -226,6 +289,8 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
             }, 3000);
         }
     }
+
+
 
     return (
         <div className='WaitingContainer'>

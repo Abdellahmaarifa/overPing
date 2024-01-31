@@ -23,7 +23,7 @@ export const sleep = (ms: any) => new Promise((r) => setTimeout(r, ms));
 export const withPad = (n: number) => n.toString().padStart(2, "0");
 
 export const GetUserProfile = (data: AccountQuery): ProfileType => {
-  console.log("data: AccountQuery ===> " ,data);
+  //console.log("data: AccountQuery ===> " ,data);
   return {
     id: data?.findProfileByUserId?.id!,
     about: data?.findProfileByUserId?.about!,

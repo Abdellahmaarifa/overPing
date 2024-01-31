@@ -73,6 +73,13 @@ export class MatchMakingMutationsResolver {
         const userId = cxt.req.user.id;
         return this.gwMatchMakingService.cancelRequestToPlay(userId, acceptMatchData);
       }
+
+      @UseGuards(GqlJwtAuthGuard)
+      @Mutation((returns) => Boolean,)
+      async removePlayerFromQueue(@Context() cxt , @Args('matchType') matchType: string){
+        const userId = cxt.req.user.id;
+        return this.gwMatchMakingService.removePlayerFromQueue(userId, matchType);
+      }
       
       @Subscription((returns) => RespondToPlay, {
         resolve: (payload: RespondToPlay) => payload,

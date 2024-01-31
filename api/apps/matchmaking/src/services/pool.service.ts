@@ -173,4 +173,17 @@ export class PoolService {
       return null;
     }
   }
+  async getPlayerFromQueue(playerId: number, type: PoolType): Promise<any>{
+    console.log("this is player id in get player from queue", type, " ", playerId);
+    const index = this.playersByPool[type].findIndex((player) => player.id === playerId);
+    const players = this.playersByPool[type];
+    if (index !== -1) {
+      return players[index];
+    } else {
+      console.error(`Player with ID ${playerId} not found in pool: ${type}`);
+      return null;
+    }
+  }
+
+  
 }

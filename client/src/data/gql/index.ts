@@ -279,6 +279,7 @@ export type Mutation = {
   placeBet?: Maybe<Scalars['Boolean']['output']>;
   refresh: Scalars['String']['output'];
   removeAdmin: Scalars['Boolean']['output'];
+  removePlayerFromQueue: Scalars['Boolean']['output'];
   removeUserProfile: Scalars['Boolean']['output'];
   resolveBet?: Maybe<Scalars['Boolean']['output']>;
   sendFriendRequest: Scalars['Boolean']['output'];
@@ -436,6 +437,11 @@ export type MutationPlaceBetArgs = {
 
 export type MutationRemoveAdminArgs = {
   data: ActionToMemberInput;
+};
+
+
+export type MutationRemovePlayerFromQueueArgs = {
+  matchType: Scalars['String']['input'];
 };
 
 
@@ -1040,6 +1046,13 @@ export type JoinMatchGameMutationVariables = Exact<{
 
 
 export type JoinMatchGameMutation = { __typename?: 'Mutation', placeBet?: boolean | null, joinMatchmakingQueue?: boolean | null };
+
+export type RemovePlayerFromQueueMutationVariables = Exact<{
+  matchType: Scalars['String']['input'];
+}>;
+
+
+export type RemovePlayerFromQueueMutation = { __typename?: 'Mutation', removePlayerFromQueue: boolean };
 
 export type LoginMutationVariables = Exact<{
   password: Scalars['String']['input'];
@@ -2809,6 +2822,37 @@ export function useJoinMatchGameMutation(baseOptions?: Apollo.MutationHookOption
 export type JoinMatchGameMutationHookResult = ReturnType<typeof useJoinMatchGameMutation>;
 export type JoinMatchGameMutationResult = Apollo.MutationResult<JoinMatchGameMutation>;
 export type JoinMatchGameMutationOptions = Apollo.BaseMutationOptions<JoinMatchGameMutation, JoinMatchGameMutationVariables>;
+export const RemovePlayerFromQueueDocument = gql`
+    mutation RemovePlayerFromQueue($matchType: String!) {
+  removePlayerFromQueue(matchType: $matchType)
+}
+    `;
+export type RemovePlayerFromQueueMutationFn = Apollo.MutationFunction<RemovePlayerFromQueueMutation, RemovePlayerFromQueueMutationVariables>;
+
+/**
+ * __useRemovePlayerFromQueueMutation__
+ *
+ * To run a mutation, you first call `useRemovePlayerFromQueueMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemovePlayerFromQueueMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removePlayerFromQueueMutation, { data, loading, error }] = useRemovePlayerFromQueueMutation({
+ *   variables: {
+ *      matchType: // value for 'matchType'
+ *   },
+ * });
+ */
+export function useRemovePlayerFromQueueMutation(baseOptions?: Apollo.MutationHookOptions<RemovePlayerFromQueueMutation, RemovePlayerFromQueueMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemovePlayerFromQueueMutation, RemovePlayerFromQueueMutationVariables>(RemovePlayerFromQueueDocument, options);
+      }
+export type RemovePlayerFromQueueMutationHookResult = ReturnType<typeof useRemovePlayerFromQueueMutation>;
+export type RemovePlayerFromQueueMutationResult = Apollo.MutationResult<RemovePlayerFromQueueMutation>;
+export type RemovePlayerFromQueueMutationOptions = Apollo.BaseMutationOptions<RemovePlayerFromQueueMutation, RemovePlayerFromQueueMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($password: String!, $email: String!) {
   signIn(authCredentials: {username: $email, password: $password}) {
