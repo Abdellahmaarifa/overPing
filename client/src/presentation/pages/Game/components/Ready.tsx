@@ -36,6 +36,8 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : ready
         // else
 
     }, 200)
+    
+    console.log("Mode playing : ", playerOne.modePlaying, playerTwo.modePlaying)
 
   
 
@@ -63,23 +65,16 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : ready
             let ply2TabId : string = playerTwo.userId.toString();
             let ply1UserId : number = playerOne.ply2userId
             let ply1MatchType : string = playerOne.matchType;
-            if (data?.findProfileByUserId?.rank  as number < 100)
-                ply2UserLogo = "/public/images/badge-1.png"
-            if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-                ply2UserLogo = "/public/images/badge-2.png";
-            if (data?.findProfileByUserId?.rank  as number >= 200)
-                ply2UserLogo = "/public/images/badge-3.png";
-            
             let ply2MatchId : string = playerTwo.matchId;
-            let ply2MatchWager : number = playerTwo.matchWager;
+            let ply2MatchWager : number = playerOne.matchWager;
             let ply2UserId : number  =  playerTwo.userId;
             let ply2ModePlaying : number = playerTwo.modePlaying;
             if (data?.findProfileByUserId?.rank  as number < 100)
-                ply2UserLogo = "/public/images/badge-1.png"
+                ply2UserLogo = "/images/badge-1.png"
             if (data?.findProfileByUserId?.rank  as number >= 100 && data?.findProfileByUserId?.rank  as number < 200)
-                ply2UserLogo = "/public/images/badge-2.png";
+                ply2UserLogo = "/images/badge-2.png";
             if (data?.findProfileByUserId?.rank  as number >= 200)
-                ply2UserLogo = "/public/images/badge-3.png";
+                ply2UserLogo = "/images/badge-3.png";
         
             if (playerTwo.userLogo.length === 0)
             {
@@ -90,8 +85,10 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : ready
         }, 500)
         setTimeout( () => 
         {
+            //console.log("{playerOne :}", playerOne);
+            //console.log("{playerTwo :}", playerTwo);
                 updateReadyState(false);
-        }, 5000); 
+        }, 4000); 
         
         return (
             <div className='ReadyContainer'>

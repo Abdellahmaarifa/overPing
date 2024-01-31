@@ -23,18 +23,21 @@ import { IGameData } from './components/game.interface';
 import { Result } from './components/Result';
 import ReadyFriend from './components/ReadyFriend';
 import Goals  from './components/Goals'
+import { Socket , io } from 'socket.io-client';
+import KeepTrack from './components/KeepTrack';
+import { ProfileWallet } from 'components/profilePage/ProfileBanner/ProfileBanner.style';
 
 let gameCapsule: GameContainer = new GameContainer();
 let playerOne : UserInfo = new UserInfo(tabId, "", 0, 0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
 let playerTwo : UserInfo | undefined = new UserInfo(tabId, "", 0, 0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
 let robot     : UserInfo = new UserInfo(tabId, "", playerOne.matchWager, playerOne.modePlaying, "Mr Robot <|o_o|>", "/images/robot.jpg", "/images/badge-3.png", 10, 10 ,10, 12, 10, 0, 0)
-
+const serverUrl: string = 'ws://localhost:4055';
 function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlayerTwo } : 
     { playerOne : UserInfo , playerTwo : UserInfo | undefined})
 {
-    
  
     let [gameResult, setGameResult] = useState<Result>(() => new Result());
+
 
     const updateGameResult = (
       newPlyOneId: number,
@@ -104,7 +107,8 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
             userId         : renamePlayerTwo?.userId,
             friend         : renamePlayerTwo?.friend,
             ply2userId     : renamePlayerTwo?.ply2userId,
-            matchType      : renamePlayerTwo?.matchType
+            matchType      : renamePlayerTwo?.matchType,
+            wallet         : renamePlayerTwo?.wallet
         }
     );
 
@@ -146,6 +150,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         friend         : renamePlayerOne.friend,
         ply2userId     : renamePlayerOne.ply2userId,
         matchType      : renamePlayerOne.matchType,
+        wallet         : renamePlayerOne.wallet
     })
 
     const updatePlayerOne = (newPlayWithRobot : boolean, newTabId : string, newMatchId : string, newMatchWager: number,
@@ -218,6 +223,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
 
     
 
+
     if (playerOne.playWithMouse === 0)
         return (< Util playerOne={playerOne} playerTwo={playerTwo as UserInfo} updatePlayerOne={updatePlayerOne} updatePlayerTwo={updatePlayerTwo} updateUserInfoUtil={UpdateUserInfoUtil}/>);
     else if (playerOne.modePlaying === 0)
@@ -225,8 +231,12 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
     else if (playerOne.matchWager === 0)
         return ( < Deposit playerOne={playerOne} updateUserInfoWager={updateuserinfoWager}/>);
     else if (playerOne.matchId.length === 0 && playerOne.playWithRobot === false)
-        return (<Waiting playerOne={ playerOne } playerTwo={ playerTwo as UserInfo }
-                updateRobotOpetion={updateRobotOpetion} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo}  />) 
+        return (
+        <>
+        <Waiting playerOne={ playerOne } playerTwo={ playerTwo as UserInfo }
+                updateRobotOpetion={updateRobotOpetion} updateMatchId={updateMatchId} updatePlayerTwo={updatePlayerTwo} updateUserInfoWager={updateuserinfoWager} />
+        </>
+        )
     if (playerOne.matchId.length > 0 && playerOne.playWithRobot === false && readyState && playerOne.friend === false)
         return (< Ready playerOne={playerOne} playerTwo={playerTwo as UserInfo} updateReadyState={updateReadyState} updatePlayerTwo={updatePlayerTwo}/>)
     else if (playerOne.matchId.length > 0 && playerOne.playWithRobot === false && readyState && playerOne.friend)

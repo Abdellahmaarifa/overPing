@@ -8,12 +8,13 @@ import { UpdateProfileDto } from "../dto/updateUserProfileDto";
 import { UpdateWalletDto } from "../dto/updateUserWalletDto";
 import { Prisma } from "@prisma/client";
 import { IUserProfile } from "@app/common/profile/IUserProfile";
-
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class ProfileService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly rpcExceptionService: RpcExceptionService,
+    private configService: ConfigService,
   ) {
   }
 
@@ -21,9 +22,11 @@ export class ProfileService {
     try {
 
       // Create a new user profile with the provided data
+      const img = this.configService.get<string>("DEFAULT_COVER");//http://localhost:5500/image/profileBackGound/defaultCover.jpg
       const userProfile = await this.prisma.userProfile.create({
         data: {
           user_id: input.userId,
+          bgImageUrl: img,
           nickname: `${input.username.replace(/\s/g, '')}${Date.now()}`,
           title: UserTitle.Challenger_10,
           wallet: { create: {} },

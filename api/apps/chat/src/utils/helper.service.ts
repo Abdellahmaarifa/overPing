@@ -16,6 +16,7 @@ import { GroupType } from '../interface/group.interface';
 import { ChannelService } from '../services/channel.service';
 import { CheckerService } from './checker.service';
 import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
+import { DirectMessageService } from '../services/directMessage.service';
 
 // const argon2 = require('argon2');
 
@@ -31,6 +32,8 @@ export class HelperService {
     private readonly checker: CheckerService,
     @Inject(forwardRef(() => ChannelService))
     private readonly channelService: ChannelService,
+    @Inject(forwardRef(() => DirectMessageService))
+    private readonly directMessageService: DirectMessageService,
     private readonly channelGateway: ChannelGateway,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -64,7 +67,7 @@ export class HelperService {
     catch (error) {
       if (error === 'Invalid password') {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `Invalid password`,
         });
       }
@@ -78,7 +81,7 @@ export class HelperService {
     });
     if (existingChannel) {
       this.rpcExceptionService.throwCatchedException({
-        code: 200,
+        code: 400,
         message: `Channel name already exist`,
       });
     }
@@ -100,7 +103,7 @@ export class HelperService {
     } catch (error) {
       if (error.expiredAt) {
         this.rpcExceptionService.throwCatchedException({
-          code: 200,
+          code: 400,
           message: `Token has expired, please sign in`,
         });
       }
@@ -127,7 +130,7 @@ export class HelperService {
   
     if (!channel) {
       this.rpcExceptionService.throwCatchedException({
-        code: 200,
+        code: 400,
         message: `Failed to find channel`,
       });
     }
@@ -169,6 +172,7 @@ export class HelperService {
     } else {
       await this.setOwner(channelId, admins[0].id, "isAdmin");
     }
+    console.log(`ownerLeavedChannel(${channelId})`);
   }
   
   async setOwner(channelId: number, newOwner: number, oldStatus: string) : Promise<void> {
@@ -221,7 +225,7 @@ export class HelperService {
     catch {
       if (throwExc) {
         // this.rpcExceptionService.throwCatchedException({
-        //   code: 200,
+        //   code: 400,
         //   message: `Failed to find user`,
         // });
       }
@@ -263,5 +267,40 @@ export class HelperService {
     return {
       error: { message: errorMsg }
     }
+  }
+
+  /******* Remove The data related to a User if Something went wrong in sign-up *******/
+  async removeUserData(userId: number) {
+    if (!userId) {
+      return;
+    }
+
+    const channels = await this.prisma.channel.findMany({
+      where: { owner_id: userId }
+    });
+    channels.forEach(async (channel) => {
+      await this.channelService.leave(userId, channel.id);
+    });
+
+    // const userChannels = await this.channelService.getUserChannels(userId);
+    // userChannels.forEach((channel) => {
+    //   if (channel.id) {
+    //     this.channelService.leave(userId, channel.id);
+    //     this.prisma.messages.deleteMany({
+    //       where: {
+    //         sender_id: userId,
+    //         channelId: channel.id
+    //       }
+    //     });
+    //   }
+    // });
+    await this.prisma.directMessage.deleteMany({
+      where: {
+        OR: [
+          { user1_id: userId },
+          { user2_id: userId }
+        ]
+      }
+    });
   }
 }

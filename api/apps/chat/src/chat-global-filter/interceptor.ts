@@ -9,7 +9,7 @@
 //   ) {}
 //   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
 //     return of(this.rpcExceptionService.throwCatchedException({
-//       code: 200,
+//       code: 400,
 //       message: `Failed to fetch data`
 //     }));
 //   }

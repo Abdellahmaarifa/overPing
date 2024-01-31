@@ -48,7 +48,7 @@ export class DirectMessageService {
     });
     if (!directMessage) {
       this.rpcExceptionService.throwCatchedException({
-        code: 200,
+        code: 400,
         message: `Failed to find direct message`,
       });
     }
@@ -139,7 +139,7 @@ export class DirectMessageService {
       );
 
     let i = 0;
-    return await Promise.all(directMessages.map(async (dm) => {
+    const dms = await Promise.all(directMessages.map(async (dm) => {
       if (user2[i]) {
         return {
           id: dm.id,
@@ -153,12 +153,13 @@ export class DirectMessageService {
         return {};
       }
     }));
+    return dms;
   }
 
   async create(userID: number, targetID: number) : Promise<any> {
     if (userID === targetID) {
       this.rpcExceptionService.throwCatchedException({
-        code: 200,
+        code: 400,
         message: `Failed: You can't create a direct message with yourself!`,
       });
     }
@@ -190,7 +191,7 @@ export class DirectMessageService {
 
     if (!createdDirectMessage) {
       this.rpcExceptionService.throwCatchedException({
-        code: 200,
+        code: 400,
         message: `Failed to create direct message`,
       });
     }

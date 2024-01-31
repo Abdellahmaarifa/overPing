@@ -20,11 +20,14 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42'){
         refreshToken: string,
         profile: any,
         ){ 
+            const profileAsJSON = JSON.parse(profile._raw);
+            const profilePicture = profileAsJSON.image && profileAsJSON.image.link ? profileAsJSON.image.link : null;
             const user = {
                 fortyTwoId: profile.id,
                 username: profile.username,
                 displayName: profile.displayName,
-                email: '',
+                email: profile.emails[0].value,
+                imgUrl: profilePicture,
                 emails: profile.emails,
             }
             const account = await this.userService.findOrCreateUser(user);

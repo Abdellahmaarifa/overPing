@@ -42,6 +42,7 @@ class UserInfo
     friend : boolean = false;
     ply2userId : number = 0;
     matchType : string = MatchMode.ONLINE_RANDOM;
+    wallet : number = 10000;
 };
 
 
