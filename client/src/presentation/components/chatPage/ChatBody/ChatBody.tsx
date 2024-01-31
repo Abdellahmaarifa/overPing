@@ -71,6 +71,7 @@ interface MessageDMType {
   updated_at: string;
 }
 
+
 const ChatBody = ({ type }: { type: string }) => {
   const {
     showChatAbout: [showChatAbout, setShowChatAbout],
@@ -142,16 +143,23 @@ const ChatBody = ({ type }: { type: string }) => {
   };
   ////////////////////////////////////////////////////////
   useEffect(() => {
-    socket_dm.on("error", (data)=>{
-      console.log("#####################ERROR :",data);
-  })
     if (type == "channel") {
+
+      socket.on(CHANNEL_CMD.error, (data) =>{
+        console.log("88888888888888888888===>ERROR GET IT FROM CHANNEL SOCKET : " ,data);
+      })
+
       socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
         console.log("THIS IS FROM BACKEND!!! ", data);
         if (data && data.channelId == Number(id))
           setMessages((old) => [data, ...old]);
       });
     } else if (type == "dm") {
+
+
+      socket_dm.on(DIRECTMESSAGE.error, (data) =>{
+        console.log("88888888888888888888===>ERROR GET IT FROM DIRECT MSG SOCKET : " ,data);
+      })
       
       socket_dm.on(DIRECTMESSAGE.recMessageFromUser, (data: MessageDMType) => {
         console.log("THIS IS FROM BACKEND!!! ", data);
@@ -159,12 +167,21 @@ const ChatBody = ({ type }: { type: string }) => {
           data &&
           (data.sender_id == Number(id) || data.sender_id == Number(user?.id))
         )
+        {
+
           setMessagesDM((old) => [data, ...old]);
+        }
       });
     }
     return () => {
-      if (type == "channel") socket.off(CHANNEL_CMD.recMessageFromChannel);
-      if (type == "dm") socket_dm.off(DIRECTMESSAGE.recMessageFromUser);
+      if (type == "channel"){
+        socket.off(CHANNEL_CMD.error);
+        socket.off(CHANNEL_CMD.recMessageFromChannel);
+      }
+      if (type == "dm") {
+        socket_dm.off(DIRECTMESSAGE.error);
+        socket_dm.off(DIRECTMESSAGE.recMessageFromUser);
+      }
     };
   }, [id, location.pathname]);
 
@@ -230,19 +247,19 @@ const ChatBody = ({ type }: { type: string }) => {
         setShowChannelMenu(false);
       }}
     >
-      <ChatBanner type={type} />
+      {type != "none" && <ChatBanner type={type} />}
       {type == "channel" && currentChannel &&(
         <>
           <ChatMessages>
             {messages.length > 0 &&
-              messages.map((e: MessageType) => {
+              messages.map((e: MessageType, index :number) => {
+                console.log("///////////===========>>the key ", index); 
                 return (
                   <Message
                     name={membersMap?.get(e.sender_id)?.name!}
                     image={membersMap?.get(e.sender_id)?.image!}
                     message={e.text}
-                    date={e.created_at}
-                    key={e.id}
+                    date={format(e.created_at, "dd/MM/yyyy HH:mm")}
                     id={e.sender_id}
                   />
                 );
@@ -254,7 +271,7 @@ const ChatBody = ({ type }: { type: string }) => {
         <>
           <ChatMessages>
             {messagesDM.length > 0 &&
-              messagesDM.map((e: MessageDMType) => {
+              messagesDM.map((e: MessageDMType, index :number) => {
                 let u = currentDm?.user2;
                 if (u && e.sender_id != Number(id)) u = currentDm?.user1;
                 if (!u) return "";
@@ -264,8 +281,7 @@ const ChatBody = ({ type }: { type: string }) => {
                     name={String(u?.username)}
                     image={String(u?.profileImgUrl)}
                     message={e.text}
-                    date={format(e.created_at, "dd-MM-yyy/HH:mm")}
-                    key={Number(e.id)}
+                    date={format(e.created_at, "dd/MM/yyyy HH:mm")}
                     id={Number(u?.id)}
                   />
                 );
@@ -284,6 +300,7 @@ const ChatBody = ({ type }: { type: string }) => {
             }}
           >
             <SendMessageInput
+              tw="w-full"
               placeholder="Message"
               onChange={(e) => setMsg(e.target.value)}
               value={msg}
