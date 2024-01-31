@@ -95,7 +95,7 @@ const ChatLeftSide = () => {
       </MessagesSearch>
       <MessagesBox>
         <MessagesHeaderContainer>
-          <MessagesHeader>channels</MessagesHeader>
+          <MessagesHeader>Channels</MessagesHeader>
           <MessagesHeaderIcon
             onClick={() => {
               setShowChannelModel(true);
@@ -105,12 +105,15 @@ const ChatLeftSide = () => {
           </MessagesHeaderIcon>
         </MessagesHeaderContainer>
         <MessagesContent>
-          {channels.map((e: ChannelType) => {
+          {(currentChannel) && (channels.map((e: ChannelType) => {
             return (
               <ChannelConatiner
                 active={currentChannel && currentChannel?.id == e.id}
                 key={e.id}
-                onClick={() => navigate(`/chat/channel/${e.id}`)}
+                onClick={() => {
+                  navigate(`/chat/channel/${e.id}`);
+                  setCurrentDm(null);}
+              }
               >
                 <ChannelIcon>
                   <HashTagIcon />
@@ -118,22 +121,22 @@ const ChatLeftSide = () => {
                 <ChannelName>{e.name}</ChannelName>
               </ChannelConatiner>
             );
-          })}
+          }))}
         </MessagesContent>
       </MessagesBox>
       <MessagesBox>
         <MessagesHeaderContainer>
-          <MessagesHeader>direct messages</MessagesHeader>
+          <MessagesHeader>Direct messages</MessagesHeader>
           <MessagesHeaderIcon onClick={() => searchUserHandler()}>
             <PlusIcon />
           </MessagesHeaderIcon>
         </MessagesHeaderContainer>
         <MessagesContent>
           {dms.map((e: DMType) => {
-            // if (!e.user2 || !e.user1)
-            // {
-            //   return;
-            // }
+            if (!e.user2 || !e.user1)
+            {
+              return;
+            }
             return (
               <DMContainer
                 $active={currentDm && e.user2.id == id}

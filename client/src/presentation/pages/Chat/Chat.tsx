@@ -50,6 +50,10 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   useEffect(() => {
     viewModel.initChat();
 
+    socket.on(CHANNEL_CMD.error, (data) =>{
+      console.log("88888888888888888888===>ERROR GET IT FROM CHANNEL SOCKET : " ,data);
+    })
+
     socket.on(CHANNEL_CMD.recUpdatedChannelsList, (data) => {
       if (data) setChannels(data);
       //console.log("looks like the list is updated: ", data);
@@ -83,15 +87,22 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
 
     //////////////////////////////////////////////////////////////////////
 
+    socket_dm.on(DIRECTMESSAGE.error, (data) =>{
+      console.log("88888888888888888888===>ERROR GET IT FROM DIRECT MSG SOCKET : " ,data);
+    })
+    
+
     socket_dm.on(DIRECTMESSAGE.recUpdatedDMsList, (data) => {
       if (data) setDms(data);
       console.log("looks like the list is updated: ", data);
     });
 
     return () => {
+      socket.off(CHANNEL_CMD.error);
       socket.off(CHANNEL_CMD.recUpdatedChannelsList);
       socket.off(CHANNEL_CMD.recUpdatedListOfMembers);
       socket.off(CHANNEL_CMD.recUpdatedChannelInfo);
+      socket_dm.off(DIRECTMESSAGE.error);
       socket_dm.off(DIRECTMESSAGE.recUpdatedDMsList);
     };
   }, [id, location.pathname]);
@@ -115,8 +126,8 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
 
   console.log("the current channel: ", currentChannel);
   console.log("the current direct: ", currentDm);
-  console.log("the current channel: ", channels);
-  console.log("the current channel: ", dms);
+  console.log("the array channels: ", channels);
+  console.log("the array dms: ", dms);
 
   return (
     <ChatConatiner>

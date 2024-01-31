@@ -61,14 +61,18 @@ const ChatBanner = ({ type }: { type: string }) => {
   } = useChatContext();
   const navigate = useNavigate();
   useEffect(() => {
-    if (
+    if (currentChannel && currentChannel.owner_id == Number(user?.id))
+    {
+      setRole("owner");
+    }
+    else if (
       currentChannel &&
       currentChannel.admins &&
       currentChannel.admins.find((e) => e.id == user?.id)
     )
+    {
       setRole("admin");
-    else if (currentChannel && currentChannel.owner_id == Number(user?.id))
-      setRole("owner");
+    }
     else setRole("member");
     if (currentChannel?.visibility) setVisibility(currentChannel?.visibility);
     console.log("set ROLE", role);
@@ -159,6 +163,7 @@ targetId: Float!
   };
 
   const leaveChannel = async () => {
+    console.log("7777777777777777777777777777777777777777")
     try {
       const data = await client.mutate({
         mutation: LeaveChannelDocument,
@@ -205,6 +210,10 @@ targetId: Float!
     }
   };
 
+
+  console.log("//*/*/*/*/*/*/*/*/*/*/*/*/*:", type, "ROLE +===", role);
+  console.log("-//////////////////---///--/-//- ", currentChannel, "user id == " , user?.id);
+
   return (
     <ChatBannerContainer>
       <ChatBannerLeft>
@@ -220,7 +229,7 @@ targetId: Float!
           />
         </ChatBannerIcon>
       </ChatBannerLeft>
-      {(type == "channel" || type == "dm") && (
+      {(
         <ChatBannerRight>
           {currentChannel && (
             <ChatBannerIcon>
@@ -288,7 +297,7 @@ targetId: Float!
                     Edit Channel
                   </ExtraMenuLink>
                 )}
-                {role === "owner" && (
+                {role == "owner" && (
                   <ExtraMenuLinkDanger onClick={() => deleteChannel()}>
                     Delete Channel
                   </ExtraMenuLinkDanger>

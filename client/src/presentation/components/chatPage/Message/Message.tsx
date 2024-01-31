@@ -27,7 +27,7 @@ const Message = ({
   date: string;
   message: string;
   image: string;
-  key: number;
+  key?: number;
   id: number;
 }) => {
   //const [IsShown, setIsShown] = useState<boolean>(false);
@@ -59,7 +59,7 @@ const Message = ({
   }, []);
   return (
     <MessageContainer
-      // onMouseLeave={() => setIsShown(false)}
+ 
       style={
         !name && !image
           ? {
@@ -70,8 +70,6 @@ const Message = ({
     >
       <MessageProfile
         src={image || user.image || BannedDeafultImg}
-        // onMouseEnter={() => setIsShown(true)}
-
         onClick={() => navigate(`/profile/${id}`)}
       />
       <MessageInfo>
@@ -80,19 +78,6 @@ const Message = ({
             {name || user.name || "[left recently]"}
           </MessageSenderName>
           <MessageSenderDate>{date}</MessageSenderDate>
-          {/* {IsShown && (
-            <SenderCard
-              user={{
-                name: "maarifa",
-                userName: "amaarifa",
-                image: faker.image.urlLoremFlickr(),
-                totalGames: 200,
-                gamesWon: 150,
-                gameLost: 100,
-                isFriend: false,
-              }}
-            />
-          )} */}
         </MessageSender>
         <MessageSample>
           <span>{message}</span>
