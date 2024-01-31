@@ -75,9 +75,6 @@ const ChatLeftSide = () => {
     setShowSearchModel(true);
   };
 
-  console.warn("left side >>>>>>>>>> currentchannel", currentChannel);
-  console.warn("left side >>>>>>>>>> currentDm", currentDm);
-
   return (
     <ChatLeftSideContainer
       style={
@@ -108,7 +105,7 @@ const ChatLeftSide = () => {
           </MessagesHeaderIcon>
         </MessagesHeaderContainer>
         <MessagesContent>
-          {(currentChannel) && (channels.map((e: ChannelType) => {
+          {channels.map((e: ChannelType) => {
             return (
               <ChannelConatiner
                 active={currentChannel && currentChannel?.id == e.id}
@@ -124,7 +121,7 @@ const ChatLeftSide = () => {
                 <ChannelName>{e.name}</ChannelName>
               </ChannelConatiner>
             );
-          }))}
+          })}
         </MessagesContent>
       </MessagesBox>
       <MessagesBox>
