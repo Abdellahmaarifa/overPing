@@ -38,7 +38,6 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
  
     let [gameResult, setGameResult] = useState<Result>(() => new Result());
 
-
     const updateGameResult = (
       newPlyOneId: number,
       newPlyTwoId: number,

@@ -27,6 +27,7 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
     const [leftGoal, setLeftGoal] = useState(0);
     const [rightGoal, setRightGoal] = useState(0);
     const [playerNumber, setPlayerNumber] = useState(0);
+    
     //const [ID, setUsrId] = useState("A" + playerOne.matchId);
 
 
@@ -69,10 +70,10 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                 //console.error('Error connecting to the WebSocket server:');
               });
 
-            socket.on('playerLeaveTheGame', () =>
+            socket.on('playerLeaveTheGame', (goal : Goals) =>
             {
                 //console.log("Leaving ===>")
-                if (leftGoal !== 5 && rightGoal !== 5 && matchState === undefined)
+                if (goal && goal.leftPlayerGoals !== 5 && goal.rightPlayerGoals !== 5 && matchState === undefined)
                 {
                     let plyLevel;
                     if (playerOne.matchType === MatchMode.VS_COMPUTER)
@@ -97,7 +98,8 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                         points            : playerOne.matchWager * 2,
                         level             : plyLevel,
                       };
-                    if (playerOne.playWithRobot === false)
+                    console.log("get to here");
+                    if (gameResult.plyOneId === 0 && playerOne.playWithRobot === false)
                         playerOne.socket?.emit('customResult', gameData);
                     TempGameResult.leftPlayerRebound = 5;
                     TempGameResult.leftPlayerStrict = 0;
@@ -128,16 +130,17 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                     setTimeout(() => {
                         let p1status : number = 0;
                         let p2status : number = 0;
-                        if (goal.leftPlayerGoals > goal.rightPlayerGoals)
+                        if (goal.rightPlayerGoals > goal.leftPlayerGoals)
+                        {
+                            p1status = 0;
+                            p2status = 1;
+                        }
+                        else
                         {
                             p1status = 1;
                             p2status = 0;
                         }
-                        else
-                        {
-                            p1status = 0;
-                            p1status = 1;
-                        }
+                        //console.log("players : ", goal.rightPlayerGoals, goal.leftPlayerGoals, p1status, p2status)
                         let plyLevel;
                         if (playerOne.matchType === MatchMode.VS_COMPUTER)
                             plyLevel = xp.calculateXp(playerOne.matchWager * 2, MatchMode.VS_COMPUTER);
@@ -160,8 +163,6 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                             points            : playerOne.matchWager * 2,
                             level             : plyLevel,
                           };
-                        if (gameData.playerOneStatus === 1 && playerOne.playWithRobot === false)
-                            playerOne.socket?.emit('customResult', gameData);
                         TempGameResult.leftPlayerRebound = goal.leftPlayerRebound;
                         TempGameResult.leftPlayerStrict = goal.leftPlayerStrict;
                         TempGameResult.rightPlayerRebound = goal.rightPlayerRebound;
@@ -176,9 +177,16 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                                     TempGameResult.leftPlayerRebound, TempGameResult.leftPlayerStrict,
                                     TempGameResult.rightPlayerRebound, TempGameResult.rightPlayerStrict );
                         if (goal.rightPlayerGoals === 5 && matchState === undefined)
+                        {
+
                             updateMatchState(false);
+                        }
                         else
+                        {
+                            if (playerOne.playWithRobot === false)
+                                playerOne.socket?.emit('customResult', gameData);
                             updateMatchState(true);
+                        }
 
                     }, 3000);
                 }
