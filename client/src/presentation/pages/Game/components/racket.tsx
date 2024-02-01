@@ -249,7 +249,7 @@ class Racket
             {
                 this.coordinateAlreadyGot = true;
                 this.randomRebound = Math.floor(Math.random() * (this.racketH - (this.game.p5.height / 23))) + (this.game.p5.height / 23);
-                //this.getCoordinates();
+                this.getCoordinates();
             }
             else if (this.coordinateAlreadyGot)
             {
