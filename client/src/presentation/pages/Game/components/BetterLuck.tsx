@@ -25,8 +25,8 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
 
     if (canvas)
     {
-        canvas.style.width = "0";
-        canvas.style.height = "0";
+        (canvas as any).style.width = "0";
+        (canvas as any).style.height = "0";
     }
     let wager : number = playerTwo.matchWager * 2;
     return (

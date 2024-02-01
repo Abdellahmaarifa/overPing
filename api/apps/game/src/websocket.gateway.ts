@@ -199,7 +199,7 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
   @SubscribeMessage('customGoalsEvent') // Listen for the 'customEventDataRequest' event
   handleGoalsEvent(client: Socket, obj : infoObj )//matchId : string)//, tabsId : string) 
   {
-      console.log("The id : ", obj. ID )
+      //console.log("The id : ", obj. ID )
       let room = getRoomByMatchId(rooms, obj.ID);
      // if (room)
        // console.log("Number of clients : ---> ", room.numberOfClients);
@@ -402,13 +402,30 @@ handleWeaponrandomNumber(client: Socket)
     {
       if (room.clientOneInfoSocket === client)
       {
-        if (room.clientTwoInfoSocket)
-          room.clientTwoInfoSocket.emit('playerLeaveTheGame')
+        let goal : Goals = new Goals();
+          goal.leftPlayerGoals = room.container.leftPlayerGoal;
+          goal.rightPlayerGoals = room.container.rightPlayerGoal;
+          goal.leftPlayerRebound = room.container.leftPlayerRebound;
+          goal.leftPlayerStrict = room.container.leftPlayerStrict;
+          goal.rightPlayerRebound = room.container.rightPlayerRebound;
+          goal.rightPlayerStrict = room.container.rightPlayerStrict;
+          goal.playerNumber = 1;
+        if (room.clientTwoInfoSocket && (goal.leftPlayerGoals !== 5 && goal.rightPlayerGoals !== 5))
+          room.clientTwoInfoSocket.emit('playerLeaveTheGame', goal)
       }
       else if (room.clientTwoInfoSocket === client)
       {
-        if (room.clientOneInfoSocket)
-          room.clientOneInfoSocket.emit('playerLeaveTheGame')
+        let goal : Goals = new Goals();
+     
+          goal.leftPlayerGoals = room.container.rightPlayerGoal;
+          goal.rightPlayerGoals = room.container.leftPlayerGoal;
+          goal.leftPlayerRebound = room.container.rightPlayerRebound;
+          goal.leftPlayerStrict = room.container.rightPlayerStrict;
+          goal.rightPlayerRebound = room.container.leftPlayerRebound;
+          goal.rightPlayerStrict = room.container.leftPlayerStrict;
+          goal.playerNumber = 2;
+        if (room.clientOneInfoSocket && (goal.leftPlayerGoals !== 5 && goal.rightPlayerGoals !== 5))
+          room.clientOneInfoSocket.emit('playerLeaveTheGame', goal)
       }
     }
 
