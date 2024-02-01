@@ -172,10 +172,13 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                         TempGameResult.plyOneId = playerOne.userId;
                         TempGameResult.plyTwoId = playerTwo.userId;
                         if (gameResult.plyOneId === 0)
+                        {
+                            console.log("update game result")
                             updateGameResult(TempGameResult.plyOneId, TempGameResult.plyTwoId,
                                     TempGameResult.plyOneGoals, TempGameResult.plyTwoGoals,
                                     TempGameResult.leftPlayerRebound, TempGameResult.leftPlayerStrict,
                                     TempGameResult.rightPlayerRebound, TempGameResult.rightPlayerStrict );
+                        }
                         if (goal.rightPlayerGoals === 5 && matchState === undefined)
                         {
 
