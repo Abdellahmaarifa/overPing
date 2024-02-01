@@ -30,7 +30,12 @@ export class DirectMessageService {
   ) {}
 
   async findById(id: number, user_id: number) : Promise<IDirectMessage> {
-    await this.helper.findUser(user_id);
+    if (!await this.helper.findUser(user_id)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
     const directMessage = await this.prisma.directMessage.findUnique({
       where: {
         id,
@@ -107,7 +112,12 @@ export class DirectMessageService {
 
   async getUserDirectMessages(user_id: number) : Promise<IDirectMessage[] | {}> {
 
-    await this.helper.findUser(user_id);
+    if (!await this.helper.findUser(user_id)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     const directMessages = await this.prisma.directMessage.findMany({
       where: {
@@ -164,8 +174,12 @@ export class DirectMessageService {
       });
     }
 
-    await this.helper.findUser(userID);
-    await this.helper.findUser(targetID);
+    if (!await this.helper.findUser(userID) || !await this.helper.findUser(targetID)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     const directMessage = await this.findByUsers(userID, targetID);
     
@@ -221,7 +235,12 @@ export class DirectMessageService {
   }
 
   async delete(data: DeleteDirectMessagedto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
     return false;
   }
 
@@ -256,7 +275,12 @@ export class DirectMessageService {
   }
 
   async updateMessage(data: UpdateMessageInDMdto) : Promise<any> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     this.checker.blockStatus(data.userId, data.groupChatId, FriendshipStatus.Blocked, GroupType.DM);
     this.checker.blockStatus(data.userId, data.groupChatId, FriendshipStatus.BlockedBy, GroupType.DM);
@@ -283,7 +307,12 @@ export class DirectMessageService {
   }
 
   async deleteMessage(data: DeleteMessageInDMdto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     const message = await this.prisma.messages.findUnique({
       where: {

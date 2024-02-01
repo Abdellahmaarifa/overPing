@@ -38,7 +38,12 @@ export class ChannelService {
   /******** Find Channel by user and group ID ********/
 
   async findById(id: number, user_id: number) : Promise<IChannel> {
-    await this.helper.findUser(user_id);
+    if (!await this.helper.findUser(user_id)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     if (await this.checker.isMember(user_id, id) === false) {
       return await this.prisma.channel.findUnique({
@@ -91,7 +96,12 @@ export class ChannelService {
   /************** Get Channels of a User **************/
 
   async getUserChannels(userId: number) : Promise<IChannel[]> {
-    await this.helper.findUser(userId);
+    if (!await this.helper.findUser(userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     const userChannels = await this.prisma.channel.findMany({
       where: {
@@ -208,8 +218,12 @@ export class ChannelService {
   /******* create ******* update ***** delete *******/
 
   async create(data: CreateChanneldto) : Promise<IChannel> {
-
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     await this.helper.channelNameValidation(data.channelName);
 
@@ -257,7 +271,12 @@ export class ChannelService {
   }
 
   async update(data: UpdateChanneldto) : Promise<IChannel> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
     
     const channel = await this.prisma.channel.findUnique({
       where: {
@@ -313,7 +332,12 @@ export class ChannelService {
   }
 
   async delete(data: UpdateChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     if (await this.checker.isOwner(data.userId, data.channelId) === false) {
       this.rpcExceptionService.throwCatchedException({
@@ -376,7 +400,12 @@ export class ChannelService {
   }
 
   async updateMessage(data: UpdateMessageInChanneldto) : Promise<IMessage> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     const message = await this.prisma.messages.findUnique({
       where: {
@@ -400,7 +429,12 @@ export class ChannelService {
   }
 
   async deleteMessage(data: DeleteMessageInChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     const message = await this.prisma.messages.findUnique({
       where: {
@@ -425,7 +459,12 @@ export class ChannelService {
   /*********** leave *************** remove member ***/
 
   async joinPublicChannel(userID: number, channelID: number) : Promise<IChannel> {
-    await this.helper.findUser(userID);
+    if (!await this.helper.findUser(userID)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
     await this.checker.isBanned(userID, channelID);
 
     if (await this.checker.isMember(userID, channelID)) {
@@ -457,7 +496,12 @@ export class ChannelService {
   }
 
   async joinProtectedChannel(userID: number, channelID: number, password: string) : Promise<IChannel> {
-    await this.helper.findUser(userID);
+    if (!await this.helper.findUser(userID)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
     await this.checker.isBanned(userID, channelID);
 
     if (await this.checker.isMember(userID, channelID)) {
@@ -491,8 +535,12 @@ export class ChannelService {
   }
 
   async addMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
-    await this.helper.findUser(data.targetId);
+    if (!await this.helper.findUser(data.userId) || !await this.helper.findUser(data.targetId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
     await this.checker.isBanned(data.targetId, data.channelId);
 
     if (await this.checker.isMember(data.targetId, data.channelId)) {
@@ -569,8 +617,12 @@ export class ChannelService {
   /********* add Admin ******* remove Admine *********/
 
   async addAdmin(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
-    await this.helper.findUser(data.targetId);
+    if (!await this.helper.findUser(data.userId) || !await this.helper.findUser(data.targetId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     if (await this.checker.isOwner(data.userId, data.channelId) === false) {
       this.rpcExceptionService.throwCatchedException({
@@ -635,7 +687,12 @@ export class ChannelService {
   /*** Unban Member ********* Kick Member ********* Unmute Member ***/
 
   async kickMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwCatchedException({
@@ -666,7 +723,12 @@ export class ChannelService {
   }
 
   async banMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwCatchedException({
@@ -711,7 +773,12 @@ export class ChannelService {
   }
 
   async unbanMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     if (await this.checker.isAdmin(data.userId, data.channelId) === false) {
       this.rpcExceptionService.throwCatchedException({
@@ -729,7 +796,12 @@ export class ChannelService {
   }
 
   async muteMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     if (await this.checker.authorized(data.userId, data.targetId, data.channelId) === false) {
       this.rpcExceptionService.throwCatchedException({
@@ -790,7 +862,12 @@ export class ChannelService {
   }
 
   async unmuteMember(data: MemberOfChanneldto) : Promise<Boolean> {
-    await this.helper.findUser(data.userId);
+    if (!await this.helper.findUser(data.userId)) {
+      this.rpcExceptionService.throwCatchedException({
+        code: 400,
+        message: `Failed to find user`,
+      });
+    }
 
     if (!this.checker.isAdmin(data.userId, data.channelId)) {
       return false;

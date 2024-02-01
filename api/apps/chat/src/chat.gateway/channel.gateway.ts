@@ -150,10 +150,10 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   @SubscribeMessage(CHANNEL.getChannelMessages)
   async getMessages(client: Socket, data: ChannelMessagesdto) : Promise<IMessage[] | any> {
     const userId = await this.helper.getUserId(client);
-    if (!userId || !data.channelId || userId !== data.userId) {
+    const id = await this.helper.findUser(data.userId);
+    if (!userId || !id || !data.channelId || userId !== data.userId) {
       return;
     }
-    await this.helper.findUser(data.userId);
 
     const blockedUsers = (await this.checker.blockStatus(
       data.userId, 
@@ -200,10 +200,10 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   @SubscribeMessage(CHANNEL.getChannelMembers)
   async getMembers(client: Socket, data: MemberOfChanneldto) : Promise<IMembersWithInfo | any> {
     const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId) {
+    const id = await this.helper.findUser(data.userId);
+    if (!userId || !id || userId !== data.userId) {
       return;
     }
-    await this.helper.findUser(data.userId);
 
     if (await this.checker.isMember(userId, data.channelId) === false) {
       return this.helper.handleError(`Failed to find channel: you're not a member`);

@@ -116,11 +116,11 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
   @SubscribeMessage(DIRECTMESSAGE.getDMMessages)
   async getMessages(client: Socket, data: DMMessagesdto) {
     const userId = await this.helper.getUserId(client);
-    if (!userId || userId !== data.userId ) {
+    const id = await this.helper.findUser(data.userId);
+    if (!userId || !id || userId !== data.userId ) {
       return;
     }
 
-    await this.helper.findUser(data.userId);
 
     const messages = await this.prisma.directMessage.findUnique({
       where: {

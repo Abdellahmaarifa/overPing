@@ -12,7 +12,7 @@ export class ChatExceptionFilter extends BaseWsExceptionFilter {
     
     if (!client || typeof client.emit !== 'function') {
       Logger.error(
-        'Invalid client or client does not have emit function',
+        'Invalid client',
         null,
         'ChatExceptionFilter',
         );
