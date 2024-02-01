@@ -11,24 +11,18 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
 {
     let plyOneImg : HTMLElement | null = null;
     let plyTwoImg : HTMLElement | null = null;
-    let canvas : HTMLElement | null = null;
 
 
     setTimeout( () => {
         plyOneImg  = document.getElementById("betterAvatar2");
         plyTwoImg  = document.getElementById("betterAvatar1");
-        canvas = document.getElementById("defaultCanvas0");
         plyOneImg?.setAttribute('src', playerOne.userAvatar);
         plyTwoImg?.setAttribute('src', playerTwo.userAvatar);
 
     }, 200)
 
-    if (canvas)
-    {
-        (canvas as any).style.width = "0";
-        (canvas as any).style.height = "0";
-    }
-    let wager : number = playerTwo.matchWager * 2;
+    let wager : number = playerTwo.matchWager BetterLuck.tsx
+    * 2;
     return (
         <div className='betterContainer'>
             <div className='betterState'>
@@ -36,7 +30,8 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
             </div>
             <div className="betterVs">
                 <div className="betterFlashLight"><p>VS</p></div>
-            </div>
+            </div>BetterLuck.tsx
+
             <div className='betterCoins'>
                 {/* <p>1000 &#128176;</p> */}
             </div>
