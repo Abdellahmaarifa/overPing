@@ -21,8 +21,7 @@ let BetterLuck = ({ playerOne, playerTwo} : BetterProps) =>
 
     }, 200)
 
-    let wager : number = playerTwo.matchWager BetterLuck.tsx
-    * 2;
+    let wager : number = playerTwo.matchWager * 2;
     return (
         <div className='betterContainer'>
             <div className='betterState'>
