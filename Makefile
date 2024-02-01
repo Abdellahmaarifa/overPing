@@ -11,7 +11,7 @@ COMPOSE := docker compose
 
 # Start services (development profile)
 start:
-	$(COMPOSE)  --profile development up -d
+	$(COMPOSE)  --profile development up 
 # build services (development profile)	
 build:
 	$(COMPOSE) --profile development build

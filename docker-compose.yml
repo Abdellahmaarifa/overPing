@@ -1,20 +1,20 @@
 version: "3.7"
 services:
   # CLIENT SERVICE FOR PRODUCTION #
-  # client:
-  #   build:
-  #     context: ./client
-  #     dockerfile: Dockerfile
-  #     target: production
-  #   networks:
-  #     - webapp
-  #   ports:
-  #     - 8080:8080
-  #   restart: always
-  #   container_name: client
-  #   profiles:
-  #     - production
-  #     - development
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: production
+    networks:
+      - webapp
+    ports:
+      - 8080:8080
+    restart: always
+    container_name: client
+    profiles:
+      - production
+      - development
 
   # DATABASE SERVICE FOR PRODUCTION & DEVELOPMENT #
   postgres_auth_db:
@@ -82,26 +82,11 @@ services:
       - production
       - development
 
-  # GATEWAY SERVICE FOR PRODUCTION #
-  # gateway:
-  #   build:
-  #     context: ./api/apps/gateway
-  #     dockerfile: Dockerfile
-  #   networks:
-  #     - webapp
-  #     - database
-  #   restart: always
-  #   command: [ 'node', 'main.js']
-  #   container_name: gateway
-  #   profiles:
-  #     - production
-  # GATEWAY SERVICE FOR DEVELOPMENT #
   gateway:
     build:
       context: ./api
       dockerfile: ./apps/gateway/Dockerfile
-      target: development
-    command: yarn start:dev gateway
+      target: production
     env_file:
       - .env
     networks:
@@ -135,8 +120,8 @@ services:
     build:
       context: ./api
       dockerfile: ./apps/auth/Dockerfile
-      target: development
-    command: yarn start:dev auth
+      # target: production
+    # command: yarn start:dev auth
     env_file:
       - .env
     networks:
@@ -148,7 +133,6 @@ services:
     volumes:
       - ./api/apps/auth:/usr/src/app/apps/auth
       - ./api/libs:/usr/src/app/libs
-      - ./api/apps/auth/prisma/migrations:/usr/src/app/apps/auth/prisma/migrations
     depends_on:
       postgres_auth_db:
         condition: service_started
@@ -165,8 +149,8 @@ services:
     build:
       context: ./api
       dockerfile: ./apps/profile/Dockerfile
-      target: development
-    command: yarn start:dev profile
+      target: production
+    # command: yarn start:dev profile
     env_file:
       - .env
     networks:
@@ -177,7 +161,6 @@ services:
     volumes:
       - ./api/apps/profile:/usr/src/app/apps/profile
       - ./api/libs:/usr/src/app/libs
-      - ./api/apps/profile/prisma/migrations:/usr/src/app/apps/profile/prisma/migrations
 
     depends_on:
       postgress_profile_db:
@@ -195,8 +178,8 @@ services:
     build:
       context: ./api
       dockerfile: ./apps/matchmaking/Dockerfile
-      target: development
-    command: yarn start:dev matchmaking
+      target: production
+    # command: yarn start:dev matchmaking
     container_name: matchmaking
     env_file:
       - .env
@@ -219,8 +202,8 @@ services:
     build:
       context: ./api
       dockerfile: ./apps/media/Dockerfile
-      target: development
-    command: yarn start:dev media
+      target: production
+    # command: yarn start:dev media
     container_name: media
     env_file:
       - .env
@@ -245,8 +228,8 @@ services:
     build:
       context: ./api
       dockerfile: ./apps/chat/Dockerfile
-      target: development
-    command: yarn start:dev chat
+      target: production
+    # command: yarn start:dev chat
     env_file:
       - .env
     networks:
@@ -258,7 +241,7 @@ services:
     volumes:
       - ./api/apps/chat:/usr/src/app/apps/chat
       - ./api/libs:/usr/src/app/libs
-      - ./api/apps/chat/prisma/migrations:/usr/src/app/apps/chat/prisma/migrations
+
     depends_on:
       postgres_chat_db:
         condition: service_started
@@ -319,8 +302,8 @@ services:
     build:
       context: ./api
       dockerfile: ./apps/game/Dockerfile
-      target: development
-    command: yarn start:dev game
+      target: production
+    # command: yarn start:dev game
     env_file:
       - .env
     ports:
@@ -332,7 +315,10 @@ services:
       - ./api/apps/game/prisma/migrations:/usr/src/app/apps/game/prisma/migrations
 
     depends_on:
-      - game_history_db
+      game_history_db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     networks:
       - webapp
     profiles:

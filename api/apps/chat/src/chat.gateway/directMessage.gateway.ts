@@ -17,7 +17,6 @@ import { DirectMessageService } from '../services/directMessage.service';
 import { CheckerService } from '../utils/checker.service';
 import { HelperService } from '../utils/helper.service';
 import { ChatExceptionFilter } from '../chat-global-filter/chat-global-filter';
-import { ErrorInterceptor } from '../chat-global-filter/interceptor';
 import { RpcExceptionService } from '@app/common/exception-handling';
 
 let connectedUsers: Map<number, any> = new Map();

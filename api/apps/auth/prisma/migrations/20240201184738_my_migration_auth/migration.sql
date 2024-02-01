@@ -3,7 +3,7 @@ CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "profileImgUrl" TEXT NOT NULL DEFAULT 'http://localhost:5500/image/avatar/defaultAvatar.jpg',
+    "profileImgUrl" TEXT NOT NULL,
     "password" TEXT,
     "googleId" TEXT,
     "fortyTwoId" TEXT,
