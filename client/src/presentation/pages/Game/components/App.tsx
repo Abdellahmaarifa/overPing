@@ -154,7 +154,8 @@ function App({
 
   return (
    
-    <ReactP5Wrapper id="adbel"
+    //<div id="test">
+      <ReactP5Wrapper
       sketch={(p5) =>
         MySketch({
           gameCapsule,
@@ -165,9 +166,10 @@ function App({
           updateMatchState,
         })
       }
-    >
- <div id="test"></div>
-    </ReactP5Wrapper>
+      >
+
+      </ReactP5Wrapper>
+    //</div>
  
   );
 }

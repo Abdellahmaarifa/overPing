@@ -124,7 +124,7 @@ let Util = ({ playerOne , playerTwo, updateUserInfoUtil, updatePlayerOne, update
             }, 7000)
         }
         
-        console.log("THIS TIME OUT IS WORKING!!")
+        //console.log("THIS TIME OUT IS WORKING!!")
             
         return (
             <div className="UtilContainer" >

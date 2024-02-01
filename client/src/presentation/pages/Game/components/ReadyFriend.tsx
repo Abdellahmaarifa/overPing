@@ -41,7 +41,7 @@ let ReadyFriend = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} :
       return (<p>Loading...ReadyFriend</p>)
     else if (error)
     {
-        console.log("error : ", error)
+        //console.log("error : ", error)
         return (<p>Error...ReadyFriend</p>)
     }
     else
@@ -70,7 +70,7 @@ let ReadyFriend = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} :
         if (data?.findProfileByUserId?.rank  as number >= 200)
             ply2UserLogo = "/images/badge-3.png";
         
-        console.log("match id and :  " , playerOne.matchId, playerTwo.matchId, playerOne.userId, playerTwo.userId, playerTwo.modePlaying)
+        //console.log("match id and :  " , playerOne.matchId, playerTwo.matchId, playerOne.userId, playerTwo.userId, playerTwo.modePlaying)
         setTimeout( () => {
             if (playerTwo.userLogo.length === 0)
             {

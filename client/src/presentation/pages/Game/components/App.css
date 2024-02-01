@@ -15,10 +15,17 @@
 }
 .react-p5-wrapper
 {
-  z-index: 3;
-  border: 12px lightcoral;
+  z-index: 0;
+  /* border: 12px lightcoral;
+  width: 100%;
+  height: 100%; */
+}
+#test
+{
   width: 100%;
   height: 100%;
+  background-color: aqua;
+  border: 10px solid gray;
 }
 /* 
 @media all and (orientation: portrait) {

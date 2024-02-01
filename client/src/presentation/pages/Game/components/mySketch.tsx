@@ -50,7 +50,7 @@ let resizeCanvas = (game : Game) : void =>
   let canvasWidth : number;
   let canvasHeight : number; 
  
-  game.canvasPranetDiv = game.p5.select('#layout'); 
+  game.canvasPranetDiv = game.p5.select('#gameHover'); 
   if (game.canvasPranetDiv)
   {
     canvasWidth = (game.canvasPranetDiv.elt.clientWidth )// game.gameBordersPixel; //the game..xel is the number of pixel give to canvas borders 
@@ -427,7 +427,7 @@ function setup(game : Game)
 
   return () => 
   {
-    game.canvasPranetDiv = game.p5.select('#layout');
+    game.canvasPranetDiv = game.p5.select('#gameHover');
     
     if (game.canvasPranetDiv)
     {
@@ -435,9 +435,10 @@ function setup(game : Game)
       canvasHeight = (game.canvasPranetDiv.elt.clientWidth / 2) ;
       if  (game.canvasPranetDiv.elt.clientHeight <= 300)
         canvasHeight = 150;
+      //console.log("The width : ", canvasWidth, canvasHeight)
       game.cnv = game.p5.createCanvas( canvasWidth ,  canvasHeight);
       if (game.cnv)
-        game.cnv.parent('test');
+        game.cnv.parent('gameHover');
       game.canvasResizedHeight = canvasHeight;
       game.canvasResizedWidth = canvasWidth;
       /*Sounds.soundButton = game.p5.createButton('mute');
@@ -493,6 +494,7 @@ function MySketch({gameCapsule ,  p5 , playerOne , playerTwo , weaponTemplate , 
       
     }
     game.p5.setup = setup(game);
+    //console.log("state", updateMatchState)
     game.p5.draw = draw({game, gameCapsule, playerOne, playerTwo, weapon, weaponTemplate, updateMatchState});
   };
 

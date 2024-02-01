@@ -21,7 +21,7 @@ let KeepTrack = () =>
          });
  
          socket.on('connect', () => {
-             console.log(`Track Connected to WebSocket server`);
+            // console.log(`Track Connected to WebSocket server`);
          });
  
          socket.on("aMatchinghappen", () =>
@@ -29,14 +29,14 @@ let KeepTrack = () =>
             leave = 1;
          })
          socket.on('disconnect', () => {
-             console.log(`Track Disconnected from WebSocket server`);
-             console.log("keep Track: =======> ", leave);
-             if (leave === 0)
-             {
-                 console.log("no matching happen", leave)
-             }
-             else
-                 console.log("a matchig happen", leave)
+            // console.log(`Track Disconnected from WebSocket server`);
+            // console.log("keep Track: =======> ", leave);
+            //  if (leave === 0)
+            //  {
+            //    //  console.log("no matching happen", leave)
+            //  }
+            //  else
+            //      console.log("a matchig happen", leave)
          });
  
          socket.on('connect_error', (error) => {

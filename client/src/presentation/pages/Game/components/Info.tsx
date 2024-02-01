@@ -57,21 +57,21 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
             });
 
             socket.on('connect', () => {
-                console.log(`info Connected to WebSocket server`);
+                //console.log(`info Connected to WebSocket server`);
                 playerOne.socket = socket;
             });
 
             socket.on('disconnect', () => {
-                console.log(`info Disconnected from WebSocket server`);
+                //console.log(`info Disconnected from WebSocket server`);
             });
 
             socket.on('connect_error', (error) => {
-                console.error('Error connecting to the WebSocket server:');
+                //console.error('Error connecting to the WebSocket server:');
               });
 
             socket.on('playerLeaveTheGame', () =>
             {
-                console.log("Leaving ===>")
+                //console.log("Leaving ===>")
                 if (leftGoal !== 5 && rightGoal !== 5 && matchState === undefined)
                 {
                     let plyLevel;
@@ -124,7 +124,7 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
 
                 if (goal.leftPlayerGoals === 5 || goal.rightPlayerGoals === 5)
                 {
-                    console.log("winning ===>")
+                    //console.log("winning ===>")
                     setTimeout(() => {
                         let p1status : number = 0;
                         let p2status : number = 0;
@@ -201,7 +201,7 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                 clearInterval(intervalId)
                 if (socket)
                 {
-                    console.log("is disco")
+                    //console.log("is disco")
                     socket.disconnect();
                 }
             };

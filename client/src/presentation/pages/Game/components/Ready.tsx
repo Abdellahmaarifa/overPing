@@ -37,7 +37,7 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : ready
 
     }, 200)
     
-    console.log("Mode playing : ", playerOne.modePlaying, playerTwo.modePlaying)
+    //console.log("Mode playing : ", playerOne.modePlaying, playerTwo.modePlaying)
 
   
 
@@ -45,7 +45,7 @@ let Ready = ( {playerOne, playerTwo, updateReadyState , updatePlayerTwo} : ready
       return (<p>Loading...Ready</p>)
     else if (error)
     {
-        console.log("error : ", error, playerTwo.userId)
+        //console.log("error : ", error, playerTwo.userId)
         return (<p>Error...Ready</p>)
     }
     else

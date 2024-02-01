@@ -22,7 +22,7 @@ class Ball
     
     drawAndMove()
     {
-        console.log("drw ball")
+        //console.log("drw ball")
         this.ballSpeed = this.game.p5.width / 120;
         if (this.ballFirst50Time < 50)
         {

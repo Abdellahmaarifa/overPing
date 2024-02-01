@@ -99,9 +99,9 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
             starts_collected: 0,
           };
           socket?.emit('customAchieve', { player1, player2 });
-          console.log("The game result is : ", gameResult)
-          console.log("player One : ", player1);
-          console.log("player One : ", player2);
+          //console.log("The game result is : ", gameResult)
+          //console.log("player One : ", player1);
+          //console.log("player One : ", player2);
       }, [])
 
 

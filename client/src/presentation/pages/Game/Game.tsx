@@ -253,10 +253,13 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         else
             return (
                 <>
+                    <div id="gameHover">
+
                     <Info playerOne={playerOne} playerTwo={playerTwo as UserInfo} gameResult={gameResult} updateMatchState={updateMatchState}
                         updateGameResult={updateGameResult} matchState={matchState}/>
                     <App  gameCapsule={gameCapsule} playerOne={playerOne} playerTwo={playerTwo as UserInfo}
                         updateMatchState={updateMatchState} updateServerState={updateServerState}/>
+                    </div>
                 </>
             )
     }
