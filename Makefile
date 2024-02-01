@@ -2,7 +2,7 @@
 COMPOSE_FILE := docker-compose.yml
 
 # Docker Compose options
-COMPOSE := docker compose 
+COMPOSE := docker-compose 
 
 # Define targets
 .PHONY: start stop restart logs clean fclean client
