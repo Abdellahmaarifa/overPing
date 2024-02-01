@@ -18,7 +18,7 @@ import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { IRmqSeverName } from '@app/rabbit-mq/interface/rmqServerName';
 import { RabbitMqService } from '@app/rabbit-mq';
-import { RpcExceptionService } from '@app/common/exception-handling';
+
 
 interface PlayersList
 {
@@ -68,8 +68,8 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
     const query = client.handshake.query;
     const matchId : string  = query.ID as string ; 
     const tabsId : string  = query.tabId as string ; 
-    const waitingUserId : number  = query.waitingTabsId as number ;
-    let playerObject : UserInfo = query.playerOne
+    // const waitingUserId : number  = Number(query.waitingTabsId);
+    // let playerObject : UserInfo = query.playerOne
 
     // console.log("query : ", query)
     
