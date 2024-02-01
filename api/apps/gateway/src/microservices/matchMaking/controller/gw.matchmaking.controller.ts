@@ -14,7 +14,6 @@ export class GwMatchmakingController {
 
   @MessagePattern({ role: 'gateway', cmd: 'matchFound' })
   async matchnotify(matchData: matchDataInput) {
-    console.log('atest:', matchData);
     if (matchData == null) {
       console.log('match not found');
     }
@@ -31,7 +30,6 @@ export class GwMatchmakingController {
 
   @MessagePattern({ role: 'gateway', cmd: 'matchDirc' })
   async matchnotifyDrict(matchData: matchDataInput) {
-    console.log('atest:', matchData);
     if (matchData == null) {
       console.log('match not found');
     }

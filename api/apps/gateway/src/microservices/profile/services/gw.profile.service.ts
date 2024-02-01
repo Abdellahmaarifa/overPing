@@ -58,7 +58,6 @@ export class GwProfileService {
 
     async findProfileByUserId(userId: number, id: number) : Promise<IUserProfile>{
         const isUserblocked = await this.friendshipService.getFriendshipStatus(userId, id);
-        console.log("profile: ", isUserblocked)
         if (isUserblocked === FriendshipStatus.BlockedBy){
             throw new HttpException( "premission deine", 404)
         }

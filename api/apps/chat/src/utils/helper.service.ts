@@ -172,7 +172,6 @@ export class HelperService {
     } else {
       await this.setOwner(channelId, admins[0].id, "isAdmin");
     }
-    console.log(`ownerLeavedChannel(${channelId})`);
   }
   
   async setOwner(channelId: number, newOwner: number, oldStatus: string) : Promise<void> {

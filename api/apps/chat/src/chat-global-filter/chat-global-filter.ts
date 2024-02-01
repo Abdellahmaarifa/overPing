@@ -7,8 +7,7 @@ export class ChatExceptionFilter extends BaseWsExceptionFilter {
   
   catch(exception: WsException | HttpException, host: ArgumentsHost) {
     const ctx = host.switchToWs();
-    console.log('\n\n\nctx:', ctx, '\n\n\n');
-    console.log('\n\n\nexception:', exception, '\n\n\n');
+
     const client = ctx.getClient() as Socket;
     
     if (!client || typeof client.emit !== 'function') {
@@ -19,7 +18,7 @@ export class ChatExceptionFilter extends BaseWsExceptionFilter {
         );
       return;
     }
-    
+
     try {
       let error;
       if (exception instanceof WsException) {
@@ -68,8 +67,7 @@ export class ChatExceptionFilter extends BaseWsExceptionFilter {
     
     //   catch(exception: WsException | HttpException, host: ArgumentsHost) {
     //     const ctx = host.switchToWs();
-    //     console.log('\n\n\nctx:', ctx, '\n\n\n');
-    //     console.log('\n\n\nexception:', exception, '\n\n\n');
+  
     //     const client = ctx.getClient() as Socket;
     
     

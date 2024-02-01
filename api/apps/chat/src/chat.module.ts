@@ -44,7 +44,6 @@ import { ChatExceptionFilter } from './chat-global-filter/chat-global-filter';
     ChannelService,
     DirectMessageGateway,
     ChannelGateway,
-    // NotificationsGateway,
   ],
 })
 export class ChatModule {}

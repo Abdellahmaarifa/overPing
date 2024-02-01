@@ -53,7 +53,6 @@ export class MatchMakingMutationsResolver {
               playerId: isRequestSent.userId,
               matchType: isRequestSent.matchType
             }
-            console.log("this is respondData ", respondData);
             this.pubSub.publish(`getRequestToPlay${isRequestSent.recipientId}`, respondData);
           }
           return !! isRequestSent;

@@ -9,7 +9,6 @@ export class GoogleGuard extends AuthGuard('google'){
            // if the access token jwt is invalid this is the error we will be returning.
             throw new UnauthorizedException(err,'Invalid JWT');
         }
-        console.log('the guard is working=========================== ')
         return super.handleRequest(err, user, info, context, status);
     }
 }

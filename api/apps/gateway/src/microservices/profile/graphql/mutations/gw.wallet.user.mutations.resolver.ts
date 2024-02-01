@@ -26,7 +26,6 @@ export class WalletMutationsResolver {
 
     @Mutation(()=> Boolean, { nullable: true })
     async placeBet(@Args('transferFundsInput') placeBetInput : PlaceBetInput): Promise<boolean>{
-        console.log("place bet called");
         return this.walletService.placeBet(placeBetInput);
     }
     @Mutation(()=> Boolean, { nullable: true })
