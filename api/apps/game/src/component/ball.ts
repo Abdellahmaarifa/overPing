@@ -94,7 +94,7 @@ class Ball
             if ((this.ballDirection && this.ballX > this.width - data.rRacketW  && (this.ballY < data.rRacketY || this.ballY > data.rRacketY + data.rRacketH))
                 || (!this.ballDirection && this.ballX < data.lRacketW && (this.ballY < data.lRacketY || this.ballY > data.lRacketY + data.lRacketH)))
             {
-                console.log("You lose ==================== : ");
+                //console.log("You lose ==================== : ");
                 if ((this.ballDirection && this.ballX > this.width - data.rRacketW  && (this.ballY < data.rRacketY || this.ballY > data.rRacketY + data.rRacketH)))
                 {
                     data.rightPlayerGoal++;
@@ -102,9 +102,9 @@ class Ball
                         data.rightPlayerRebound++;
                     else
                         data.rightPlayerStrict++;
-                    console.log("right player goal : " , data.rightPlayerGoal);
-                    console.log("right player goal rebound : " , data.rightPlayerRebound);
-                    console.log("right player goal strict : " , data.rightPlayerStrict);
+                    //console.log("right player goal : " , data.rightPlayerGoal);
+                    //console.log("right player goal rebound : " , data.rightPlayerRebound);
+                    //console.log("right player goal strict : " , data.rightPlayerStrict);
                 }
                 else
                 {

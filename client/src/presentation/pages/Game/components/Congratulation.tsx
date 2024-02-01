@@ -34,7 +34,6 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
 
     let plyOneGoals : number  = 0;
     let plyTwoGoals : number  = 0;
-    let prise : number = playerOne.matchWager * 2;
     if (playerOne.userId = gameResult.plyOneId)
     {
         plyOneGoals = gameResult.plyOneGoals;
@@ -46,21 +45,41 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
         plyOneGoals = gameResult.plyTwoGoals;
     }
     
-      socket = io(serverUrl, { path: '/game-container'
-      , transports: ['websocket']});
-  
-      socket.on('connect', () => {
-        //console.log(`App Connected to WebSocket server in tab id `);
-      });
-  
-      socket.on('disconnect', () => {
-        //console.log(`App Disconnected from WebSocket server in tab `);
-      });
-      socket.on('connect_error', (error) => {
-        console.error('Error connecting to the WebSocket server:');
-      });
+    const setUpSocket = () =>
+    {
+        socket = io(serverUrl, 
+        {
+            path: '/game-container',
+            transports: ['websocket'],
+        });
+
+        socket.on('connect', () => {
+            //console.log(`quit Connected to WebSocket server`);
+        });
+
+        socket.on('disconnect', () => 
+        {
+            //console.log(`quit Disconnected from WebSocket server`);
+        });
+
+        socket.on('connect_error', (error) => 
+        {
+            //console.error('Error connecting to the WebSocket server:');
+        });
+    }
   
       
+      useEffect(() => 
+      {
+              setUpSocket();
+              
+              return () => {
+                  if (socket)
+                  {
+                      socket.disconnect();
+                  }
+              };
+      }, []);
       
       useEffect(() => {
 

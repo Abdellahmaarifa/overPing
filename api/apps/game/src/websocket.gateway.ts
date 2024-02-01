@@ -82,7 +82,7 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
     //add player to room 
     if (matchId && matchId.length && matchId.substring(0, 5) !== 'robot') 
     {
-      console.log("Matchid : ", matchId);
+      //console.log("Matchid : ", matchId);
       addToRoom(rooms, client, matchId, tabsId);
       let room : Rooms = getRoomByClientId(rooms, client.id);
     
@@ -164,6 +164,7 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
 
 @SubscribeMessage('customAchieve')
 handleAchievements(client: Socket, gameAchievement: any) {
+  //console.log("achive: ", gameAchievement);
   try {
     const { player1, player2 } = gameAchievement;
     
@@ -208,12 +209,13 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
           const elapsedTime: number = Date.now() - room.startTime;
           const elapsedMinutes: number = Math.floor(elapsedTime / (1000));
       
-          console.log(`Client two has spent ${elapsedMinutes} second in the room`, room.numberOfClients );
+          //console.log(`Client two has spent ${elapsedMinutes} second in the room`, room.numberOfClients );
       
           if (room.numberOfClients === 1 && elapsedMinutes >= 15) 
           {
-            client.emit('playerLeaveTheGame');
-            console.log(`Client two should lose after : ${elapsedMinutes} second `);
+            let goal = new Goals();
+            client.emit('playerLeaveTheGame', goal);
+            //console.log(`Client two should lose after : ${elapsedMinutes} second `);
             room.late = true;
           }
       }

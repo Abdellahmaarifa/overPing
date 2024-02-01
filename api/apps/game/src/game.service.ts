@@ -70,7 +70,7 @@ export class GameService {
         createdAt: game.createdAt,
       };
     }));
-    console.log('result:', await result);
+    //console.log('result:', await result);
     return result;
   }
 
@@ -124,7 +124,7 @@ export class GameService {
         createdAt: game.createdAt,
       };
     }));
-    console.log('result:', await result);
+    //console.log('result:', await result);
     return result;
   }
 }

@@ -11,12 +11,11 @@ import {
 } from "./ChatBody.style";
 import ChatBanner from "../ChatBanner/ChatBanner";
 import tw from "twin.macro";
-import { CHANNEL_CMD, DIRECTMESSAGE, SERVER_CHAT} from "constant/constants";
+import { CHANNEL_CMD, DIRECTMESSAGE, SERVER_CHAT } from "constant/constants";
 import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import { io } from "socket.io-client";
-
 
 interface MessageType {
   id: number;
@@ -37,8 +36,15 @@ interface MessageDMType {
   updated_at: string;
 }
 
-
-const ChatBody = ({ type, socket, socket_dm }: { type: string, socket:any, socket_dm: any }) => {
+const ChatBody = ({
+  type,
+  socket,
+  socket_dm,
+}: {
+  type: string;
+  socket: any;
+  socket_dm: any;
+}) => {
   const {
     showChatAbout: [showChatAbout, setShowChatAbout],
   } = useChatContext();
@@ -60,8 +66,7 @@ const ChatBody = ({ type, socket, socket_dm }: { type: string, socket:any, socke
   > | null>(null);
 
   const sendMessage = () => {
-    if(msg == "")
-      return;
+    if (msg == "") return;
     socket.emit(
       CHANNEL_CMD.sendMessageInchannel,
       {
@@ -89,8 +94,7 @@ const ChatBody = ({ type, socket, socket_dm }: { type: string, socket:any, socke
   };
 
   const sendMessage_dm = () => {
-    if(msg == "")
-      return;
+    if (msg == "") return;
     socket_dm.emit(
       DIRECTMESSAGE.sendMessageToUser,
       {
@@ -110,10 +114,12 @@ const ChatBody = ({ type, socket, socket_dm }: { type: string, socket:any, socke
   ////////////////////////////////////////////////////////
   useEffect(() => {
     if (type == "channel") {
-
-      socket.on(CHANNEL_CMD.error, (data) =>{
-        console.log("88888888888888888888===>ERROR GET IT FROM CHANNEL SOCKET : " ,data);
-      })
+      socket.on(CHANNEL_CMD.error, (data) => {
+        console.log(
+          "88888888888888888888===>ERROR GET IT FROM CHANNEL SOCKET : ",
+          data
+        );
+      });
 
       socket.on(CHANNEL_CMD.recMessageFromChannel, (data: MessageType) => {
         console.log("THIS IS FROM BACKEND!!! ", data);
@@ -121,26 +127,25 @@ const ChatBody = ({ type, socket, socket_dm }: { type: string, socket:any, socke
           setMessages((old) => [data, ...old]);
       });
     } else if (type == "dm") {
+      socket_dm.on(DIRECTMESSAGE.error, (data) => {
+        console.log(
+          "88888888888888888888===>ERROR GET IT FROM DIRECT MSG SOCKET : ",
+          data
+        );
+      });
 
-
-      socket_dm.on(DIRECTMESSAGE.error, (data) =>{
-        console.log("88888888888888888888===>ERROR GET IT FROM DIRECT MSG SOCKET : " ,data);
-      })
-      
       socket_dm.on(DIRECTMESSAGE.recMessageFromUser, (data: MessageDMType) => {
         console.log("THIS IS FROM BACKEND!!! ", data);
         if (
           data &&
           (data.sender_id == Number(id) || data.sender_id == Number(user?.id))
-        )
-        {
-
+        ) {
           setMessagesDM((old) => [data, ...old]);
         }
       });
     }
     return () => {
-      if (type == "channel"){
+      if (type == "channel") {
         socket.off(CHANNEL_CMD.error);
         socket.off(CHANNEL_CMD.recMessageFromChannel);
       }
@@ -213,13 +218,13 @@ const ChatBody = ({ type, socket, socket_dm }: { type: string, socket:any, socke
         setShowChannelMenu(false);
       }}
     >
-      { <ChatBanner type={type} />}
-      {type == "channel" && currentChannel &&(
+      {<ChatBanner type={type} />}
+      {type == "channel" && currentChannel && (
         <>
           <ChatMessages>
             {messages.length > 0 &&
-              messages.map((e: MessageType, index :number) => {
-                console.log("///////////===========>>the key ", index); 
+              messages.map((e: MessageType, index: number) => {
+                console.log("///////////===========>>the key ", index);
                 return (
                   <Message
                     name={membersMap?.get(e.sender_id)?.name!}
@@ -237,7 +242,7 @@ const ChatBody = ({ type, socket, socket_dm }: { type: string, socket:any, socke
         <>
           <ChatMessages>
             {messagesDM.length > 0 &&
-              messagesDM.map((e: MessageDMType, index :number) => {
+              messagesDM.map((e: MessageDMType, index: number) => {
                 let u = currentDm?.user2;
                 if (u && e.sender_id != Number(id)) u = currentDm?.user1;
                 if (!u) return "";
@@ -270,6 +275,7 @@ const ChatBody = ({ type, socket, socket_dm }: { type: string, socket:any, socke
               placeholder="Message"
               onChange={(e) => setMsg(e.target.value)}
               value={msg}
+              maxLength={100}
             />
           </form>
         </SendMessageFeild>
