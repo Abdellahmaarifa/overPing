@@ -19,6 +19,7 @@ interface MySketchProp
   playerTwo : UserInfo;
   weaponTemplate : WeaponTemplate;
   updateMatchState : (val : boolean) => void;
+  matchState : boolean | undefined;
 };
 
 
@@ -80,6 +81,7 @@ let resizeCanvas = (game : Game) : void =>
   else
   {
     console.log("The game div selector return null.");
+    game.p5.noLoop();
   }
 }
 
@@ -92,10 +94,11 @@ interface drawProps
   weapon : Weapon;
   weaponTemplate : WeaponTemplate;
   updateMatchState : (val : boolean) => void;
+  matchState : boolean | undefined;
 }
 
 
-function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTemplate , updateMatchState} : drawProps) 
+function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTemplate , updateMatchState, matchState} : drawProps) 
 {
   let ballX : number; 
   let ballY : number;
@@ -105,6 +108,7 @@ function draw({game , gameCapsule , playerOne , playerTwo , weapon , weaponTempl
 
   return () => 
   {
+
     // get player number from the server
     game.playerNumber = gameCapsule.playerNumber;
     if (game.playerNumber === 0 && playerOne.playWithRobot === true)
@@ -455,7 +459,11 @@ function setup(game : Game)
 
     }
     else
-      console.log("Error: in sketch file, failed to select the parent of canvas element.")
+    {
+
+      console.log("select the parent of canvas element.")
+      game.p5.noLoop();
+    }
   };
 }
 
@@ -466,7 +474,7 @@ function setup(game : Game)
 
 
 // function MySketch(gameCapsule : GameContainer,  p5: p5Types , playerOne : UserInfo, playerTwo : UserInfo, weaponTemplate : WeaponTemplate, updateMatchState )
-function MySketch({gameCapsule ,  p5 , playerOne , playerTwo , weaponTemplate , updateMatchState } : MySketchProp )
+function MySketch({gameCapsule ,  p5 , playerOne , playerTwo , weaponTemplate , updateMatchState, matchState } : MySketchProp )
 {
   let game: Game | null = null;
   // let weapon : 
@@ -495,7 +503,7 @@ function MySketch({gameCapsule ,  p5 , playerOne , playerTwo , weaponTemplate , 
     }
     game.p5.setup = setup(game);
     //console.log("state", updateMatchState)
-    game.p5.draw = draw({game, gameCapsule, playerOne, playerTwo, weapon, weaponTemplate, updateMatchState});
+    game.p5.draw = draw({game, gameCapsule, playerOne, playerTwo, weapon, weaponTemplate, updateMatchState, matchState});
   };
 
   // Call setupGame once when the component mounts

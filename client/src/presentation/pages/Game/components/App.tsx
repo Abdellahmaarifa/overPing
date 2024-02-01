@@ -27,6 +27,7 @@ interface AppProps {
   playerTwo: UserInfo;
   updateMatchState: (val: boolean) => void;
   updateServerState: (val: boolean) => void;
+  matchState : boolean | undefined;
 }
 
 function App({
@@ -35,6 +36,7 @@ function App({
   playerTwo,
   updateMatchState,
   updateServerState,
+  matchState 
 }: AppProps) {
   //let gameCapsule: GameContainer = new GameContainer();
   let socket: Socket | null = null;
@@ -164,6 +166,7 @@ function App({
           playerTwo,
           weaponTemplate,
           updateMatchState,
+          matchState
         })
       }
       >

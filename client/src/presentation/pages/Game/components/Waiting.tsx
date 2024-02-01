@@ -138,7 +138,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
             setSwitchValue(true);
         }
         else
-            console.warn('Subscription data is null:', subscriptionData);
+            console.log('Subscription data is null:');
 
     },[subscriptionData])
     
@@ -212,7 +212,7 @@ let Waiting = ({ playerOne, playerTwo, updateRobotOpetion, updateMatchId, update
     }
     if (TheSwitch === true)
     {
-        //console.log("====================> : ", subscriptionData)
+        console.log("====================> : ", subscriptionData)
         if (subscriptionData === undefined || ( subscriptionData && subscriptionData.matchWaitingList.matchKey === "null"))
         {
             //console.log("====================> : ", subscriptionData)

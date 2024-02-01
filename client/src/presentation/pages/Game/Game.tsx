@@ -258,7 +258,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
                     <Info playerOne={playerOne} playerTwo={playerTwo as UserInfo} gameResult={gameResult} updateMatchState={updateMatchState}
                         updateGameResult={updateGameResult} matchState={matchState}/>
                     <App  gameCapsule={gameCapsule} playerOne={playerOne} playerTwo={playerTwo as UserInfo}
-                        updateMatchState={updateMatchState} updateServerState={updateServerState}/>
+                        updateMatchState={updateMatchState} updateServerState={updateServerState} matchState={matchState}/>
                     </div>
                 </>
             )
