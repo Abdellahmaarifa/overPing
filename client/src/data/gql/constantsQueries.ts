@@ -32,6 +32,7 @@ export const PROFILE_QUERY = `
       title
       xp
       rank
+      displayRank
       about
       bgImageUrl
       wallet {

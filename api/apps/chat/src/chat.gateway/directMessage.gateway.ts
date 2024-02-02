@@ -87,9 +87,11 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
     await this.checker.blockStatus(data.userId, data.recipientId, FriendshipStatus.BlockedBy, GroupType.DM);
 
     const message = await this.directMessageService.addMessage(data);
-    const recSocket =  connectedUsers.get(data.recipientId);
-    if (recSocket && message) {
-      recSocket.emit(DIRECTMESSAGE.recMessageFromUser , message);
+    if (message) {
+      const recSocket =  connectedUsers.get(data.recipientId);
+      if (recSocket) {
+        recSocket.emit(DIRECTMESSAGE.recMessageFromUser , message);
+      }
       client.emit(DIRECTMESSAGE.recMessageFromUser , message);
 
       this.sendUpdatedListOfDMs(

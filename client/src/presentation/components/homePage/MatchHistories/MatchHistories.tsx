@@ -73,7 +73,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
   const setMatches = async () => {
     try {
       const res: MatchType[] = (await getMatchesHistories(page)) as MatchType[];
-      //console.log("data:", res);
+      // console.warn("data:", res);
       if (res?.length > 0) {
         setMatchList([...matchList, ...res]);
         setPage(page + 1);
@@ -104,7 +104,7 @@ const MatchHistories = ({ active }: { active: boolean }) => {
               <MatchTableHeaderCell tw="flex-[30%]">Date</MatchTableHeaderCell>
               {/* <MatchTableHeaderCell tw="flex-[30%]">Points</MatchTableHeaderCell> */}
               <MatchTableHeaderCell tw="flex-[15%]">Points</MatchTableHeaderCell>
-              <MatchTableHeaderCell tw="flex-[15%]">Rank</MatchTableHeaderCell>
+              <MatchTableHeaderCell tw="flex-[15%]">Xp</MatchTableHeaderCell>
             </tr>
           </MatchTableHeader>
           <MatchTableBody>
