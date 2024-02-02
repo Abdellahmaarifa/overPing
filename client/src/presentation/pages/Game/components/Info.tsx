@@ -3,17 +3,18 @@ import { io, Socket } from 'socket.io-client';
 import './Info.css';
 import Goals from "./Goals";
 import UserInfo from "./UserInfo";
-import { Result } from "./Result";
+import Result from "./Result";
 import { IGameData } from './game.interface';
 import { MatchMode, XpService } from "./xp";
 const serverUrl: string = 'ws://localhost:4055';
 let socket: Socket | null = null;
-
+const gameData : IGameData = new IGameData();
+import { gameResult } from "../Game";
 interface InfoProps
 {
     playerOne : UserInfo;
     playerTwo : UserInfo;
-    gameResult : Result;
+    localGameResult : Result;
     updateMatchState : (val : boolean ) => void;
     updateGameResult : (newPlyOneId : number ,
          newPlyTwoId : number, newPlyOneGoals : number, newPlyTwoGoals : number, newLeftPlayerRebound : number,
@@ -21,8 +22,9 @@ interface InfoProps
     matchState : boolean | undefined; 
 }
 
+let lastGoalsResult: Goals = new Goals();
 
-function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameResult, matchState} : InfoProps) 
+function Info({playerOne, playerTwo, localGameResult, updateMatchState, updateGameResult, matchState} : InfoProps) 
 {
     const [leftGoal, setLeftGoal] = useState(0);
     const [rightGoal, setRightGoal] = useState(0);
@@ -34,7 +36,7 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
     //console.log("Data inside it is : ", playerOne, playerTwo);
     let xp = new XpService();
 
-    let TempGameResult : Result = new Result();
+    //let TempGameResult : Result | undefined = gameResult;
     const sendDataToServer = (ID : string, tabId : string) =>
     {
         if (socket)
@@ -63,6 +65,7 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
             });
 
             socket.on('disconnect', () => {
+
                 //console.log(`info Disconnected from WebSocket server`);
             });
 
@@ -97,23 +100,22 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                         playerTwoStatus   : 0,
                         points            : playerOne.matchWager * 2,
                         level             : plyLevel,
-                      };
-                    console.log("get to here");
+                    };
                     if (gameResult.plyOneId === 0 && playerOne.playWithRobot === false)
                         playerOne.socket?.emit('customResult', gameData);
-                    TempGameResult.leftPlayerRebound = 5;
-                    TempGameResult.leftPlayerStrict = 0;
-                    TempGameResult.rightPlayerRebound = 0;
-                    TempGameResult.rightPlayerStrict = 0;
-                    TempGameResult.plyOneGoals = 5;
-                    TempGameResult.plyTwoGoals = 0;
-                    TempGameResult.plyOneId = playerOne.userId;
-                    TempGameResult.plyTwoId = playerTwo.userId;
+                    let leftPlayerRebound = 5;
+                    let leftPlayerStrict = 0;
+                    let rightPlayerRebound = 0;
+                    let rightPlayerStrict = 0;
+                    let plyOneGoals = 5;
+                    let plyTwoGoals = 0;
+                    let plyOneId = playerOne.userId;
+                    let plyTwoId = playerTwo.userId;
                     if (gameResult.plyOneId === 0)
-                        updateGameResult(TempGameResult.plyOneId, TempGameResult.plyTwoId,
-                                TempGameResult.plyOneGoals, TempGameResult.plyTwoGoals,
-                                TempGameResult.leftPlayerRebound, TempGameResult.leftPlayerStrict,
-                                TempGameResult.rightPlayerRebound, TempGameResult.rightPlayerStrict );
+                        updateGameResult(plyOneId, plyTwoId,
+                                plyOneGoals, plyTwoGoals,
+                                leftPlayerRebound, leftPlayerStrict,
+                                rightPlayerRebound, rightPlayerStrict );
                     setTimeout(() => {
                         updateMatchState(true)
                     }, 2000)
@@ -163,21 +165,24 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                             points            : playerOne.matchWager * 2,
                             level             : plyLevel,
                           };
-                        TempGameResult.leftPlayerRebound = goal.leftPlayerRebound;
-                        TempGameResult.leftPlayerStrict = goal.leftPlayerStrict;
-                        TempGameResult.rightPlayerRebound = goal.rightPlayerRebound;
-                        TempGameResult.rightPlayerStrict = goal.rightPlayerStrict;
-                        TempGameResult.plyOneGoals = goal.leftPlayerGoals;
-                        TempGameResult.plyTwoGoals = goal.rightPlayerGoals;
-                        TempGameResult.plyOneId = playerOne.userId;
-                        TempGameResult.plyTwoId = playerTwo.userId;
+                        if (gameResult.plyOneId === 0 && playerOne.playWithRobot === false)
+                        {
+                            playerOne.socket?.emit('customResult', gameData);
+                        }
+                        let leftPlayerRebound = goal.leftPlayerRebound;
+                        let leftPlayerStrict = goal.leftPlayerStrict;
+                        let rightPlayerRebound = goal.rightPlayerRebound;
+                        let rightPlayerStrict = goal.rightPlayerStrict;
+                        let plyOneGoals = goal.leftPlayerGoals;
+                        let plyTwoGoals = goal.rightPlayerGoals;
+                        let plyOneId = playerOne.userId;
+                        let plyTwoId = playerTwo.userId;
                         if (gameResult.plyOneId === 0)
                         {
-                            console.log("update game result")
-                            updateGameResult(TempGameResult.plyOneId, TempGameResult.plyTwoId,
-                                    TempGameResult.plyOneGoals, TempGameResult.plyTwoGoals,
-                                    TempGameResult.leftPlayerRebound, TempGameResult.leftPlayerStrict,
-                                    TempGameResult.rightPlayerRebound, TempGameResult.rightPlayerStrict );
+                            updateGameResult(plyOneId, plyTwoId,
+                                    plyOneGoals, plyTwoGoals,
+                                    leftPlayerRebound, leftPlayerStrict,
+                                    rightPlayerRebound, rightPlayerStrict );
                         }
                         if (goal.rightPlayerGoals === 5 && matchState === undefined)
                         {
@@ -186,18 +191,30 @@ function Info({playerOne, playerTwo, gameResult, updateMatchState, updateGameRes
                         }
                         else
                         {
-                            if (playerOne.playWithRobot === false)
-                                playerOne.socket?.emit('customResult', gameData);
                             updateMatchState(true);
                         }
 
                     }, 3000);
                 }
-                if (matchState === undefined)
+                if (matchState === undefined && lastGoalsResult.leftPlayerGoals !== 5 && lastGoalsResult.rightPlayerGoals !== 5)
                 {
-                    setPlayerNumber(goal.playerNumber);
-                    setLeftGoal(goal.rightPlayerGoals);
-                    setRightGoal(goal.leftPlayerGoals);
+                    if (lastGoalsResult.leftPlayerGoals !== goal.leftPlayerGoals)
+                    {
+                        setRightGoal(goal.leftPlayerGoals);
+                        lastGoalsResult.leftPlayerGoals = goal.leftPlayerGoals;
+                    }
+                    if (lastGoalsResult.rightPlayerGoals !== goal.rightPlayerGoals)
+                    {
+                        setLeftGoal(goal.rightPlayerGoals)
+                        lastGoalsResult.rightPlayerGoals = goal.rightPlayerGoals;
+                    }
+                    if (lastGoalsResult.playerNumber === 0)
+                    {
+                        setPlayerNumber(goal.playerNumber);
+                        lastGoalsResult.playerNumber = goal.playerNumber;
+                    }
+                    //setLeftGoal(goal.rightPlayerGoals);
+                    //setRightGoal(goal.leftPlayerGoals);
                 }
             });
         }

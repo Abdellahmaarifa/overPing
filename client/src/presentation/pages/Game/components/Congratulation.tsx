@@ -2,7 +2,7 @@ import './Congratulation.css'
 import UserInfo from './UserInfo'
 import { io, Socket } from 'socket.io-client';
 import { IGameData } from './game.interface';
-import { Result } from './Result';
+import Result from './Result';
 import { Achieve, MatchMode } from './Achieve';
 const serverUrl: string = 'ws://localhost:4055';
 import { useEffect } from 'react'; 
@@ -12,11 +12,11 @@ interface CongraProps
 {
     playerOne : UserInfo;
     playerTwo : UserInfo;
-    gameResult : Result;
+    localGameResult : Result;
 
 }
 
-let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
+let Congratulation = ({playerOne, playerTwo, localGameResult} : CongraProps) =>
 {
     let plyOneImg : HTMLElement | null = null;
     let plyTwoImg : HTMLElement | null = null;
@@ -34,15 +34,15 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
 
     let plyOneGoals : number  = 0;
     let plyTwoGoals : number  = 0;
-    if (playerOne.userId = gameResult.plyOneId)
+    if (playerOne.userId = localGameResult.plyOneId)
     {
-        plyOneGoals = gameResult.plyOneGoals;
-        plyTwoGoals = gameResult.plyTwoGoals;
+        plyOneGoals = localGameResult.plyOneGoals;
+        plyTwoGoals = localGameResult.plyTwoGoals;
     }
     else
     {
-        plyTwoGoals = gameResult.plyOneGoals;
-        plyOneGoals = gameResult.plyTwoGoals;
+        plyTwoGoals = localGameResult.plyOneGoals;
+        plyOneGoals = localGameResult.plyTwoGoals;
     }
     
     const setUpSocket = () =>
@@ -96,25 +96,25 @@ let Congratulation = ({playerOne, playerTwo, gameResult} : CongraProps) =>
         let player2 : Achieve;
           player1 = {
             user_id: playerOne.userId,
-            score_for: gameResult.plyOneGoals,
-            score_against: gameResult.plyTwoGoals,
+            score_for: localGameResult.plyOneGoals,
+            score_against: localGameResult.plyTwoGoals,
             is_winner:  true,
             bet: playerOne.matchWager * 2,
             matchMode: mode,
-            strict_shot_goals:  gameResult.leftPlayerStrict,
-            rebounded_goals: gameResult.leftPlayerRebound,
+            strict_shot_goals:  localGameResult.leftPlayerStrict,
+            rebounded_goals: localGameResult.leftPlayerRebound,
             starts_collected: 0,
           };
     
           player2  = {
             user_id: playerTwo.userId,
-            score_for: gameResult.plyTwoGoals,
-            score_against: gameResult.plyOneGoals,
+            score_for: localGameResult.plyTwoGoals,
+            score_against: localGameResult.plyOneGoals,
             is_winner:  false,
             bet: 0,
             matchMode: mode,
-            strict_shot_goals:  gameResult.rightPlayerStrict,
-            rebounded_goals: gameResult.rightPlayerRebound,
+            strict_shot_goals:  localGameResult.rightPlayerStrict,
+            rebounded_goals: localGameResult.rightPlayerRebound,
             starts_collected: 0,
           };
           socket?.emit('customAchieve', { player1, player2 });
