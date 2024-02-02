@@ -79,14 +79,14 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
     //     addPlayerToWaitingList(waitingPlayers, playerObject);
     // }
     //add player to room 
-    console.log("the match id ", matchId)
-    console.log("the tab id ", tabsId)
-    if (matchId && matchId.length && matchId.substring(0, 5) !== 'robot') 
+    //console.log("the match id ", matchId)
+    //console.log("the tab id ", tabsId)
+    if (matchId && matchId.length && matchId.substring(0, 5) !== 'robot' && matchId.substring(0, 8) !== "ABCD1234") 
     {
       addToRoom(rooms, client, matchId, tabsId);
       let room : Rooms = getRoomByClientId(rooms, client.id);
     
-      console.log("Matchid : ", matchId, room?.numberOfClients);
+      //console.log("Matchid : ", matchId, room?.numberOfClients);
       if (room && room.clientOneSocket == client)
         playerNumber = 1;
       else
@@ -94,7 +94,7 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
       if (client)
         client.emit('getPlayerNumber', playerNumber);
  
-      console.log("web socket connection established--------------><match>");
+      //console.log("web socket connection established--------------><match>");
     }
 
     //play with robot case 
@@ -108,7 +108,7 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
         room.numberOfClients = 3;
       if (client)
         client.emit('getPlayerNumber', playerNumber);
-      console.log("web socket connection established--------------><robot>");
+      //console.log("web socket connection established--------------><robot>");
     }
   }
   
@@ -204,8 +204,8 @@ handleResult(client: Socket, obj : IGameData )//matchId : string)//, tabsId : st
   {
       //console.log("The id : ", obj. ID )
       let room = getRoomByMatchId(rooms, obj.ID);
-     // if (room)
-       // console.log("Number of clients : ---> ", room.numberOfClients);
+      //if (room)
+      //  console.log("Number of clients : ---> ", room.numberOfClients, room.clientOneTabId);
       if (room && room.numberOfClients === 1 && room.late === false)
       {
           const elapsedTime: number = Date.now() - room.startTime;

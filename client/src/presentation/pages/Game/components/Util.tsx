@@ -63,7 +63,7 @@ let Util = ({ playerOne , playerTwo, updateUserInfoUtil, updatePlayerOne, update
         {
             p1.modePlaying = Math.floor(Math.random() * 3) + 1;
             p1.playWithMouse = 1;
-            p1.matchWager = 100;
+            p1.matchWager = 0;
             p1.playWithRobot = true;
             p1.friend = false;
             p1.matchType = MatchMode.VS_COMPUTER;
@@ -74,7 +74,7 @@ let Util = ({ playerOne , playerTwo, updateUserInfoUtil, updatePlayerOne, update
         {
             p1.playWithMouse = 1;
             p1.modePlaying = 1;
-            p1.matchWager = 100;
+            p1.matchWager = 0;
             p1.matchId = params.get("key") as string;
             p1.friend = true;
             p1.matchType = MatchMode.VS_FRIENDS;

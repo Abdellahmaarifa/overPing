@@ -49,7 +49,7 @@ function Info({playerOne, playerTwo, localGameResult, updateMatchState, updateGa
     //continuously get goals data
     const setUpSocket = (tabId : string) =>
     {
-        let ID = "A" + playerOne.matchId;
+        let ID = "ABCD1234" + playerOne.matchId;
         if (ID !== undefined) 
         {
             socket = io(serverUrl, 

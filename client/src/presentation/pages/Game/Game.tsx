@@ -26,6 +26,7 @@ import { Socket , io } from 'socket.io-client';
 import KeepTrack from './components/KeepTrack';
 import { ProfileWallet } from 'components/profilePage/ProfileBanner/ProfileBanner.style';
 import Result from './components/Result';
+import { MatchMode } from './components/Achieve';
 
 let gameCapsule: GameContainer = new GameContainer();
 let playerOne : UserInfo = new UserInfo(tabId, "", 0, 0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
@@ -35,7 +36,7 @@ let gameResult : Result  = new Result(0, 0, 0, 0, 0, 0, 0, 0);
 
 const serverUrl: string = 'ws://localhost:4055';
 function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlayerTwo } : 
-    { playerOne : UserInfo , playerTwo : UserInfo | undefined, gameResult : Result})
+    { playerOne : UserInfo , playerTwo : UserInfo | undefined})
 {
  
     let [localGameResult, setGameResult] = useState<Result>(() => new Result(0,0,0,0,0,0,0,0));
@@ -220,7 +221,7 @@ function ParentComponent ({ playerOne : renamePlayerOne, playerTwo : renamePlaye
         return (< Util playerOne={playerOne} playerTwo={playerTwo as UserInfo} updatePlayerOne={updatePlayerOne} updatePlayerTwo={updatePlayerTwo} updateUserInfoUtil={UpdateUserInfoUtil}/>);
     else if (playerOne.modePlaying === 0)
         return ( <Modes playerOne={playerOne} updateUserInfoMode={updateUserInfoMode}/>);
-    else if (playerOne.matchWager === 0)
+    else if (playerOne.matchWager === 0 && playerOne.matchType === MatchMode.ONLINE_RANDOM)
         return ( < Deposit playerOne={playerOne} updateUserInfoWager={updateuserinfoWager}/>);
     else if (playerOne.matchId.length === 0 && playerOne.playWithRobot === false)
         return (
