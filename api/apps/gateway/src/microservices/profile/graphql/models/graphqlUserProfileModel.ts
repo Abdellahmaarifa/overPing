@@ -1,6 +1,6 @@
-import { Field, ObjectType, ID } from "@nestjs/graphql";
-import { GQLWalletModel } from './graphqlWallet';
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { GQLGameStatusModel } from './graphqlGameStatus';
+import { GQLWalletModel } from './graphqlWallet';
 @ObjectType()
 export class GQLUserProfileModel {
     @Field(() => ID)
@@ -21,7 +21,7 @@ export class GQLUserProfileModel {
     @Field()
     rank: number
 
-    @Field()
+    @Field({nullable: true})
     displayRank: number
 
     @Field()

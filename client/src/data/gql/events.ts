@@ -1,6 +1,8 @@
 import { SERVER_END_POINT } from "constant/constants";
 import { UPDATE_STATUS } from "./constantsQueries";
 
+console.warn = () => {};
+
 window.onerror = () => {
   return true;
 };

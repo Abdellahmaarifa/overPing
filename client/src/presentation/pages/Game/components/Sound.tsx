@@ -48,7 +48,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -58,7 +58,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -68,7 +68,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -78,7 +78,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -88,7 +88,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -98,7 +98,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -109,7 +109,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -120,7 +120,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -131,7 +131,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -142,7 +142,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -153,7 +153,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
 
@@ -163,7 +163,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
     this.heartSound = new Howl({
@@ -172,7 +172,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
     this.alertHitSound = new Howl({
@@ -181,7 +181,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
     this.freezeSound = new Howl({
@@ -190,7 +190,7 @@ class SoundsClass {
         // console.log('Audio loaded successfully');
       },
       onloaderror: (error: any) => {
-        console.error("Error loading audio:", error);
+        // console.error("Error loading audio:", error);
       },
     });
   };

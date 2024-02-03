@@ -45,7 +45,7 @@ export class AuthMutationsResolver {
     if (response.twoFactorAuth){
       res.cookie('twoFactorAuth', response.twoFactorAuth, {
         httpOnly: true,
-        secure: true,
+        // secure: true,
         sameSite: 'Strict',
       });
       throw new HttpException("Two-factor", 401);
@@ -54,13 +54,13 @@ export class AuthMutationsResolver {
     this.userStatusService.updateUserStatus(response.user.id, Date().toString());
     res.cookie('Refresh_token', response.refreshToken, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       sameSite: 'Strict',
     });
     
     res.cookie('Access_token', response.accessToken, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       sameSite: 'Strict',
     });
     return (response.user);
@@ -76,13 +76,13 @@ export class AuthMutationsResolver {
     const {res} = ctx;
     res.cookie('Refresh_token', response.refreshToken, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       sameSite: 'Strict',
     });
     
     res.cookie('Access_token', response.accessToken, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       sameSite: 'Strict',
     });
     return (response.user);
@@ -147,13 +147,13 @@ export class AuthMutationsResolver {
     const { res } = context;
     res.cookie('Refresh_token', response.refreshToken, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       sameSite: 'Strict',
     });
 
     res.cookie('Access_token', response.accessToken, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       sameSite: 'Strict',
     });
 

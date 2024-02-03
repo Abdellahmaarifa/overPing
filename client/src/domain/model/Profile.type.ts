@@ -15,7 +15,7 @@ export type WalletType = {
 };
 
 export type ProfileType = {
-  id: string;
+  id: number;
   about: string;
   cover: string;
   nickname: string;

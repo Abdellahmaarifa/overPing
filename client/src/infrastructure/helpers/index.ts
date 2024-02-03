@@ -25,7 +25,7 @@ export const withPad = (n: number) => n.toString().padStart(2, "0");
 export const GetUserProfile = (data: AccountQuery): ProfileType => {
   //console.log("data: AccountQuery ===> " ,data);
   return {
-    id: data?.findProfileByUserId?.id!,
+    id: data?.findProfileByUserId?.user_id!,
     about: data?.findProfileByUserId?.about!,
     cover: encodeURI(data?.findProfileByUserId?.bgImageUrl as string),
     nickname: data.findProfileByUserId?.nickname!,
@@ -41,10 +41,10 @@ export const GetUserProfile = (data: AccountQuery): ProfileType => {
       xp: data?.findProfileByUserId?.xp!,
       totalMatches: data?.findProfileByUserId?.gameStatus.totalMatches!,
     },
-    wallet:{
+    wallet: {
       id: data?.findProfileByUserId?.wallet.id!,
-      balance : data?.findProfileByUserId?.wallet.balance!,
-      betAmount : data?.findProfileByUserId?.wallet.balance!,
+      balance: data?.findProfileByUserId?.wallet.balance!,
+      betAmount: data?.findProfileByUserId?.wallet.balance!,
     },
   };
 };

@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 interface CreateChannelData {
   channelName: string;
   description?: string;
-  password?: string;
+  password?: string | null;
   userId: number;
   visibility: string;
 }
@@ -58,7 +58,7 @@ const ChannelModel = () => {
     const dataSchema = Yup.object({
       channelName: Yup.string().required(),
       description: Yup.string(),
-      password: Yup.string(),
+      password: Yup.string().nullable(),
       userId: Yup.number().required(),
       visibility: Yup.string().required(),
     });
@@ -70,7 +70,7 @@ const ChannelModel = () => {
         channelName: name,
         description: description,
         userId: Number(user?.id),
-        password: pass,
+        password: pass ? pass : null,
         visibility: visibility ? "private" : pass ? "protected" : "public",
       });
       // create a protected channel

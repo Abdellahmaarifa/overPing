@@ -94,12 +94,12 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
       });
       const userRes = await userData.json();
 
-      //console.log("from user context: ", userRes?.data?.getUser);
+      console.log("from user context: ", userRes?.data?.getUser);
       setUser(userRes?.data?.getUser);
 
       // set the profile
       if (!profile && userRes?.data?.getUser?.id) {
-        console.log("SERVER: ", SERVER_END_POINT);
+        console.log("getting profile *****: ", SERVER_END_POINT);
         const profileData = await fetch(SERVER_END_POINT, {
           method: "POST",
           headers: {
@@ -115,16 +115,23 @@ const UserContextProvider = ({ children, store }: Props): JSX.Element => {
           }),
           credentials: "include",
         });
-        console.log("RES SERVER: ", SERVER_END_POINT);
+        console.log("FROM SERVER: *", profileData, userRes?.data?.getUser?.id);
         const profileRes = await profileData.json();
         // console.log(
         //   "resualt of the query: ",
         //   profileRes.data,
         //   GetUserProfile(profileRes.data)
         // );
+
+        console.log(
+          "DATA OF THE USER: ,",
+          profileRes,
+          userRes?.data?.getUser.id
+        );
         setProfile(GetUserProfile(profileRes.data));
         //console.log("profile after done: ", profile);
       }
+      console.log("DONE!!");
       //setUser(user);
       //if (res?.accessToken) setUser({ token: res?.accessToken, ...user });
       callback && callback();

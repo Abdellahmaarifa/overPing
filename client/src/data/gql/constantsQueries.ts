@@ -28,9 +28,11 @@ export const PROFILE_QUERY = `
 
     findProfileByUserId(userId: $userId) {
       id
+      user_id
       nickname
       title
       xp
+      displayRank
       rank
       about
       bgImageUrl

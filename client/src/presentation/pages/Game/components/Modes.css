@@ -129,18 +129,18 @@
 .i1
 {
     /* background: radial-gradient(25.64% 75.76% at 50% 50%, #134371 0%, #09152B 97.4%); */
-    background-image: url('../../BackgroundImages/background_image1.jpg') ;
+    background-image: url('../../../assets/game/BackgroundImages/background_image1.jpg') ;
     background-size: 100% 100%;
 }
 .i2
 {
-    background-image: url('../../BackgroundImages/background_image2.jpg') ;
+    background-image: url('../../../assets/game/BackgroundImages/background_image2.jpg') ;
     background-size: 100% 100%;
 }
 
 .i3
 {
-    background-image: url('../../BackgroundImages/background_image3.jpg') ;
+    background-image: url('../../../assets/game/BackgroundImages/background_image3.jpg') ;
     background-size: 100% 100%;
 }
 

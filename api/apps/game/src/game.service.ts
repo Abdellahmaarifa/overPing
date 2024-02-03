@@ -43,7 +43,7 @@ export class GameService {
         ]
       },
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -97,7 +97,7 @@ export class GameService {
         ],
       },
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
       skip: (page - 1) * limit,
       take: limit,

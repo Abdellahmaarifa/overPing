@@ -17,7 +17,7 @@ import {
 } from "gql/index";
 import { Dispatch, SetStateAction } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   BannerBadge,
   BannerBadgeGrade,
@@ -81,8 +81,10 @@ const ProfileBanner = ({
   };
   // console.log("TTTTTTTTTTT ", profile);
 
+  const { uid } = useParams();
   const sendGameInvitaionHandler = async () => {
-    toast.promise(playWithUser(Number(profile?.id), sendGameInvitaion), {
+    console.log("profile?.id: ", profile?.id);
+    toast.promise(playWithUser(Number(id), sendGameInvitaion), {
       loading: "please wait ..",
       success: (data: string) => data,
       error: (err: string) => err,

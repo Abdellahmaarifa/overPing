@@ -61,19 +61,15 @@ const ChatBanner = ({ type }: { type: string }) => {
   } = useChatContext();
   const navigate = useNavigate();
   useEffect(() => {
-    if (currentChannel && currentChannel.owner_id == Number(user?.id))
-    {
+    if (currentChannel && currentChannel.owner_id == Number(user?.id)) {
       setRole("owner");
-    }
-    else if (
+    } else if (
       currentChannel &&
       currentChannel.admins &&
       currentChannel.admins.find((e) => e.id == user?.id)
-    )
-    {
+    ) {
       setRole("admin");
-    }
-    else setRole("member");
+    } else setRole("member");
     if (currentChannel?.visibility) setVisibility(currentChannel?.visibility);
     console.log("set ROLE", role);
   }, [currentChannel, id, location.pathname]);
@@ -163,7 +159,7 @@ targetId: Float!
   };
 
   const leaveChannel = async () => {
-    console.log("7777777777777777777777777777777777777777")
+    console.log("7777777777777777777777777777777777777777");
     try {
       const data = await client.mutate({
         mutation: LeaveChannelDocument,
@@ -186,9 +182,9 @@ targetId: Float!
 
   const deleteChannel = async () => {
     let password: string | null = null;
-    if (visibility === "protected") {
-      password = prompt("please give me the passowrd");
-    }
+    // if (visibility === "protected") {
+    //   password = prompt("please give me the passowrd");
+    // }
     try {
       const data = await client.mutate({
         mutation: LeaveChannelDocument,
@@ -210,9 +206,13 @@ targetId: Float!
     }
   };
 
-
   console.log("//*/*/*/*/*/*/*/*/*/*/*/*/*:", type, "ROLE +===", role);
-  console.log("-//////////////////---///--/-//- ", currentChannel, "user id == " , user?.id);
+  console.log(
+    "-//////////////////---///--/-//- ",
+    currentChannel,
+    "user id == ",
+    user?.id
+  );
 
   return (
     <ChatBannerContainer>

@@ -30,7 +30,6 @@ RUN npm run build
 # prepare nginx
 FROM nginx as production
 RUN rm /etc/nginx/conf.d/default.conf
-COPY 
 COPY nginx.conf /etc/nginx/conf.d/
 COPY --from=build app/dist /usr/share/nginx/html 
 

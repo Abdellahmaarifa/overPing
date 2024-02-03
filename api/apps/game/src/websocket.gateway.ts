@@ -166,7 +166,7 @@ export class MyWebSocketGateway implements OnGatewayInit ,OnGatewayConnection, O
 
 @SubscribeMessage('customAchieve')
 handleAchievements(client: Socket, gameAchievement: any) {
-  //console.log("achive: ", gameAchievement);
+  console.log("achive: ", gameAchievement);
   try {
     const { player1, player2 } = gameAchievement;
     

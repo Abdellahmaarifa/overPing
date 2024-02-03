@@ -1,18 +1,18 @@
 import "./App.css";
 import React, { useEffect } from "react";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
-import { io, Socket } from 'socket.io-client';
-import MySketch from './mySketch';
-import GameContainer from './gamecontainer';
-import SentRacketData from './SentRacketData';
-import RecieveBallData from './RecieveBallData';
-import UserInfo from './UserInfo';
-import { weapon } from './mySketch';
-import WeaponTemplate from './WeaponTemplate';
+import { io, Socket } from "socket.io-client";
+import MySketch from "./mySketch";
+import GameContainer from "./gamecontainer";
+import SentRacketData from "./SentRacketData";
+import RecieveBallData from "./RecieveBallData";
+import UserInfo from "./UserInfo";
+import { weapon } from "./mySketch";
+import WeaponTemplate from "./WeaponTemplate";
 //import { Sounds } from './mySketch';
 //import { Howler } from 'howler';
 
-let weaponTemplate : WeaponTemplate = new WeaponTemplate();
+let weaponTemplate: WeaponTemplate = new WeaponTemplate();
 
 // Function to generate a unique tab identifier
 function generateUniqueTabId(): string {
@@ -20,14 +20,14 @@ function generateUniqueTabId(): string {
 }
 const tabId = generateUniqueTabId();
 
-const serverUrl: string = "ws://localhost:4055";
+const serverUrl: string = import.meta.env.OVER_PING_SERVER_URL_PROD_WS;
 interface AppProps {
   gameCapsule: GameContainer;
   playerOne: UserInfo;
   playerTwo: UserInfo;
   updateMatchState: (val: boolean) => void;
   updateServerState: (val: boolean) => void;
-  matchState : boolean | undefined;
+  matchState: boolean | undefined;
 }
 
 function App({
@@ -36,7 +36,7 @@ function App({
   playerTwo,
   updateMatchState,
   updateServerState,
-  matchState 
+  matchState,
 }: AppProps) {
   //let gameCapsule: GameContainer = new GameContainer();
   let socket: Socket | null = null;
@@ -133,8 +133,8 @@ function App({
       // console.log("player Number is : ", gameCapsule.playerNumber);
     });
 
-    socket.on('connect_error', (error) => {
-      console.error('Error connecting to the WebSocket server:');
+    socket.on("connect_error", (error) => {
+      // console.error("Error connecting to the WebSocket server:");
     });
 
     socket.on("connect_timeout", (timeout) => {
@@ -155,9 +155,8 @@ function App({
   }, []); // Use an empty dependency array to run this effect only once
 
   return (
-   
     //<div id="test">
-      <ReactP5Wrapper
+    <ReactP5Wrapper
       sketch={(p5) =>
         MySketch({
           gameCapsule,
@@ -166,14 +165,11 @@ function App({
           playerTwo,
           weaponTemplate,
           updateMatchState,
-          matchState
+          matchState,
         })
       }
-      >
-
-      </ReactP5Wrapper>
+    ></ReactP5Wrapper>
     //</div>
- 
   );
 }
 

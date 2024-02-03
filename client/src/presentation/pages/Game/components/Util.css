@@ -121,13 +121,13 @@
 
 .U1
 {
-    background-image: url('../../images/mouse.jpg') ;
+    background-image: url('../../../assets/game/mouse.jpg') ;
     background-size: 100% 100%;
 }
 
 .U2
 {
-    background-image: url('../../images/keyboard.jpg') ;
+    background-image: url('../../../assets/game/keyboard.jpg') ;
     background-size: 100% 100%;
 }
 

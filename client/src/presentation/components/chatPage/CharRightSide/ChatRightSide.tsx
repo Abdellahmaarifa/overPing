@@ -59,7 +59,7 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
           fetchPolicy: "no-cache",
         })
         .then((data) => {
-          console.warn("FROM DM", data);
+          // console.warn("FROM DM", data);
           if (data.data) {
             setData(GetUserProfile(data.data));
             setLoading(false);
@@ -85,8 +85,10 @@ const ChatRightSide = ({ type }: { type: "none" | "dm" | "channel" }) => {
     });
   };
 
-
-  console.log("-------------------------------------- in right side data :", data);
+  console.log(
+    "-------------------------------------- in right side data :",
+    data
+  );
 
   return (
     <ChatRightSideContainer

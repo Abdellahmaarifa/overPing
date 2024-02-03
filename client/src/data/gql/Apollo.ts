@@ -6,13 +6,13 @@ import {
   split,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
 import { onError } from "@apollo/client/link/error";
 import { getMainDefinition } from "@apollo/client/utilities";
-import { createClient } from "graphql-ws";
 import { SERVER_END_POINT } from "constant/constants";
+import { createClient } from "graphql-ws";
 
 // Log any GraphQL errors or network error that occurred
 const errorLink = onError((err) => {
@@ -34,7 +34,7 @@ export const httpLink = createUploadLink({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:5500/graphql",
+    url: "ws://10.14.55.249:5500/graphql",
   })
 );
 

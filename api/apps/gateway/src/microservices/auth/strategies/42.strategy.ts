@@ -11,7 +11,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42'){
         super({
             clientID: process.env.FORTYTWO_APP_ID,
             clientSecret: process.env.FROTYTWO_APP_SECRET,
-            callbackURL:  'http://localhost:5500/auth/42/fortytwo-callback/',  
+            callbackURL:  process.env.FROTYTWO_REDIRECTION_URL, 
         })
     }
 

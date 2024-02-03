@@ -1,20 +1,20 @@
 version: "3.7"
 services:
   # CLIENT SERVICE FOR PRODUCTION #
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-      target: production
-    networks:
-      - webapp
-    ports:
-      - 8080:8080
-    restart: always
-    container_name: client
-    profiles:
-      - production
-      - development
+  # client:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #     target: production
+  #   networks:
+  #     - webapp
+  #   ports:
+  #     - 8080:8080
+  #   restart: always
+  #   container_name: client
+  #   profiles:
+  #     - production
+  #     - development
 
   # DATABASE SERVICE FOR PRODUCTION & DEVELOPMENT #
   postgres_auth_db:
@@ -86,7 +86,8 @@ services:
     build:
       context: ./api
       dockerfile: ./apps/gateway/Dockerfile
-      target: production
+      target: development
+    command: yarn start:dev gateway 
     env_file:
       - .env
     networks:

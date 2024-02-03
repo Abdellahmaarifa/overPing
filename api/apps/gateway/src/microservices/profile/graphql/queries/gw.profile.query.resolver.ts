@@ -1,11 +1,11 @@
-import { Resolver,Query, Args, Context} from '@nestjs/graphql';
-import { GwProfileService } from '../../services/gw.profile.service';
-import { GQLUserProfileModel } from '../models/graphqlUserProfileModel';
-import { IUserProfile } from '@app/common/profile/IUserProfile';
-import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
-import { UseGuards } from '@nestjs/common';
 import { IAchievement } from '@app/common/profile/IAchievement';
+import { IUserProfile } from '@app/common/profile/IUserProfile';
+import { UseGuards } from '@nestjs/common';
+import { Args, Context, Query, Resolver } from '@nestjs/graphql';
+import { GqlJwtAuthGuard } from '../../../auth/guards/gql.accessToken.guard';
+import { GwProfileService } from '../../services/gw.profile.service';
 import { GQLAchievement } from '../models/graphqlAchievement';
+import { GQLUserProfileModel } from '../models/graphqlUserProfileModel';
 
 @Resolver()
 export class ProfileQueryResolver {
@@ -19,10 +19,10 @@ export class ProfileQueryResolver {
     // }
 
     @UseGuards(GqlJwtAuthGuard)
-    @Query(() => GQLUserProfileModel ,{ nullable: true })
+    @Query(() => GQLUserProfileModel)
     async findProfileByUserId(@Context() cxt , @Args('userId') id: number) : Promise<IUserProfile>{
       const userId = cxt.req.user.id;
-      const profile =  await this.profileService.findProfileByUserId(userId, id);
+      const profile = await this.profileService.findProfileByUserId(userId, id);
       return profile;
     }
 

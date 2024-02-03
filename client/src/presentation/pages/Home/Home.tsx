@@ -8,12 +8,12 @@ import { useUserContext } from "context/user.context";
 import { useSettingsContext, SETTINGS_LINKS } from "context/settings.context";
 import { useNotificationSubscription, useUpdateUserMutation } from "gql/index";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { user, profile, updateUser } = useUserContext();
   const { settingsModel, settingsNav } = useSettingsContext();
   const [updateUserMutation] = useUpdateUserMutation();
-
   useEffect(() => {
     if (user) {
       //console.log("this is the user :", user);

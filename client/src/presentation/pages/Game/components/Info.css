@@ -207,7 +207,7 @@
     text-align: center;
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     background-size: 100% 100%;
-    background-image: url(../../images/question-mark.jpeg);
+    background-image: url('../../../assets/game/question-mark.jpeg');
 }
 
 #infoAvatar01
@@ -248,7 +248,7 @@
     height: 100%;
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     background-size: 100% 100%;
-    background-image: url(../../images/question-mark.jpeg);
+    background-image: url('../../../assets/game/question-mark.jpeg');
 }
 
 #infoAvatar02
@@ -462,7 +462,7 @@
     cursor: pointer;
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     background-size: 100% 100%;
-    background-image: url(../../images/question-mark.jpeg);
+    background-image: url('../../../assets/game/question-mark.jpeg');
 }
 
 
@@ -708,7 +708,7 @@
     cursor: pointer;
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     background-size: 100% 100%;
-    background-image: url(../../images/question-mark.jpeg);
+    background-image: url('../../../assets/game/question-mark.jpeg');
 }
 
 

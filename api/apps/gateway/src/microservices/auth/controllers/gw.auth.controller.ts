@@ -30,7 +30,7 @@ export class AuthController {
 			const respond = await this.gatewayService.getTwoFacatorAccessToken({id: user.id, username: user.username})
 			res.cookie('twoFactorAuth', respond, {
 				httpOnly: true,
-				secure: true,
+				//secure: true,
 				sameSite: 'Strict',
 			  });
 		  	res.redirect(FRONT_URL);
@@ -39,13 +39,13 @@ export class AuthController {
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
 		res.cookie('Refresh_token', token.refreshToken, {
 			httpOnly: true,
-			secure: true,
+			//secure: true,
 			sameSite: 'Strict',
 		  });
 		  
 		  res.cookie('Access_token', token.accessToken, {
 			httpOnly: true,
-			secure: true,
+			//secure: true,
 			sameSite: 'Strict',
 		  });
 		res.redirect(FRONT_URL);
@@ -73,7 +73,7 @@ export class AuthController {
 			const respond = await this.gatewayService.getTwoFacatorAccessToken({id: user.id, username: user.username})
 			res.cookie('twoFactorAuth', respond, {
 				httpOnly: true,
-				secure: true,
+				//secure: true,
 				sameSite: 'Strict',
 			  });
 		  	res.redirect(FRONT_URL);
@@ -82,13 +82,13 @@ export class AuthController {
 		const token = await this.gatewayService.getRefreshWithJwtAccessToken({id: req.user.id, username: req.user.username});
 		res.cookie('Refresh_token', token.refreshToken, {
 			httpOnly: true,
-			secure: true,
+			//secure: true,
 			sameSite: 'Strict',
 		  });
 		  
 		  res.cookie('Access_token', token.accessToken, {
 			httpOnly: true,
-			secure: true,
+			//secure: true,
 			sameSite: 'Strict',
 		  });
 		  res.redirect(FRONT_URL);
@@ -106,7 +106,7 @@ export class AuthController {
 		console.log("res from the server: ", resault.Access_token);
 		res.cookie('Access_token', resault.Access_token, {
 			httpOnly: true,
-			secure: true,
+			//secure: true,
 			sameSite: 'Strict',
 		  });
 		
