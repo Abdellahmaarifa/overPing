@@ -262,9 +262,9 @@ const ChatBody = ({
             {messagesDM.length > 0 &&
               messagesDM.map((e: MessageDMType, index: number) => {
                 let u = currentDm?.user2;
-                if (e.sender_id == Number(currentDm?.user1.id))
-                  u = currentDm?.user1;
-                // if (u && e.sender_id != Number(id)) u = currentDm?.user1;
+                // if (e.sender_id == Number(currentDm?.user1.id))
+                //   u = currentDm?.user1;
+                if (e.sender_id != Number(id)) u = currentDm?.user1;
                 if (!u) return "";
                 return (
                   <Message

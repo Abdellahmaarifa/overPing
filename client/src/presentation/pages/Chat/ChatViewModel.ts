@@ -35,7 +35,7 @@ export class ChatViewModel {
     data: ChatViewData;
     state: any;
     context: ChatCtxType;
-    socket:any;
+    socket: any;
   }) {
     this.data = params.data;
     this.state = params.state;
@@ -207,7 +207,7 @@ export class ChatViewModel {
       if (!channel) {
         this.hooks.navigate("/error");
       }
-      const isJoined: boolean = channels.find((e) => e.id == channel.id);
+      const isJoined: boolean = channels.find((e) => e.id == channel?.id);
 
       if (!isJoined) {
         const newChannel = await this.joinToChannel(

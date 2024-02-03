@@ -2,9 +2,11 @@ import { useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import { Achieve, MatchMode } from "./Achieve";
 import "./Congratulation.css";
+import { IGameData } from "./game.interface";
+import { lastGoalsResult } from "./Info";
 import Result from "./Result";
 import UserInfo from "./UserInfo";
-
+import { XpService } from "./xp";
 const serverUrl: string = import.meta.env.OVER_PING_SERVER_URL_PROD_WS;
 
 interface CongraProps {
@@ -21,6 +23,7 @@ let Congratulation = ({
   let plyOneImg: HTMLElement | null = null;
   let plyTwoImg: HTMLElement | null = null;
   let socket: Socket | null = null;
+  let xp = new XpService();
 
   setTimeout(() => {
     plyOneImg = document.getElementById("congAvatar2");
@@ -57,13 +60,19 @@ let Congratulation = ({
     socket.on("connect_error", (error) => {
       //console.error('Error connecting to the WebSocket server:');
     });
+    socket.on("error", (error) => {
+      //console.log("")
+    });
+    socket.on("connect_timeout", (timeout) => {
+      // console.error('Connection to the WebSocket server timed out:', timeout);
+    });
   };
 
   useEffect(() => {
     setUpSocket();
 
     return () => {
-      if (socket) {
+      if (socket && socket.connected) {
         socket.disconnect();
       }
     };
@@ -110,6 +119,46 @@ let Congratulation = ({
       starts_collected: 0,
     };
     socket?.emit("customAchieve", { player1, player2 });
+
+    let p1status: number = 1;
+    let p2status: number = 0;
+    console.log("The fuking result is : ", lastGoalsResult);
+    if (
+      lastGoalsResult.rightPlayerGoals !== 5 &&
+      lastGoalsResult.leftPlayerGoals !== 5
+    ) {
+      lastGoalsResult.leftPlayerGoals = 5;
+      lastGoalsResult.rightPlayerGoals = 0;
+    }
+    if (lastGoalsResult.leftPlayerGoals > lastGoalsResult.rightPlayerGoals) {
+      //console.log("players : ", goal.rightPlayerGoals, goal.leftPlayerGoals, p1status, p2status)
+      let plyLevel: number = xp.calculateXp(
+        playerOne.matchWager * 2,
+        MatchMode.ONLINE_RANDOM
+      );
+      if (playerOne.matchType === MatchMode.VS_COMPUTER)
+        plyLevel = xp.calculateXp(10, MatchMode.VS_COMPUTER);
+      if (playerOne.matchType === MatchMode.VS_FRIENDS)
+        plyLevel = xp.calculateXp(10, MatchMode.VS_FRIENDS);
+
+      const gameData: IGameData = {
+        playerOneId: playerOne.userId,
+        playerOneName: playerOne.userName,
+        playerOneImageURL: playerOne.userAvatar,
+        playerOneScore: lastGoalsResult.leftPlayerGoals,
+        playerOneStatus: p1status,
+        playerTwoId: playerTwo.userId,
+        playerTwoName: playerTwo.userName,
+        playerTwoImageURL: playerTwo.userAvatar,
+        playerTwoScore: lastGoalsResult.rightPlayerGoals,
+        playerTwoStatus: p2status,
+        points: playerOne.matchWager * 2,
+        level: plyLevel,
+      };
+      if (playerOne.playWithRobot === false)
+        socket?.emit("customResult", gameData);
+      console.log("player ", playerOne.playWithRobot, gameData);
+    }
     //console.log("The game result is : ", gameResult)
     //console.log("player One : ", player1);
     //console.log("player One : ", player2);

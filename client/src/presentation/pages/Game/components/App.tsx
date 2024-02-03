@@ -140,6 +140,9 @@ function App({
     socket.on("connect_timeout", (timeout) => {
       // console.error('Connection to the WebSocket server timed out:', timeout);
     });
+    socket.on("error", (error) => {
+      //console.log("")
+    });
   };
 
   useEffect(() => {
@@ -148,7 +151,7 @@ function App({
 
     return () => {
       clearInterval(intervalId); // Clean up the interval when the component unmounts
-      if (socket) {
+      if (socket && socket.connected) {
         socket.disconnect(); // Close the WebSocket connection
       }
     };

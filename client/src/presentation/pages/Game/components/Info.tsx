@@ -6,7 +6,7 @@ import "./Info.css";
 import Result from "./Result";
 import UserInfo from "./UserInfo";
 import { IGameData } from "./game.interface";
-import { MatchMode, XpService } from "./xp";
+import { XpService } from "./xp";
 const serverUrl: string = import.meta.env.OVER_PING_SERVER_URL_PROD_WS;
 let socket: Socket | null = null;
 const gameData: IGameData = new IGameData();
@@ -77,6 +77,12 @@ function Info({
       socket.on("connect_error", (error) => {
         //console.error('Error connecting to the WebSocket server:');
       });
+      socket.on("connect_timeout", (timeout) => {
+        // console.error('Connection to the WebSocket server timed out:', timeout);
+      });
+      socket.on("error", (error) => {
+        //console.log("")
+      });
 
       socket.on("playerLeaveTheGame", (goal: Goals) => {
         //console.log("Leaving ===>")
@@ -86,37 +92,37 @@ function Info({
           goal.rightPlayerGoals !== 5 &&
           matchState === undefined
         ) {
-          let plyLevel;
-          if (playerOne.matchType === MatchMode.VS_COMPUTER)
-            plyLevel = xp.calculateXp(
-              playerOne.matchWager * 2,
-              MatchMode.VS_COMPUTER
-            );
-          if (playerOne.matchType === MatchMode.VS_FRIENDS)
-            plyLevel = xp.calculateXp(
-              playerOne.matchWager * 2,
-              MatchMode.VS_FRIENDS
-            );
-          if (playerOne.matchType === MatchMode.ONLINE_RANDOM)
-            plyLevel = xp.calculateXp(
-              playerOne.matchWager * 2,
-              MatchMode.ONLINE_RANDOM
-            );
+          // let plyLevel;
+          // if (playerOne.matchType === MatchMode.VS_COMPUTER)
+          //   plyLevel = xp.calculateXp(
+          //     playerOne.matchWager * 2,
+          //     MatchMode.VS_COMPUTER
+          //   );
+          // if (playerOne.matchType === MatchMode.VS_FRIENDS)
+          //   plyLevel = xp.calculateXp(
+          //     playerOne.matchWager * 2,
+          //     MatchMode.VS_FRIENDS
+          //   );
+          // if (playerOne.matchType === MatchMode.ONLINE_RANDOM)
+          //   plyLevel = xp.calculateXp(
+          //     playerOne.matchWager * 2,
+          //     MatchMode.ONLINE_RANDOM
+          //   );
 
-          const gameData: IGameData = {
-            playerOneId: playerOne.userId,
-            playerOneName: playerOne.userName,
-            playerOneImageURL: playerOne.userAvatar,
-            playerOneScore: 5,
-            playerOneStatus: 1,
-            playerTwoId: playerTwo.userId,
-            playerTwoName: playerTwo.userName,
-            playerTwoImageURL: playerTwo.userAvatar,
-            playerTwoScore: 0,
-            playerTwoStatus: 0,
-            points: playerOne.matchWager * 2,
-            level: plyLevel,
-          };
+          // const gameData: IGameData = {
+          //   playerOneId: playerOne.userId,
+          //   playerOneName: playerOne.userName,
+          //   playerOneImageURL: playerOne.userAvatar,
+          //   playerOneScore: 5,
+          //   playerOneStatus: 1,
+          //   playerTwoId: playerTwo.userId,
+          //   playerTwoName: playerTwo.userName,
+          //   playerTwoImageURL: playerTwo.userAvatar,
+          //   playerTwoScore: 0,
+          //   playerTwoStatus: 0,
+          //   points: playerOne.matchWager * 2,
+          //   level: plyLevel,
+          // };
           if (gameResult.plyOneId === 0 && playerOne.playWithRobot === false)
             playerOne.socket?.emit("customResult", gameData);
           let leftPlayerRebound = 5;
@@ -148,48 +154,48 @@ function Info({
         if (goal.leftPlayerGoals === 5 || goal.rightPlayerGoals === 5) {
           //console.log("winning ===>")
           setTimeout(() => {
-            let p1status: number = 0;
-            let p2status: number = 0;
-            if (goal.rightPlayerGoals > goal.leftPlayerGoals) {
-              p1status = 0;
-              p2status = 1;
-            } else {
-              p1status = 1;
-              p2status = 0;
-            }
-            //console.log("players : ", goal.rightPlayerGoals, goal.leftPlayerGoals, p1status, p2status)
-            let plyLevel;
-            if (playerOne.matchType === MatchMode.VS_COMPUTER)
-              plyLevel = xp.calculateXp(
-                playerOne.matchWager * 2,
-                MatchMode.VS_COMPUTER
-              );
-            if (playerOne.matchType === MatchMode.VS_FRIENDS)
-              plyLevel = xp.calculateXp(
-                playerOne.matchWager * 2,
-                MatchMode.VS_FRIENDS
-              );
-            if (playerOne.matchType === MatchMode.ONLINE_RANDOM)
-              plyLevel = xp.calculateXp(
-                playerOne.matchWager * 2,
-                MatchMode.ONLINE_RANDOM
-              );
-            const gameData: IGameData = {
-              playerOneId: playerOne.userId,
-              playerOneName: playerOne.userName,
-              playerOneImageURL: playerOne.userAvatar,
-              playerOneScore: goal.leftPlayerGoals,
-              playerOneStatus: p1status,
-              playerTwoId: playerTwo.userId,
-              playerTwoName: playerTwo.userName,
-              playerTwoImageURL: playerTwo.userAvatar,
-              playerTwoScore: goal.rightPlayerGoals,
-              playerTwoStatus: p2status,
-              points: playerOne.matchWager * 2,
-              level: plyLevel,
-            };
+            // let p1status: number = 0;
+            // let p2status: number = 0;
+            // if (goal.rightPlayerGoals > goal.leftPlayerGoals) {
+            //   p1status = 0;
+            //   p2status = 1;
+            // } else {
+            //   p1status = 1;
+            //   p2status = 0;
+            // }
+            // //console.log("players : ", goal.rightPlayerGoals, goal.leftPlayerGoals, p1status, p2status)
+            // let plyLevel;
+            // if (playerOne.matchType === MatchMode.VS_COMPUTER)
+            //   plyLevel = xp.calculateXp(
+            //     playerOne.matchWager * 2,
+            //     MatchMode.VS_COMPUTER
+            //   );
+            // if (playerOne.matchType === MatchMode.VS_FRIENDS)
+            //   plyLevel = xp.calculateXp(
+            //     playerOne.matchWager * 2,
+            //     MatchMode.VS_FRIENDS
+            //   );
+            // if (playerOne.matchType === MatchMode.ONLINE_RANDOM)
+            //   plyLevel = xp.calculateXp(
+            //     playerOne.matchWager * 2,
+            //     MatchMode.ONLINE_RANDOM
+            //   );
+            // const gameData: IGameData = {
+            //   playerOneId: playerOne.userId,
+            //   playerOneName: playerOne.userName,
+            //   playerOneImageURL: playerOne.userAvatar,
+            //   playerOneScore: goal.leftPlayerGoals,
+            //   playerOneStatus: p1status,
+            //   playerTwoId: playerTwo.userId,
+            //   playerTwoName: playerTwo.userName,
+            //   playerTwoImageURL: playerTwo.userAvatar,
+            //   playerTwoScore: goal.rightPlayerGoals,
+            //   playerTwoStatus: p2status,
+            //   points: playerOne.matchWager * 2,
+            //   level: plyLevel,
+            // };
 
-            console.log("goals data : ", goal);
+            //console.log("goals data : ", goal);
             let leftPlayerRebound = goal.leftPlayerRebound;
             let leftPlayerStrict = goal.leftPlayerStrict;
             let rightPlayerRebound = goal.rightPlayerRebound;
@@ -199,14 +205,14 @@ function Info({
             let plyOneId = playerOne.userId;
             let plyTwoId = playerTwo.userId;
             if (gameResult.plyOneId === 0) {
-              if (
-                gameResult.plyOneId === 0 &&
-                playerOne.playWithRobot === false
-              ) {
-                if (goal.leftPlayerGoals > goal.rightPlayerGoals) {
-                  playerOne.socket?.emit("customResult", gameData);
-                }
-              }
+              // if (
+              //   gameResult.plyOneId === 0 &&
+              //   playerOne.playWithRobot === false
+              // ) {
+              //   if (goal.leftPlayerGoals > goal.rightPlayerGoals) {
+              //     playerOne.socket?.emit("customResult", gameData);
+              //   }
+              // }
               updateGameResult(
                 plyOneId,
                 plyTwoId,
@@ -248,6 +254,12 @@ function Info({
           //setLeftGoal(goal.rightPlayerGoals);
           //setRightGoal(goal.leftPlayerGoals);
         }
+        lastGoalsResult.leftPlayerGoals = goal.leftPlayerGoals;
+        lastGoalsResult.rightPlayerGoals = goal.rightPlayerGoals;
+        lastGoalsResult.leftPlayerRebound = goal.leftPlayerRebound;
+        lastGoalsResult.leftPlayerStrict = goal.leftPlayerStrict;
+        lastGoalsResult.rightPlayerRebound = goal.rightPlayerRebound;
+        lastGoalsResult.rightPlayerStrict = goal.rightPlayerStrict;
       });
     }
   };
@@ -261,7 +273,7 @@ function Info({
 
     return () => {
       clearInterval(intervalId);
-      if (socket) {
+      if (socket && socket.connected) {
         //console.log("is disco")
         socket.disconnect();
       }
@@ -532,3 +544,5 @@ function Info({
 }
 
 export default Info;
+
+export { lastGoalsResult };

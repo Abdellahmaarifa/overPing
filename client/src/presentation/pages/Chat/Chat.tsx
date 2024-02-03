@@ -5,7 +5,7 @@ import ChatRightSide from "components/chatPage/CharRightSide/ChatRightSide";
 import ChatLeftSide from "components/chatPage/ChatLeftSide/ChatLeftSide";
 import ChatSearch from "components/chatPage/ChatSearch/ChatSearch";
 import EditChannelModel from "components/chatPage/EditChannelModel /EditChannelModel";
-import { CHANNEL_CMD, DIRECTMESSAGE, SERVER_CHAT} from "constant/constants";
+import { CHANNEL_CMD, DIRECTMESSAGE, SERVER_CHAT } from "constant/constants";
 import { useChatContext } from "context/chat.context";
 import { useUserContext } from "context/user.context";
 import { useEffect } from "react";
@@ -17,43 +17,50 @@ import { ChannelSample } from "domain/model/chat.type";
 import { io } from "socket.io-client";
 import ChatBody from "components/chatPage/ChatBody/ChatBody";
 
-
 class Socket_init {
-  socket : any = null;
-  socket_dm : any = null;
+  socket: any = null;
+  socket_dm: any = null;
 
   init = () => {
-    if (this.socket === null)
-    {
+    if (this.socket === null) {
       this.socket = io(URL_CHANNEL, { withCredentials: true });
+      this.socket.on("connect_error", (error) => {
+        //console.error('Error connecting to the WebSocket server:');
+      });
+      this.socket.on("error", (error) => {
+        //console.log("")
+      });
+      this.socket.on("connect_timeout", (timeout) => {
+        // console.error('Connection to the WebSocket server timed out:', timeout);
+      });
     }
     if (this.socket_dm === null) {
       this.socket_dm = io(URL_DM, { withCredentials: true });
+      this.socket_dm.on("connect_error", (error) => {
+        //console.error('Error connecting to the WebSocket server:');
+      });
+      this.socket_dm.on("error", (error) => {
+        //console.log("")
+      });
+      this.socket_dm.on("connect_timeout", (timeout) => {
+        // console.error('Connection to the WebSocket server timed out:', timeout);
+      });
     }
-    return {socket: this.socket, socket_dm: this.socket_dm}
-  }
+    return { socket: this.socket, socket_dm: this.socket_dm };
+  };
 }
 
 const SocketObj = new Socket_init();
 
-const URL_CHANNEL = `${SERVER_CHAT}/${
-  CHANNEL_CMD.namespace
-}`;
+const URL_CHANNEL = `${SERVER_CHAT}/${CHANNEL_CMD.namespace}`;
 
-const URL_DM = `${SERVER_CHAT}/${
-  DIRECTMESSAGE.namespace
-}`;
-
+const URL_DM = `${SERVER_CHAT}/${DIRECTMESSAGE.namespace}`;
 
 // const socket = io(URL_CHANNEL, { withCredentials: true });
 // const socket_dm = io(URL_DM, { withCredentials: true });
 
-
-
-
 const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
-
-  const {socket, socket_dm} = SocketObj.init();
+  const { socket, socket_dm } = SocketObj.init();
 
   // call of hooks
   const { id } = useParams();
@@ -69,7 +76,7 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
     hooks: { navigate },
     state: {},
     context: ChatCtx,
-    socket:socket,
+    socket: socket,
   });
 
   // get context values
@@ -86,9 +93,12 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   useEffect(() => {
     viewModel.initChat();
 
-    socket.on(CHANNEL_CMD.error, (data) =>{
-      console.log("88888888888888888888===>ERROR GET IT FROM CHANNEL SOCKET : " ,data);
-    })
+    socket.on(CHANNEL_CMD.error, (data) => {
+      console.log(
+        "88888888888888888888===>ERROR GET IT FROM CHANNEL SOCKET : ",
+        data
+      );
+    });
 
     socket.on(CHANNEL_CMD.recUpdatedChannelsList, (data) => {
       if (data) setChannels(data);
@@ -123,10 +133,12 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
 
     //////////////////////////////////////////////////////////////////////
 
-    socket_dm.on(DIRECTMESSAGE.error, (data) =>{
-      console.log("88888888888888888888===>ERROR GET IT FROM DIRECT MSG SOCKET : " ,data);
-    })
-    
+    socket_dm.on(DIRECTMESSAGE.error, (data) => {
+      console.log(
+        "88888888888888888888===>ERROR GET IT FROM DIRECT MSG SOCKET : ",
+        data
+      );
+    });
 
     socket_dm.on(DIRECTMESSAGE.recUpdatedDMsList, (data) => {
       if (data) setDms(data);
@@ -168,9 +180,9 @@ const Chat = ({ type }: { type: "none" | "dm" | "channel" }) => {
   return (
     <ChatConatiner>
       <ChatLeftSide />
-      <ChatBody   socket={socket} socket_dm={socket_dm} type={type} />
+      <ChatBody socket={socket} socket_dm={socket_dm} type={type} />
       {((currentChannel && type == "channel") ||
-        (currentDm && type == "dm")) && <ChatRightSide  type={type} />}
+        (currentDm && type == "dm")) && <ChatRightSide type={type} />}
       {showSearchModel && <ChatSearch />}
       {showChannelModel && <ChannelModel />}
       {showEditChannelModel && <EditChannelModel />}

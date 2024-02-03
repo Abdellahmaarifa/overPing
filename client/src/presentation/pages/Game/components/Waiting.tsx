@@ -186,12 +186,18 @@ let Waiting = ({
     socket.on("connect_error", (error) => {
       //console.error('Error connecting to the WebSocket server:');
     });
+    socket.on("connect_timeout", (timeout) => {
+      // console.error('Connection to the WebSocket server timed out:', timeout);
+    });
+    socket.on("error", (error) => {
+      //console.log("")
+    });
   };
   useEffect(() => {
     setUpSocket();
 
     return () => {
-      if (socket) {
+      if (socket && socket.connected) {
         socket.disconnect();
       }
     };
