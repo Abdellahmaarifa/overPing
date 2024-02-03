@@ -24,8 +24,8 @@ const LoginAuth = () => {
           success: ({ data }: any) => {
             console.log("the user: from validating 2FA: ", data);
             setTimeout(() => {
-              //window.location.replace("/");
-              updateUser(data.authenticate_2fa);
+              window.location.replace("/");
+              //updateUser(data.authenticate_2fa);
             }, 500);
             return "welcome back!";
           },

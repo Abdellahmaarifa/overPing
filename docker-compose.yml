@@ -86,8 +86,7 @@ services:
     build:
       context: ./api
       dockerfile: ./apps/gateway/Dockerfile
-      target: development
-    command: yarn start:dev gateway 
+      target: production
     env_file:
       - .env
     networks:

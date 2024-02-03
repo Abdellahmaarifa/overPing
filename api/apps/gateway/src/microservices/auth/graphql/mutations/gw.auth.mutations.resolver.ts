@@ -179,6 +179,7 @@ export class AuthMutationsResolver {
   @Mutation ( () => Boolean)
   async updateUserStatus(@Context() cxt, @Args('currentTime') currentTime: string ): Promise<boolean>{
       const {id} = cxt.req.user;
+      
       return this.userStatusService.updateUserStatus(id, currentTime);
   }
 

@@ -8,6 +8,7 @@ import IntraGoogle from "assets/login/42.svg?react";
 import CloseIcon from "assets/login/btn-back.svg?react";
 import GoogleIcon from "assets/login/google.svg?react";
 import PhotoIcon from "assets/login/photoIcon.svg?react";
+console.error;
 import { SignUpContainer, SignUpGroup, SignUpHeading } from "./SignUp.style";
 
 import { motion } from "framer-motion";
@@ -23,12 +24,13 @@ interface FormStepProps {
   viewModel: SignUpViewModelType;
   formikProps?: FormikProps<SignUpModelType>;
 }
+const SERVER = import.meta.env.OVER_PING_SERVER_URL_PROD;
 
 const SignUpFormStepOne = (_: FormStepProps) => {
   return (
     <>
       <SignUpGroup>
-        <Button
+        {/* <Button
           $text="Create with Google"
           $size="xl"
           $Icon={GoogleIcon}
@@ -36,9 +38,9 @@ const SignUpFormStepOne = (_: FormStepProps) => {
           $border={true}
           onClick={() => {
             window.location.href = "http://localhost:5500/auth/google";
-            _.viewModel.closeModel()
-         }}
-        />
+            _.viewModel.closeModel();
+          }}
+        /> */}
         <Button
           $text="Create With Intra"
           $size="xl"
@@ -46,10 +48,9 @@ const SignUpFormStepOne = (_: FormStepProps) => {
           $transparent={true}
           $border={true}
           onClick={() => {
-            window.location.href = "http://localhost:5500/auth/42";
-            _.viewModel.closeModel()
-
-         }}
+            window.location.href = `${SERVER}/auth/42`;
+            _.viewModel.closeModel();
+          }}
         />
       </SignUpGroup>
       <Seprator text="or" />

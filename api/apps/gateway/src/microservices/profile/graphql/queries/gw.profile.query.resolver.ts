@@ -21,6 +21,7 @@ export class ProfileQueryResolver {
     @UseGuards(GqlJwtAuthGuard)
     @Query(() => GQLUserProfileModel)
     async findProfileByUserId(@Context() cxt , @Args('userId') id: number) : Promise<IUserProfile>{
+      console.log("search about profile id: ++++++++++++++++++++++++++++++++++++++++++++++======>", id)
       const userId = cxt.req.user.id;
       const profile = await this.profileService.findProfileByUserId(userId, id);
       return profile;

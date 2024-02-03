@@ -18,6 +18,7 @@ import {
 } from "./LoginForm.style";
 
 const a = tw.a``;
+const SERVER = import.meta.env.OVER_PING_SERVER_URL_PROD;
 const LoginForm = () => {
   const { setShowRegister, showRegister } = useLoginContext();
   const navigate = useNavigate();
@@ -31,25 +32,24 @@ const LoginForm = () => {
         </div>
         <Seprator text="or" />
         <div tw="flex justify-center items-center flex-col gap-[16px] w-full mt-[22px]">
-          <Button
+          {/* <Button
             $text="log in with Google"
             $border={true}
             $transparent={true}
             $size="xl"
             $Icon={GoogleIcon}
             onClick={() => {
-               window.location.href = "http://localhost:5500/auth/google";
+              window.location.href = `http://localhost:5500/auth/google`;
             }}
-          />
+          /> */}
           <Button
             $text="log in with Intra"
             $border={true}
             $transparent={true}
             $size="xl"
             $Icon={IntraIcon}
-
             onClick={() => {
-               window.location.href = "http://localhost:5500/auth/42";
+              window.location.href = `${SERVER}/auth/42`;
             }}
           />
         </div>

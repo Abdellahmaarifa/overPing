@@ -23,13 +23,13 @@
     "generate:profile:prisma": "cd ./apps/profile/prisma && prisma generate --schema schema.prisma",
     "generate:chat:prisma": "cd ./apps/chat/prisma && prisma generate --schema schema.prisma",
     "generate:game:prisma": "cd ./apps/game/prisma && prisma generate --schema schema.prisma",
-    "start:auth:migrate:prod": "prisma migrate deploy --schema=apps/auth/prisma/schema.prisma && yarn start:dev auth ",
-    "start:profile:migrate:prod": "prisma migrate deploy --schema=apps/profile/prisma/schema.prisma && yarn  start:dev profile  ", 
-    "start:chat:migrate:prod": "prisma migrate deploy --schema=apps/chat/prisma/schema.prisma && yarn start:dev chat ",
-    "start:game:migrate:prod": "prisma migrate deploy --schema=apps/game/prisma/schema.prisma && yarn start:dev game ", 
-    "start:gateway:prod": "yarn start:dev gateway",
-    "start:media:prod": "yarn start:dev media",
-    "start:matchmaking:prod": "yarn start:dev matchmaking"
+    "start:auth:migrate:prod": "prisma migrate deploy --schema=apps/auth/prisma/schema.prisma && node dist/apps/auth/main",
+    "start:profile:migrate:prod": "prisma migrate deploy --schema=apps/profile/prisma/schema.prisma && node dist/apps/profile/main",
+    "start:chat:migrate:prod": "prisma migrate deploy --schema=apps/chat/prisma/schema.prisma && node dist/apps/chat/main",
+    "start:game:migrate:prod": "prisma migrate deploy --schema=apps/game/prisma/schema.prisma && node dist/apps/game/main",
+    "start:gateway:prod": "node dist/apps/gateway/main",
+    "start:media:prod": "node dist/apps/media/main",
+    "start:matchmaking:prod": "node dist/apps/matchmaking/main"
   },
   "dependencies": {
     "@apollo/server": "^4.9.5",
