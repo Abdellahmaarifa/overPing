@@ -327,16 +327,16 @@ services:
       - production
     restart: always
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgAdminConsole
-    env_file:
-      - .env
-    ports:
-      - "5050:80"
-    networks:
-      - webapp
-    restart: always
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgAdminConsole
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "5050:80"
+  #   networks:
+  #     - webapp
+  #   restart: always
 
 networks:
   webapp:
