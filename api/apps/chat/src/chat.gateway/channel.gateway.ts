@@ -135,10 +135,10 @@ export class ChannelGateway implements OnGatewayInit, OnGatewayConnection, OnGat
         FriendshipStatus.BlockedBy, 
         GroupType.CHANNEL
       )) as number[];
-      
-      blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).leave(channelName) });
+      console.log(blockedByUsers);
+      blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user))?.leave(channelName) });
       this.server.to(channelName).emit(CHANNEL.recMessageFromChannel, message);
-      blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user)).join(channelName) });
+      blockedByUsers.forEach((user) => { (connectedChannelUsers.get(user))?.join(channelName) });
 
       this.sendPullUpChannel(
         data.channelId,

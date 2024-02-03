@@ -6,6 +6,7 @@ import { Socket } from "socket.io";
 export class ChatExceptionFilter extends BaseWsExceptionFilter {
   
   catch(exception: WsException | HttpException, host: ArgumentsHost) {
+    console.log(exception);
     const ctx = host.switchToWs();
 
     const client = ctx.getClient() as Socket;

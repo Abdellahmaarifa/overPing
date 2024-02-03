@@ -16,7 +16,8 @@ import { useUserContext } from "context/user.context";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import { io } from "socket.io-client";
-
+import { ChannelSampleMember } from "domain/model/chat.type";
+import IMG from "assets/common/profile.png";
 interface MessageType {
   id: number;
   sender_id: number;
@@ -158,20 +159,20 @@ const ChatBody = ({
 
   ////////////////////////////////////////////////////////
 
-  useEffect(() => {
-    if (currentChannel && type == "channel") {
-      const newMap = new Map<number, { name: string; image: string }>();
-      let newAdmin = currentChannel.admins ? [...currentChannel.admins] : [];
-      let newMems = currentChannel.members ? [...currentChannel.members] : [];
-      [...newAdmin, ...newMems].map((e) => {
-        newMap.set(Number(e.id), {
-          name: e.username,
-          image: e.profileImgUrl,
-        });
-      });
-      setMembersMap(newMap);
-    }
-  }, [currentChannel, location.pathname, id]);
+  // useEffect(() => {
+  //   if (currentChannel && type == "channel") {
+  //     const newMap = new Map<number, { name: string; image: string }>();
+  //     let newAdmin = currentChannel.admins ? [...currentChannel.admins] : [];
+  //     let newMems = currentChannel.members ? [...currentChannel.members] : [];
+  //     [...newAdmin, ...newMems].map((e) => {
+  //       newMap.set(Number(e.id), {
+  //         name: e.username,
+  //         image: e.profileImgUrl,
+  //       });
+  //     });
+  //     setMembersMap(newMap);
+  //   }
+  // }, [currentChannel, location.pathname, id]);
 
   ////////////////////////////////////////////////////////
 
@@ -225,10 +226,27 @@ const ChatBody = ({
             {messages.length > 0 &&
               messages.map((e: MessageType, index: number) => {
                 console.log("///////////===========>>the key ", index);
+
+                let newAdmin = currentChannel.admins
+                  ? [...currentChannel.admins]
+                  : [];
+                let newMems = currentChannel.members
+                  ? [...currentChannel.members]
+                  : [];
+                let us: ChannelSampleMember | undefined = [
+                  ...newAdmin,
+                  ...newMems,
+                ].find((m) => Number(m.id) == e.sender_id);
+
+                console.log(
+                  "list of memebers: ",
+                  [...newAdmin, ...newMems],
+                  us
+                );
                 return (
                   <Message
-                    name={membersMap?.get(e.sender_id)?.name!}
-                    image={membersMap?.get(e.sender_id)?.image!}
+                    name={us ? us?.username! : "user"}
+                    image={us ? us?.profileImgUrl! : IMG}
                     message={e.text}
                     date={format(e.created_at, "dd/MM/yyyy HH:mm")}
                     id={e.sender_id}
@@ -244,9 +262,10 @@ const ChatBody = ({
             {messagesDM.length > 0 &&
               messagesDM.map((e: MessageDMType, index: number) => {
                 let u = currentDm?.user2;
-                if (u && e.sender_id != Number(id)) u = currentDm?.user1;
+                if (e.sender_id == Number(currentDm?.user1.id))
+                  u = currentDm?.user1;
+                // if (u && e.sender_id != Number(id)) u = currentDm?.user1;
                 if (!u) return "";
-
                 return (
                   <Message
                     name={String(u?.username)}

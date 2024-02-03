@@ -16,6 +16,11 @@ export class FriendshipService {
   
   async sendFriendRequest(senderId: number, receiverId: number): Promise<boolean> {
     const areFriends = await this.areUsersFriends(senderId, receiverId);
+    const areBlocked = await this.areUsersBlocked(receiverId, senderId);
+
+    if (areBlocked){
+      throw this.rpcExceptionService.throwBadRequest('the user blocked you');
+    }
     if (areFriends) {
       throw this.rpcExceptionService.throwBadRequest('Users are already friends.');
     }
@@ -302,6 +307,9 @@ export class FriendshipService {
       where: {
         id: { not: userId },
         friends: { none: { id: userId } },
+        blocks: {  none: { id: userId, },},
+        friendOf: { none: {id: userId }},
+        blockedBy: { none: {id: userId}}
       },
       take: limit,
     });
